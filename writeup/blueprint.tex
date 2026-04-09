@@ -101,6 +101,20 @@ $r(p,\operatorname{mix}_M u)=r(p,u)$;
 Therefore the eventual factor-space case analysis may be carried out up to
 orthogonal recombination of the four coordinates.
 
+\medskip
+\noindent
+\textbf{Formalized representative surjectivity.} The constant
+$\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 1$ model
+\[
+  u_{\mathrm{const}} = (1, x_1^2, x_1x_2, x_2^2)
+\]
+is now fully formalized in
+\texttt{TernaryQuarticProof/RepresentativeSurjective.lean}. The key lemma is
+that every quartic monomial of degree at most $4$ lies in
+$\operatorname{im}(A_{u_{\mathrm{const}}})$, hence every quartic polynomial does
+as well by linearity. Therefore every SOCP at this representative has zero
+residual by the already-formalized image case.
+
 \section*{Normal-Form Target}
 The most promising unresolved case is when, after affine changes of variables
 and invertible recombination of the four coordinates, the factor takes the form
@@ -248,6 +262,11 @@ following models:
       w_\ell=(-x_2\ell,0,\ell,0),\qquad \ell=c+d x_2.
     \]
   \end{itemize}
+\item The model
+  \[
+    (1,x_1^2,x_1x_2,x_2^2)
+  \]
+  is already formalized: its image is all quartics.
 \item Treat the mixed-affine branch
   \[
     (1,x_1,x_1^2,x_1x_2),\qquad

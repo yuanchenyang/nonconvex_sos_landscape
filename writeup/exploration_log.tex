@@ -42,6 +42,14 @@ transformed image-plus-cone decomposition forces zero residual at a SOCP.
   the four factor coordinates, with formal proofs that admissibility, the
   linearized image map, $\sigma$, the residual, FOCP, and SOCP are preserved
   under orthogonal recombination.
+\item \texttt{TernaryQuarticProof/RepresentativeSurjective.lean}: the explicit
+  representative
+  \[
+    (1, x_1^2, x_1x_2, x_2^2)
+  \]
+  is now proved surjective on quartics by a monomial-by-monomial image
+  construction. This discharges the constant $\dim(W \cap \mathbb{R}[x]_{\le 1})
+  = 1$ branch at the representative level.
 \end{itemize}
 
 These files build with
@@ -296,10 +304,33 @@ mixed_affine_parabolic_probe = (u = [1, x1, x1*x2, x1^2 + x2^2],
 This corrects the earlier assumption that the five listed canonical models
 already exhausted the independent rank-$4$ cases.
 
+\section*{New Lean Strategy Adjustment}
+The first representative theorem suggests a better formalization pattern than
+generic coefficient reconstruction. For explicit normal forms, it is often
+easier to prove either:
+\begin{itemize}
+\item full image surjectivity by reducing quartics to monomial cases; or
+\item an image-plus-kernel decomposition for each quadratic square
+  $q^2$, using a decomposition $q = r + t$ where $r$ already lies in the span
+  of the factor coordinates and $t$ is the small missing piece.
+\end{itemize}
+
+This avoids the failed earlier attempt to build a large generic monomial-basis
+library first.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Prove the normalization/classification statement for the mixed-affine
 constant-containing $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 2$ branch.
+\item Formalize the remaining representative case lemmas:
+  \[
+    (x_1,x_1^2,x_1x_2,x_2^2),\quad
+    (x_1,x_2,x_1^2,x_1x_2),\quad
+    (x_1,x_2,x_1^2,x_2^2),\quad
+    (1,x_1,x_2,h),\quad
+    (1,x_1,x_1^2,x_1x_2),\quad
+    (1,x_1,x_1x_2,x_2^2).
+  \]
 \item Translate the representative mixed-affine kernel formulas into Lean after
 the normalization step is fixed.
 \item After that branch is settled, assemble the final theorem in
