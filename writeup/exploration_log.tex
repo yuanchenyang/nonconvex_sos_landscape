@@ -318,6 +318,18 @@ easier to prove either:
 This avoids the failed earlier attempt to build a large generic monomial-basis
 library first.
 
+The next candidate abstraction is smaller and more targeted than the abandoned
+generic coefficient library: prove a \emph{quadratic normal-form} lemma for
+two-variable quadratics,
+\[
+  q = c_{00} + c_{10}x_1 + c_{01}x_2 + c_{20}x_1^2 + c_{11}x_1x_2 + c_{02}x_2^2,
+\]
+by using the support restriction coming from \texttt{IsQuadratic} and the fact
+that every support monomial of total degree at most $2$ is one of exactly six
+finitely many \texttt{Fin 2 →₀ ℕ} patterns. This should be enough to formalize
+the remaining representative decompositions without reviving the earlier broad
+\texttt{Monomials.lean} attempt.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Prove the normalization/classification statement for the mixed-affine

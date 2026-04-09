@@ -295,6 +295,15 @@ normalization/classification of the mixed-affine constant-containing
 $\dim = 2$ branch, then translate the representative kernel formulas above into
 Lean and assemble the final theorem.
 
+\medskip
+\noindent
+On the formalization side, the next likely reusable lemma is a six-monomial
+normal form for quadratic polynomials in two variables. This is not intended as
+a general coefficient API; it is a proof-serving finite-support lemma that
+should let the remaining representative cases split a quadratic $q$ into an
+explicit part lying in the chosen factor span and a small complementary affine
+or homogeneous remainder.
+
 \section*{Pending Step}
 To finish the theorem, it remains to prove the multivariate admissible
 image-plus-cone decomposition for every SOS quartic. This is currently the main
