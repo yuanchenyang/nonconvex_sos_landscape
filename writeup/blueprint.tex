@@ -137,6 +137,28 @@ coefficient, and then matches that coefficient with the explicit kernel square
   \sigma(0,0,-c x_1x_2, c x_1^2) = c^2(x_1^2x_2^2 + x_1^4).
 \]
 
+\medskip
+\noindent
+\textbf{Formalized codimension-two image reduction.} The mixed-affine
+rank-$13$ representative
+\[
+  u_{\mathrm{ma},13} = (1, x_1, x_1^2, x_1x_2)
+\]
+is now also fully formalized in the same file. The image theorem proves that a
+quartic lies in $\operatorname{im}(A_{u_{\mathrm{ma},13}})$ whenever its
+$x_2^3$ and $x_2^4$ coefficients vanish. The key coefficient identities for a
+quadratic square are
+\[
+  [x_2^3](q^2) = 2\,[x_2](q)\,[x_2^2](q), \qquad
+  [x_2^4](q^2) = [x_2^2](q)^2,
+\]
+and the explicit kernel line
+\[
+  w_{b,c} = (0,0,-x_2(b+c x_2),x_1(b+c x_2))
+\]
+matches both missing quotient classes simultaneously. Hence every SOCP at this
+representative also has zero residual.
+
 \section*{Normal-Form Target}
 The most promising unresolved case is when, after affine changes of variables
 and invertible recombination of the four coordinates, the factor takes the form
@@ -332,23 +354,13 @@ proof-serving finite-support lemma rather than a general coefficient API.
 
 \medskip
 \noindent
-The next candidate representative proof is now the mixed-affine rank-$13$ model
-\[
-  u = (1,x_1,x_1^2,x_1x_2).
-\]
-The intended argument is again quotient-theoretic:
-\begin{enumerate}
-\item prove that $\operatorname{im}(A_u)$ contains every quartic monomial
-except $x_2^3$ and $x_2^4$;
-\item extract the $x_2$ and $x_2^2$ coefficients of a quadratic $q$ from the
-six-monomial normal form, so that the missing $x_2^3$ and $x_2^4$ coefficients
-of $q^2$ become explicit;
-\item use the explicit kernel family
-\[
-  w_\ell = (0,0,-x_2\ell,x_1\ell), \qquad \ell = c + d x_2,
-\]
-to represent precisely those two missing quotient classes modulo the image.
-\end{enumerate}
+The mixed-affine representative analysis is now complete at the representative
+level: the rank-$13$ and rank-$14$ nonsurjective models are formalized, and the
+rank-$15$ model is already surjective. So the remaining obstacle is no longer a
+missing mixed-affine kernel calculation. It is the written and formal
+normalization statement showing that every constant-containing
+$\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
+three representatives.
 
 \section*{Pending Step}
 To finish the theorem, it remains to prove the multivariate admissible
