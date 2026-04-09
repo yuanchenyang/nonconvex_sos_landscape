@@ -318,17 +318,48 @@ easier to prove either:
 This avoids the failed earlier attempt to build a large generic monomial-basis
 library first.
 
-The next candidate abstraction is smaller and more targeted than the abandoned
+The next candidate abstraction was smaller and more targeted than the abandoned
 generic coefficient library: prove a \emph{quadratic normal-form} lemma for
-two-variable quadratics,
+two-variable quadratics by using the support restriction coming from
+\texttt{IsQuadratic} and the fact that every support monomial of total degree
+at most $2$ is one of exactly six finitely many \texttt{Fin 2 →₀ ℕ} patterns.
+
+This step is now formalized in
+\texttt{TernaryQuarticProof/QuadraticNormalForm.lean}. The file introduces the
+six quadratic monomial indices
 \[
-  q = c_{00} + c_{10}x_1 + c_{01}x_2 + c_{20}x_1^2 + c_{11}x_1x_2 + c_{02}x_2^2,
+  m_{00},\ m_{10},\ m_{01},\ m_{20},\ m_{11},\ m_{02},
 \]
-by using the support restriction coming from \texttt{IsQuadratic} and the fact
-that every support monomial of total degree at most $2$ is one of exactly six
-finitely many \texttt{Fin 2 →₀ ℕ} patterns. This should be enough to formalize
-the remaining representative decompositions without reviving the earlier broad
-\texttt{Monomials.lean} attempt.
+proves a case split for all exponent vectors of total degree at most $2$,
+proves that the support of any quadratic polynomial is contained in this six
+element set, and derives the six-monomial sum formula
+\[
+  q = \sum_{d \in \{m_{00},m_{10},m_{01},m_{20},m_{11},m_{02}\}}
+      \operatorname{monomial}(d,\operatorname{coeff}_d(q)).
+\]
+
+The new proof strategy shift is therefore no longer ``build a quadratic normal
+form'' but ``use the formalized quadratic normal form to drive a codimension-one
+image argument for the mixed-affine representatives.'' The first target is
+\[
+  u = (1,x_1,x_1x_2,x_2^2),
+\]
+where Julia says the only missing quartic class is $x_1^4$. The planned Lean
+substeps are:
+\begin{itemize}
+\item prove monomial-by-monomial that every quartic monomial except $x_1^4$
+lies in $\operatorname{im}(A_u)$;
+\item prove, using the new quadratic support lemma, that for any quadratic $q$
+the coefficient of $x_1^4$ in $q^2$ is exactly the square of the $x_1^2$
+coefficient of $q$;
+\item match that coefficient with the explicit kernel square
+\[
+  \sigma(0,0,-c x_1x_2, c x_1^2)
+    = c^2(x_1^2x_2^2 + x_1^4).
+\]
+\end{itemize}
+This keeps the next formalization round tightly tied to the actual mixed-affine
+quotient structure detected numerically.
 
 \section*{Open Subgoals}
 \begin{itemize}

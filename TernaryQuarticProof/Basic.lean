@@ -1,5 +1,6 @@
 import TernaryQuarticProof.Certificate
 import TernaryQuarticProof.FactorTransform
+import TernaryQuarticProof.QuadraticNormalForm
 import TernaryQuarticProof.RepresentativeSurjective
 
 set_option autoImplicit false

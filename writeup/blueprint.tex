@@ -297,12 +297,39 @@ Lean and assemble the final theorem.
 
 \medskip
 \noindent
-On the formalization side, the next likely reusable lemma is a six-monomial
-normal form for quadratic polynomials in two variables. This is not intended as
-a general coefficient API; it is a proof-serving finite-support lemma that
-should let the remaining representative cases split a quadratic $q$ into an
-explicit part lying in the chosen factor span and a small complementary affine
-or homogeneous remainder.
+That six-monomial normal form is now formalized in
+\texttt{TernaryQuarticProof/QuadraticNormalForm.lean}. It introduces the six
+quadratic monomial exponents
+\[
+  1,\ x_1,\ x_2,\ x_1^2,\ x_1x_2,\ x_2^2
+\]
+as explicit \texttt{Fin 2 →₀ ℕ} indices, proves that every support monomial of
+an \texttt{IsQuadratic} polynomial is one of them, and concludes that every
+quadratic is the sum of its six monomial-coefficient terms. This is still a
+proof-serving finite-support lemma rather than a general coefficient API.
+
+\medskip
+\noindent
+The next candidate representative proof is the mixed-affine rank-$14$ model
+\[
+  u = (1,x_1,x_1x_2,x_2^2).
+\]
+The intended argument is now sharper than before:
+\begin{enumerate}
+\item prove that $\operatorname{im}(A_u)$ contains every quartic monomial
+except $x_1^4$;
+\item prove that for any quadratic $q$, the coefficient of $x_1^4$ in $q^2$ is
+exactly the square of the $x_1^2$-coefficient of $q$, using the new
+six-monomial quadratic normal form;
+\item use the explicit kernel direction
+\[
+  w_c = (0,0,-c\,x_1x_2,c\,x_1^2)
+\]
+to represent precisely that missing $x_1^4$ coefficient modulo the image.
+\end{enumerate}
+If this representative lemma is formalized, the same codimension-one pattern
+should also handle the rank-$13$ mixed-affine model with missing quotient
+classes $\{x_2^3,x_2^4\}$.
 
 \section*{Pending Step}
 To finish the theorem, it remains to prove the multivariate admissible
@@ -317,7 +344,10 @@ certificate rather than a direct copy of the univariate gcd/peeling argument.
 image-plus-cone certificate.
 \item \texttt{TernaryQuarticProof/FactorTransform.lean}: orthogonal
 factor-coordinate invariance.
-\item one future algebra module for the ternary-quartic decomposition theorem;
+\item \texttt{TernaryQuarticProof/QuadraticNormalForm.lean}: finite-support
+normal form for two-variable quadratics;
+\item one future algebra module for the remaining representative image and
+image-plus-kernel decompositions;
 \item \texttt{TernaryQuarticProof.lean}: final theorem assembly.
 \end{itemize}
 
