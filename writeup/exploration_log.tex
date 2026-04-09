@@ -242,6 +242,19 @@ affine changes of variables:
     w_\ell=(0,0,-x_2\ell,x_1\ell),\qquad \ell=c+d x_2,
   \]
   which generates both missing classes $x_2^3$ and $x_2^4$ modulo the image.
+  A further parabolic probe of the same branch gives
+  \[
+    (1,x_1,x_1x_2,x_1^2-x_2^2),\qquad
+    (1,x_1,x_1x_2,x_1^2+x_2^2)
+  \]
+  both with image rank $15$. This suggests the following sharper
+  classification: after fixing
+  \[
+    W \cap \mathbb{R}[x_1,x_2]_{\le 1} = \operatorname{span}(1,x_1),
+  \]
+  the remaining quadratic plane is the kernel of a binary quadratic
+  $a x_1^2 + b x_1x_2 + c x_2^2$, and only the annihilators $x_2^2$ and
+  $x_1^2$ give nonsurjective image ranks ($13$ and $14$ respectively).
   So the remaining classification gap is specifically the constant-containing
   $\dim = 2$ branch rather than the whole independent nonsurjective case.
 \end{itemize}
@@ -274,6 +287,10 @@ mixed_affine_kernel_probe = (u = [1, x1, x1^2, x1*x2],
 mixed_affine_kernel_probe = (u = [1, x1, x1*x2, x2^2],
   w = [0, 0, -x1*x2, x1^2], Auw = 0,
   sigmaw = x1^2*x2^2 + x1^4)
+mixed_affine_parabolic_probe = (u = [1, x1, x1*x2, x1^2 - x2^2],
+  rank = 15, err ~ 1e-12)
+mixed_affine_parabolic_probe = (u = [1, x1, x1*x2, x1^2 + x2^2],
+  rank = 15, err ~ 1e-11)
 \end{verbatim}
 
 This corrects the earlier assumption that the five listed canonical models

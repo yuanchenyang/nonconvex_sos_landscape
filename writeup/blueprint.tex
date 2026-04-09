@@ -176,6 +176,35 @@ So the mixed-affine algebra itself now looks tractable; the old statement that
 the proof was complete up to normalization was too optimistic because the
 classification step still has to produce these representatives.
 
+\medskip
+\noindent
+The current candidate normalization for the constant-containing
+$\dim = 2$ branch is the following. After choosing coordinates so that
+\[
+  W \cap \mathbb{R}[x_1,x_2]_{\le 1} = \operatorname{span}(1,x_1),
+\]
+the remaining quadratic plane is a $2$-dimensional subspace of
+\[
+  \operatorname{span}(x_1^2,x_1x_2,x_2^2),
+\]
+hence the kernel of a nonzero binary quadratic
+\[
+  q = a x_1^2 + b x_1x_2 + c x_2^2
+\]
+in the dual $3$-space. Under shears and rescalings preserving the line
+$\mathbb{R}x_1$, the quadratic $q$ should reduce to one of
+\[
+  x_2^2,\qquad x_1^2,\qquad x_1x_2,\qquad x_1^2 \pm x_2^2.
+\]
+The Julia probes show that the last three possibilities are already
+surjective/image-rank-$15$ except for the $x_1^2$ case, which gives image rank
+$14$, while the $x_2^2$ case gives image rank $13$. So the only nonsurjective
+mixed-affine representatives appear to be
+\[
+  (1,x_1,x_1^2,x_1x_2),\qquad (1,x_1,x_1x_2,x_2^2).
+\]
+Proving this reduction is now the key written sublemma.
+
 \section*{Current Candidate Blueprint}
 At the level of a paper proof, the present candidate argument is:
 

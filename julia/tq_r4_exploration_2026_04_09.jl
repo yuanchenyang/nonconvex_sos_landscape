@@ -148,6 +148,18 @@ function mixed_affine_kernel_probe()
         ", sigmaw = ", sum(wi^2 for wi in w14), ")")
 end
 
+function mixed_affine_parabolic_probe()
+    cands = [
+        [one(x[1]), x[1], x[1] * x[2], x[1]^2 - x[2]^2],
+        [one(x[1]), x[1], x[1] * x[2], x[1]^2 + x[2]^2],
+    ]
+    for u in cands
+        println("mixed_affine_parabolic_probe = (u = ", u,
+            ", rank = ", image_rank(u), ", err = ",
+            find_counter(x, u; ntrials=1, verbose=false), ")")
+    end
+end
+
 random_rank4_sweep()
 basis_image_ranks()
 basis_sweep()
@@ -157,3 +169,4 @@ kernel_family_probe()
 low_affine_probe()
 mixed_affine_probe()
 mixed_affine_kernel_probe()
+mixed_affine_parabolic_probe()
