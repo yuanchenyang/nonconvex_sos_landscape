@@ -10,6 +10,7 @@
 
 \section*{Status}
 This blueprint is not complete yet. The abstract SOCP component has been
+formalized, and orthogonal mixing of the four factor coordinates is now also
 formalized, but the ternary-quartic algebraic reduction is still missing.
 
 \section*{Formalized Step}
@@ -81,6 +82,25 @@ $\langle q^2, r(u,p)\rangle \ge 0$. Summing over the SOS decomposition yields
 $\langle p, r(u,p)\rangle \ge 0$, and the abstract SOCP argument finishes as
 before.
 
+\medskip
+\noindent
+\textbf{Orthogonal factor-coordinate invariance.} Let $M \in \mathbb{R}^{4
+\times 4}$ satisfy $M^\top M = M M^\top = I$, and define
+\[
+  (\operatorname{mix}_M u)_i = \sum_j M_{ij} u_j.
+\]
+Then the following are now formalized in
+\texttt{TernaryQuarticProof/FactorTransform.lean}:
+\begin{enumerate}
+\item admissibility is preserved by $\operatorname{mix}_M$;
+\item $A_{\operatorname{mix}_M u}(v) = A_u(\operatorname{mix}_{M^\top} v)$;
+\item $\sigma(\operatorname{mix}_M u) = \sigma(u)$ and hence
+$r(p,\operatorname{mix}_M u)=r(p,u)$;
+\item FOCP and SOCP are preserved under orthogonal mixing.
+\end{enumerate}
+Therefore the eventual factor-space case analysis may be carried out up to
+orthogonal recombination of the four coordinates.
+
 \section*{Normal-Form Target}
 The most promising unresolved case is when, after affine changes of variables
 and invertible recombination of the four coordinates, the factor takes the form
@@ -109,8 +129,29 @@ quadratic belongs to
 The remaining gap is to turn this observation into a complete classification of
 all independent rank-$4$ factors of image rank $13$ or $14$.
 
-\section*{Current Full Blueprint}
-At the level of a paper proof, the current candidate argument is:
+\section*{Correction To The Previous Case Split}
+The earlier five-case list is not complete. The constant-containing
+$\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ branch splits further.
+
+\medskip
+\noindent
+Representative mixed-affine models recorded in the Julia script are:
+\[
+  (1,x_1,x_1^2,x_1x_2),\qquad
+  (1,x_1,x_1x_2,x_2^2),\qquad
+  (1,x_1,x_1^2,x_2^2).
+\]
+Their image ranks are respectively $13$, $14$, and $15$, with missing quotient
+monomials
+\[
+  \{x_2^3,x_2^4\},\qquad \{x_1^4\},\qquad \varnothing.
+\]
+So the old statement that the proof was complete up to normalization was too
+optimistic. The unresolved work is now concentrated in this mixed-affine
+subbranch.
+
+\section*{Current Candidate Blueprint}
+At the level of a paper proof, the present candidate argument is:
 
 \begin{enumerate}
 \item If the four coordinates of $u$ are linearly dependent over $\mathbb{R}$,
@@ -118,7 +159,8 @@ apply the already-formalized constant-relation lemma.
 \item Otherwise let $W = \operatorname{span}(u_1,u_2,u_3,u_4)$ and classify by
 the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
 \item Use orthogonal changes in the factor coordinates together with affine
-changes of variables in $(x_1,x_2)$ to reduce to one of the following models:
+changes of variables in $(x_1,x_2)$ to reduce the stable branches to the
+following models:
   \[
     (1,x_1,x_2,h),\quad
     (x_1,x_2,x_1^2,x_1x_2),\quad
@@ -126,7 +168,7 @@ changes of variables in $(x_1,x_2)$ to reduce to one of the following models:
     (1,x_1^2,x_1x_2,x_2^2),\quad
     (x_1,x_1^2,x_1x_2,x_2^2).
   \]
-\item In each model, show directly that every quadratic square lies in
+\item In these stable models, show directly that every quadratic square lies in
   \[
     \operatorname{im}(A_u) + \operatorname{cone}(\sigma(\ker A_u))
   \]
@@ -151,14 +193,23 @@ changes of variables in $(x_1,x_2)$ to reduce to one of the following models:
       w_\ell=(-x_2\ell,0,\ell,0),\qquad \ell=c+d x_2.
     \]
   \end{itemize}
+\item Treat the mixed-affine branch
+  \[
+    (1,x_1,x_1^2,x_1x_2),\qquad
+    (1,x_1,x_1x_2,x_2^2),\qquad
+    (1,x_1,x_1^2,x_2^2)
+  \]
+  separately. Numerically this branch behaves exactly like the conjecture
+  predicts, but the written proof of its quotient generators is not complete
+  yet.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
 $\sigma(u)=p$.
 \end{enumerate}
 
 \noindent
-This is the first version of the blueprint that appears mathematically complete
-up to the normalization/classification step. That step is now the main obstacle
-to a finished Lean proof.
+The main obstacle to a finished Lean proof is now precise: complete the
+classification and explicit kernel certificates for the mixed-affine
+constant-containing $\dim = 2$ branch, then assemble the final theorem.
 
 \section*{Pending Step}
 To finish the theorem, it remains to prove the multivariate admissible
@@ -171,6 +222,8 @@ certificate rather than a direct copy of the univariate gcd/peeling argument.
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.
 \item \texttt{TernaryQuarticProof/Certificate.lean}: admissible transformed
 image-plus-cone certificate.
+\item \texttt{TernaryQuarticProof/FactorTransform.lean}: orthogonal
+factor-coordinate invariance.
 \item one future algebra module for the ternary-quartic decomposition theorem;
 \item \texttt{TernaryQuarticProof.lean}: final theorem assembly.
 \end{itemize}

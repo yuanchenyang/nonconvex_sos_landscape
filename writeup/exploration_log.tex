@@ -38,6 +38,10 @@ transformed image-plus-cone decomposition forces zero residual at a SOCP.
   relation, then every SOS quartic lies in the admissible kernel cone and the
   residual again vanishes.
   \end{itemize}
+\item \texttt{TernaryQuarticProof/FactorTransform.lean}: orthogonal mixing of
+  the four factor coordinates, with formal proofs that admissibility, the
+  linearized image map, $\sigma$, the residual, FOCP, and SOCP are preserved
+  under orthogonal recombination.
 \end{itemize}
 
 These files build with
@@ -203,6 +207,21 @@ affine changes of variables:
     \pmod{\operatorname{im}(A_u)}.
   \]
   This matches the quotient classes of an arbitrary quadratic square.
+\item \textbf{Correction.} The previous five-case list is not complete. When
+  $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 2$ and $1 \in W$, there is an
+  additional mixed-affine subbranch. The representative probes
+  \[
+    (1,x_1,x_1^2,x_1x_2),\qquad
+    (1,x_1,x_1x_2,x_2^2),\qquad
+    (1,x_1,x_1^2,x_2^2)
+  \]
+  have image ranks $13$, $14$, and $15$ respectively, with missing monomial
+  classes
+  \[
+    \{x_2^3,x_2^4\},\qquad \{x_1^4\},\qquad \varnothing.
+  \]
+  So the remaining classification gap is specifically the constant-containing
+  $\dim = 2$ branch rather than the whole independent nonsurjective case.
 \end{itemize}
 
 These cases are still only a blueprint because the normalization and invariance
@@ -219,14 +238,28 @@ low_affine_probe = (u = [x1, x2, x1^2 + x2^2, x1*x2], rank = 14, err ~ 1e-12)
 
 These are the representative models behind the five canonical cases above.
 
+The same Julia script now also records the mixed-affine branch:
+\begin{verbatim}
+mixed_affine_probe = (u = [1, x1, x1^2, x1*x2], rank = 13,
+  missing = [x2^3, x2^4], err ~ 1e-10)
+mixed_affine_probe = (u = [1, x1, x1*x2, x2^2], rank = 14,
+  missing = [x1^4], err ~ 1e-11)
+mixed_affine_probe = (u = [1, x1, x1^2, x2^2], rank = 15,
+  missing = [], err ~ 1e-11)
+\end{verbatim}
+
+This corrects the earlier assumption that the five listed canonical models
+already exhausted the independent rank-$4$ cases.
+
 \section*{Open Subgoals}
 \begin{itemize}
-\item Determine the correct finite-dimensional algebraic certificate on the
-6-dimensional quadratic space.
-\item Complete the basis sweep in Julia and inspect the homogeneous dual
-certificates for monomial-basis rank-4 factors.
-\item Write the full mathematical proof in \texttt{blueprint.tex} before
-attempting the final Lean theorem.
+\item Determine the correct finite-dimensional algebraic certificate for the
+mixed-affine constant-containing $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 2$
+branch.
+\item Turn the mixed-affine Julia evidence into explicit quotient generators and
+kernel-square formulas in \texttt{blueprint.tex}.
+\item After that branch is settled, assemble the final theorem in
+\texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}
 
 \end{document}

@@ -61,6 +61,21 @@ function basis_image_ranks()
     end
 end
 
+function missing_monomials(u)
+    _, basis_2d = get_basis(x, length(u), 2)
+    Au = get_Au(u, get_basis(x, length(u), 2)...)
+    r = rank(Au)
+    missing = Any[]
+    for (idx, m) in enumerate(basis_2d)
+        e = zeros(Float64, length(basis_2d))
+        e[idx] = 1.0
+        if rank(hcat(Au, e)) == r + 1
+            push!(missing, m)
+        end
+    end
+    missing
+end
+
 function dual_probe()
     u = [one(x[1]), x[2], x[1], x[2]^2]
     a = randn(length(monomials(x, 0:4)))
@@ -106,6 +121,19 @@ function low_affine_probe()
     end
 end
 
+function mixed_affine_probe()
+    cands = [
+        [one(x[1]), x[1], x[1]^2, x[1] * x[2]],
+        [one(x[1]), x[1], x[1] * x[2], x[2]^2],
+        [one(x[1]), x[1], x[1]^2, x[2]^2],
+    ]
+    for u in cands
+        err = find_counter(x, u; ntrials=1, verbose=false)
+        println("mixed_affine_probe = (u = ", u, ", rank = ", image_rank(u),
+            ", missing = ", missing_monomials(u), ", err = ", err, ")")
+    end
+end
+
 random_rank4_sweep()
 basis_image_ranks()
 basis_sweep()
@@ -113,3 +141,4 @@ dual_probe()
 normal_form_probe()
 kernel_family_probe()
 low_affine_probe()
+mixed_affine_probe()
