@@ -220,6 +220,28 @@ affine changes of variables:
   \[
     \{x_2^3,x_2^4\},\qquad \{x_1^4\},\qquad \varnothing.
   \]
+  The first two also admit explicit kernel probes:
+  \[
+    w = (0,0,-x_2^2,x_1x_2)
+  \]
+  for the rank-$13$ model, giving
+  \[
+    A_u(w)=0,\qquad \sigma(w)=x_2^4+x_1^2x_2^2,
+  \]
+  and
+  \[
+    w = (0,0,-x_1x_2,x_1^2)
+  \]
+  for the rank-$14$ model, giving
+  \[
+    A_u(w)=0,\qquad \sigma(w)=x_1^2x_2^2+x_1^4.
+  \]
+  Modulo $\operatorname{im}(A_u)$ these produce the missing $x_2^4$ and $x_1^4$
+  classes, and the rank-$13$ family extends to
+  \[
+    w_\ell=(0,0,-x_2\ell,x_1\ell),\qquad \ell=c+d x_2,
+  \]
+  which generates both missing classes $x_2^3$ and $x_2^4$ modulo the image.
   So the remaining classification gap is specifically the constant-containing
   $\dim = 2$ branch rather than the whole independent nonsurjective case.
 \end{itemize}
@@ -246,6 +268,12 @@ mixed_affine_probe = (u = [1, x1, x1*x2, x2^2], rank = 14,
   missing = [x1^4], err ~ 1e-11)
 mixed_affine_probe = (u = [1, x1, x1^2, x2^2], rank = 15,
   missing = [], err ~ 1e-11)
+mixed_affine_kernel_probe = (u = [1, x1, x1^2, x1*x2],
+  w = [0, 0, -x2^2, x1*x2], Auw = 0,
+  sigmaw = x2^4 + x1^2*x2^2)
+mixed_affine_kernel_probe = (u = [1, x1, x1*x2, x2^2],
+  w = [0, 0, -x1*x2, x1^2], Auw = 0,
+  sigmaw = x1^2*x2^2 + x1^4)
 \end{verbatim}
 
 This corrects the earlier assumption that the five listed canonical models
@@ -253,11 +281,10 @@ already exhausted the independent rank-$4$ cases.
 
 \section*{Open Subgoals}
 \begin{itemize}
-\item Determine the correct finite-dimensional algebraic certificate for the
-mixed-affine constant-containing $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 2$
-branch.
-\item Turn the mixed-affine Julia evidence into explicit quotient generators and
-kernel-square formulas in \texttt{blueprint.tex}.
+\item Prove the normalization/classification statement for the mixed-affine
+constant-containing $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 2$ branch.
+\item Translate the representative mixed-affine kernel formulas into Lean after
+the normalization step is fixed.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

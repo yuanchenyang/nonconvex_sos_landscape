@@ -134,6 +134,20 @@ function mixed_affine_probe()
     end
 end
 
+function mixed_affine_kernel_probe()
+    u13 = [one(x[1]), x[1], x[1]^2, x[1] * x[2]]
+    w13 = [zero(x[1]), zero(x[1]), -x[2]^2, x[1] * x[2]]
+    println("mixed_affine_kernel_probe = (u = ", u13,
+        ", w = ", w13, ", Auw = ", u13' * w13,
+        ", sigmaw = ", sum(wi^2 for wi in w13), ")")
+
+    u14 = [one(x[1]), x[1], x[1] * x[2], x[2]^2]
+    w14 = [zero(x[1]), zero(x[1]), -x[1] * x[2], x[1]^2]
+    println("mixed_affine_kernel_probe = (u = ", u14,
+        ", w = ", w14, ", Auw = ", u14' * w14,
+        ", sigmaw = ", sum(wi^2 for wi in w14), ")")
+end
+
 random_rank4_sweep()
 basis_image_ranks()
 basis_sweep()
@@ -142,3 +156,4 @@ normal_form_probe()
 kernel_family_probe()
 low_affine_probe()
 mixed_affine_probe()
+mixed_affine_kernel_probe()

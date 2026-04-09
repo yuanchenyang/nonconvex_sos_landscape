@@ -146,9 +146,35 @@ monomials
 \[
   \{x_2^3,x_2^4\},\qquad \{x_1^4\},\qquad \varnothing.
 \]
-So the old statement that the proof was complete up to normalization was too
-optimistic. The unresolved work is now concentrated in this mixed-affine
-subbranch.
+Moreover the first two mixed-affine representatives also admit explicit kernel
+directions:
+\[
+  u=(1,x_1,x_1^2,x_1x_2),\qquad
+  w_\ell=(0,0,-x_2\ell,x_1\ell),\qquad \ell=c+d x_2,
+\]
+for which
+\[
+  A_u(w_\ell)=0,\qquad
+  \sigma(w_\ell)=(x_1^2+x_2^2)\ell^2 \equiv x_2^2\ell^2
+  \equiv 2cd\,x_2^3 + d^2 x_2^4
+  \pmod{\operatorname{im}(A_u)}.
+\]
+Hence this family generates the two missing quotient classes. For
+\[
+  u=(1,x_1,x_1x_2,x_2^2),
+\]
+the direction
+\[
+  w=(0,0,-x_1x_2,x_1^2)
+\]
+satisfies
+\[
+  A_u(w)=0,\qquad \sigma(w)=x_1^2x_2^2+x_1^4 \equiv x_1^4
+  \pmod{\operatorname{im}(A_u)}.
+\]
+So the mixed-affine algebra itself now looks tractable; the old statement that
+the proof was complete up to normalization was too optimistic because the
+classification step still has to produce these representatives.
 
 \section*{Current Candidate Blueprint}
 At the level of a paper proof, the present candidate argument is:
@@ -199,17 +225,27 @@ following models:
     (1,x_1,x_1x_2,x_2^2),\qquad
     (1,x_1,x_1^2,x_2^2)
   \]
-  separately. Numerically this branch behaves exactly like the conjecture
-  predicts, but the written proof of its quotient generators is not complete
-  yet.
+  separately. The representative quotient generators are now explicit:
+  the first model uses the family
+  \[
+    w_\ell=(0,0,-x_2\ell,x_1\ell),\qquad \ell=c+d x_2,
+  \]
+  the second uses
+  \[
+    w=(0,0,-x_1x_2,x_1^2),
+  \]
+  and the third is already surjective. What is still missing is the written
+  proof that every constant-containing $\dim = 2$ factor can be normalized into
+  one of these representatives.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
 $\sigma(u)=p$.
 \end{enumerate}
 
 \noindent
 The main obstacle to a finished Lean proof is now precise: complete the
-classification and explicit kernel certificates for the mixed-affine
-constant-containing $\dim = 2$ branch, then assemble the final theorem.
+normalization/classification of the mixed-affine constant-containing
+$\dim = 2$ branch, then translate the representative kernel formulas above into
+Lean and assemble the final theorem.
 
 \section*{Pending Step}
 To finish the theorem, it remains to prove the multivariate admissible
