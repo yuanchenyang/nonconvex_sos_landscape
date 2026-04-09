@@ -31,6 +31,13 @@ for the objective.
 \item \texttt{TernaryQuarticProof/Certificate.lean}: admissible
 image-plus-cone definitions and the abstract theorem that any admissible
 transformed image-plus-cone decomposition forces zero residual at a SOCP.
+\item The same file now also contains two concrete reductions:
+  \begin{itemize}
+  \item if $p \in \operatorname{im}(A_u)$, then the residual vanishes directly;
+  \item if the four coordinates of $u$ satisfy a nontrivial constant linear
+  relation, then every SOS quartic lies in the admissible kernel cone and the
+  residual again vanishes.
+  \end{itemize}
 \end{itemize}
 
 These files build with
@@ -87,6 +94,34 @@ least one basis case, so the next exploration step should be to decode the
 gradient/PSD/SOS dual objects into a symbolic admissible image-plus-cone
 certificate.
 
+Image-rank scan for the 15 monomial bases showed ranks only in
+$\{13,14,15\}$. In particular, several cases are already surjective
+(\texttt{rank = 15}), hence formally reducible to the new Lean lemma
+\texttt{residual\_eq\_zero\_of\_in\_admissible\_image}.
+
+Normal-form probe:
+\begin{verbatim}
+normal_form_probe = (u = [1, x1, x2, x1^2 + x2^2], rank = 13, err ~ 1e-11)
+normal_form_probe = (u = [1, x1, x2, x1^2 - x2^2], rank = 13, err ~ 1e-12)
+normal_form_probe = (u = [1, x1, x2, x1*x2 + x1^2], rank = 13, err ~ 1e-12)
+normal_form_probe = (u = [1, x1, x2, x1*x2 + x2^2], rank = 13, err ~ 1e-11)
+normal_form_probe = (u = [x1, x2, x1^2 + x2^2, x1*x2], rank = 14, err ~ 1e-12)
+normal_form_probe = (u = [x1, x2, x1^2 - x2^2, x1*x2], rank = 14, err ~ 1e-11)
+\end{verbatim}
+
+This suggests the main classification is by the dimension of the affine
+lower-degree part of $\operatorname{span}(u_1,\dots,u_4)$ rather than by the
+factorization type of the extra quadratic.
+
+Explicit kernel-family probe for $u=(1,x_2,x_1,x_2^2)$:
+\begin{verbatim}
+w = (-x1^2, 0, x1, 0),  A_u(w)=0,  sigma(w)=x1^4 + x1^2
+\end{verbatim}
+
+Since $x_1^2 \in \operatorname{im}(A_u)$ via the first coordinate $1$, this
+shows that $x_1^4$ is represented modulo $\operatorname{im}(A_u)$ by an
+admissible kernel square.
+
 \section*{Current Hypothesis}
 The abstract SOCP step is not the blocker. The missing ingredient is a
 ternary-quartic algebraic statement of the following form:
@@ -101,6 +136,16 @@ This is the multivariate replacement for the univariate factor-peeling/hgroup
 reduction. The admissibility restriction rules out naively importing the
 univariate kernel generators, because multiplying a quadratic factor by a
 nonconstant polynomial leaves the quadratic direction space.
+
+The current best candidate for the remaining proof is a normal-form
+classification by the filtered dimensions
+\[
+  \dim(W \cap \mathbb{R}), \qquad \dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}),
+  \qquad W = \operatorname{span}(u_1,\dots,u_4).
+\]
+The newly formalized dependent case handles $\dim W < 4$, and the surjective
+case handles image rank $15$. The unresolved cases are the independent
+nonsurjective configurations of image rank $13$ or $14$.
 
 \section*{Open Subgoals}
 \begin{itemize}

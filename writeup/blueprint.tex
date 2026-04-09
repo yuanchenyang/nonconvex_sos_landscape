@@ -51,6 +51,64 @@ at $v=u$ gives $\langle \sigma(u), r(u,p)\rangle = 0$, hence
 Positive-definiteness implies $\langle r(u,p), r(u,p)\rangle \ge 0$, so the
 objective is zero and therefore $r(u,p)=0$.
 
+\section*{Additional Formalized Reductions}
+Two special cases are now formalized.
+
+\medskip
+\noindent
+\textbf{Image case.} If $p \in \operatorname{im}(A_u)$ with an admissible
+preimage, then $r(u,p)=0$ directly from the first-order condition and positive
+definiteness.
+
+\medskip
+\noindent
+\textbf{Constant-relation case.} If there exists a nonzero constant vector
+$c \in \mathbb{R}^4$ with $\sum_i c_i u_i = 0$, then $r(u,p)=0$ for every SOS
+quartic $p$.
+
+\medskip
+\noindent
+\textbf{Proof sketch.}
+For each quadratic summand $q^2$ in an SOS decomposition of $p$, define the
+admissible direction $w_i = c_i q$. Then
+\[
+  A_u(w) = q \sum_i c_i u_i = 0,
+  \qquad
+  \sigma(w) = \Bigl(\sum_i c_i^2\Bigr) q^2.
+\]
+Since $\sum_i c_i^2 > 0$, the SOCP inequality in the direction $w$ implies
+$\langle q^2, r(u,p)\rangle \ge 0$. Summing over the SOS decomposition yields
+$\langle p, r(u,p)\rangle \ge 0$, and the abstract SOCP argument finishes as
+before.
+
+\section*{Normal-Form Target}
+The most promising unresolved case is when, after affine changes of variables
+and invertible recombination of the four coordinates, the factor takes the form
+\[
+  u = (1, x_1, x_2, q).
+\]
+For this normal form there is an explicit admissible kernel family:
+if a homogeneous quadratic $h$ is written as
+\[
+  h = x_1 a + x_2 b
+\]
+with $a,b$ linear, then
+\[
+  w = (-h, a, b, 0)
+\]
+satisfies $A_u(w)=0$ and
+\[
+  \sigma(w) = h^2 + a^2 + b^2.
+\]
+The correction term $a^2+b^2$ has degree at most $2$, hence lies in the image
+through the first coordinate $1$. Therefore every square of a homogeneous
+quadratic belongs to
+\[
+  \operatorname{im}(A_u) + \operatorname{cone}(\sigma(\ker A_u)).
+\]
+The remaining gap is to turn this observation into a complete classification of
+all independent rank-$4$ factors of image rank $13$ or $14$.
+
 \section*{Pending Step}
 To finish the theorem, it remains to prove the multivariate admissible
 image-plus-cone decomposition for every SOS quartic. This is currently the main

@@ -48,6 +48,19 @@ function basis_sweep(; max_retries=5)
     results
 end
 
+function image_rank(u)
+    basis, basis_2d = get_basis(x, length(u), 2)
+    Au = get_Au(u, basis, basis_2d)
+    rank(Au)
+end
+
+function basis_image_ranks()
+    us = [collect(ui) for ui in combinations(monomials(x, 0:2), 4)]
+    for u in us
+        println("basis_image_rank = (u = ", u, ", rank = ", image_rank(u), ")")
+    end
+end
+
 function dual_probe()
     u = [one(x[1]), x[2], x[1], x[2]^2]
     a = randn(length(monomials(x, 0:4)))
@@ -59,6 +72,30 @@ function dual_probe()
         ", first_grad_dual = ", dual(grad_c[1]), ")")
 end
 
+function normal_form_probe()
+    cands = [
+        [one(x[1]), x[1], x[2], x[1]^2 + x[2]^2],
+        [one(x[1]), x[1], x[2], x[1]^2 - x[2]^2],
+        [one(x[1]), x[1], x[2], x[1] * x[2] + x[1]^2],
+        [one(x[1]), x[1], x[2], x[1] * x[2] + x[2]^2],
+        [x[1], x[2], x[1]^2 + x[2]^2, x[1] * x[2]],
+        [x[1], x[2], x[1]^2 - x[2]^2, x[1] * x[2]],
+    ]
+    for u in cands
+        err = find_counter(x, u; ntrials=1, verbose=false)
+        println("normal_form_probe = (u = ", u, ", rank = ", image_rank(u), ", err = ", err, ")")
+    end
+end
+
+function kernel_family_probe()
+    u = [one(x[1]), x[2], x[1], x[2]^2]
+    w = [-x[1]^2, zero(x[1]), x[1], zero(x[1])]
+    println("kernel_family_probe = (Auw = ", u' * w, ", sigmaw = ", sum(wi^2 for wi in w), ")")
+end
+
 random_rank4_sweep()
+basis_image_ranks()
 basis_sweep()
 dual_probe()
+normal_form_probe()
+kernel_family_probe()
