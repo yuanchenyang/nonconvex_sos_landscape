@@ -63,9 +63,14 @@ transformed image-plus-cone decomposition forces zero residual at a SOCP.
   \[
     (1, x_1, x_1x_2, x_2^2)
   \]
-  is now partially formalized. The current theorem proves that any quartic with
-  zero $x_1^4$ coefficient lies in $\operatorname{im}(A_u)$, by another
-  monomial-by-monomial image argument excluding only the single missing class.
+  is now fully discharged at the representative level. The file proves both
+  that any quartic with zero $x_1^4$ coefficient lies in $\operatorname{im}(A_u)$
+  and that every SOCP at this representative has zero residual. The second step
+  uses the six-monomial quadratic normal form, a coefficient-of-square lemma
+  for the missing $x_1^4$ class, and the explicit kernel direction
+  \[
+    (0,0,-x_1x_2,x_1^2).
+  \]
 \end{itemize}
 
 These files build with
@@ -356,26 +361,25 @@ element set, and derives the six-monomial sum formula
 
 The new proof strategy shift is therefore no longer ``build a quadratic normal
 form'' but ``use the formalized quadratic normal form to drive a codimension-one
-image argument for the mixed-affine representatives.'' The first target is
+or codimension-two image argument for the mixed-affine representatives.'' The
+first target
 \[
-  u = (1,x_1,x_1x_2,x_2^2),
+  u = (1,x_1,x_1x_2,x_2^2)
 \]
-where Julia says the only missing quartic class is $x_1^4$. The planned Lean
-substeps are:
-\begin{itemize}
-\item prove monomial-by-monomial that every quartic monomial except $x_1^4$
-lies in $\operatorname{im}(A_u)$;
-\item prove, using the new quadratic support lemma, that for any quadratic $q$
-the coefficient of $x_1^4$ in $q^2$ is exactly the square of the $x_1^2$
-coefficient of $q$;
-\item match that coefficient with the explicit kernel square
+is now complete: the codimension-one image theorem, the coefficient-of-square
+lemma for the missing $x_1^4$ class, and the explicit kernel correction have
+all been formalized, giving a full representative-level no-spurious-SOCP
+theorem.
+
+So the next formalization target becomes the rank-$13$ mixed-affine model
 \[
-  \sigma(0,0,-c x_1x_2, c x_1^2)
-    = c^2(x_1^2x_2^2 + x_1^4).
+  u = (1,x_1,x_1^2,x_1x_2),
 \]
-\end{itemize}
-This keeps the next formalization round tightly tied to the actual mixed-affine
-quotient structure detected numerically.
+whose missing quotient classes are $\{x_2^3,x_2^4\}$ and whose kernel family
+\[
+  w_\ell = (0,0,-x_2\ell,x_1\ell), \qquad \ell = c + d x_2,
+\]
+already appears explicitly in the Julia experiments.
 
 \section*{Open Subgoals}
 \begin{itemize}
@@ -387,8 +391,7 @@ constant-containing $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 2$ branch.
     (x_1,x_2,x_1^2,x_1x_2),\quad
     (x_1,x_2,x_1^2,x_2^2),\quad
     (1,x_1,x_2,h),\quad
-    (1,x_1,x_1^2,x_1x_2),\quad
-    (1,x_1,x_1x_2,x_2^2).
+    (1,x_1,x_1^2,x_1x_2).
   \]
 \item Translate the representative mixed-affine kernel formulas into Lean after
 the normalization step is fixed.

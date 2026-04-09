@@ -122,13 +122,20 @@ rank-$14$ representative
 \[
   u_{\mathrm{ma},14} = (1, x_1, x_1x_2, x_2^2)
 \]
-now has a first formalized image theorem in
+now has a full representative-level formalization in
 \texttt{TernaryQuarticProof/RepresentativeMixedAffine.lean}: if a quartic
 polynomial has zero $x_1^4$ coefficient, then it lies in
 $\operatorname{im}(A_{u_{\mathrm{ma},14}})$. The proof is again
 monomial-by-monomial. Every quartic monomial except $x_1^4$ is represented by
 one of the four coordinates, and then support induction upgrades the monomial
-statement to all quartics with vanishing $x_1^4$ coefficient.
+statement to all quartics with vanishing $x_1^4$ coefficient. The same file now
+also proves that every SOCP at this representative has zero residual. The extra
+step uses the six-monomial quadratic normal form to show that the $x_1^4$
+coefficient of a quadratic square is exactly the square of its $x_1^2$
+coefficient, and then matches that coefficient with the explicit kernel square
+\[
+  \sigma(0,0,-c x_1x_2, c x_1^2) = c^2(x_1^2x_2^2 + x_1^4).
+\]
 
 \section*{Normal-Form Target}
 The most promising unresolved case is when, after affine changes of variables
@@ -325,26 +332,23 @@ proof-serving finite-support lemma rather than a general coefficient API.
 
 \medskip
 \noindent
-The next candidate representative proof is the mixed-affine rank-$14$ model
+The next candidate representative proof is now the mixed-affine rank-$13$ model
 \[
-  u = (1,x_1,x_1x_2,x_2^2).
+  u = (1,x_1,x_1^2,x_1x_2).
 \]
-The intended argument is now sharper than before:
+The intended argument is again quotient-theoretic:
 \begin{enumerate}
 \item prove that $\operatorname{im}(A_u)$ contains every quartic monomial
-except $x_1^4$;
-\item prove that for any quadratic $q$, the coefficient of $x_1^4$ in $q^2$ is
-exactly the square of the $x_1^2$-coefficient of $q$, using the new
-six-monomial quadratic normal form;
-\item use the explicit kernel direction
+except $x_2^3$ and $x_2^4$;
+\item extract the $x_2$ and $x_2^2$ coefficients of a quadratic $q$ from the
+six-monomial normal form, so that the missing $x_2^3$ and $x_2^4$ coefficients
+of $q^2$ become explicit;
+\item use the explicit kernel family
 \[
-  w_c = (0,0,-c\,x_1x_2,c\,x_1^2)
+  w_\ell = (0,0,-x_2\ell,x_1\ell), \qquad \ell = c + d x_2,
 \]
-to represent precisely that missing $x_1^4$ coefficient modulo the image.
+to represent precisely those two missing quotient classes modulo the image.
 \end{enumerate}
-If this representative lemma is formalized, the same codimension-one pattern
-should also handle the rank-$13$ mixed-affine model with missing quotient
-classes $\{x_2^3,x_2^4\}$.
 
 \section*{Pending Step}
 To finish the theorem, it remains to prove the multivariate admissible
