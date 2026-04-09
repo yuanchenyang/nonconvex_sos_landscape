@@ -1,0 +1,103 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[margin=1in]{geometry}
+
+\title{Ternary Quartic Rank-4 Exploration Log}
+\date{2026-04-09}
+
+\begin{document}
+\maketitle
+
+\section*{Current Strategy}
+The current proof search is split into two layers:
+\begin{enumerate}
+\item isolate the abstract SOCP certificate lemmas that depend only on the
+definitions in \texttt{TernaryQuartic.lean};
+\item use Julia to determine what algebraic decomposition should replace the
+univariate factor-peeling argument in the ternary quartic rank-4 setting.
+\end{enumerate}
+
+The key modeling difference from the univariate reference is that the SOCP
+conditions only quantify over admissible directions, i.e. rank-4 vectors of
+quadratic polynomials. Any image-plus-cone certificate therefore has to keep all
+witness directions quadratic.
+
+\section*{Lean Progress}
+Added the following reusable proof modules.
+\begin{itemize}
+\item \texttt{TernaryQuarticProof/Socp.lean}: bilinear simp lemmas, the FOCP
+consequence $\langle \sigma(u), \sigma(u)-p \rangle = 0$, and positivity lemmas
+for the objective.
+\item \texttt{TernaryQuarticProof/Certificate.lean}: admissible
+image-plus-cone definitions and the abstract theorem that any admissible
+transformed image-plus-cone decomposition forces zero residual at a SOCP.
+\end{itemize}
+
+These files build with
+\begin{verbatim}
+lake build TernaryQuarticProof.Basic
+\end{verbatim}
+and the full root project builds with \texttt{lake build}. The verification
+harness still fails at
+\begin{verbatim}
+Unknown identifier `TernaryQuartic.ternaryQuartic_rankFour_no_spurious_socp`
+\end{verbatim}
+because the final theorem has not been assembled in
+\texttt{TernaryQuarticProof.lean}.
+
+\section*{Julia Experiments}
+Recorded script:
+\begin{verbatim}
+julia/tq_r4_exploration_2026_04_09.jl
+\end{verbatim}
+
+Random rank-4 sweep command:
+\begin{verbatim}
+cd /agent-workspace/julia
+julia --project=. tq_r4_exploration_2026_04_09.jl
+\end{verbatim}
+
+Observed random sweep output:
+\begin{verbatim}
+random_rank4_errs = [6.351865185047683e-11, 8.956485306788336e-12,
+2.6531504105737066e-11, 1.305916626190534e-10, 7.704433630342462e-11]
+\end{verbatim}
+
+Interpretation: all five sampled rank-4 instances were numerically consistent
+with ``no counterexample found'' for the fixed-$u$ SDP search.
+
+Observed basis sweep summary:
+\begin{verbatim}
+basis_sweep_summary = (cases = 15, counters = 0, unknowns = 0)
+\end{verbatim}
+
+Each of the 15 monomial-basis rank-4 subspaces of the quadratic space produced
+an \texttt{INFEASIBLE} homogeneous SDP, again consistent with the conjectured
+absence of spurious SOCPs.
+
+\section*{Current Hypothesis}
+The abstract SOCP step is not the blocker. The missing ingredient is a
+ternary-quartic algebraic statement of the following form:
+\[
+  p \in \operatorname{im}(A_{u_{\mathrm{img}}}) +
+      \operatorname{cone}(\sigma(\ker A_u))
+\]
+with all witnesses admissible, for every admissible rank-4 factor $u$ and every
+SOS quartic $p$.
+
+This is the multivariate replacement for the univariate factor-peeling/hgroup
+reduction. The admissibility restriction rules out naively importing the
+univariate kernel generators, because multiplying a quadratic factor by a
+nonconstant polynomial leaves the quadratic direction space.
+
+\section*{Open Subgoals}
+\begin{itemize}
+\item Determine the correct finite-dimensional algebraic certificate on the
+6-dimensional quadratic space.
+\item Complete the basis sweep in Julia and inspect the homogeneous dual
+certificates for monomial-basis rank-4 factors.
+\item Write the full mathematical proof in \texttt{blueprint.tex} before
+attempting the final Lean theorem.
+\end{itemize}
+
+\end{document}

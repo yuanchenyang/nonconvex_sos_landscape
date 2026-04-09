@@ -1,0 +1,69 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[margin=1in]{geometry}
+
+\title{Blueprint for the Ternary Quartic Rank-4 Proof}
+\date{2026-04-09}
+
+\begin{document}
+\maketitle
+
+\section*{Status}
+This blueprint is not complete yet. The abstract SOCP component has been
+formalized, but the ternary-quartic algebraic reduction is still missing.
+
+\section*{Formalized Step}
+Let $r(u,p) = \sigma(u) - p$. The following statement is already formalized in
+\texttt{TernaryQuarticProof/Certificate.lean}.
+
+\medskip
+\noindent
+\textbf{Lemma.} Assume:
+\begin{enumerate}
+\item $u$ is an admissible rank-4 point;
+\item $u$ is a SOCP for $p$ with respect to a positive-definite bilinear form
+$B$;
+\item $r(u,p)$ is orthogonal to $\operatorname{im}(A_{u_{\mathrm{img}}})$ for
+some admissible factor $u_{\mathrm{img}}$;
+\item there is a decomposition
+\[
+  p = q_{\mathrm{img}} + \sum_{w \in W} \sigma(w),
+\]
+where $q_{\mathrm{img}} \in \operatorname{im}(A_{u_{\mathrm{img}}})$ and every
+$w \in W$ is an admissible kernel direction for $A_u$.
+\end{enumerate}
+Then $r(u,p) = 0$.
+
+\medskip
+\noindent
+\textbf{Proof.}
+The image term pairs to zero by the first-order condition. Each kernel-square
+term pairs nonnegatively with the residual by the second-order condition,
+because $A_u(w)=0$ removes the positive $2\langle A_u(w), A_u(w)\rangle$ part
+of the Hessian expression. Summing these inequalities gives
+$\langle p, r(u,p)\rangle \ge 0$. On the other hand, the first-order condition
+at $v=u$ gives $\langle \sigma(u), r(u,p)\rangle = 0$, hence
+\[
+  \langle r(u,p), r(u,p)\rangle
+  = \langle \sigma(u)-p, r(u,p)\rangle
+  = - \langle p, r(u,p)\rangle \le 0.
+\]
+Positive-definiteness implies $\langle r(u,p), r(u,p)\rangle \ge 0$, so the
+objective is zero and therefore $r(u,p)=0$.
+
+\section*{Pending Step}
+To finish the theorem, it remains to prove the multivariate admissible
+image-plus-cone decomposition for every SOS quartic. This is currently the main
+mathematical gap. The likely form is a finite-dimensional quadratic-space
+certificate rather than a direct copy of the univariate gcd/peeling argument.
+
+\section*{Planned File Map}
+\begin{itemize}
+\item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.
+\item \texttt{TernaryQuarticProof/Certificate.lean}: admissible transformed
+image-plus-cone certificate.
+\item one future algebra module for the ternary-quartic decomposition theorem;
+\item \texttt{TernaryQuarticProof.lean}: final theorem assembly.
+\end{itemize}
+
+\end{document}
