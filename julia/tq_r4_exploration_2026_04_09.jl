@@ -48,5 +48,17 @@ function basis_sweep(; max_retries=5)
     results
 end
 
+function dual_probe()
+    u = [one(x[1]), x[2], x[1], x[2]^2]
+    a = randn(length(monomials(x, 0:4)))
+    model, _, grad_c, psd_c, sos_c, nonzero_c = counter_homogeneous(x, 2, u, a; verbose=false)
+    println("dual_probe_status = (termination = ", termination_status(model),
+        ", dual = ", dual_status(model), ", grad_constraints = ", length(grad_c), ")")
+    println("dual_probe_types = (psd = ", typeof(dual(psd_c)),
+        ", sos = ", typeof(dual(sos_c)), ", nonzero_dual = ", dual(nonzero_c),
+        ", first_grad_dual = ", dual(grad_c[1]), ")")
+end
+
 random_rank4_sweep()
 basis_sweep()
+dual_probe()

@@ -75,6 +75,18 @@ Each of the 15 monomial-basis rank-4 subspaces of the quadratic space produced
 an \texttt{INFEASIBLE} homogeneous SDP, again consistent with the conjectured
 absence of spurious SOCPs.
 
+Representative dual probe (same recorded Julia script, basis
+$u = (1, x_2, x_1, x_2^2)$):
+\begin{verbatim}
+dual_probe_status = (termination = INFEASIBLE,
+  dual = INFEASIBILITY_CERTIFICATE, grad_constraints = 24)
+\end{verbatim}
+
+This confirms that CSDP returns an explicit infeasibility certificate for at
+least one basis case, so the next exploration step should be to decode the
+gradient/PSD/SOS dual objects into a symbolic admissible image-plus-cone
+certificate.
+
 \section*{Current Hypothesis}
 The abstract SOCP step is not the blocker. The missing ingredient is a
 ternary-quartic algebraic statement of the following form:
