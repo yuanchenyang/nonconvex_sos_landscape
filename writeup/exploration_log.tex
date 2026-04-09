@@ -50,6 +50,22 @@ transformed image-plus-cone decomposition forces zero residual at a SOCP.
   is now proved surjective on quartics by a monomial-by-monomial image
   construction. This discharges the constant $\dim(W \cap \mathbb{R}[x]_{\le 1})
   = 1$ branch at the representative level.
+\item \texttt{TernaryQuarticProof/QuadraticNormalForm.lean}: a proof-serving
+  six-monomial support theorem for two-variable quadratics. It formalizes that
+  any \texttt{IsQuadratic} polynomial has support contained in exactly the six
+  monomials
+  \[
+    1,\ x_1,\ x_2,\ x_1^2,\ x_1x_2,\ x_2^2,
+  \]
+  and hence equals the sum of its six monomial-coefficient terms.
+\item \texttt{TernaryQuarticProof/RepresentativeMixedAffine.lean}: the
+  rank-$14$ mixed-affine representative
+  \[
+    (1, x_1, x_1x_2, x_2^2)
+  \]
+  is now partially formalized. The current theorem proves that any quartic with
+  zero $x_1^4$ coefficient lies in $\operatorname{im}(A_u)$, by another
+  monomial-by-monomial image argument excluding only the single missing class.
 \end{itemize}
 
 These files build with

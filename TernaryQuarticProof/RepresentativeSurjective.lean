@@ -35,24 +35,6 @@ private theorem isQuadratic_C_mul_pow_pow (a : ℝ) (m n : ℕ) (h : m + n ≤ 2
     _ = m + n := by simp [x0, x1, MvPolynomial.totalDegree_X_pow]
     _ ≤ 2 := h
 
-private theorem admissibleDirection_add {v w : RankFourVec}
-    (hv : IsAdmissibleDirection v) (hw : IsAdmissibleDirection w) :
-    IsAdmissibleDirection (v + w) := by
-  intro i
-  exact (MvPolynomial.totalDegree_add _ _).trans <| max_le (hv i) (hw i)
-
-private theorem inAdmissibleImage_zero (u : RankFourVec) :
-    InAdmissibleImage u 0 := by
-  exact ⟨0, isAdmissibleDirection_zero, by simp [A]⟩
-
-private theorem inAdmissibleImage_add (u : RankFourVec) {p q : Poly}
-    (hp : InAdmissibleImage u p) (hq : InAdmissibleImage u q) :
-    InAdmissibleImage u (p + q) := by
-  rcases hp with ⟨vp, hvp, rfl⟩
-  rcases hq with ⟨vq, hvq, rfl⟩
-  refine ⟨vp + vq, admissibleDirection_add hvp hvq, ?_⟩
-  simp [A, Finset.sum_add_distrib, mul_add]
-
 private theorem monomial_image_constQuadRep (s : Fin 2 →₀ ℕ) (a : ℝ)
     (hdeg : s.sum (fun _ e => e) ≤ 4) :
     InAdmissibleImage constQuadRep (MvPolynomial.monomial s a) := by

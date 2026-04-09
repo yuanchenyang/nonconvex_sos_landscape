@@ -133,12 +133,30 @@ theorem isAdmissibleDirection_zero : IsAdmissibleDirection (0 : RankFourVec) := 
   intro i
   simp [IsQuadratic]
 
+theorem isAdmissibleDirection_add {v w : RankFourVec}
+    (hv : IsAdmissibleDirection v) (hw : IsAdmissibleDirection w) :
+    IsAdmissibleDirection (v + w) := by
+  intro i
+  exact (MvPolynomial.totalDegree_add _ _).trans <| max_le (hv i) (hw i)
+
 theorem imageOrthogonalResidual_self {p : Poly} {u : RankFourVec}
     (hfocp : IsFOCP B p u) :
     ImageOrthogonalResidual B p u u := by
   intro q hq
   rcases hq with ⟨v, hv, rfl⟩
   exact hfocp v hv
+
+theorem inAdmissibleImage_zero (u : RankFourVec) :
+    InAdmissibleImage u 0 := by
+  exact ⟨0, isAdmissibleDirection_zero, by simp [A]⟩
+
+theorem inAdmissibleImage_add (u : RankFourVec) {p q : Poly}
+    (hp : InAdmissibleImage u p) (hq : InAdmissibleImage u q) :
+    InAdmissibleImage u (p + q) := by
+  rcases hp with ⟨vp, hvp, rfl⟩
+  rcases hq with ⟨vq, hvq, rfl⟩
+  refine ⟨vp + vq, isAdmissibleDirection_add hvp hvq, ?_⟩
+  simp [A, Finset.sum_add_distrib, mul_add]
 
 theorem relationDirection_admissible (c : Fin 4 → ℝ) {q : Poly}
     (hq : IsQuadratic q) :

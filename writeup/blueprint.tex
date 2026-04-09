@@ -115,6 +115,21 @@ $\operatorname{im}(A_{u_{\mathrm{const}}})$, hence every quartic polynomial does
 as well by linearity. Therefore every SOCP at this representative has zero
 residual by the already-formalized image case.
 
+\medskip
+\noindent
+\textbf{Formalized codimension-one image reduction.} The mixed-affine
+rank-$14$ representative
+\[
+  u_{\mathrm{ma},14} = (1, x_1, x_1x_2, x_2^2)
+\]
+now has a first formalized image theorem in
+\texttt{TernaryQuarticProof/RepresentativeMixedAffine.lean}: if a quartic
+polynomial has zero $x_1^4$ coefficient, then it lies in
+$\operatorname{im}(A_{u_{\mathrm{ma},14}})$. The proof is again
+monomial-by-monomial. Every quartic monomial except $x_1^4$ is represented by
+one of the four coordinates, and then support induction upgrades the monomial
+statement to all quartics with vanishing $x_1^4$ coefficient.
+
 \section*{Normal-Form Target}
 The most promising unresolved case is when, after affine changes of variables
 and invertible recombination of the four coordinates, the factor takes the form
