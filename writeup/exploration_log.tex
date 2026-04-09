@@ -147,6 +147,78 @@ The newly formalized dependent case handles $\dim W < 4$, and the surjective
 case handles image rank $15$. The unresolved cases are the independent
 nonsurjective configurations of image rank $13$ or $14$.
 
+Current canonical candidates after orthogonal mixing of the four coordinates and
+affine changes of variables:
+\begin{itemize}
+\item $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 3$:
+  \[
+    u \sim (1, x_1, x_2, h), \qquad h \in \mathbb{R}[x_1,x_2]_2^{\mathrm{hom}}.
+  \]
+  Kernel family:
+  if $h_0 = x_1 a + x_2 b$ with $a,b$ linear, then
+  \[
+    w = (-h_0, a, b, 0), \qquad A_u(w)=0,\qquad \sigma(w)=h_0^2 + a^2 + b^2.
+  \]
+  Since $a^2+b^2$ has degree $2$, every quadratic square is in
+  $\operatorname{im}(A_u)+\operatorname{cone}(\sigma(\ker A_u))$ modulo
+  lower-degree terms.
+\item $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 2$, common-factor case:
+  \[
+    u \sim (x_1, x_2, x_1^2, x_1 x_2).
+  \]
+  The image misses exactly the classes of $1$ and $x_2^4$ in the monomial
+  model. Explicit kernel directions:
+  \[
+    w_c = (-2x_2, x_1, 0, 1), \qquad
+    w_q = (-x_2^2, x_1 x_2, 0, 0).
+  \]
+  Then $\sigma(w_c) \equiv 1$ and $\sigma(w_q) \equiv x_2^4$ modulo
+  $\operatorname{im}(A_u)$.
+\item $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 2$, coprime case:
+  \[
+    u \sim (x_1, x_2, x_1^2, x_2^2)
+  \]
+  or any equivalent rank-$14$ model. The image already contains every positive
+  degree monomial; only the constant class remains, and it is represented by
+  \[
+    w = (-x_1, 0, 1, 0), \qquad \sigma(w)=x_1^2+1 \equiv 1.
+  \]
+\item $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 1$, constant case:
+  \[
+    u \sim (1, x_1^2, x_1 x_2, x_2^2),
+  \]
+  which is already surjective.
+\item $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 1$, linear case:
+  \[
+    u \sim (x_1, x_1^2, x_1 x_2, x_2^2).
+  \]
+  The image misses exactly the classes of $1$ and $x_2$. For any affine linear
+  $\ell = c + d x_2$,
+  \[
+    w_\ell = (-x_2 \ell, 0, \ell, 0)
+  \]
+  lies in the kernel, and
+  \[
+    \sigma(w_\ell) = (1+x_2^2)\ell^2 \equiv c^2 + 2 c d\, x_2
+    \pmod{\operatorname{im}(A_u)}.
+  \]
+  This matches the quotient classes of an arbitrary quadratic square.
+\end{itemize}
+
+These cases are still only a blueprint because the normalization and invariance
+steps have not yet been formalized in Lean.
+
+\section*{Additional Recorded Experiments}
+The checked-in Julia script now also records:
+\begin{verbatim}
+low_affine_probe = (u = [1, x1^2, x1*x2, x2^2], rank = 15, err ~ 1e-11)
+low_affine_probe = (u = [x1, x1^2, x1*x2, x2^2], rank = 13, err ~ 1e-10)
+low_affine_probe = (u = [x1, x2, x1^2, x1*x2], rank = 13, err ~ 1e-11)
+low_affine_probe = (u = [x1, x2, x1^2 + x2^2, x1*x2], rank = 14, err ~ 1e-12)
+\end{verbatim}
+
+These are the representative models behind the five canonical cases above.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Determine the correct finite-dimensional algebraic certificate on the

@@ -109,6 +109,57 @@ quadratic belongs to
 The remaining gap is to turn this observation into a complete classification of
 all independent rank-$4$ factors of image rank $13$ or $14$.
 
+\section*{Current Full Blueprint}
+At the level of a paper proof, the current candidate argument is:
+
+\begin{enumerate}
+\item If the four coordinates of $u$ are linearly dependent over $\mathbb{R}$,
+apply the already-formalized constant-relation lemma.
+\item Otherwise let $W = \operatorname{span}(u_1,u_2,u_3,u_4)$ and classify by
+the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
+\item Use orthogonal changes in the factor coordinates together with affine
+changes of variables in $(x_1,x_2)$ to reduce to one of the following models:
+  \[
+    (1,x_1,x_2,h),\quad
+    (x_1,x_2,x_1^2,x_1x_2),\quad
+    (x_1,x_2,x_1^2,x_2^2),\quad
+    (1,x_1^2,x_1x_2,x_2^2),\quad
+    (x_1,x_1^2,x_1x_2,x_2^2).
+  \]
+\item In each model, show directly that every quadratic square lies in
+  \[
+    \operatorname{im}(A_u) + \operatorname{cone}(\sigma(\ker A_u))
+  \]
+  using explicit kernel families:
+  \begin{itemize}
+  \item $(1,x_1,x_2,h)$:
+    \[
+      w=(-h_0,a,b,0),\qquad h_0=x_1a+x_2b;
+    \]
+  \item $(x_1,x_2,x_1^2,x_1x_2)$:
+    \[
+      w_c=(-2x_2,x_1,0,1),\qquad
+      w_q=(-x_2^2,x_1x_2,0,0);
+    \]
+  \item $(x_1,x_2,x_1^2,x_2^2)$:
+    \[
+      w=(-x_1,0,1,0);
+    \]
+  \item $(1,x_1^2,x_1x_2,x_2^2)$: surjective image, no kernel term needed;
+  \item $(x_1,x_1^2,x_1x_2,x_2^2)$:
+    \[
+      w_\ell=(-x_2\ell,0,\ell,0),\qquad \ell=c+d x_2.
+    \]
+  \end{itemize}
+\item Apply the formalized admissible image-plus-cone certificate to conclude
+$\sigma(u)=p$.
+\end{enumerate}
+
+\noindent
+This is the first version of the blueprint that appears mathematically complete
+up to the normalization/classification step. That step is now the main obstacle
+to a finished Lean proof.
+
 \section*{Pending Step}
 To finish the theorem, it remains to prove the multivariate admissible
 image-plus-cone decomposition for every SOS quartic. This is currently the main
