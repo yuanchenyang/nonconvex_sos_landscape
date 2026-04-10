@@ -254,6 +254,52 @@ theorem inAdmissibleImage_add (u : RankFourVec) {p q : Poly}
   refine ⟨vp + vq, isAdmissibleDirection_add hvp hvq, ?_⟩
   simp [A, Finset.sum_add_distrib, mul_add]
 
+theorem inAdmissibleImage_smul (u : RankFourVec) (t : ℝ) {p : Poly}
+    (hp : InAdmissibleImage u p) :
+    InAdmissibleImage u (t • p) := by
+  rcases hp with ⟨v, hv, rfl⟩
+  refine ⟨t • v, isAdmissibleDirection_smul t hv, ?_⟩
+  rw [A_smul_right]
+
+theorem inAdmissibleImage_neg (u : RankFourVec) {p : Poly}
+    (hp : InAdmissibleImage u p) :
+    InAdmissibleImage u (-p) := by
+  simpa using inAdmissibleImage_smul u (-1) hp
+
+theorem inAdmissibleImage_sub (u : RankFourVec) {p q : Poly}
+    (hp : InAdmissibleImage u p) (hq : InAdmissibleImage u q) :
+    InAdmissibleImage u (p - q) := by
+  simpa [sub_eq_add_neg] using inAdmissibleImage_add u hp (inAdmissibleImage_neg u hq)
+
+theorem inAdmissibleKer_add (u : RankFourVec) {w z : RankFourVec}
+    (hw : InAdmissibleKer u w) (hz : InAdmissibleKer u z) :
+    InAdmissibleKer u (w + z) := by
+  rcases hw with ⟨hwad, hwA⟩
+  rcases hz with ⟨hzad, hzA⟩
+  refine ⟨isAdmissibleDirection_add hwad hzad, ?_⟩
+  calc
+    A u (w + z) = A u w + A u z := by
+      simp [A, Finset.sum_add_distrib, mul_add]
+    _ = 0 := by simp [hwA, hzA]
+
+theorem inAdmissibleKer_smul (u : RankFourVec) (t : ℝ) {w : RankFourVec}
+    (hw : InAdmissibleKer u w) :
+    InAdmissibleKer u (t • w) := by
+  rcases hw with ⟨hwad, hwA⟩
+  refine ⟨isAdmissibleDirection_smul t hwad, ?_⟩
+  rw [A_smul_right, hwA]
+  simp
+
+theorem inAdmissibleKer_neg (u : RankFourVec) {w : RankFourVec}
+    (hw : InAdmissibleKer u w) :
+    InAdmissibleKer u (-w) := by
+  simpa using inAdmissibleKer_smul u (-1) hw
+
+theorem inAdmissibleKer_sub (u : RankFourVec) {w z : RankFourVec}
+    (hw : InAdmissibleKer u w) (hz : InAdmissibleKer u z) :
+    InAdmissibleKer u (w - z) := by
+  simpa [sub_eq_add_neg] using inAdmissibleKer_add u hw (inAdmissibleKer_neg u hz)
+
 theorem relationDirection_admissible (c : Fin 4 → ℝ) {q : Poly}
     (hq : IsQuadratic q) :
     IsAdmissibleDirection (relationDirection c q) := by
