@@ -800,12 +800,28 @@ normalization produces homogeneous quadratics in one of those coefficient
 orbits, the existing rank-$13$, rank-$14$, or rank-$15$ plane certificates
 apply directly.
 So the remaining obstacle is no longer a missing mixed-affine representative
-calculation. The annihilator normalization itself is now formalized as a direct
-case split on the coefficients \(a,b,c\). The remaining obstacle is the written
-and formal extraction statement showing that every constant-containing
+calculation. One correction is needed here: the polynomial identity
+\texttt{mixedAffineAnnihilator\_normal\_form\_cases} describes the covariant
+action of shears and rescalings on the annihilator polynomial
+\(a x_1^2 + b x_1x_2 + c x_2^2\), while the actual classification of the
+mixed-affine branch is governed by the dual action on the homogeneous
+coefficient functionals
+\[
+  (\operatorname{coeff}_{x_1^2},\ \operatorname{coeff}_{x_1x_2},\
+  \operatorname{coeff}_{x_2^2}).
+\]
+That dual action is now formalized in
+\texttt{QuadraticCoordinateForm.lean}, and
+\texttt{RepresentativeMixedAffinePlane.lean} already uses it in the two new
+transport wrappers
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_homQuadratics\_crossAnnihilator}
+and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_homQuadratics\_annihilator\_disc\_zero}.
+So the remaining obstacle is now the written and formal extraction statement
+showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
-already-formalized plane types, together with the exact relation data needed to
-invoke the transport theorems.
+already-formalized plane types, together with the exact dual relation,
+sign, and determinant data needed to invoke the transport theorems.
 
 \medskip
 \noindent

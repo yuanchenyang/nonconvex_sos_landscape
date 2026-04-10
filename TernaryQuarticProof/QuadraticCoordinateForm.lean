@@ -485,6 +485,13 @@ theorem coeff_m20_affineHom_x1Shear
   rw [quadratic_eq_quadForm hq, affineHom_x1Shear_quadForm]
   simp [mul_comm]
 
+theorem coeff_m10_affineHom_x1Shear
+    {q : Poly} (hq : IsQuadratic q) (t : ℝ) :
+    MvPolynomial.coeff m10 (affineHom (x1ShearMatrix t) 0 q) =
+      MvPolynomial.coeff m10 q + MvPolynomial.coeff m01 q * t := by
+  rw [quadratic_eq_quadForm hq, affineHom_x1Shear_quadForm]
+  simp [mul_comm]
+
 theorem coeff_m11_affineHom_x1Shear
     {q : Poly} (hq : IsQuadratic q) (t : ℝ) :
     MvPolynomial.coeff m11 (affineHom (x1ShearMatrix t) 0 q) =
@@ -492,10 +499,24 @@ theorem coeff_m11_affineHom_x1Shear
   rw [quadratic_eq_quadForm hq, affineHom_x1Shear_quadForm]
   simp [mul_comm]
 
+theorem coeff_m01_affineHom_x1Shear
+    {q : Poly} (hq : IsQuadratic q) (t : ℝ) :
+    MvPolynomial.coeff m01 (affineHom (x1ShearMatrix t) 0 q) =
+      MvPolynomial.coeff m01 q := by
+  rw [quadratic_eq_quadForm hq, affineHom_x1Shear_quadForm]
+  simp
+
 theorem coeff_m02_affineHom_x1Shear
     {q : Poly} (hq : IsQuadratic q) (t : ℝ) :
     MvPolynomial.coeff m02 (affineHom (x1ShearMatrix t) 0 q) =
       MvPolynomial.coeff m02 q := by
+  rw [quadratic_eq_quadForm hq, affineHom_x1Shear_quadForm]
+  simp
+
+theorem coeff_m00_affineHom_x1Shear
+    {q : Poly} (hq : IsQuadratic q) (t : ℝ) :
+    MvPolynomial.coeff m00 (affineHom (x1ShearMatrix t) 0 q) =
+      MvPolynomial.coeff m00 q := by
   rw [quadratic_eq_quadForm hq, affineHom_x1Shear_quadForm]
   simp
 
@@ -536,10 +557,24 @@ theorem coeff_m20_affineHom_x1Scale
   rw [quadratic_eq_quadForm hq, affineHom_x1Scale_quadForm]
   simp
 
+theorem coeff_m10_affineHom_x1Scale
+    {q : Poly} (hq : IsQuadratic q) (s : ℝ) :
+    MvPolynomial.coeff m10 (affineHom (x1ScaleMatrix s) 0 q) =
+      MvPolynomial.coeff m10 q := by
+  rw [quadratic_eq_quadForm hq, affineHom_x1Scale_quadForm]
+  simp
+
 theorem coeff_m11_affineHom_x1Scale
     {q : Poly} (hq : IsQuadratic q) (s : ℝ) :
     MvPolynomial.coeff m11 (affineHom (x1ScaleMatrix s) 0 q) =
       MvPolynomial.coeff m11 q * s := by
+  rw [quadratic_eq_quadForm hq, affineHom_x1Scale_quadForm]
+  simp [mul_comm]
+
+theorem coeff_m01_affineHom_x1Scale
+    {q : Poly} (hq : IsQuadratic q) (s : ℝ) :
+    MvPolynomial.coeff m01 (affineHom (x1ScaleMatrix s) 0 q) =
+      MvPolynomial.coeff m01 q * s := by
   rw [quadratic_eq_quadForm hq, affineHom_x1Scale_quadForm]
   simp [mul_comm]
 
@@ -549,5 +584,103 @@ theorem coeff_m02_affineHom_x1Scale
       MvPolynomial.coeff m02 q * s ^ 2 := by
   rw [quadratic_eq_quadForm hq, affineHom_x1Scale_quadForm]
   simp [mul_comm]
+
+theorem coeff_m00_affineHom_x1Scale
+    {q : Poly} (hq : IsQuadratic q) (s : ℝ) :
+    MvPolynomial.coeff m00 (affineHom (x1ScaleMatrix s) 0 q) =
+      MvPolynomial.coeff m00 q := by
+  rw [quadratic_eq_quadForm hq, affineHom_x1Scale_quadForm]
+  simp
+
+theorem coeff_relation_affineHom_x1Shear_dual
+    {q : Poly} (hq : IsQuadratic q)
+    {a b c : ℝ}
+    (hrel :
+      a * MvPolynomial.coeff m20 q +
+        b * MvPolynomial.coeff m11 q +
+          c * MvPolynomial.coeff m02 q = 0)
+    (t : ℝ) :
+    a * MvPolynomial.coeff m20 (affineHom (x1ShearMatrix t) 0 q) +
+      (b - a * t) * MvPolynomial.coeff m11 (affineHom (x1ShearMatrix t) 0 q) +
+        (a * t ^ 2 - 2 * b * t + c) * MvPolynomial.coeff m02 (affineHom (x1ShearMatrix t) 0 q) = 0 := by
+  rw [coeff_m20_affineHom_x1Shear hq, coeff_m11_affineHom_x1Shear hq,
+    coeff_m02_affineHom_x1Shear hq]
+  linarith
+
+theorem coeff_relation_affineHom_x1Shear_dual_kill_cross
+    {q : Poly} (hq : IsQuadratic q)
+    {a b c : ℝ}
+    (ha : a ≠ 0)
+    (hrel :
+      a * MvPolynomial.coeff m20 q +
+        b * MvPolynomial.coeff m11 q +
+          c * MvPolynomial.coeff m02 q = 0) :
+    a * MvPolynomial.coeff m20 (affineHom (x1ShearMatrix (b / a)) 0 q) +
+      (c - b ^ 2 / a) * MvPolynomial.coeff m02 (affineHom (x1ShearMatrix (b / a)) 0 q) = 0 := by
+  rw [coeff_m20_affineHom_x1Shear hq, coeff_m02_affineHom_x1Shear hq]
+  have hrel' := hrel
+  field_simp [ha]
+  ring_nf
+  have hmul : a * (a * MvPolynomial.coeff m20 q + b * MvPolynomial.coeff m11 q +
+      c * MvPolynomial.coeff m02 q) = 0 := by
+    rw [hrel]
+    ring
+  ring_nf at hmul
+  simpa [mul_comm, mul_left_comm, mul_assoc] using hmul
+
+theorem coeff_m11_affineHom_x1Shear_dual_to_cross
+    {q : Poly} (hq : IsQuadratic q)
+    {b c : ℝ}
+    (hb : b ≠ 0)
+    (hrel :
+      b * MvPolynomial.coeff m11 q +
+        c * MvPolynomial.coeff m02 q = 0) :
+    MvPolynomial.coeff m11 (affineHom (x1ShearMatrix (c / (2 * b))) 0 q) = 0 := by
+  rw [coeff_m11_affineHom_x1Shear hq]
+  have hrel' := hrel
+  field_simp [hb] at hrel'
+  field_simp [hb]
+  ring_nf
+  nlinarith
+
+theorem coeff_relation_affineHom_x1Scale_diag_sum_zero
+    {q : Poly} (hq : IsQuadratic q)
+    {a d : ℝ}
+    (ha : a ≠ 0)
+    (hrel :
+      a * MvPolynomial.coeff m20 q +
+        d * MvPolynomial.coeff m02 q = 0)
+    (hpos : 0 < d / a) :
+    MvPolynomial.coeff m20
+        (affineHom (x1ScaleMatrix (Real.sqrt (d / a))) 0 q) +
+      MvPolynomial.coeff m02
+        (affineHom (x1ScaleMatrix (Real.sqrt (d / a))) 0 q) = 0 := by
+  rw [coeff_m20_affineHom_x1Scale hq, coeff_m02_affineHom_x1Scale hq]
+  have hs : (Real.sqrt (d / a)) ^ 2 = d / a := by
+    rw [Real.sq_sqrt]
+    exact le_of_lt hpos
+  rw [hs]
+  field_simp [ha]
+  linarith
+
+theorem coeff_relation_affineHom_x1Scale_diag_diff_zero
+    {q : Poly} (hq : IsQuadratic q)
+    {a d : ℝ}
+    (ha : a ≠ 0)
+    (hrel :
+      a * MvPolynomial.coeff m20 q +
+        d * MvPolynomial.coeff m02 q = 0)
+    (hpos : 0 < (-d) / a) :
+    MvPolynomial.coeff m20
+        (affineHom (x1ScaleMatrix (Real.sqrt ((-d) / a))) 0 q) -
+      MvPolynomial.coeff m02
+        (affineHom (x1ScaleMatrix (Real.sqrt ((-d) / a))) 0 q) = 0 := by
+  rw [coeff_m20_affineHom_x1Scale hq, coeff_m02_affineHom_x1Scale hq]
+  have hs : (Real.sqrt ((-d) / a)) ^ 2 = (-d) / a := by
+    rw [Real.sq_sqrt]
+    exact le_of_lt hpos
+  rw [hs]
+  field_simp [ha]
+  linarith
 
 end TernaryQuartic
