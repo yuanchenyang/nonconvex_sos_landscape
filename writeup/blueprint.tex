@@ -989,6 +989,33 @@ orthonormal and satisfy the explicit relations
 the tailed-pair branch no longer needs any hand-built \(4\times4\) matrix:
 those theorems internally package the relation vectors into an orthogonal
 \texttt{mix} matrix and invoke the transport form automatically.
+The next numerical probe sharpened the still-open determinant-zero side of the
+same mixed-affine branch. The new pure-linear-algebra script
+\texttt{julia/mixed\_affine\_det\_zero\_2026\_04\_10.jl} tests the canonical
+two-parameter families
+\[
+  (1,x_1,\mu x_1^2 + D,\nu x_1^2 + x_2)
+\]
+after the usual basis choice in the tailed two-plane, with
+\[
+  D \in \{x_1x_2,\ x_2^2,\ x_1^2+x_2^2,\ x_1^2-x_2^2\}.
+\]
+Across the sampled values \((\mu,\nu) \in
+\{(-2,-1),(-1,1),(0,1),(1,1),(2,-1)\}\), the image-rank picture is completely
+stable:
+\[
+  D=x_1x_2 \Longrightarrow \operatorname{rank}(A_u)=14
+  \text{ with only } x_2^4 \text{ missing,}
+\]
+while
+\[
+  D \in \{x_2^2,\ x_1^2+x_2^2,\ x_1^2-x_2^2\}
+  \Longrightarrow \operatorname{rank}(A_u)=15.
+\]
+So the determinant-zero tailed branch no longer looks like an arbitrary new
+family. Numerically it splits exactly by the homogeneous-line type: the cross
+direction behaves like the known rank-\(14\) mixed-affine obstruction, while
+the \(x_2^2\) and diagonal directions are already surjective.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
@@ -1004,7 +1031,9 @@ hypothesis after affine normalization. So the remaining gap there is no longer
 the translation algebra or its integration with the mixed-affine plane
 certificate layer; it is the
 upstream normalization/classification step producing that coordinate picture
-from a general admissible factor.
+from a general admissible factor, together with the now-sharper determinant-zero
+classification reducing the cross type to a rank-\(14\) theorem and the other
+three types to surjective ones.
 
 \medskip
 \noindent

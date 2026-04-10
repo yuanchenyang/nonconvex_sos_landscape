@@ -1028,6 +1028,30 @@ corrections with the plane certificate layer. It is now blocked upstream on
 extracting the exact normalized coordinate picture \(u=(1,x_1,q_2,q_3)\), or
 equivalently an orthonormal relation basis for that picture, from a general
 constant-containing mixed-affine factor.
+The next probe targeted the determinant-zero side directly. The new script
+\texttt{julia/mixed\_affine\_det\_zero\_2026\_04\_10.jl} uses only coefficient
+linear algebra, so it runs in the current workspace without the unavailable SDP
+stack. It checks the canonical families
+\[
+  (1,x_1,\mu x_1^2 + D,\nu x_1^2 + x_2)
+\]
+for
+\[
+  D \in \{x_1x_2,\ x_2^2,\ x_1^2+x_2^2,\ x_1^2-x_2^2\}
+\]
+and \((\mu,\nu) \in
+\{(-2,-1),(-1,1),(0,1),(1,1),(2,-1)\}\). The output is completely stable:
+\begin{verbatim}
+mixed_affine_det_zero_canonical_probe = (direction = "cross", ..., rank = 14, missing = [(0, 4)])
+mixed_affine_det_zero_canonical_probe = (direction = "x1sq", ..., rank = 15, missing = [])
+mixed_affine_det_zero_canonical_probe = (direction = "sumsq", ..., rank = 15, missing = [])
+mixed_affine_det_zero_canonical_probe = (direction = "diffsq", ..., rank = 15, missing = [])
+\end{verbatim}
+for every sampled parameter pair. So the determinant-zero tailed branch now
+looks much less amorphous than before: numerically the cross direction behaves
+like the known rank-\(14\) mixed-affine obstruction with only the \(x_2^4\)
+class missing, while the \(x_2^2\) and diagonal directions are already
+surjective.
 
 \section*{Open Subgoals}
 \begin{itemize}
@@ -1042,7 +1066,10 @@ sub-branch is now sharper than that wording suggests: there the common-
 translation lemma and its integration are done, so the remaining work is to
 extract exact normalized coordinates of the form \(u=(1,x_1,q_2,q_3)\), or an
 orthonormal relation basis for that same data, together with the same
-determinant condition from the general branch.
+determinant condition from the general branch. On the determinant-zero side,
+the new probe suggests that only the cross-type canonical family should still
+need a genuinely nonsurjective theorem; the \(x_2^2\) and diagonal types look
+surjective already.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this
