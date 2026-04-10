@@ -1463,9 +1463,26 @@ Lean now performs the remaining \(x_1\)-shear internally, subtracts the
 induced \(x_0\)-tails, re-extracts the homogeneous line, and falls through to
 the already-formalized diagonal/\(x_1^2\)-type determinant-zero theorem. So
 the determinant-zero extracted-line layer is now genuinely two-way at theorem
-level: either \(\operatorname{coeff}_{x_1^2} H=0\) and the cross-shear theorem
-applies, or \(\operatorname{coeff}_{x_1^2} H\neq 0\) and the new diagonal-shear
-theorem applies.
+level for the two theorem families already formalized, but one residual
+pure-\(x_0^2\) slice still has to be classified separately. To check whether
+that residual slice is a real new obstruction, I added the script
+\texttt{julia/mixed\_affine\_det\_zero\_x0sq\_tail\_2026\_04\_10.jl}, which
+probes the family
+\[
+  q_2=b_2x_1+a_2x_0^2+c x_0x_1+d x_1^2,\qquad
+  q_3=b_3x_1+a_3x_0^2+\frac{b_3}{b_2}c x_0x_1+\frac{b_3}{b_2}d x_1^2,
+\]
+so that \(H(q_2,q_3)\) is always pure \(x_0^2\). It prints
+\[
+  \texttt{mixed\_affine\_det\_zero\_x0sq\_tail\_probe}
+  =
+  (\texttt{samples}=20,\ \texttt{generic\_ranks}=[15],\
+   \texttt{low\_affine\_ranks}=[13],\
+   \texttt{low\_affine\_missing}=[(1,3),(0,4)]).
+\]
+So the pure-\(x_0^2\) extracted-line family is not uniformly rank \(13\): the
+generic slice looks surjective, while the special low-affine slice
+\(c=d=0\) still matches the known rank-\(13\) behavior.
 
 \section*{Open Subgoals}
 \begin{itemize}
@@ -1485,7 +1502,9 @@ the remaining work is now only extraction and transport through the coarse
 split on the extracted line \(H(q_2,q_3)\): the cross-like
 \(\operatorname{coeff}_{x_1^2} H=0\), \(\operatorname{coeff}_{x_0x_1} H\neq 0\)
 branch and the complementary \(\operatorname{coeff}_{x_1^2} H\neq 0\) branch
-both have internal shear normalization already built into Lean.
+both have internal shear normalization already built into Lean, while the
+remaining pure-\(x_0^2\) branch now looks numerically like a generic rank-\(15\)
+family plus a special low-affine rank-\(13\) sub-slice.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this

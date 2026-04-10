@@ -1497,9 +1497,26 @@ Lean then applies the internal \(x_1\)-shear killing the cross coefficient of
 \(H(q_2,q_3)\), subtracts the induced \(x_0\)-tails, re-extracts the
 homogeneous line, and dispatches automatically to the already-formalized
 diagonal/\(x_1^2\)-type determinant-zero theorem. So the determinant-zero
-mixed-affine branch now only needs a coarse extracted-line split:
-\(\operatorname{coeff}_{x_1^2} H=0\) with nonzero cross coefficient on one
-side, and \(\operatorname{coeff}_{x_1^2} H\neq 0\) on the other.
+mixed-affine branch is now much closer to a coarse extracted-line split, but
+one residual pure-\(x_0^2\) slice still remains outside the currently
+formalized wrappers. The new numerical probe
+\texttt{julia/mixed\_affine\_det\_zero\_x0sq\_tail\_2026\_04\_10.jl} shows:
+\[
+  \texttt{mixed\_affine\_det\_zero\_x0sq\_tail\_probe}
+  =
+  (\texttt{samples}=20,\ \texttt{generic\_ranks}=[15],\
+   \texttt{low\_affine\_ranks}=[13],\
+   \texttt{low\_affine\_missing}=[(1,3),(0,4)]).
+\]
+So when the extracted line is pure \(x_0^2\), the generic determinant-zero
+family looks surjective, while the special low-affine sub-slice with vanishing
+\(x_0x_1\)- and \(x_1^2\)-terms still behaves like the known rank-\(13\)
+family. The remaining classification therefore appears to split into three
+determinant-zero outputs:
+\(\operatorname{coeff}_{x_1^2} H\neq 0\),
+\(\operatorname{coeff}_{x_1^2} H=0\) with
+\(\operatorname{coeff}_{x_0x_1} H\neq 0\), and the residual pure-\(x_0^2\)
+line.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
