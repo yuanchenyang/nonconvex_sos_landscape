@@ -9,9 +9,12 @@
 \maketitle
 
 \section*{Status}
-This blueprint is not complete yet. The abstract SOCP component has been
-formalized, and orthogonal mixing of the four factor coordinates is now also
-formalized, but the ternary-quartic algebraic reduction is still missing.
+This blueprint is not complete yet. The abstract SOCP component, orthogonal
+mixing of the four factor coordinates, and all currently identified
+representative-level rank-$4$ algebraic branches are now formalized. The
+remaining gap is the normalization/classification step that reduces an
+arbitrary admissible rank-$4$ factor to those representatives, followed by the
+final theorem assembly in \texttt{TernaryQuarticProof.lean}.
 
 \section*{Formalized Step}
 Let $r(u,p) = \sigma(u) - p$. The following statement is already formalized in
@@ -159,33 +162,53 @@ and the explicit kernel line
 matches both missing quotient classes simultaneously. Hence every SOCP at this
 representative also has zero residual.
 
-\section*{Normal-Form Target}
-The most promising unresolved case is when, after affine changes of variables
-and invertible recombination of the four coordinates, the factor takes the form
+\medskip
+\noindent
+\textbf{Formalized generic span-three representative.} The representative
 \[
-  u = (1, x_1, x_2, q).
+  u_{\mathrm{span3}} = (1, x_1, x_2, h),
 \]
-For this normal form there is an explicit admissible kernel family:
-if a homogeneous quadratic $h$ is written as
+with arbitrary quadratic homogeneous $h$, is now formalized in
+\texttt{TernaryQuarticProof/RepresentativeSpanThree.lean}. Writing any
+quadratic polynomial as
 \[
-  h = x_1 a + x_2 b
+  q = q_{\le 1} + q_{\mathrm{hom}},
 \]
-with $a,b$ linear, then
+where $q_{\le 1}$ has degree at most $1$ and $q_{\mathrm{hom}}$ is homogeneous
+of degree $2$, one defines the kernel direction
 \[
-  w = (-h, a, b, 0)
+  w_q = (-q_{\mathrm{hom}}, a, b, 0),
+  \qquad q_{\mathrm{hom}} = x_1 a + x_2 b,
 \]
-satisfies $A_u(w)=0$ and
+with $a,b$ linear. Then
 \[
-  \sigma(w) = h^2 + a^2 + b^2.
+  A_{u_{\mathrm{span3}}}(w_q)=0,
+  \qquad
+  \sigma(w_q)=q_{\mathrm{hom}}^2 + a^2 + b^2.
 \]
-The correction term $a^2+b^2$ has degree at most $2$, hence lies in the image
-through the first coordinate $1$. Therefore every square of a homogeneous
-quadratic belongs to
+The crucial identity is
 \[
-  \operatorname{im}(A_u) + \operatorname{cone}(\sigma(\ker A_u)).
+  q^2 - \sigma(w_q)
+  =
+  q_{\le 1}^2 + q_{\le 1}q_{\mathrm{hom}} + q_{\mathrm{hom}}q_{\le 1}
+  - a^2 - b^2,
 \]
-The remaining gap is to turn this observation into a complete classification of
-all independent rank-$4$ factors of image rank $13$ or $14$.
+whose total degree is at most $3$. Since every cubic lies in
+$\operatorname{im}(A_{u_{\mathrm{span3}}})$ through the coordinates
+$1,x_1,x_2$, every quadratic square admits an admissible decomposition
+\[
+  q^2 \in \operatorname{im}(A_{u_{\mathrm{span3}}}) +
+  \sigma(\ker A_{u_{\mathrm{span3}}}).
+\]
+Summing these identities over an SOS decomposition of $p$ and using the new
+indexed-family certificate in \texttt{Certificate.lean} yields
+$r(u_{\mathrm{span3}},p)=0$ for every SOCP at this representative.
+
+\section*{Normalization Target}
+The main unresolved issue is no longer the representative algebra above. It is
+the classification step that shows every independent nonsurjective rank-$4$
+factor is equivalent, after affine variable changes and orthogonal mixing of
+the four coordinates, to one of the already-formalized representatives.
 
 \section*{Correction To The Previous Case Split}
 The earlier five-case list is not complete. The constant-containing
@@ -347,7 +370,7 @@ quadratic monomial exponents
 \[
   1,\ x_1,\ x_2,\ x_1^2,\ x_1x_2,\ x_2^2
 \]
-as explicit \texttt{Fin 2 →₀ ℕ} indices, proves that every support monomial of
+as explicit \texttt{Fin 2 ->0 Nat} indices, proves that every support monomial of
 an \texttt{IsQuadratic} polynomial is one of them, and concludes that every
 quadratic is the sum of its six monomial-coefficient terms. This is still a
 proof-serving finite-support lemma rather than a general coefficient API.

@@ -123,6 +123,71 @@ theorem admissible_image_plus_cone_residual_eq_zero
   exact (objective_eq_zero_iff_residual_eq_zero (B := B)).mp
     (admissible_image_plus_cone_implies_objective_eq_zero (B := B) hu hsocp himg hdecomp)
 
+omit [Fact B.toQuadraticMap.PosDef] in
+private theorem dot_biSum_left {ι : Type*} (s : Finset ι) (w : ι → RankFourVec) (p : Poly) :
+    B (Finset.sum s (fun i => sigma (w i))) p = Finset.sum s (fun i => B (sigma (w i)) p) := by
+  classical
+  refine Finset.induction_on s ?_ ?_
+  · simp
+  · intro i s hi ih
+    calc
+      B (Finset.sum (insert i s) (fun j => sigma (w j))) p
+          = B (sigma (w i) + Finset.sum s (fun j => sigma (w j))) p := by
+        simp [hi]
+      _ = B (sigma (w i)) p + B (Finset.sum s (fun j => sigma (w j))) p := by
+        simp
+      _ = B (sigma (w i)) p + Finset.sum s (fun j => B (sigma (w j)) p) := by
+        rw [ih]
+      _ = Finset.sum (insert i s) (fun j => B (sigma (w j)) p) := by
+        simp [hi]
+
+theorem admissible_image_plus_indexed_sigma_family_residual_eq_zero
+    {ι : Type*} {p : Poly} {u uImg : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    (himg : ImageOrthogonalResidual B p u uImg)
+    {imgPart : Poly} {s : Finset ι} {w : ι → RankFourVec}
+    (himgPart : InAdmissibleImage uImg imgPart)
+    (hker : ∀ i ∈ s, InAdmissibleKer u (w i))
+    (hdecomp : p = imgPart + Finset.sum s (fun i => sigma (w i))) :
+    residual p u = 0 := by
+  let r := residual p u
+  have hImg : B imgPart r = 0 := himg _ himgPart
+  have hsum_ge : 0 ≤ Finset.sum s (fun i => B (sigma (w i)) r) := by
+    refine Finset.sum_nonneg ?_
+    intro i hi
+    rcases hker i hi with ⟨hwadm, hwker⟩
+    have hhess : 0 ≤ hessianTerm B p u (w i) := hsocp.2 (w i) hwadm
+    have hAu : B (A u (w i)) (A u (w i)) = 0 := by
+      rw [hwker]
+      simp
+    have hhess' : 0 ≤ B (sigma (w i)) (residual p u) := by
+      simpa [hessianTerm, hAu] using hhess
+    exact hhess'
+  have hp_ge : 0 ≤ B p r := by
+    rw [hdecomp, dot_add_left, dot_biSum_left]
+    linarith
+  have hsigma_zero : B (sigma u) r = 0 :=
+    focp_sigma_residual_eq_zero (B := B) hsocp.1 hu
+  have hobj_formula : objective B p u = -(B p r) := by
+    subst r
+    have hsigma_zero' : B (sigma u) (sigma u - p) = 0 := by
+      simpa [residual] using hsigma_zero
+    calc
+      objective B p u = B (sigma u - p) (sigma u - p) := by
+        simp [objective, residual]
+      _ = B (sigma u) (sigma u - p) - B p (sigma u - p) := by
+        simp only [sub_eq_add_neg, dot_add_left, dot_neg_left]
+      _ = -B p (sigma u - p) := by
+        rw [hsigma_zero', zero_sub]
+      _ = -(B p (residual p u)) := by
+        simp [residual]
+  have hle : objective B p u ≤ 0 := by
+    rw [hobj_formula]
+    linarith
+  have hge : 0 ≤ objective B p u := objective_nonneg (B := B) p u
+  exact (objective_eq_zero_iff_residual_eq_zero (B := B)).mp (by linarith)
+
 end Positivity
 
 section Elementary

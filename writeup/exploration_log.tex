@@ -38,6 +38,10 @@ transformed image-plus-cone decomposition forces zero residual at a SOCP.
   relation, then every SOS quartic lies in the admissible kernel cone and the
   residual again vanishes.
   \end{itemize}
+\item The same certificate layer now also contains an indexed-family version of
+  the admissible image-plus-kernel-square argument, so SOS decompositions can
+  be summed directly over \texttt{Fin k} without deduplicating kernel
+  directions into a \texttt{Finset}.
 \item \texttt{TernaryQuarticProof/FactorTransform.lean}: orthogonal mixing of
   the four factor coordinates, with formal proofs that admissibility, the
   linearized image map, $\sigma$, the residual, FOCP, and SOCP are preserved
@@ -75,6 +79,23 @@ transformed image-plus-cone decomposition forces zero residual at a SOCP.
   \[
     (0,0,-x_2(b+c x_2),x_1(b+c x_2)).
   \]
+\item \texttt{TernaryQuarticProof/RepresentativeSpanThree.lean}: the generic
+  representative
+  \[
+    (1,x_1,x_2,h)
+  \]
+  with arbitrary homogeneous quadratic $h$ is now also discharged at the
+  representative level. The file splits a quadratic factor as
+  $q=q_{\le 1}+q_{\mathrm{hom}}$, forms the kernel direction
+  \[
+    (-q_{\mathrm{hom}},a,b,0),\qquad q_{\mathrm{hom}}=x_1 a + x_2 b,
+  \]
+  proves that the corrected square
+  \[
+    q^2-\sigma(-q_{\mathrm{hom}},a,b,0)
+  \]
+  has total degree at most $3$, and then sums these cubic image terms over an
+  SOS decomposition using the indexed-family certificate.
 \end{itemize}
 
 These files build with
@@ -181,8 +202,11 @@ classification by the filtered dimensions
   \qquad W = \operatorname{span}(u_1,\dots,u_4).
 \]
 The newly formalized dependent case handles $\dim W < 4$, and the surjective
-case handles image rank $15$. The unresolved cases are the independent
-nonsurjective configurations of image rank $13$ or $14$.
+case handles image rank $15$. The generic
+$\dim(W \cap \mathbb{R}[x]_{\le 1}) = 3$ representative is now also solved in
+Lean. The unresolved cases are therefore normalization statements reducing
+independent nonsurjective configurations of image rank $13$ or $14$ to the
+already-formalized representatives.
 
 Current canonical candidates after orthogonal mixing of the four coordinates and
 affine changes of variables:
@@ -191,14 +215,15 @@ affine changes of variables:
   \[
     u \sim (1, x_1, x_2, h), \qquad h \in \mathbb{R}[x_1,x_2]_2^{\mathrm{hom}}.
   \]
-  Kernel family:
+  This branch is now formalized at the representative level. The kernel family
+  is:
   if $h_0 = x_1 a + x_2 b$ with $a,b$ linear, then
   \[
     w = (-h_0, a, b, 0), \qquad A_u(w)=0,\qquad \sigma(w)=h_0^2 + a^2 + b^2.
   \]
-  Since $a^2+b^2$ has degree $2$, every quadratic square is in
-  $\operatorname{im}(A_u)+\operatorname{cone}(\sigma(\ker A_u))$ modulo
-  lower-degree terms.
+  The corrected square has degree at most $3$, so every quadratic square is in
+  $\operatorname{im}(A_u)+\operatorname{cone}(\sigma(\ker A_u))$ after one
+  explicit kernel correction.
 \item $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 2$, common-factor case:
   \[
     u \sim (x_1, x_2, x_1^2, x_1 x_2).
@@ -292,8 +317,9 @@ affine changes of variables:
   $\dim = 2$ branch rather than the whole independent nonsurjective case.
 \end{itemize}
 
-These cases are still only a blueprint because the normalization and invariance
-steps have not yet been formalized in Lean.
+The remaining gap is no longer the representative algebra in these cases; it is
+the normalization/invariance step that reduces a general admissible factor to
+them inside Lean.
 
 \section*{Additional Recorded Experiments}
 The checked-in Julia script now also records:
@@ -347,7 +373,7 @@ The next candidate abstraction was smaller and more targeted than the abandoned
 generic coefficient library: prove a \emph{quadratic normal-form} lemma for
 two-variable quadratics by using the support restriction coming from
 \texttt{IsQuadratic} and the fact that every support monomial of total degree
-at most $2$ is one of exactly six finitely many \texttt{Fin 2 →₀ ℕ} patterns.
+at most $2$ is one of exactly six finitely many \texttt{Fin 2 ->0 Nat} patterns.
 
 This step is now formalized in
 \texttt{TernaryQuarticProof/QuadraticNormalForm.lean}. The file introduces the
@@ -410,14 +436,27 @@ matches those missing classes via
   \sigma(w_\ell) \equiv c^2 + 2cd\,x_2 \pmod{\operatorname{im}(A_u)}.
 \]
 
+The generic span-three representative is now complete as well in
+\texttt{TernaryQuarticProof/RepresentativeSpanThree.lean}. For
+\[
+  u = (1,x_1,x_2,h),
+\]
+the formalized kernel direction attached to a quadratic factor
+$q=q_{\le 1}+q_{\mathrm{hom}}$ is
+\[
+  w_q = (-q_{\mathrm{hom}},a,b,0), \qquad q_{\mathrm{hom}} = x_1 a + x_2 b.
+\]
+The key proved identity is that
+\[
+  q^2 - \sigma(w_q)
+\]
+has total degree at most $3$, so it lies in $\operatorname{im}(A_u)$ via the
+coordinates $1,x_1,x_2$. Summing these cubic image terms over an SOS
+decomposition gives a full representative-level no-spurious-SOCP theorem for
+the whole $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 3$ branch.
+
 \section*{Open Subgoals}
 \begin{itemize}
-\item Prove the normalization/classification statement for the mixed-affine
-constant-containing $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 2$ branch.
-\item Formalize the remaining representative case lemma
-  \[
-    (1,x_1,x_2,h).
-  \]
 \item Formalize the normalization/classification step that reduces the
 constant-containing $\dim = 2$ branch to the three mixed-affine
 representatives already formalized.
