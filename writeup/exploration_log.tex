@@ -1124,7 +1124,15 @@ immediate except \(x_1^4\) and \(x_1^3x_2\), and each of those comes from the
 tailed coordinate after one correction term using the \(x_1\) or \(x_2^2\)
 coordinate. So, combined with the affine-tail theorem for the \(a=0\) case,
 the entire \(x_2^2\)-type determinant-zero tailed family is now formalized at
-representative level.
+representative level. I then lifted that result to exact relation data in the
+same file via
+\texttt{quartic\_in\_image\_of\_relations\_const\_x0\_x1sq\_x1PlusX0sq},
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x1sq\_x1PlusX0sq}, and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_x1sq\_x1PlusX0sq}.
+So the \(x_2^2\)-type determinant-zero slice is no longer only a concrete
+representative theorem; it is now usable immediately after affine
+normalization, without rebuilding the monomial image argument in the final
+assembly.
 
 I also tried to jump directly to a general diagonal determinant-zero Lean
 theorem for \((1,x_1,x_2^2 + c x_1^2, x_2 + a x_1^2)\), but that broad version

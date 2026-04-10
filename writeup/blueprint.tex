@@ -1060,7 +1060,15 @@ explicit monomial check: every quartic monomial is immediate except
 \(x_1^4\) and \(x_1^3x_2\), and those two come from the tailed coordinate by a
 single correction against the \(x_1\) and \(x_2^2\) coordinates. Combined with
 the affine-tail reduction, this means the entire \(x_2^2\)-type
-determinant-zero family is already formalized at representative level.
+determinant-zero family is already formalized at representative level. The new
+exact relation theorems
+\texttt{quartic\_in\_image\_of\_relations\_const\_x0\_x1sq\_x1PlusX0sq},
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x1sq\_x1PlusX0sq}, and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_x1sq\_x1PlusX0sq}
+lift that slice out of the concrete representative: once affine normalization
+produces exact relations to \(1\), \(x_1\), \(x_2^2\), and \(x_2 + a x_1^2\),
+the branch closes directly, and the final pullback through an algebra
+equivalence is already packaged.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
