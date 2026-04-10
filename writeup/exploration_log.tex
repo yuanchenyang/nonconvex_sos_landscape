@@ -1143,6 +1143,24 @@ now sharper again: use the new tail-parameter sweep as evidence that the next
 Lean target should be the cross-type branch or a smaller exact diagonal
 representative, not another over-general unfinished statement.
 
+The next Lean round then did exactly that. In
+\texttt{RepresentativeMixedAffine.lean} I added the cross-type determinant-zero
+representative
+\[
+  (1,x_1,x_1x_2,x_2 + a x_1^2), \qquad a \neq 0,
+\]
+as \texttt{mixedAffineTailCrossRep a}. The new theorems
+\texttt{quartic\_in\_image\_mixedAffineTailCrossRep\_of\_coeff\_m04\_zero},
+\texttt{mixedAffineTailCrossKerBase}, and
+\texttt{residual\_eq\_zero\_mixedAffineTailCrossRep}
+show that this branch is a direct rank-\(14\) image-plus-kernel certificate:
+every quartic with zero \(x_2^4\) coefficient lies in the image, while the
+explicit kernel direction contributes exactly the missing \(x_2^4\) class.
+So the canonical determinant-zero mixed-affine branch is now theorem-complete
+at representative level; the remaining issue is no longer ``find the missing
+cross theorem,'' but only ``extract exact normalized cross data from a general
+admissible factor.''
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
@@ -1157,10 +1175,10 @@ translation lemma and its integration are done, so the remaining work is to
 extract exact normalized coordinates of the form \(u=(1,x_1,q_2,q_3)\), or an
 orthonormal relation basis for that same data, together with the same
 determinant condition from the general branch. On the determinant-zero side,
-the new probe suggests that only the cross-type canonical family should still
-need a genuinely nonsurjective theorem; the \(x_2^2\)-type family is now
-formalized at representative level, and the diagonal types look increasingly
-like classification-byproducts rather than true remaining obstructions.
+the remaining work is now only extraction and transport: both the
+\(x_2^2\)-type and the cross-type canonical families are formalized, and the
+diagonal types look increasingly like classification-byproducts rather than
+true remaining obstructions.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this

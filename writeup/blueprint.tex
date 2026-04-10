@@ -1069,7 +1069,21 @@ lift that slice out of the concrete representative: once affine normalization
 produces exact relations to \(1\), \(x_1\), \(x_2^2\), and \(x_2 + a x_1^2\),
 the branch closes directly, and the final pullback through an algebra
 equivalence is already packaged.
-So the remaining obstacle is now the written and formal extraction statement
+The second remaining determinant-zero candidate, the cross-type model
+\[
+  (1,x_1,x_1x_2,x_2 + a x_1^2), \qquad a \neq 0,
+\]
+is now also formalized in \texttt{RepresentativeMixedAffine.lean} as
+\texttt{mixedAffineTailCrossRep}, with
+\texttt{quartic\_in\_image\_mixedAffineTailCrossRep\_of\_coeff\_m04\_zero},
+\texttt{mixedAffineTailCrossKerBase}, and
+\texttt{residual\_eq\_zero\_mixedAffineTailCrossRep}. This is a rank-\(14\)
+certificate of exactly the same shape as the already-solved codimension-one
+mixed-affine representative: every quartic with zero \(x_2^4\) coefficient is
+in the image, and the missing \(x_2^4\) class is supplied by a single explicit
+kernel square. So the canonical determinant-zero mixed-affine branch is no
+longer missing any representative theorem at all.
+The remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
 already-formalized plane types and supplies a nontrivial homogeneous quadratic
@@ -1084,8 +1098,7 @@ hypothesis after affine normalization. So the remaining gap there is no longer
 the translation algebra or its integration with the mixed-affine plane
 certificate layer; it is the
 upstream normalization/classification step producing that coordinate picture
-from a general admissible factor, together with the now-sharper determinant-zero
-classification reducing the cross type to a rank-\(14\) theorem. The diagonal
+from a general admissible factor. The diagonal
 determinant-zero slices no longer look like separate obstructions; if they need
 additional Lean work at all, it should only be because they simplify the final
 classification step, not because the numerics suggest another missing case.

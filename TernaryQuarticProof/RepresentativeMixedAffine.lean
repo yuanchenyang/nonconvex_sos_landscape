@@ -1865,6 +1865,394 @@ theorem coeff_m04_sq_of_quadratic_eq (q : Poly) (hq : IsQuadratic q) :
     MvPolynomial.coeff m04 (q ^ 2) = (MvPolynomial.coeff m02 q) ^ 2 :=
   coeff_m04_sq_of_quadratic q hq
 
+/-- The determinant-zero cross-type mixed-affine representative with image
+codimension one. -/
+def mixedAffineTailCrossRep (a : ℝ) : RankFourVec :=
+  ![(1 : Poly), x0, x0 * x1, x1 + a • (x0 ^ 2 : Poly)]
+
+private theorem monomial_image_mixedAffineTailCrossRep
+    (a : ℝ) (ha : a ≠ 0)
+    (s : Fin 2 →₀ ℕ) (r : ℝ)
+    (hdeg : s.sum (fun _ e => e) ≤ 4)
+    (hne4 : s ≠ m04) :
+    InAdmissibleImage (mixedAffineTailCrossRep a) (MvPolynomial.monomial s r) := by
+  let e0 := s 0
+  let e1 := s 1
+  have hsum : s.sum (fun _ e => e) = s 0 + s 1 := by
+    rw [Finsupp.sum_fintype _ _ (fun _ => rfl), Fin.sum_univ_two]
+  have hs : e0 + e1 ≤ 4 := by
+    simpa [e0, e1, hsum] using hdeg
+  have h0rel : ∑ i : Fin 4, (![1, 0, 0, 0] : Fin 4 → ℝ) i • mixedAffineTailCrossRep a i = (1 : Poly) := by
+    rw [Fin.sum_univ_four]
+    simp [mixedAffineTailCrossRep]
+  have h1rel : ∑ i : Fin 4, (![0, 1, 0, 0] : Fin 4 → ℝ) i • mixedAffineTailCrossRep a i = x0 := by
+    rw [Fin.sum_univ_four]
+    simp [mixedAffineTailCrossRep]
+  have h2rel : ∑ i : Fin 4, (![0, 0, 1, 0] : Fin 4 → ℝ) i • mixedAffineTailCrossRep a i = x0 * x1 := by
+    rw [Fin.sum_univ_four]
+    simp [mixedAffineTailCrossRep]
+  have h3rel : ∑ i : Fin 4, (![0, 0, 0, 1] : Fin 4 → ℝ) i • mixedAffineTailCrossRep a i =
+      x1 + a • (x0 ^ 2 : Poly) := by
+    rw [Fin.sum_univ_four]
+    simp [mixedAffineTailCrossRep]
+  by_cases hsmall : e0 + e1 ≤ 2
+  · simpa [monomial_fin2_eq, e0, e1, one_mul] using
+      (inAdmissibleImage_of_relation_mul_const
+        (u := mixedAffineTailCrossRep a)
+        (c := ![1, 0, 0, 0]) (r := (1 : Poly))
+        (q := (MvPolynomial.C r * x0 ^ e0) * x1 ^ e1)
+        h0rel
+        (isQuadratic_C_mul_pow_pow r e0 e1 hsmall))
+  · by_cases hxy : 1 ≤ e0 ∧ 1 ≤ e1
+    · rcases hxy with ⟨hx1, hy1⟩
+      have hs2 : (e0 - 1) + (e1 - 1) ≤ 2 := by omega
+      have himg :=
+        inAdmissibleImage_of_relation_mul_const
+          (u := mixedAffineTailCrossRep a)
+          (c := ![0, 0, 1, 0]) (r := x0 * x1)
+          (q := (MvPolynomial.C r * x0 ^ (e0 - 1)) * x1 ^ (e1 - 1))
+          h2rel
+          (isQuadratic_C_mul_pow_pow r (e0 - 1) (e1 - 1) hs2)
+      rw [monomial_fin2_eq]
+      simp [e0, e1] at himg ⊢
+      have hxpow : x0 * x0 ^ (e0 - 1) = x0 ^ e0 := by
+        simpa [Nat.sub_add_cancel hx1] using (pow_succ' x0 (e0 - 1)).symm
+      have hypow : x1 * x1 ^ (e1 - 1) = x1 ^ e1 := by
+        simpa [Nat.sub_add_cancel hy1] using (pow_succ' x1 (e1 - 1)).symm
+      have hmul :
+          (x0 * x1) * ((MvPolynomial.C r * x0 ^ (e0 - 1)) * x1 ^ (e1 - 1)) =
+            (MvPolynomial.C r * x0 ^ e0) * x1 ^ e1 := by
+        calc
+          (x0 * x1) * ((MvPolynomial.C r * x0 ^ (e0 - 1)) * x1 ^ (e1 - 1))
+              = MvPolynomial.C r * (x0 * x0 ^ (e0 - 1)) * (x1 * x1 ^ (e1 - 1)) := by
+                  ring_nf
+          _ = (MvPolynomial.C r * x0 ^ e0) * x1 ^ e1 := by
+                simp [hxpow, hypow, mul_assoc]
+      simpa [e0, e1, hmul] using himg
+    · by_cases hx1 : 1 ≤ e0
+      · have hy0 : e1 = 0 := by omega
+        by_cases hdeg3 : e0 + e1 ≤ 3
+        · have hs2 : (e0 - 1) + e1 ≤ 2 := by omega
+          have himg :=
+            inAdmissibleImage_of_relation_mul_const
+              (u := mixedAffineTailCrossRep a)
+              (c := ![0, 1, 0, 0]) (r := x0)
+              (q := (MvPolynomial.C r * x0 ^ (e0 - 1)) * x1 ^ e1)
+              h1rel
+              (isQuadratic_C_mul_pow_pow r (e0 - 1) e1 hs2)
+          rw [monomial_fin2_eq]
+          simp [e0, e1] at himg ⊢
+          have hxpow : x0 * x0 ^ (e0 - 1) = x0 ^ e0 := by
+            simpa [Nat.sub_add_cancel hx1] using (pow_succ' x0 (e0 - 1)).symm
+          have hmul :
+              x0 * ((MvPolynomial.C r * x0 ^ (e0 - 1)) * x1 ^ e1) =
+                (MvPolynomial.C r * x0 ^ e0) * x1 ^ e1 := by
+            calc
+              x0 * ((MvPolynomial.C r * x0 ^ (e0 - 1)) * x1 ^ e1)
+                  = MvPolynomial.C r * (x0 * x0 ^ (e0 - 1)) * x1 ^ e1 := by
+                      ring_nf
+              _ = (MvPolynomial.C r * x0 ^ e0) * x1 ^ e1 := by
+                    simp [hxpow, mul_assoc]
+          simpa [e0, e1, hmul] using himg
+        · have hx4 : e0 = 4 := by omega
+          let img1 :=
+            inAdmissibleImage_of_relation_mul_const
+              (u := mixedAffineTailCrossRep a)
+              (c := ![0, 1, 0, 0]) (r := x0)
+              (q := (-(r / a)) • (x0 * x1 : Poly))
+              h1rel
+              ((MvPolynomial.totalDegree_smul_le (-(r / a)) (x0 * x1 : Poly)).trans
+                isQuadratic_x0_mul_x1)
+          let img2 :=
+            inAdmissibleImage_of_relation_mul_const
+              (u := mixedAffineTailCrossRep a)
+              (c := ![0, 0, 0, 1]) (r := x1 + a • (x0 ^ 2 : Poly))
+              (q := (r / a) • (x0 ^ 2 : Poly))
+              h3rel
+              ((MvPolynomial.totalDegree_smul_le (r / a) (x0 ^ 2 : Poly)).trans <| by
+                simp [x0, MvPolynomial.totalDegree_X_pow])
+          have himg : InAdmissibleImage (mixedAffineTailCrossRep a)
+              (x0 * ((-(r / a)) • (x0 * x1 : Poly)) +
+                (x1 + a • (x0 ^ 2 : Poly)) * ((r / a) • (x0 ^ 2 : Poly))) :=
+            inAdmissibleImage_add (mixedAffineTailCrossRep a) img1 img2
+          rw [monomial_fin2_eq]
+          simp [e0, e1, hx4, hy0]
+          have hscalar : a * (r / a) = r := by
+            field_simp [ha]
+          have hcancel :
+              x0 * ((-(r / a)) • (x0 * x1 : Poly)) +
+                (x1 + a • (x0 ^ 2 : Poly)) * ((r / a) • (x0 ^ 2 : Poly)) =
+                  MvPolynomial.C r * x0 ^ 4 := by
+            have hlast :
+                a • (x0 ^ 2 : Poly) * ((r / a) • (x0 ^ 2 : Poly)) =
+                  r • (x0 ^ 4 : Poly) := by
+              calc
+                a • (x0 ^ 2 : Poly) * ((r / a) • (x0 ^ 2 : Poly))
+                    = (a * (r / a)) • ((x0 ^ 2 : Poly) * (x0 ^ 2 : Poly)) := by
+                        rw [smul_mul_assoc, mul_smul_comm, smul_smul]
+                _ = r • ((x0 ^ 2 : Poly) * (x0 ^ 2 : Poly)) := by rw [hscalar]
+                _ = r • (x0 ^ 4 : Poly) := by rw [← pow_add]
+            have hzero :
+                x0 * ((-(r / a)) • (x0 * x1 : Poly)) +
+                  x1 * ((r / a) • (x0 ^ 2 : Poly)) = 0 := by
+              rw [mul_smul_comm, mul_smul_comm,
+                show x1 * x0 ^ 2 = x0 * (x0 * x1) by ring]
+              simp
+            calc
+              x0 * ((-(r / a)) • (x0 * x1 : Poly)) +
+                  (x1 + a • (x0 ^ 2 : Poly)) * ((r / a) • (x0 ^ 2 : Poly))
+                  =
+                (x0 * ((-(r / a)) • (x0 * x1 : Poly)) +
+                  x1 * ((r / a) • (x0 ^ 2 : Poly))) +
+                    a • (x0 ^ 2 : Poly) * ((r / a) • (x0 ^ 2 : Poly)) := by
+                      rw [add_mul]
+                      ac_rfl
+              _ = MvPolynomial.C r * x0 ^ 4 := by
+                    rw [hzero]
+                    simpa [MvPolynomial.smul_eq_C_mul] using hlast
+          exact hcancel ▸ himg
+      · have hx0 : e0 = 0 := by omega
+        have hy34 : e1 = 3 ∨ e1 = 4 := by omega
+        rcases hy34 with hy3 | hy4
+        · let img1 :=
+            inAdmissibleImage_of_relation_mul_const
+              (u := mixedAffineTailCrossRep a)
+              (c := ![0, 0, 1, 0]) (r := x0 * x1)
+              (q := (-(a * r)) • (x0 * x1 : Poly))
+              h2rel
+              ((MvPolynomial.totalDegree_smul_le (-(a * r)) (x0 * x1 : Poly)).trans
+                isQuadratic_x0_mul_x1)
+          let img2 :=
+            inAdmissibleImage_of_relation_mul_const
+              (u := mixedAffineTailCrossRep a)
+              (c := ![0, 0, 0, 1]) (r := x1 + a • (x0 ^ 2 : Poly))
+              (q := r • (x1 ^ 2 : Poly))
+              h3rel
+              ((MvPolynomial.totalDegree_smul_le r (x1 ^ 2 : Poly)).trans <| by
+                simp [x1, MvPolynomial.totalDegree_X_pow])
+          have himg : InAdmissibleImage (mixedAffineTailCrossRep a)
+              ((x0 * x1) * ((-(a * r)) • (x0 * x1 : Poly)) +
+                (x1 + a • (x0 ^ 2 : Poly)) * (r • (x1 ^ 2 : Poly))) :=
+            inAdmissibleImage_add (mixedAffineTailCrossRep a) img1 img2
+          rw [monomial_fin2_eq]
+          simp [e0, e1, hx0, hy3]
+          have hcancel :
+              (x0 * x1) * ((-(a * r)) • (x0 * x1 : Poly)) +
+                (x1 + a • (x0 ^ 2 : Poly)) * (r • (x1 ^ 2 : Poly)) =
+                  MvPolynomial.C r * x1 ^ 3 := by
+            have hzero :
+                (x0 * x1) * ((-(a * r)) • (x0 * x1 : Poly)) +
+                  a • (x0 ^ 2 : Poly) * (r • (x1 ^ 2 : Poly)) = 0 := by
+              rw [mul_smul_comm, mul_smul_comm,
+                show (x0 * x1) * (x0 * x1) = (x0 ^ 2 : Poly) * (x1 ^ 2 : Poly) by ring]
+              simp [smul_smul, mul_comm]
+            calc
+              (x0 * x1) * ((-(a * r)) • (x0 * x1 : Poly)) +
+                  (x1 + a • (x0 ^ 2 : Poly)) * (r • (x1 ^ 2 : Poly))
+                  =
+                ((x0 * x1) * ((-(a * r)) • (x0 * x1 : Poly)) +
+                  a • (x0 ^ 2 : Poly) * (r • (x1 ^ 2 : Poly))) +
+                    x1 * (r • (x1 ^ 2 : Poly)) := by
+                      rw [add_mul]
+                      ac_rfl
+              _ = MvPolynomial.C r * x1 ^ 3 := by
+                    rw [hzero]
+                    simp [MvPolynomial.smul_eq_C_mul]
+                    ring
+          exact hcancel ▸ himg
+        · exfalso
+          apply hne4
+          ext i
+          fin_cases i <;> simp [m04, e0, e1, hx0, hy4]
+
+theorem quartic_in_image_mixedAffineTailCrossRep_of_coeff_m04_zero
+    (a : ℝ) (ha : a ≠ 0)
+    {p : Poly} (hp : IsQuartic p)
+    (h04 : MvPolynomial.coeff m04 p = 0) :
+    InAdmissibleImage (mixedAffineTailCrossRep a) p := by
+  classical
+  rw [← MvPolynomial.support_sum_monomial_coeff p]
+  let P : Finset (Fin 2 →₀ ℕ) → Prop := fun S =>
+    (∀ s ∈ S, s ∈ p.support) →
+      InAdmissibleImage (mixedAffineTailCrossRep a)
+        (∑ s ∈ S, MvPolynomial.monomial s (MvPolynomial.coeff s p))
+  have hP : P p.support := by
+    refine Finset.induction_on p.support ?_ ?_
+    · intro hsub
+      simpa using inAdmissibleImage_zero (mixedAffineTailCrossRep a)
+    · intro s ss hsnot ih hsub
+      rw [Finset.sum_insert hsnot]
+      refine inAdmissibleImage_add (mixedAffineTailCrossRep a) ?_ (ih ?_)
+      · have hsdeg : s.sum (fun _ e => e) ≤ 4 :=
+          (MvPolynomial.le_totalDegree (hsub s (by simp))).trans hp
+        have hscoeff : MvPolynomial.coeff s p ≠ 0 :=
+          MvPolynomial.mem_support_iff.mp (hsub s (by simp))
+        have hsne4 : s ≠ m04 := by
+          intro hs4
+          apply hscoeff
+          simpa [hs4] using h04
+        exact monomial_image_mixedAffineTailCrossRep a ha s (MvPolynomial.coeff s p) hsdeg hsne4
+      · intro t ht
+        exact hsub t (by simp [ht])
+  exact hP (fun s hs => hs)
+
+/-- Kernel direction generating the missing `x₁⁴` class for the determinant-zero
+cross-type representative. -/
+def mixedAffineTailCrossKerBase (a : ℝ) : RankFourVec :=
+  ![(x1 ^ 2 : Poly), 0, a • (x0 : Poly), -x1]
+
+theorem mixedAffineTailCrossRep_admissible (a : ℝ) :
+    IsAdmissiblePoint (mixedAffineTailCrossRep a) := by
+  intro i
+  fin_cases i
+  · simp [mixedAffineTailCrossRep, IsQuadratic]
+  · simp [mixedAffineTailCrossRep, x0, x1, IsQuadratic]
+  · simpa [mixedAffineTailCrossRep] using isQuadratic_x0_mul_x1
+  ·
+    calc
+      (x1 + a • (x0 ^ 2 : Poly)).totalDegree ≤ max x1.totalDegree (a • (x0 ^ 2 : Poly)).totalDegree := by
+        exact MvPolynomial.totalDegree_add _ _
+      _ ≤ 2 := by
+          refine max_le ?_ ?_
+          · simp [x1]
+          · exact (MvPolynomial.totalDegree_smul_le a (x0 ^ 2 : Poly)).trans <| by
+              simp [x0, MvPolynomial.totalDegree_X_pow]
+
+theorem mixedAffineTailCrossKerBase_admissible (a : ℝ) :
+    IsAdmissibleDirection (mixedAffineTailCrossKerBase a) := by
+  intro i
+  fin_cases i
+  ·
+    have hx1sq : IsQuadratic ((x1 ^ 2 : Poly)) := by
+      calc
+        (x1 ^ 2 : Poly).totalDegree = 2 := by
+          simp [x1, MvPolynomial.totalDegree_X_pow]
+        _ ≤ 2 := by norm_num
+    simpa [mixedAffineTailCrossKerBase] using hx1sq
+  · simp [mixedAffineTailCrossKerBase, IsQuadratic]
+  ·
+    exact (MvPolynomial.totalDegree_smul_le a (x0 : Poly)).trans <| by simp [x0]
+  ·
+    calc
+      (-x1 : Poly).totalDegree = x1.totalDegree := by rw [MvPolynomial.totalDegree_neg]
+      _ ≤ 2 := by simp [x1]
+
+theorem mixedAffineTailCrossKerBase_inKer (a : ℝ) :
+    InAdmissibleKer (mixedAffineTailCrossRep a) (mixedAffineTailCrossKerBase a) := by
+  refine ⟨mixedAffineTailCrossKerBase_admissible a, ?_⟩
+  simp [A, mixedAffineTailCrossRep, mixedAffineTailCrossKerBase, Fin.sum_univ_four, x0, x1,
+    MvPolynomial.smul_eq_C_mul]
+  ring_nf
+
+theorem mixedAffineTailCrossKer_scaled_inKer (a t : ℝ) :
+    InAdmissibleKer (mixedAffineTailCrossRep a) (t • mixedAffineTailCrossKerBase a) := by
+  refine ⟨isAdmissibleDirection_smul_local t (mixedAffineTailCrossKerBase_admissible a), ?_⟩
+  rw [A_smul_right_local, (mixedAffineTailCrossKerBase_inKer a).2]
+  simp
+
+private theorem isQuadratic_smul_x1_sq (t : ℝ) :
+    IsQuadratic (t • (x1 ^ 2 : Poly)) := by
+  exact (MvPolynomial.totalDegree_smul_le t (x1 ^ 2 : Poly)).trans <| by
+    simp [x1, MvPolynomial.totalDegree_X_pow]
+
+private theorem coeff_m02_smul_x1_sq (t : ℝ) :
+    MvPolynomial.coeff m02 (t • (x1 ^ 2 : Poly)) = t := by
+  rw [MvPolynomial.coeff_smul]
+  have hx1sq : MvPolynomial.coeff m02 (x1 ^ 2 : Poly) = 1 := by
+    simp [x1, m02, MvPolynomial.coeff_X_pow]
+  simp [hx1sq]
+
+private theorem coeff_m02_smul_x0 (t : ℝ) :
+    MvPolynomial.coeff m02 (t • (x0 : Poly)) = 0 := by
+  rw [MvPolynomial.coeff_smul]
+  have hx0 : MvPolynomial.coeff m02 (x0 : Poly) = 0 := by
+    simp [x0, m02]
+  simp [hx0]
+
+private theorem coeff_m02_smul_x1 (t : ℝ) :
+    MvPolynomial.coeff m02 (t • (x1 : Poly)) = 0 := by
+  rw [MvPolynomial.coeff_smul]
+  have hx1 : MvPolynomial.coeff m02 (x1 : Poly) = 0 := by
+    simp [x1, m02]
+  simp [hx1]
+
+theorem coeff_m04_sigma_mixedAffineTailCrossKerScaled (a t : ℝ) :
+    MvPolynomial.coeff m04 (sigma (t • mixedAffineTailCrossKerBase a)) = t ^ 2 := by
+  have h0 :
+      MvPolynomial.coeff m04 ((t • (x1 ^ 2 : Poly)) ^ 2) = t ^ 2 := by
+    rw [coeff_m04_sq_of_quadratic_eq _ (isQuadratic_smul_x1_sq t)]
+    rw [coeff_m02_smul_x1_sq]
+  have h2 :
+      MvPolynomial.coeff m04 (((t * a) • (x0 : Poly)) ^ 2) = 0 := by
+    rw [coeff_m04_sq_of_quadratic_eq _ ((MvPolynomial.totalDegree_smul_le (t * a) (x0 : Poly)).trans <| by
+      simp [x0])]
+    rw [coeff_m02_smul_x0]
+    ring
+  have h3 :
+      MvPolynomial.coeff m04 ((t • (x1 : Poly)) ^ 2) = 0 := by
+    rw [coeff_m04_sq_of_quadratic_eq _ ((MvPolynomial.totalDegree_smul_le t (x1 : Poly)).trans <| by
+      simp [x1])]
+    rw [coeff_m02_smul_x1]
+    ring
+  rw [sigma, Fin.sum_univ_four]
+  rw [MvPolynomial.coeff_add, MvPolynomial.coeff_add, MvPolynomial.coeff_add]
+  simp [mixedAffineTailCrossKerBase, h0, h2, h3, smul_smul]
+
+theorem residual_eq_zero_mixedAffineTailCrossRep
+    (a : ℝ) (ha : a ≠ 0)
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p (mixedAffineTailCrossRep a)) :
+    residual p (mixedAffineTailCrossRep a) = 0 := by
+  rcases hp with ⟨hpquartic, k, qs, hqdeg, hpq⟩
+  let s4 : ℝ := ∑ i : Fin k, (MvPolynomial.coeff m02 (qs i)) ^ 2
+  let t : ℝ := Real.sqrt s4
+  let w : RankFourVec := t • mixedAffineTailCrossKerBase a
+  have hs4_nonneg : 0 ≤ s4 := by
+    dsimp [s4]
+    positivity
+  have hp04 : MvPolynomial.coeff m04 p = s4 := by
+    calc
+      MvPolynomial.coeff m04 p = ∑ i : Fin k, MvPolynomial.coeff m04 ((qs i) ^ 2) := by
+        rw [hpq, MvPolynomial.coeff_sum]
+      _ = ∑ i : Fin k, (MvPolynomial.coeff m02 (qs i)) ^ 2 := by
+        refine Finset.sum_congr rfl ?_
+        intro i hi
+        exact coeff_m04_sq_of_quadratic_eq (qs i) (hqdeg i)
+      _ = s4 := by rfl
+  have hwker : InAdmissibleKer (mixedAffineTailCrossRep a) w :=
+    mixedAffineTailCrossKer_scaled_inKer a t
+  have hw04 : MvPolynomial.coeff m04 (sigma w) = s4 := by
+    change MvPolynomial.coeff m04 (sigma (t • mixedAffineTailCrossKerBase a)) = s4
+    calc
+      MvPolynomial.coeff m04 (sigma (t • mixedAffineTailCrossKerBase a)) = t ^ 2 := by
+        exact coeff_m04_sigma_mixedAffineTailCrossKerScaled a t
+      _ = s4 := by
+            dsimp [t]
+            rw [Real.sq_sqrt hs4_nonneg]
+  have hquartic_sub : IsQuartic (p - sigma w) := by
+    calc
+      (p - sigma w).totalDegree ≤ max p.totalDegree (sigma w).totalDegree := by
+        exact MvPolynomial.totalDegree_sub _ _
+      _ ≤ 4 := by
+          exact max_le hpquartic (isQuartic_sigma_of_admissible_local hwker.1)
+  have h04_sub : MvPolynomial.coeff m04 (p - sigma w) = 0 := by
+    rw [MvPolynomial.coeff_sub, hp04, hw04]
+    ring
+  have himg : InAdmissibleImage (mixedAffineTailCrossRep a) (p - sigma w) :=
+    quartic_in_image_mixedAffineTailCrossRep_of_coeff_m04_zero a ha hquartic_sub h04_sub
+  refine admissible_image_plus_cone_residual_eq_zero (B := B)
+    (u := mixedAffineTailCrossRep a) (uImg := mixedAffineTailCrossRep a)
+    (mixedAffineTailCrossRep_admissible a) hsocp
+    (imageOrthogonalResidual_self (B := B) hsocp.1) ?_
+  refine ⟨p - sigma w, {w}, himg, ?_, ?_⟩
+  · intro w' hw'
+    have hw' : w' = w := by simpa using hw'
+    subst hw'
+    exact hwker
+  · simp [w, sub_eq_add_neg]
+
 theorem residual_eq_zero_mixedAffineRank13Rep
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {p : Poly}
