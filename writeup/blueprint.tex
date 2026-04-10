@@ -404,10 +404,12 @@ and
 after the scaling \(x_2 \mapsto \sqrt{a/c}\,x_2\) or
 \(x_2 \mapsto \sqrt{-a/c}\,x_2\). It also combines these with the shear step,
 so the cross-killed diagonal form now normalizes directly to the sum-square or
-split-diagonal annihilator whenever the corresponding ratio is positive. So the remaining work is no longer
-to discover the completion-of-squares algebra, but to connect these explicit
-affine moves to a general rank-$4$ mixed-affine factor and then feed the result
-into the already-formalized representative theorems.
+split-diagonal annihilator whenever the corresponding ratio is positive. The
+same Lean file now packages the whole coefficient case split as a single theorem
+\texttt{mixedAffineAnnihilator\_normal\_form\_cases}. So the remaining work is
+no longer to discover the completion-of-squares algebra, but to connect these
+explicit affine moves to a general rank-$4$ mixed-affine factor and then feed
+the result into the already-formalized representative theorems.
 
 \medskip
 \noindent
@@ -592,9 +594,13 @@ the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
   \[
     \operatorname{span}(x_1x_2,\ x_1^2-x_2^2)
   \]
-  is now formalized as surjective at the plane level as well. What is still
-  missing is the written proof that every constant-containing $\dim = 2$ factor
-  can be normalized into one of these formalized plane types.
+  is now formalized as surjective at the plane level as well. The remaining
+  mixed-affine gap is no longer the annihilator case split itself, since
+  \texttt{MixedAffineNormalization.lean} now packages that as
+  \texttt{mixedAffineAnnihilator\_normal\_form\_cases}. What is still missing is
+  the written proof that every constant-containing $\dim = 2$ factor supplies
+  the coefficient data and relation vectors needed to invoke that theorem and
+  then land in one of these formalized plane types.
 \item A smaller replacement for exact representative transport is now plausible
   in this branch: prove basis-invariant mixed-affine plane theorems. Instead of
   forcing the last two coordinates to be exactly
@@ -779,11 +785,27 @@ formalized for both real plane orbits
   \qquad\text{and}\qquad
   \operatorname{span}(x_1x_2,\ x_1^2-x_2^2).
 \]
+The new bridge layer is also formalized now: using the six-coefficient
+quadratic normal form, Lean proves that a homogeneous quadratic satisfying one
+of the canonical coefficient conditions
+\[
+  \operatorname{coeff}_{x_1x_2}=0,\qquad
+  \operatorname{coeff}_{x_1^2}=0,\qquad
+  \operatorname{coeff}_{x_2^2}=0,\qquad
+  \operatorname{coeff}_{x_1^2}\pm \operatorname{coeff}_{x_2^2}=0
+\]
+already has the corresponding canonical plane expansion. The mixed-affine plane
+file now wraps those coefficient lemmas into generic relation theorems, so once
+normalization produces homogeneous quadratics in one of those coefficient
+orbits, the existing rank-$13$, rank-$14$, or rank-$15$ plane certificates
+apply directly.
 So the remaining obstacle is no longer a missing mixed-affine representative
-calculation. It is the written and formal normalization statement showing that
-every constant-containing $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor
-reduces to one of these already-formalized plane types, together with the exact
-relation data needed to invoke the transport theorems.
+calculation. The annihilator normalization itself is now formalized as a direct
+case split on the coefficients \(a,b,c\). The remaining obstacle is the written
+and formal extraction statement showing that every constant-containing
+$\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
+already-formalized plane types, together with the exact relation data needed to
+invoke the transport theorems.
 
 \medskip
 \noindent

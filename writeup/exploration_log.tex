@@ -576,9 +576,10 @@ the planned Lean lemmas are exactly the scalar choices used in the paper proof:
   \]
   to kill the $x_1^2$ term and reduce to the pure-cross orbit.
 \end{itemize}
-This is the last purely algebraic piece still missing before the mixed-affine
-classification can be stated as a direct case split on the annihilator
-coefficients.
+This algebra is no longer only a blueprint item: the same file now packages it
+as the Lean theorem
+\texttt{mixedAffineAnnihilator\_normal\_form\_cases}, giving a direct case split
+on the annihilator coefficients.
 
 \section*{Additional Recorded Experiments}
 The checked-in Julia script now also records:
@@ -861,12 +862,30 @@ diagonal annihilator case no longer needs a separate ad hoc surjectivity
 argument. Once the normalization reaches \(x_1^2-x_2^2\), Lean can now close
 that branch by a fixed transport step.
 
+This branch now has one more formalized bridge layer. In
+\texttt{QuadraticCoordinateForm.lean}, every homogeneous quadratic with one of
+the canonical coefficient constraints
+\[
+  \operatorname{coeff}_{x_1x_2}=0,\qquad
+  \operatorname{coeff}_{x_1^2}=0,\qquad
+  \operatorname{coeff}_{x_2^2}=0,\qquad
+  \operatorname{coeff}_{x_1^2}\pm \operatorname{coeff}_{x_2^2}=0
+\]
+is rewritten into the corresponding canonical plane basis. Then
+\texttt{RepresentativeMixedAffinePlane.lean} turns those coefficient
+decompositions into generic residual-zero wrappers for the rank-$13$,
+rank-$14$, and rank-$15$ mixed-affine plane theorems. So the remaining
+mixed-affine gap is now purely the extraction step: produce the normalized
+homogeneous quadratics and prove which coefficient constraint they satisfy.
+
 \section*{Open Subgoals}
 \begin{itemize}
-\item Use the new file \texttt{MixedAffineNormalization.lean} to finish the
-constant-containing $\dim = 2$ classification lemma, reducing a general
+\item Use the new theorem
+\texttt{mixedAffineAnnihilator\_normal\_form\_cases} to finish the
+constant-containing $\dim = 2$ classification lemma, reducing the extracted
 annihilator $a x_1^2 + b x_1x_2 + c x_2^2$ to one of the already-formalized
-rank-$13$, rank-$14$, or rank-$15$ mixed-affine plane types.
+rank-$13$, rank-$14$, or rank-$15$ mixed-affine plane types, then feed the
+result into the new coefficient-level plane wrappers.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this

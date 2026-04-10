@@ -164,6 +164,69 @@ theorem affineHom_x1ShearScale_mixedAffineAnnihilator_to_diffsq
   exact affineHom_x1Scale_mixedAffineAnnihilator_to_diffsq
     (a - b ^ 2 / (4 * c)) c hpos
 
+theorem mixedAffineAnnihilator_normal_form_cases
+    (a b c : ℝ) :
+    (c = 0 ∧ b = 0 ∧
+      mixedAffineAnnihilator a b c = mixedAffineAnnihilator a 0 0) ∨
+    (c = 0 ∧ b ≠ 0 ∧
+      affineHom (x1ShearMatrix (-(a / b))) 0 (mixedAffineAnnihilator a b c) =
+        mixedAffineAnnihilator 0 b 0) ∨
+    (c ≠ 0 ∧
+      let d := a - b ^ 2 / (4 * c)
+      (d = 0 ∧
+        affineHom (x1ShearMatrix (-(b / (2 * c)))) 0 (mixedAffineAnnihilator a b c) =
+          mixedAffineAnnihilator 0 0 c) ∨
+      (0 < d / c ∧
+        affineHom (x1ScaleMatrix (Real.sqrt (d / c))) 0
+          (affineHom (x1ShearMatrix (-(b / (2 * c)))) 0 (mixedAffineAnnihilator a b c)) =
+            mixedAffineAnnihilator d 0 d) ∨
+      (0 < (-d) / c ∧
+        affineHom (x1ScaleMatrix (Real.sqrt ((-d) / c))) 0
+          (affineHom (x1ShearMatrix (-(b / (2 * c)))) 0 (mixedAffineAnnihilator a b c)) =
+            mixedAffineAnnihilator d 0 (-d))) := by
+  by_cases hc : c = 0
+  · by_cases hb : b = 0
+    · left
+      constructor
+      · exact hc
+      constructor
+      · exact hb
+      · simp [mixedAffineAnnihilator, hc, hb]
+    · right
+      left
+      constructor
+      · exact hc
+      constructor
+      · exact hb
+      · simpa [hc] using affineHom_x1Shear_mixedAffineAnnihilator_to_cross a b hb
+  · right
+    right
+    constructor
+    · exact hc
+    let d : ℝ := a - b ^ 2 / (4 * c)
+    by_cases hd : d = 0
+    · left
+      constructor
+      · exact hd
+      · simpa [d, hd] using affineHom_x1Shear_mixedAffineAnnihilator_cancel_cross a b c hc
+    · have hdc0 : d / c ≠ 0 := by
+        exact div_ne_zero hd hc
+      rcases lt_or_gt_of_ne hdc0 with hneg | hpos
+      · right
+        right
+        have hpos' : 0 < (-d) / c := by
+          have hneg' : 0 < -(d / c) := by
+            linarith
+          simpa [neg_div] using hneg'
+        constructor
+        · exact hpos'
+        · simpa [d] using affineHom_x1ShearScale_mixedAffineAnnihilator_to_diffsq a b c hc hpos'
+      · right
+        left
+        constructor
+        · exact hpos
+        · simpa [d] using affineHom_x1ShearScale_mixedAffineAnnihilator_to_sumsq a b c hc hpos
+
 /-- Polynomial equivalence induced by the `x₁`-shear preserving `x₀`. -/
 def x1ShearEquiv (t : ℝ) : Poly ≃ₐ[ℝ] Poly :=
   affineEquiv (x1ShearMatrix t) (x1ShearInvMatrix t) 0 0

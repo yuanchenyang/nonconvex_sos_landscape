@@ -215,6 +215,143 @@ theorem quadratic_eq_quadForm
           (MvPolynomial.coeff m02 q) := by
             simp [quadForm, quadSupp, add_left_comm, add_comm]
 
+theorem homogeneousQuadratic_eq
+    {q : Poly} (hq : IsQuadratic q)
+    (h00 : MvPolynomial.coeff m00 q = 0)
+    (h10 : MvPolynomial.coeff m10 q = 0)
+    (h01 : MvPolynomial.coeff m01 q = 0) :
+    q =
+      MvPolynomial.coeff m20 q • (x0 ^ 2 : Poly) +
+        MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m02 q • (x1 ^ 2 : Poly) := by
+  have hx0sq : (x0 ^ 2 : Poly) = MvPolynomial.monomial m20 (1 : ℝ) := by
+    simp [x0, m20, MvPolynomial.monomial_eq]
+  have hx0x1 : (x0 * x1 : Poly) = MvPolynomial.monomial m11 (1 : ℝ) := by
+    simp [x0, x1, m11, MvPolynomial.monomial_eq]
+  have hx1sq : (x1 ^ 2 : Poly) = MvPolynomial.monomial m02 (1 : ℝ) := by
+    simp [x1, m02, MvPolynomial.monomial_eq]
+  have hs20 :
+      MvPolynomial.coeff m20 q • (x0 ^ 2 : Poly) =
+        MvPolynomial.monomial m20 (MvPolynomial.coeff m20 q) := by
+    rw [hx0sq, MvPolynomial.smul_eq_C_mul, MvPolynomial.C_mul_monomial]
+    simp
+  have hs11 :
+      MvPolynomial.coeff m11 q • (x0 * x1 : Poly) =
+        MvPolynomial.monomial m11 (MvPolynomial.coeff m11 q) := by
+    rw [hx0x1, MvPolynomial.smul_eq_C_mul, MvPolynomial.C_mul_monomial]
+    simp
+  have hs02 :
+      MvPolynomial.coeff m02 q • (x1 ^ 2 : Poly) =
+        MvPolynomial.monomial m02 (MvPolynomial.coeff m02 q) := by
+    rw [hx1sq, MvPolynomial.smul_eq_C_mul, MvPolynomial.C_mul_monomial]
+    simp
+  calc
+    q = quadForm
+          (MvPolynomial.coeff m00 q)
+          (MvPolynomial.coeff m10 q)
+          (MvPolynomial.coeff m01 q)
+          (MvPolynomial.coeff m20 q)
+          (MvPolynomial.coeff m11 q)
+          (MvPolynomial.coeff m02 q) := quadratic_eq_quadForm hq
+    _ =
+        MvPolynomial.coeff m20 q • (x0 ^ 2 : Poly) +
+          MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+            MvPolynomial.coeff m02 q • (x1 ^ 2 : Poly) := by
+              rw [quadForm]
+              rw [h00, h10, h01]
+              rw [← hs20, ← hs11, ← hs02]
+              simp
+
+theorem homogeneousQuadratic_eq_x0x1_x1sq_of_coeff_m20_zero
+    {q : Poly} (hq : IsQuadratic q)
+    (h00 : MvPolynomial.coeff m00 q = 0)
+    (h10 : MvPolynomial.coeff m10 q = 0)
+    (h01 : MvPolynomial.coeff m01 q = 0)
+    (h20 : MvPolynomial.coeff m20 q = 0) :
+    q =
+      MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+        MvPolynomial.coeff m02 q • (x1 ^ 2 : Poly) := by
+  have hbase := homogeneousQuadratic_eq hq h00 h10 h01
+  simpa [h20, add_assoc] using hbase
+
+theorem homogeneousQuadratic_eq_x0sq_x0x1_of_coeff_m02_zero
+    {q : Poly} (hq : IsQuadratic q)
+    (h00 : MvPolynomial.coeff m00 q = 0)
+    (h10 : MvPolynomial.coeff m10 q = 0)
+    (h01 : MvPolynomial.coeff m01 q = 0)
+    (h02 : MvPolynomial.coeff m02 q = 0) :
+    q =
+      MvPolynomial.coeff m20 q • (x0 ^ 2 : Poly) +
+        MvPolynomial.coeff m11 q • (x0 * x1 : Poly) := by
+  have hbase := homogeneousQuadratic_eq hq h00 h10 h01
+  simpa [h02, add_assoc] using hbase
+
+theorem homogeneousQuadratic_eq_x0sq_x1sq_of_coeff_m11_zero
+    {q : Poly} (hq : IsQuadratic q)
+    (h00 : MvPolynomial.coeff m00 q = 0)
+    (h10 : MvPolynomial.coeff m10 q = 0)
+    (h01 : MvPolynomial.coeff m01 q = 0)
+    (h11 : MvPolynomial.coeff m11 q = 0) :
+    q =
+      MvPolynomial.coeff m20 q • (x0 ^ 2 : Poly) +
+        MvPolynomial.coeff m02 q • (x1 ^ 2 : Poly) := by
+  have hbase := homogeneousQuadratic_eq hq h00 h10 h01
+  simpa [h11, add_assoc] using hbase
+
+theorem homogeneousQuadratic_eq_x0x1_diffsq_of_diag_sum_zero
+    {q : Poly} (hq : IsQuadratic q)
+    (h00 : MvPolynomial.coeff m00 q = 0)
+    (h10 : MvPolynomial.coeff m10 q = 0)
+    (h01 : MvPolynomial.coeff m01 q = 0)
+    (hdiag : MvPolynomial.coeff m20 q + MvPolynomial.coeff m02 q = 0) :
+    q =
+      MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+        MvPolynomial.coeff m20 q • (x0 ^ 2 - x1 ^ 2 : Poly) := by
+  have h02 : MvPolynomial.coeff m02 q = -MvPolynomial.coeff m20 q := by
+    linarith
+  have hbase :
+      q =
+        MvPolynomial.coeff m20 q • (x0 ^ 2 : Poly) +
+          MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+            (-MvPolynomial.coeff m20 q) • (x1 ^ 2 : Poly) := by
+    simpa [h02] using homogeneousQuadratic_eq hq h00 h10 h01
+  calc
+    q =
+        MvPolynomial.coeff m20 q • (x0 ^ 2 : Poly) +
+          MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+            (-MvPolynomial.coeff m20 q) • (x1 ^ 2 : Poly) := hbase
+    _ =
+        MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m20 q • (x0 ^ 2 - x1 ^ 2 : Poly) := by
+            simp [sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
+
+theorem homogeneousQuadratic_eq_x0x1_sumsq_of_diag_diff_zero
+    {q : Poly} (hq : IsQuadratic q)
+    (h00 : MvPolynomial.coeff m00 q = 0)
+    (h10 : MvPolynomial.coeff m10 q = 0)
+    (h01 : MvPolynomial.coeff m01 q = 0)
+    (hdiag : MvPolynomial.coeff m20 q - MvPolynomial.coeff m02 q = 0) :
+    q =
+      MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+        MvPolynomial.coeff m20 q • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+  have h02 : MvPolynomial.coeff m02 q = MvPolynomial.coeff m20 q := by
+    linarith
+  have hbase :
+      q =
+        MvPolynomial.coeff m20 q • (x0 ^ 2 : Poly) +
+          MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+            MvPolynomial.coeff m20 q • (x1 ^ 2 : Poly) := by
+    simpa [h02] using homogeneousQuadratic_eq hq h00 h10 h01
+  calc
+    q =
+        MvPolynomial.coeff m20 q • (x0 ^ 2 : Poly) +
+          MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+            MvPolynomial.coeff m20 q • (x1 ^ 2 : Poly) := hbase
+    _ =
+        MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m20 q • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+            simp [smul_add, add_assoc, add_left_comm, add_comm]
+
 /-- Translation fixing `x₀` and sending `x₁` to `x₁ + t`. -/
 def x1TranslateVec (t : ℝ) : Fin 2 → ℝ := ![0, t]
 

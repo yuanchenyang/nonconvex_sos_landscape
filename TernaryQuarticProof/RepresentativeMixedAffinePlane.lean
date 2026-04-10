@@ -1,6 +1,7 @@
 import TernaryQuarticProof.Certificate
 import TernaryQuarticProof.AffineSocpTransform
 import TernaryQuarticProof.RepresentativeMixedAffine
+import TernaryQuarticProof.QuadraticCoordinateForm
 
 set_option autoImplicit false
 set_option warningAsError true
@@ -3012,5 +3013,277 @@ theorem residual_eq_zero_of_equiv_relations_const_x0Plane_det
     exact residual_eq_zero_of_relations_const_x0Plane_det
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h2 h3 h22 h33 h23 hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+theorem residual_eq_zero_of_relations_const_x0_homQuadratics_coeff_m11_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq2_11 : MvPolynomial.coeff m11 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hq3_11 : MvPolynomial.coeff m11 q3 = 0)
+    (hdet :
+      MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
+        MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have h2' :
+      ∑ i : Fin 4, c2 i • u i =
+        MvPolynomial.coeff m20 q2 • (x0 ^ 2 : Poly) +
+          MvPolynomial.coeff m02 q2 • (x1 ^ 2 : Poly) := by
+    calc
+      ∑ i : Fin 4, c2 i • u i = q2 := h2
+      _ =
+          MvPolynomial.coeff m20 q2 • (x0 ^ 2 : Poly) +
+            MvPolynomial.coeff m02 q2 • (x1 ^ 2 : Poly) := by
+              simpa using
+                homogeneousQuadratic_eq_x0sq_x1sq_of_coeff_m11_zero
+                  hq2 hq2_00 hq2_10 hq2_01 hq2_11
+  have h3' :
+      ∑ i : Fin 4, c3 i • u i =
+        MvPolynomial.coeff m20 q3 • (x0 ^ 2 : Poly) +
+          MvPolynomial.coeff m02 q3 • (x1 ^ 2 : Poly) := by
+    calc
+      ∑ i : Fin 4, c3 i • u i = q3 := h3
+      _ =
+          MvPolynomial.coeff m20 q3 • (x0 ^ 2 : Poly) +
+            MvPolynomial.coeff m02 q3 • (x1 ^ 2 : Poly) := by
+              simpa using
+                homogeneousQuadratic_eq_x0sq_x1sq_of_coeff_m11_zero
+                  hq3 hq3_00 hq3_10 hq3_01 hq3_11
+  exact residual_eq_zero_of_relations_const_x0sq_x1sqPlane
+    (B := B) (u := u) hu h0 h2' h3' hdet hp hsocp
+
+theorem residual_eq_zero_of_relations_const_x0_homQuadratics_diag_diff_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq2_diag : MvPolynomial.coeff m20 q2 - MvPolynomial.coeff m02 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hq3_diag : MvPolynomial.coeff m20 q3 - MvPolynomial.coeff m02 q3 = 0)
+    (hdet :
+      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 -
+        MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have h2' :
+      ∑ i : Fin 4, c2 i • u i =
+        MvPolynomial.coeff m11 q2 • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m20 q2 • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+    calc
+      ∑ i : Fin 4, c2 i • u i = q2 := h2
+      _ =
+          MvPolynomial.coeff m11 q2 • (x0 * x1 : Poly) +
+            MvPolynomial.coeff m20 q2 • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+              simpa using
+                homogeneousQuadratic_eq_x0x1_sumsq_of_diag_diff_zero
+                  hq2 hq2_00 hq2_10 hq2_01 hq2_diag
+  have h3' :
+      ∑ i : Fin 4, c3 i • u i =
+        MvPolynomial.coeff m11 q3 • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m20 q3 • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+    calc
+      ∑ i : Fin 4, c3 i • u i = q3 := h3
+      _ =
+          MvPolynomial.coeff m11 q3 • (x0 * x1 : Poly) +
+            MvPolynomial.coeff m20 q3 • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+              simpa using
+                homogeneousQuadratic_eq_x0x1_sumsq_of_diag_diff_zero
+                  hq3 hq3_00 hq3_10 hq3_01 hq3_diag
+  exact residual_eq_zero_of_relations_const_x0x1_sumsqPlane
+    (B := B) (u := u) hu h0 h2' h3' hdet hp hsocp
+
+theorem residual_eq_zero_of_relations_const_x0_homQuadratics_diag_sum_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq2_diag : MvPolynomial.coeff m20 q2 + MvPolynomial.coeff m02 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hq3_diag : MvPolynomial.coeff m20 q3 + MvPolynomial.coeff m02 q3 = 0)
+    (hdet :
+      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 -
+        MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have h2' :
+      ∑ i : Fin 4, c2 i • u i =
+        MvPolynomial.coeff m11 q2 • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m20 q2 • (x0 ^ 2 - x1 ^ 2 : Poly) := by
+    calc
+      ∑ i : Fin 4, c2 i • u i = q2 := h2
+      _ =
+          MvPolynomial.coeff m11 q2 • (x0 * x1 : Poly) +
+            MvPolynomial.coeff m20 q2 • (x0 ^ 2 - x1 ^ 2 : Poly) := by
+              simpa using
+                homogeneousQuadratic_eq_x0x1_diffsq_of_diag_sum_zero
+                  hq2 hq2_00 hq2_10 hq2_01 hq2_diag
+  have h3' :
+      ∑ i : Fin 4, c3 i • u i =
+        MvPolynomial.coeff m11 q3 • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m20 q3 • (x0 ^ 2 - x1 ^ 2 : Poly) := by
+    calc
+      ∑ i : Fin 4, c3 i • u i = q3 := h3
+      _ =
+          MvPolynomial.coeff m11 q3 • (x0 * x1 : Poly) +
+            MvPolynomial.coeff m20 q3 • (x0 ^ 2 - x1 ^ 2 : Poly) := by
+              simpa using
+                homogeneousQuadratic_eq_x0x1_diffsq_of_diag_sum_zero
+                  hq3 hq3_00 hq3_10 hq3_01 hq3_diag
+  exact residual_eq_zero_of_relations_const_x0x1_diffsqPlane
+    (B := B) (u := u) hu h0 h2' h3' hdet hp hsocp
+
+theorem residual_eq_zero_of_relations_const_x0_homQuadratics_coeff_m20_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq2_20 : MvPolynomial.coeff m20 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hq3_20 : MvPolynomial.coeff m20 q3 = 0)
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hdet :
+      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+        MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have h2' :
+      ∑ i : Fin 4, c2 i • u i =
+        MvPolynomial.coeff m11 q2 • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m02 q2 • (x1 ^ 2 : Poly) := by
+    calc
+      ∑ i : Fin 4, c2 i • u i = q2 := h2
+      _ =
+          MvPolynomial.coeff m11 q2 • (x0 * x1 : Poly) +
+            MvPolynomial.coeff m02 q2 • (x1 ^ 2 : Poly) := by
+              simpa using
+                homogeneousQuadratic_eq_x0x1_x1sq_of_coeff_m20_zero
+                  hq2 hq2_00 hq2_10 hq2_01 hq2_20
+  have h3' :
+      ∑ i : Fin 4, c3 i • u i =
+        MvPolynomial.coeff m11 q3 • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m02 q3 • (x1 ^ 2 : Poly) := by
+    calc
+      ∑ i : Fin 4, c3 i • u i = q3 := h3
+      _ =
+          MvPolynomial.coeff m11 q3 • (x0 * x1 : Poly) +
+            MvPolynomial.coeff m02 q3 • (x1 ^ 2 : Poly) := by
+              simpa using
+                homogeneousQuadratic_eq_x0x1_x1sq_of_coeff_m20_zero
+                  hq3 hq3_00 hq3_10 hq3_01 hq3_20
+  exact residual_eq_zero_of_relations_const_x0_x1Plane_det
+    (B := B) (u := u) hu h0 h1 h2' h3' h22 h33 h23 hdet hp hsocp
+
+theorem residual_eq_zero_of_relations_const_x0_homQuadratics_coeff_m02_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq2_02 : MvPolynomial.coeff m02 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hq3_02 : MvPolynomial.coeff m02 q3 = 0)
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hdet :
+      MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+        MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have h2' :
+      ∑ i : Fin 4, c2 i • u i =
+        MvPolynomial.coeff m20 q2 • (x0 ^ 2 : Poly) +
+          MvPolynomial.coeff m11 q2 • (x0 * x1 : Poly) := by
+    calc
+      ∑ i : Fin 4, c2 i • u i = q2 := h2
+      _ =
+          MvPolynomial.coeff m20 q2 • (x0 ^ 2 : Poly) +
+            MvPolynomial.coeff m11 q2 • (x0 * x1 : Poly) := by
+              simpa using
+                homogeneousQuadratic_eq_x0sq_x0x1_of_coeff_m02_zero
+                  hq2 hq2_00 hq2_10 hq2_01 hq2_02
+  have h3' :
+      ∑ i : Fin 4, c3 i • u i =
+        MvPolynomial.coeff m20 q3 • (x0 ^ 2 : Poly) +
+          MvPolynomial.coeff m11 q3 • (x0 * x1 : Poly) := by
+    calc
+      ∑ i : Fin 4, c3 i • u i = q3 := h3
+      _ =
+          MvPolynomial.coeff m20 q3 • (x0 ^ 2 : Poly) +
+            MvPolynomial.coeff m11 q3 • (x0 * x1 : Poly) := by
+              simpa using
+                homogeneousQuadratic_eq_x0sq_x0x1_of_coeff_m02_zero
+                  hq3 hq3_00 hq3_10 hq3_01 hq3_02
+  exact residual_eq_zero_of_relations_const_x0Plane_det
+    (B := B) (u := u) hu h0 h2' h3' h22 h33 h23 hdet hp hsocp
 
 end TernaryQuartic
