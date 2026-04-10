@@ -927,17 +927,34 @@ which constructs the canonical annihilator directly from the \(2\times 3\)
 homogeneous coefficient matrix of \((q_2,q_3)\) by coefficient cross-products
 and then dispatches automatically to the cross, discriminant-zero, sum-square,
 split-diagonal, or \(\operatorname{coeff}_{x_2^2}=0\) branch as appropriate.
-So the remaining gap is now upstream extraction: produce from an arbitrary
-constant-containing factor the nontrivial homogeneous quadratic plane and the
-linear relation needed by that theorem.
+The next focused probe tested whether the unresolved branch generically already
+contains such a full homogeneous quadratic plane. The new script
+\texttt{julia/mixed\_affine\_tail\_dim\_2026\_04\_10.jl} perturbs the canonical
+rank-$13$, rank-$14$, and rank-$15$ mixed-affine homogeneous bases by random
+affine tails while keeping \(\dim(W \cap \mathbb{R}[x]_{\le 1})=2\). In all
+$20/20$ samples for each base, the result still had affine dimension $2$ but
+homogeneous-quadratic intersection dimension only $1$:
+\begin{verbatim}
+mixed_affine_tail_dim_probe = (case = rank14_base, samples = 20, all values = (2,1))
+mixed_affine_tail_dim_probe = (case = rank13_base, samples = 20, all values = (2,1))
+mixed_affine_tail_dim_probe = (case = rank15_base, samples = 20, all values = (2,1))
+\end{verbatim}
+So the remaining gap is now more specific. The generic mixed-affine branch
+should be attacked as ``one homogeneous line plus one tailed quadratic,'' not
+as ``a full homogeneous quadratic plane already sitting inside \(W\).'' To
+support that bridge, \texttt{QuadraticCoordinateForm.lean} was extended in this
+round with the missing explicit formulas for the constant and \(x_1\)
+coefficients under the translation \(x_2 \mapsto x_2+t\).
 
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
 coefficient side: extract a nontrivial homogeneous quadratic plane together
-with the linear relation \(x_1\)-direction data. The canonical annihilator
-coefficients are now computed internally from that plane, so this step no
-longer has to hand-feed \((a,b,c)\) into the mixed-affine wrappers.
+\emph{or, more likely generically,} extract one homogeneous quadratic line plus
+one tailed quadratic together with the linear relation \(x_1\)-direction data.
+The canonical annihilator coefficients are now computed internally from the
+homogeneous plane when available, so this step no longer has to hand-feed
+\((a,b,c)\) into the mixed-affine wrappers.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this

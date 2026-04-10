@@ -873,12 +873,35 @@ Given explicit relations to \(1\), \(x_1\), and two homogeneous quadratics
 and then dispatches automatically to the rank-$13$, rank-$14$, or rank-$15$
 mixed-affine plane theorem according to whether \(a\), \(b\), and
 \(c-b^2/a\) vanish or change sign.
+However, a new coefficient-only Julia probe now shows that this is still not
+the generic shape of the constant-containing mixed-affine branch before the
+final normalization step. The new script
+\texttt{julia/mixed\_affine\_tail\_dim\_2026\_04\_10.jl} perturbs each canonical
+homogeneous pair by random affine tails and finds, in $20/20$ samples for each
+of the rank-$13$, rank-$14$, and rank-$15$ bases, that
+\[
+  \dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2
+  \qquad\text{but}\qquad
+  \dim(W \cap \mathbb{R}[x_1,x_2]^{\mathrm{hom}}_2) = 1.
+\]
+So the next bridge should not expect a full $2$-dimensional homogeneous
+quadratic plane to be present already. The generic target is instead:
+\[
+  1,\ x_1,\ h,\ q \in W,
+\]
+where \(h\) is homogeneous and \(q\) has one remaining affine tail. The
+translation formulas now formalized in
+\texttt{QuadraticCoordinateForm.lean}, including the new explicit
+\(\operatorname{coeff}_{1}\) and \(\operatorname{coeff}_{x_1}\) identities under
+\(x_2 \mapsto x_2+t\), are exactly the API needed to turn that one-line-plus-tail
+configuration into the homogeneous-plane theorem above when the tail lies in the
+right orbit.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
 already-formalized plane types and supplies a nontrivial homogeneous quadratic
-plane together with the linear relation needed to invoke this canonical
-cross-product theorem.
+line together with the extra affine-tail relation needed to invoke this
+canonical cross-product theorem.
 
 \medskip
 \noindent
