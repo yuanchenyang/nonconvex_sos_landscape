@@ -1371,6 +1371,26 @@ So even the diagonal determinant-zero extracted-line branch is now expressed in
 terms of the natural original pair data plus an internal Lean case split,
 rather than another external subclassification.
 
+The next Lean round showed that the same cleanup applies to the other two
+determinant-zero extracted-line slices. I added
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_crossTail\_origDetZero\_cases}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_x1sqTail\_origDetZero\_cases},
+again with equivariant wrappers. In both cases Lean now splits on whether the
+remaining \(x_1^2\)-tail coefficient vanishes:
+\begin{itemize}
+\item if it is nonzero, the branch dispatches to the already-formalized cross
+or \(x_2^2\)-type determinant-zero theorem;
+\item if it vanishes, Lean subtracts the corresponding multiple of the
+extracted homogeneous line and reduces the coordinate to an affine tail, so the
+branch falls back to
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_affineTail}.
+\end{itemize}
+So the determinant-zero mixed-affine extracted-line layer is now uniform across
+all three coefficient types: the external classification only has to identify
+the extracted-line type and the original determinant-zero relation, while the
+remaining affine-vs-quadratic tail split is handled internally in Lean.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual

@@ -1403,6 +1403,23 @@ and hence to the already-solved \(\dim(W \cap \mathrm{Aff}_1)=3\) case. So the
 classification step now only has to identify the diagonal extracted-line type
 and the original determinant-zero relation; the secondary diagonal determinant
 is handled internally by a Lean case split.
+The same affine-tail fallback is now formalized for the other two
+determinant-zero extracted-line slices as well. The new theorems
+\[
+  \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_crossTail\_origDetZero\_cases}
+\]
+and
+\[
+  \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_x1sqTail\_origDetZero\_cases},
+\]
+again with equivariant wrappers, no longer require a separate nonvanishing
+\(x_1^2\)-tail coefficient. If that coefficient is present, Lean invokes the
+existing nonsurjective cross or \(x_2^2\)-type theorem. If it vanishes, Lean
+subtracts the corresponding multiple of the extracted homogeneous line and
+falls back to the affine-tail theorem. So all three determinant-zero extracted
+line types are now handled from the same natural data: the extracted-line
+coefficient pattern, the original determinant-zero relation, and the nonzero
+linear tail.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
