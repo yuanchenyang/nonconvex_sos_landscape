@@ -896,6 +896,13 @@ shears a pure-cross dual relation to the already-solved
 \texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_homQuadratics\_annihilator\_disc\_zero}
 shears the discriminant-zero dual relation to the already-solved
 \(\operatorname{coeff}_{x_1^2}=0\) rank-$14$ plane.
+The same file now also contains the diagonal scaling wrappers
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_homQuadratics\_diagAnnihilator\_sum}
+and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_homQuadratics\_diagAnnihilator\_diff},
+so once the dual relation has already been cross-killed, the positive and
+negative diagonal cases reduce directly to the sum-square and split-diagonal
+plane theorems by one explicit scaling step.
 
 \section*{Open Subgoals}
 \begin{itemize}
@@ -903,7 +910,7 @@ shears the discriminant-zero dual relation to the already-solved
 coefficient side: extract the annihilator coefficients
 \((a,b,c)\) for the homogeneous quadratic plane, prove which dual normal-form
 case they satisfy after shear and scale, and feed that data into the existing
-cross-annihilator, discriminant-zero, or canonical-plane wrappers.
+cross-annihilator, discriminant-zero, diagonal, or canonical-plane wrappers.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this

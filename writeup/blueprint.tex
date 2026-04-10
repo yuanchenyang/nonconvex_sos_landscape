@@ -817,6 +817,14 @@ transport wrappers
 \texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_homQuadratics\_crossAnnihilator}
 and
 \texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_homQuadratics\_annihilator\_disc\_zero}.
+The same file now also handles the purely diagonal dual relation
+\(a\,\operatorname{coeff}_{x_1^2} + d\,\operatorname{coeff}_{x_2^2}=0\) by a
+single \(x_2\)-scaling, via the wrappers
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_homQuadratics\_diagAnnihilator\_sum}
+and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_homQuadratics\_diagAnnihilator\_diff},
+which reduce directly to the already-formalized sum-square and split-diagonal
+plane theorems.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
