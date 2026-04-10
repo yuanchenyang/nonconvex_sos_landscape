@@ -1326,6 +1326,28 @@ remaining mixed-affine extraction step now only has to identify the coefficient
 type of \(H(q_2,q_3)\) and the relevant determinant data, not the leftover
 tail cancellations themselves.
 
+The next cleanup removed one more artificial conversion from that same branch.
+I added the coefficient identities
+\texttt{det\_m11\_m02\_mixedAffineTailHomLine} and
+\texttt{det\_m02\_m20\_mixedAffineTailHomLine} in
+\texttt{QuadraticCoordinateForm.lean}. They express the extracted-line
+determinants as the original tailed-pair determinants multiplied by the tail
+coefficient \(\operatorname{coeff}_{x_2}(q_3)\). With those in place,
+\texttt{RepresentativeMixedAffinePlane.lean} now proves the stronger wrappers
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_crossTail\_origDetZero},
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_x1sqTail\_origDetZero},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_diagX1sqTail\_origDetZero},
+again with equivariant wrappers. So the determinant-zero mixed-affine
+classification no longer has to hand-convert the original pair determinant
+\[
+  \operatorname{coeff}_{x_1x_2}(q_2)\operatorname{coeff}_{x_2^2}(q_3)
+  -
+  \operatorname{coeff}_{x_2^2}(q_2)\operatorname{coeff}_{x_1x_2}(q_3)=0
+\]
+into the corresponding determinant identity for the extracted line
+\(H(q_2,q_3)\); Lean now performs that conversion internally.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual

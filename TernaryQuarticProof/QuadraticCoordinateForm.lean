@@ -398,6 +398,26 @@ theorem coeff_m02_mixedAffineTailHomLine
         MvPolynomial.coeff m01 q2 * MvPolynomial.coeff m02 q3 := by
   simp [mixedAffineTailHomLine, sub_eq_add_neg]
 
+theorem det_m11_m02_mixedAffineTailHomLine
+    {q2 q3 : Poly} :
+    MvPolynomial.coeff m11 (mixedAffineTailHomLine q2 q3) * MvPolynomial.coeff m02 q3 -
+      MvPolynomial.coeff m02 (mixedAffineTailHomLine q2 q3) * MvPolynomial.coeff m11 q3 =
+        MvPolynomial.coeff m01 q3 *
+          (MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+            MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3) := by
+  rw [coeff_m11_mixedAffineTailHomLine, coeff_m02_mixedAffineTailHomLine]
+  ring
+
+theorem det_m02_m20_mixedAffineTailHomLine
+    {q2 q3 : Poly} :
+    MvPolynomial.coeff m02 (mixedAffineTailHomLine q2 q3) * MvPolynomial.coeff m20 q3 -
+      MvPolynomial.coeff m20 (mixedAffineTailHomLine q2 q3) * MvPolynomial.coeff m02 q3 =
+        MvPolynomial.coeff m01 q3 *
+          (MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3 -
+            MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3) := by
+  rw [coeff_m02_mixedAffineTailHomLine, coeff_m20_mixedAffineTailHomLine]
+  ring
+
 theorem isQuadratic_mixedAffineTailHomLine
     {q2 q3 : Poly} (hq2 : IsQuadratic q2) (hq3 : IsQuadratic q3) :
     IsQuadratic (mixedAffineTailHomLine q2 q3) := by
