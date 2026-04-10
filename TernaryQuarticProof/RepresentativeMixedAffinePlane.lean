@@ -248,6 +248,175 @@ theorem residual_eq_zero_of_equiv_relations_const_x0sq_x1sqPlane
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h2 h3 hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
+/-- Linear change of variables sending `(x₀,x₁)` to `(x₀+x₁,x₀-x₁)`. -/
+private def splitDiagMatrix : Matrix (Fin 2) (Fin 2) ℝ :=
+  !![1, 1; 1, -1]
+
+/-- Inverse of `splitDiagMatrix`. -/
+private def splitDiagInvMatrix : Matrix (Fin 2) (Fin 2) ℝ :=
+  !![(1 / 2 : ℝ), (1 / 2 : ℝ); (1 / 2 : ℝ), (-1 / 2 : ℝ)]
+
+private theorem splitDiag_mul_inv :
+    splitDiagMatrix * splitDiagInvMatrix = 1 := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [splitDiagMatrix, splitDiagInvMatrix, Matrix.mul_apply, Fin.sum_univ_two]
+  all_goals norm_num
+
+private theorem splitDiag_inv_mul :
+    splitDiagInvMatrix * splitDiagMatrix = 1 := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [splitDiagMatrix, splitDiagInvMatrix, Matrix.mul_apply, Fin.sum_univ_two]
+  all_goals norm_num
+
+private def splitDiagEquiv : Poly ≃ₐ[ℝ] Poly :=
+  affineEquiv splitDiagMatrix splitDiagInvMatrix 0 0
+    splitDiag_mul_inv splitDiag_inv_mul (by intro i; simp) (by intro i; simp)
+
+@[simp] private theorem affineHom_splitDiag_x0 :
+    affineHom splitDiagMatrix 0 x0 = x0 + x1 := by
+  simp [x0, x1, affineImage, affineHom_X, splitDiagMatrix, Fin.sum_univ_two]
+
+@[simp] private theorem affineHom_splitDiag_x1 :
+    affineHom splitDiagMatrix 0 x1 = x0 - x1 := by
+  simp [x0, x1, affineImage, affineHom_X, splitDiagMatrix, Fin.sum_univ_two, sub_eq_add_neg]
+
+private theorem affineHom_splitDiag_x0x1 :
+    affineHom splitDiagMatrix 0 (x0 * x1 : Poly) = x0 ^ 2 - x1 ^ 2 := by
+  simp [affineHom_splitDiag_x0, affineHom_splitDiag_x1]
+  ring
+
+private theorem affineHom_splitDiag_sumsq :
+    affineHom splitDiagMatrix 0 (x0 ^ 2 + x1 ^ 2 : Poly) = 2 • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+  simp [affineHom_splitDiag_x0, affineHom_splitDiag_x1]
+  ring
+
+private theorem affineHom_splitDiag_x0x1_sumsq
+    (a b : ℝ) :
+    affineHom splitDiagMatrix 0 (a • (x0 * x1 : Poly) + b • (x0 ^ 2 + x1 ^ 2 : Poly)) =
+      (a + 2 * b) • (x0 ^ 2 : Poly) + (-a + 2 * b) • (x1 ^ 2 : Poly) := by
+  simp [affineHom_splitDiag_x0, affineHom_splitDiag_x1, sub_eq_add_neg, MvPolynomial.smul_eq_C_mul]
+  have htwo : (MvPolynomial.C (2 : ℝ) : Poly) = 2 := by
+    change (MvPolynomial.C (2 : ℝ) : Poly) = MvPolynomial.C 2
+    rfl
+  simp [htwo]
+  ring_nf
+
+@[simp] private theorem splitDiagEquiv_apply_one :
+    splitDiagEquiv (1 : Poly) = 1 := by
+  simp [splitDiagEquiv]
+
+@[simp] private theorem splitDiagEquiv_apply_x0x1_sumsq
+    (a b : ℝ) :
+    splitDiagEquiv (a • (x0 * x1 : Poly) + b • (x0 ^ 2 + x1 ^ 2 : Poly)) =
+      (a + 2 * b) • (x0 ^ 2 : Poly) + (-a + 2 * b) • (x1 ^ 2 : Poly) := by
+  exact affineHom_splitDiag_x0x1_sumsq a b
+
+/-- Any invertible basis of `span(x₀x₁, x₀² + x₁²)` is surjective, via the
+fixed linear equivalence sending this split-diagonal plane to `span(x₀²,x₁²)`. -/
+theorem residual_eq_zero_of_relations_const_x0x1_sumsqPlane
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    {a b c d : ℝ}
+    (h2 : ∑ i : Fin 4, c2 i • u i = a • (x0 * x1 : Poly) + b • (x0 ^ 2 + x1 ^ 2 : Poly))
+    (h3 : ∑ i : Fin 4, c3 i • u i = c • (x0 * x1 : Poly) + d • (x0 ^ 2 + x1 ^ 2 : Poly))
+    (hdet : a * d - b * c ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have hB : IsPositiveDefinite B := (Fact.out : B.toQuadraticMap.PosDef)
+  have h0' : ∑ i : Fin 4, c0 i • mapVec splitDiagEquiv.toAlgHom u i = (1 : Poly) := by
+    calc
+      ∑ i : Fin 4, c0 i • mapVec splitDiagEquiv.toAlgHom u i
+          = splitDiagEquiv (∑ i : Fin 4, c0 i • u i) := by
+              simp [mapVec, map_sum]
+      _ = 1 := by simp [h0]
+  have h2' :
+      ∑ i : Fin 4, c2 i • mapVec splitDiagEquiv.toAlgHom u i =
+        (a + 2 * b) • (x0 ^ 2 : Poly) + (-a + 2 * b) • (x1 ^ 2 : Poly) := by
+    calc
+      ∑ i : Fin 4, c2 i • mapVec splitDiagEquiv.toAlgHom u i
+          = splitDiagEquiv (∑ i : Fin 4, c2 i • u i) := by
+              simp [mapVec, map_sum]
+      _ = splitDiagEquiv (a • (x0 * x1 : Poly) + b • (x0 ^ 2 + x1 ^ 2 : Poly)) := by
+            rw [h2]
+      _ = (a + 2 * b) • (x0 ^ 2 : Poly) + (-a + 2 * b) • (x1 ^ 2 : Poly) := by
+            simpa using splitDiagEquiv_apply_x0x1_sumsq a b
+  have h3' :
+      ∑ i : Fin 4, c3 i • mapVec splitDiagEquiv.toAlgHom u i =
+        (c + 2 * d) • (x0 ^ 2 : Poly) + (-c + 2 * d) • (x1 ^ 2 : Poly) := by
+    calc
+      ∑ i : Fin 4, c3 i • mapVec splitDiagEquiv.toAlgHom u i
+          = splitDiagEquiv (∑ i : Fin 4, c3 i • u i) := by
+              simp [mapVec, map_sum]
+      _ = splitDiagEquiv (c • (x0 * x1 : Poly) + d • (x0 ^ 2 + x1 ^ 2 : Poly)) := by
+            rw [h3]
+      _ = (c + 2 * d) • (x0 ^ 2 : Poly) + (-c + 2 * d) • (x1 ^ 2 : Poly) := by
+            simpa using splitDiagEquiv_apply_x0x1_sumsq c d
+  have hdet' : (a + 2 * b) * (-c + 2 * d) - (-a + 2 * b) * (c + 2 * d) ≠ 0 := by
+    intro h
+    apply hdet
+    nlinarith
+  exact residual_eq_zero_of_equiv_relations_const_x0sq_x1sqPlane
+    (e := splitDiagEquiv)
+    (heQuad := fun {_} hpq =>
+      isQuadratic_affineEquiv splitDiagMatrix splitDiagInvMatrix 0 0
+        splitDiag_mul_inv splitDiag_inv_mul (by intro i; simp) (by intro i; simp) hpq)
+    (heQuadSymm := fun {_} hpq =>
+      isQuadratic_affineEquiv_symm splitDiagMatrix splitDiagInvMatrix 0 0
+        splitDiag_mul_inv splitDiag_inv_mul (by intro i; simp) (by intro i; simp) hpq)
+    (heQuartic := fun {_} hpq =>
+      isQuartic_affineEquiv splitDiagMatrix splitDiagInvMatrix 0 0
+        splitDiag_mul_inv splitDiag_inv_mul (by intro i; simp) (by intro i; simp) hpq)
+    (B := B) (p := p) (u := u)
+    hB hp hu hsocp
+    h0' h2' h3' hdet'
+
+/-- Transport the split-diagonal surjective mixed-affine plane theorem across
+an algebra equivalence. -/
+theorem residual_eq_zero_of_equiv_relations_const_x0x1_sumsqPlane
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = (1 : Poly))
+    {a b c d : ℝ}
+    (h2 :
+      ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i =
+        a • (x0 * x1 : Poly) + b • (x0 ^ 2 + x1 ^ 2 : Poly))
+    (h3 :
+      ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i =
+        c • (x0 * x1 : Poly) + d • (x0 ^ 2 + x1 ^ 2 : Poly))
+    (hdet : a * d - b * c ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_const_x0x1_sumsqPlane
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h2 h3 hdet hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
 /-- Exact surjective plane theorem for the definite mixed-affine model with
 quadratic plane `span(x₀x₁, x₀² - x₁²)`. -/
 theorem quartic_in_image_of_relations_const_x0x1_diffsq

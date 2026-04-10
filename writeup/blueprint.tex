@@ -392,6 +392,44 @@ into the already-formalized representative theorems.
 
 \medskip
 \noindent
+There is one useful refinement of that plan. After the shear step, the
+surjective non-rank-one case naturally appears as a split diagonal annihilator
+\[
+  x_1^2 - x_2^2,
+\]
+whose kernel plane is
+\[
+  \operatorname{span}(x_1x_2,\ x_1^2+x_2^2).
+\]
+This plane is not one of the two canonical surjective models already stated
+above, but it is linearly equivalent to
+\[
+  \operatorname{span}(x_1^2,x_2^2)
+\]
+via the fixed change of variables
+\[
+  (x_1,x_2) \longmapsto (x_1+x_2,\ x_1-x_2).
+\]
+Under that map,
+\[
+  x_1x_2 \longmapsto x_1^2-x_2^2,
+  \qquad
+  x_1^2+x_2^2 \longmapsto 2(x_1^2+x_2^2),
+\]
+so any invertible basis of
+\[
+  \operatorname{span}(x_1x_2,\ x_1^2+x_2^2)
+\]
+transports to an invertible basis of
+\[
+  \operatorname{span}(x_1^2,x_2^2).
+\]
+Therefore the split diagonal case can be discharged by a fixed transport lemma,
+and the remaining mixed-affine normalization can stay inside the explicit
+translation-shear-scaling formulas already formalized.
+
+\medskip
+\noindent
 The current plan for that last connection is to work in explicit quadratic
 coordinates. Every quadratic polynomial can be written uniquely as
 \[

@@ -737,6 +737,27 @@ artifact of the earlier representative-first approach: the remaining obstacle
 is now exactly to extract orthogonal mixed-affine plane data from the constant-
 containing $\dim=2$ branch, not to renormalize it afterward.
 
+The surjective mixed-affine layer is broader now as well. The same file now
+contains a fixed split-diagonal transport lemma for planes of the form
+\[
+  \operatorname{span}(x_1x_2,\ x_1^2+x_2^2).
+\]
+It uses the explicit linear change of variables
+\[
+  (x_1,x_2)\mapsto(x_1+x_2,\ x_1-x_2),
+\]
+under which
+\[
+  x_1x_2 \mapsto x_1^2-x_2^2,
+  \qquad
+  x_1^2+x_2^2 \mapsto 2(x_1^2+x_2^2).
+\]
+So any invertible basis of that split-diagonal plane transports to an
+invertible basis of \(\operatorname{span}(x_1^2,x_2^2)\), and the opposite-sign
+diagonal annihilator case no longer needs a separate ad hoc surjectivity
+argument. Once the normalization reaches \(x_1^2-x_2^2\), Lean can now close
+that branch by a fixed transport step.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Use the new file \texttt{MixedAffineNormalization.lean} to finish the
