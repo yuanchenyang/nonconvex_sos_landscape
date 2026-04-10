@@ -1484,6 +1484,21 @@ So the pure-\(x_0^2\) extracted-line family is not uniformly rank \(13\): the
 generic slice looks surjective, while the special low-affine slice
 \(c=d=0\) still matches the known rank-\(13\) behavior.
 
+The next Lean round internalized the generic side of that picture. In
+\texttt{RepresentativeMixedAffinePlane.lean} I added theorems
+\texttt{residual\_eq\_zero\_of\_const\_x0\_x0sqTail\_m02\_nonzero},
+\texttt{residual\_eq\_zero\_of\_equiv\_const\_x0\_x0sqTail\_m02\_nonzero}, and
+their transport wrappers. They cover exact normalized coordinates
+\((1,x_0,q_2,q_3)\) where \(q_2\) is pure \(x_0^2\) and
+\(\operatorname{coeff}_{x_1^2}(q_3)\neq 0\). Lean now performs the same
+\(x_1\)-translation suggested by the numerical probe, kills the \(x_1\)-tail
+of \(q_3\), subtracts the induced constant and \(x_0\) pieces by explicit
+coordinate relations, and reduces automatically to the existing
+homogeneous-plane theorem. So the pure-\(x_0^2\) determinant-zero branch is no
+longer open generically; the remaining pure-\(x_0^2\) difficulty is now the
+complementary \(\operatorname{coeff}_{x_1^2}(q_3)=0\) slice, which is exactly
+where the low-affine rank-\(13\) behavior lives numerically.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual

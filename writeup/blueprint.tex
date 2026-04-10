@@ -1518,6 +1518,22 @@ determinant-zero outputs:
 \(\operatorname{coeff}_{x_0x_1} H\neq 0\), and the residual pure-\(x_0^2\)
 line.
 
+The next Lean step removed the generic pure-\(x_0^2\) branch from that list.
+In \texttt{RepresentativeMixedAffinePlane.lean}, the new theorems
+\texttt{residual\_eq\_zero\_of\_const\_x0\_x0sqTail\_m02\_nonzero},
+\texttt{residual\_eq\_zero\_of\_equiv\_const\_x0\_x0sqTail\_m02\_nonzero}, and
+their \texttt{eq\_mix\_affineEquiv} wrapper cover exact normalized coordinates
+\((1,x_0,q_2,q_3)\) where \(q_2\) is a pure \(x_0^2\) line and
+\(\operatorname{coeff}_{x_1^2}(q_3)\neq 0\). Lean now performs the common
+\(x_1\)-translation killing the \(x_1\)-tail of \(q_3\), subtracts the
+induced constant and \(x_0\) parts by explicit coordinate relations, and then
+falls through to the already-formalized homogeneous-plane theorem. So the
+pure-\(x_0^2\) determinant-zero branch is no longer open in its generic
+\(\operatorname{coeff}_{x_1^2}(q_3)\neq 0\) case; the genuinely remaining
+pure-\(x_0^2\) work is the complementary slice
+\(\operatorname{coeff}_{x_1^2}(q_3)=0\), which matches the low-affine-looking
+rank-\(13\) behavior seen numerically.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data, especially for the constant-containing mixed-affine
