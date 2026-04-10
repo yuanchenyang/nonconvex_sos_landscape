@@ -1231,6 +1231,29 @@ remainder to \(x_2 + a x_1^2\), and then invokes the already-formalized exact
 nonsurjective determinant-zero mixed-affine slices now admit coefficient-level
 wrappers above the exact normalized relation layer.
 
+The next Lean round finally turned the simplest diagonal determinant-zero slice
+from a numerical expectation into a theorem. In
+\texttt{RepresentativeMixedAffine.lean} I added the exact diagonal theorems
+\texttt{quartic\_in\_image\_of\_relations\_const\_x0\_diagX1sq\_x1PlusX0sq},
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_diagX1sq\_x1PlusX0sq},
+and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_diagX1sq\_x1PlusX0sq}.
+These prove directly that exact relations to
+\[
+  (1,\;x_1,\; d x_1^2 + x_2^2,\; x_2 + a x_1^2), \qquad a \neq 0,
+\]
+already force zero residual. The proof is by direct monomial image generation:
+after the easy degree-\(\le 3\) cases, the quartic monomials are produced in
+the chain \(x_1^4\), \(x_1^3x_2\), \(x_1^2x_2^2\), \(x_1x_2^3\), \(x_2^4\),
+each corrected using only the diagonal homogeneous line and the tailed
+coordinate. I then lifted that exact theorem one level higher in
+\texttt{RepresentativeMixedAffinePlane.lean} via
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_diagX1sqTail} and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_diagX1sqTail},
+which start only from the coefficient conditions on a diagonal homogeneous
+line and a compatible tail. So the diagonal determinant-zero slice is no longer
+just a numerical observation; it is now part of the checked theorem layer.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual

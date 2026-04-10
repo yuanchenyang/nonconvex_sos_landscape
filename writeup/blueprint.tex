@@ -1141,6 +1141,34 @@ what remains to \(x_2 + a x_1^2\), and invokes the already-formalized
 \texttt{RepresentativeMixedAffine.lean}. So both nonsurjective
 determinant-zero mixed-affine slices now have coefficient-level wrappers above
 the exact normalized relation layer.
+The next Lean step then covered the first genuinely diagonal determinant-zero
+family at theorem level, not just numerically. In
+\texttt{RepresentativeMixedAffine.lean} the new exact theorems
+\texttt{quartic\_in\_image\_of\_relations\_const\_x0\_diagX1sq\_x1PlusX0sq},
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_diagX1sq\_x1PlusX0sq},
+and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_diagX1sq\_x1PlusX0sq}
+show directly that exact relations to
+\[
+  (1,\;x_1,\; d x_1^2 + x_2^2,\; x_2 + a x_1^2), \qquad a \neq 0,
+\]
+already force zero residual. The proof is again by explicit image generation:
+the quartic monomials are produced in a short chain
+\(x_1^4 \rightarrow x_1^3x_2 \rightarrow x_1^2x_2^2 \rightarrow x_1x_2^3
+\rightarrow x_2^4\), with the lower-degree monomials supplied by the
+\(x_1\)-relation. On top of that,
+\texttt{RepresentativeMixedAffinePlane.lean} now contains the coefficient-level
+wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_diagX1sqTail} and its
+equivariant version
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_diagX1sqTail}.
+These start only from the coefficient conditions that \(q_2\) is a diagonal
+homogeneous line with nonzero \(x_2^2\)-coefficient and that \(q_3\) has zero
+\(x_1x_2\)- and \(x_2^2\)-coefficients but nonzero \(x_2\)- and
+\(x_1^2\)-coefficients. Lean then rescales internally to the exact diagonal
+model above and dispatches to the new exact theorem. So the diagonal
+determinant-zero slice is no longer only a numerical byproduct of the
+classification; one full theorem-level interface now exists for it too.
 The remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these

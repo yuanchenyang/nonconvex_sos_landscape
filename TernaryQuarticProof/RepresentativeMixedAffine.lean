@@ -653,6 +653,408 @@ theorem residual_eq_zero_of_equiv_relations_const_x0_x1sq_x1PlusX0sq
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 ha hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
+private theorem isQuadratic_x0_mul_x1_early : IsQuadratic (x0 * x1 : Poly) := by
+  calc
+    (x0 * x1).totalDegree ≤ x0.totalDegree + x1.totalDegree := by
+      exact MvPolynomial.totalDegree_mul _ _
+    _ = 2 := by simp [x0, x1]
+
+private theorem monomial_image_of_relations_const_x0_diagX1sq_x1PlusX0sq
+    {u : RankFourVec}
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {d : ℝ}
+    (h2 : ∑ i : Fin 4, c2 i • u i = d • (x0 ^ 2 : Poly) + x1 ^ 2)
+    {a : ℝ}
+    (h3 : ∑ i : Fin 4, c3 i • u i = x1 + a • (x0 ^ 2 : Poly))
+    (ha : a ≠ 0)
+    (s : Fin 2 →₀ ℕ) (r : ℝ)
+    (hdeg : s.sum (fun _ e => e) ≤ 4) :
+    InAdmissibleImage u (MvPolynomial.monomial s r) := by
+  let e0 := s 0
+  let e1 := s 1
+  have hsum : s.sum (fun _ e => e) = s 0 + s 1 := by
+    rw [Finsupp.sum_fintype _ _ (fun _ => rfl), Fin.sum_univ_two]
+  have hs : e0 + e1 ≤ 4 := by
+    simpa [e0, e1, hsum] using hdeg
+  by_cases hsmall : e0 + e1 ≤ 2
+  · simpa [monomial_fin2_eq, e0, e1, one_mul] using
+      (inAdmissibleImage_of_relation_mul_const
+        (u := u)
+        (c := c0) (r := (1 : Poly))
+        (q := (MvPolynomial.C r * x0 ^ e0) * x1 ^ e1)
+        h0
+        (isQuadratic_C_mul_pow_pow r e0 e1 hsmall))
+  · by_cases hdeg3 : e0 + e1 ≤ 3
+    · by_cases hx1 : 1 ≤ e0
+      · have hs2 : (e0 - 1) + e1 ≤ 2 := by omega
+        have himg :=
+          inAdmissibleImage_of_relation_mul_const
+            (u := u)
+            (c := c1) (r := x0)
+            (q := (MvPolynomial.C r * x0 ^ (e0 - 1)) * x1 ^ e1)
+            h1
+            (isQuadratic_C_mul_pow_pow r (e0 - 1) e1 hs2)
+        rw [monomial_fin2_eq]
+        simp [e0, e1] at himg ⊢
+        have hxpow : x0 * x0 ^ (e0 - 1) = x0 ^ e0 := by
+          simpa [Nat.sub_add_cancel hx1] using (pow_succ' x0 (e0 - 1)).symm
+        have hmul :
+            x0 * ((MvPolynomial.C r * x0 ^ (e0 - 1)) * x1 ^ e1) =
+              (MvPolynomial.C r * x0 ^ e0) * x1 ^ e1 := by
+          calc
+            x0 * ((MvPolynomial.C r * x0 ^ (e0 - 1)) * x1 ^ e1)
+                = MvPolynomial.C r * (x0 * x0 ^ (e0 - 1)) * x1 ^ e1 := by
+                    ring_nf
+            _ = (MvPolynomial.C r * x0 ^ e0) * x1 ^ e1 := by
+                  simp [hxpow, mul_assoc]
+        simpa [e0, e1, hmul] using himg
+      · have hx0 : e0 = 0 := by omega
+        have hy3 : e1 = 3 := by omega
+        let img1 :=
+          inAdmissibleImage_of_relation_mul_const
+            (u := u)
+            (c := c2) (r := d • (x0 ^ 2 : Poly) + x1 ^ 2)
+            (q := r • (x1 : Poly))
+            h2
+            ((MvPolynomial.totalDegree_smul_le r (x1 : Poly)).trans <| by simp [x1])
+        let img2 :=
+          inAdmissibleImage_of_relation_mul_const
+            (u := u)
+            (c := c1) (r := x0)
+            (q := (-(d * r)) • (x0 * x1 : Poly))
+            h1
+            ((MvPolynomial.totalDegree_smul_le (-(d * r)) (x0 * x1 : Poly)).trans
+              isQuadratic_x0_mul_x1_early)
+        have himg : InAdmissibleImage u
+            ((d • (x0 ^ 2 : Poly) + x1 ^ 2) * (r • (x1 : Poly)) +
+              x0 * ((-(d * r)) • (x0 * x1 : Poly))) :=
+          inAdmissibleImage_add u img1 img2
+        rw [monomial_fin2_eq]
+        simp [e0, e1, hx0, hy3]
+        have hcancel :
+            (d • (x0 ^ 2 : Poly) + x1 ^ 2) * (r • (x1 : Poly)) +
+              x0 * ((-(d * r)) • (x0 * x1 : Poly)) =
+                MvPolynomial.C r * x1 ^ 3 := by
+          calc
+            (d • (x0 ^ 2 : Poly) + x1 ^ 2) * (r • (x1 : Poly)) +
+                x0 * ((-(d * r)) • (x0 * x1 : Poly))
+                =
+              d • (x0 ^ 2 : Poly) * (r • (x1 : Poly)) +
+                x1 ^ 2 * (r • (x1 : Poly)) +
+                x0 * ((-(d * r)) • (x0 * x1 : Poly)) := by
+                  rw [add_mul]
+            _ =
+              (d • (x0 ^ 2 : Poly) * (r • (x1 : Poly)) +
+                x0 * ((-(d * r)) • (x0 * x1 : Poly))) +
+                x1 ^ 2 * (r • (x1 : Poly)) := by
+                  ac_rfl
+            _ = MvPolynomial.C r * x1 ^ 3 := by
+                  have hzero :
+                      d • (x0 ^ 2 : Poly) * (r • (x1 : Poly)) +
+                        x0 * ((-(d * r)) • (x0 * x1 : Poly)) = 0 := by
+                    simp [MvPolynomial.smul_eq_C_mul]
+                    ring
+                  rw [hzero]
+                  simp [MvPolynomial.smul_eq_C_mul]
+                  ring
+        exact hcancel ▸ himg
+    · have hdeg4 : e0 + e1 = 4 := by omega
+      have img_x40 (c : ℝ) : InAdmissibleImage u (MvPolynomial.C c * x0 ^ 4) := by
+        let img1 :=
+          inAdmissibleImage_of_relation_mul_const
+            (u := u)
+            (c := c1) (r := x0)
+            (q := (-(c / a)) • (x0 * x1 : Poly))
+            h1
+            ((MvPolynomial.totalDegree_smul_le (-(c / a)) (x0 * x1 : Poly)).trans
+              isQuadratic_x0_mul_x1_early)
+        let img2 :=
+          inAdmissibleImage_of_relation_mul_const
+            (u := u)
+            (c := c3) (r := x1 + a • (x0 ^ 2 : Poly))
+            (q := (c / a) • (x0 ^ 2 : Poly))
+            h3
+            ((MvPolynomial.totalDegree_smul_le (c / a) (x0 ^ 2 : Poly)).trans <| by
+              simp [x0, MvPolynomial.totalDegree_X_pow])
+        have himg : InAdmissibleImage u
+            (x0 * ((-(c / a)) • (x0 * x1 : Poly)) +
+              (x1 + a • (x0 ^ 2 : Poly)) * ((c / a) • (x0 ^ 2 : Poly))) :=
+          inAdmissibleImage_add u img1 img2
+        have hscalar : a * (c / a) = c := by
+          field_simp [ha]
+        have hcancel :
+            x0 * ((-(c / a)) • (x0 * x1 : Poly)) +
+              (x1 + a • (x0 ^ 2 : Poly)) * ((c / a) • (x0 ^ 2 : Poly)) =
+                MvPolynomial.C c * x0 ^ 4 := by
+          have hlast :
+              a • (x0 ^ 2 : Poly) * ((c / a) • (x0 ^ 2 : Poly)) =
+                c • (x0 ^ 4 : Poly) := by
+            calc
+              a • (x0 ^ 2 : Poly) * ((c / a) • (x0 ^ 2 : Poly))
+                  = (a * (c / a)) • ((x0 ^ 2 : Poly) * (x0 ^ 2 : Poly)) := by
+                      rw [smul_mul_assoc, mul_smul_comm, smul_smul]
+              _ = c • ((x0 ^ 2 : Poly) * (x0 ^ 2 : Poly)) := by rw [hscalar]
+              _ = c • (x0 ^ 4 : Poly) := by rw [← pow_add]
+          have hzero :
+              x0 * ((-(c / a)) • (x0 * x1 : Poly)) +
+                x1 * ((c / a) • (x0 ^ 2 : Poly)) = 0 := by
+            rw [mul_smul_comm, mul_smul_comm,
+              show x1 * x0 ^ 2 = x0 * (x0 * x1) by ring]
+            simp
+          calc
+            x0 * ((-(c / a)) • (x0 * x1 : Poly)) +
+                (x1 + a • (x0 ^ 2 : Poly)) * ((c / a) • (x0 ^ 2 : Poly))
+                =
+              (x0 * ((-(c / a)) • (x0 * x1 : Poly)) +
+                x1 * ((c / a) • (x0 ^ 2 : Poly))) +
+                  a • (x0 ^ 2 : Poly) * ((c / a) • (x0 ^ 2 : Poly)) := by
+                    rw [add_mul]
+                    ac_rfl
+            _ = MvPolynomial.C c * x0 ^ 4 := by
+                  rw [hzero]
+                  simpa [MvPolynomial.smul_eq_C_mul] using hlast
+        exact hcancel ▸ himg
+      have img_x31 (c : ℝ) : InAdmissibleImage u (MvPolynomial.C c * x0 ^ 3 * x1) := by
+        let img1 :=
+          inAdmissibleImage_of_relation_mul_const
+            (u := u)
+            (c := c3) (r := x1 + a • (x0 ^ 2 : Poly))
+            (q := (c / a) • (x0 * x1 : Poly))
+            h3
+            ((MvPolynomial.totalDegree_smul_le (c / a) (x0 * x1 : Poly)).trans
+              isQuadratic_x0_mul_x1_early)
+        let img2 :=
+          inAdmissibleImage_of_relation_mul_const
+            (u := u)
+            (c := c2) (r := d • (x0 ^ 2 : Poly) + x1 ^ 2)
+            (q := (-(c / a)) • (x0 : Poly))
+            h2
+            ((MvPolynomial.totalDegree_smul_le (-(c / a)) (x0 : Poly)).trans <| by simp [x0])
+        let img3 :=
+          inAdmissibleImage_of_relation_mul_const
+            (u := u)
+            (c := c1) (r := x0)
+            (q := (d * (c / a)) • (x0 ^ 2 : Poly))
+            h1
+            ((MvPolynomial.totalDegree_smul_le (d * (c / a)) (x0 ^ 2 : Poly)).trans <| by
+              simp [x0, MvPolynomial.totalDegree_X_pow])
+        have himg12 : InAdmissibleImage u
+            ((x1 + a • (x0 ^ 2 : Poly)) * ((c / a) • (x0 * x1 : Poly)) +
+              (d • (x0 ^ 2 : Poly) + x1 ^ 2) * ((-(c / a)) • (x0 : Poly))) :=
+          inAdmissibleImage_add u img1 img2
+        have himg : InAdmissibleImage u
+            ((x1 + a • (x0 ^ 2 : Poly)) * ((c / a) • (x0 * x1 : Poly)) +
+              (d • (x0 ^ 2 : Poly) + x1 ^ 2) * ((-(c / a)) • (x0 : Poly)) +
+              x0 * ((d * (c / a)) • (x0 ^ 2 : Poly))) :=
+          inAdmissibleImage_add u himg12 img3
+        have hcancel :
+            (x1 + a • (x0 ^ 2 : Poly)) * ((c / a) • (x0 * x1 : Poly)) +
+              (d • (x0 ^ 2 : Poly) + x1 ^ 2) * ((-(c / a)) • (x0 : Poly)) +
+              x0 * ((d * (c / a)) • (x0 ^ 2 : Poly)) =
+                MvPolynomial.C c * x0 ^ 3 * x1 := by
+          have hscalar : a * (c / a) = c := by
+            field_simp [ha]
+          have hlast :
+              a • (x0 ^ 2 : Poly) * ((c / a) • (x0 * x1 : Poly)) =
+                c • (x0 ^ 3 * x1 : Poly) := by
+            calc
+              a • (x0 ^ 2 : Poly) * ((c / a) • (x0 * x1 : Poly))
+                  = (a * (c / a)) • ((x0 ^ 2 : Poly) * (x0 * x1 : Poly)) := by
+                      rw [smul_mul_assoc, mul_smul_comm, smul_smul]
+              _ = c • ((x0 ^ 2 : Poly) * (x0 * x1 : Poly)) := by rw [hscalar]
+              _ = c • (x0 ^ 3 * x1 : Poly) := by ring_nf
+          have hzero1 :
+              x1 * ((c / a) • (x0 * x1 : Poly)) +
+                x1 ^ 2 * ((-(c / a)) • (x0 : Poly)) = 0 := by
+            rw [mul_smul_comm, mul_smul_comm,
+              show x1 ^ 2 * x0 = x1 * (x0 * x1) by ring]
+            simp
+          have hzero2 :
+              d • (x0 ^ 2 : Poly) * ((-(c / a)) • (x0 : Poly)) +
+                x0 * ((d * (c / a)) • (x0 ^ 2 : Poly)) = 0 := by
+            simp [MvPolynomial.smul_eq_C_mul]
+            ring_nf
+          calc
+            (x1 + a • (x0 ^ 2 : Poly)) * ((c / a) • (x0 * x1 : Poly)) +
+                (d • (x0 ^ 2 : Poly) + x1 ^ 2) * ((-(c / a)) • (x0 : Poly)) +
+                x0 * ((d * (c / a)) • (x0 ^ 2 : Poly))
+                =
+              x1 * ((c / a) • (x0 * x1 : Poly)) +
+                a • (x0 ^ 2 : Poly) * ((c / a) • (x0 * x1 : Poly)) +
+                d • (x0 ^ 2 : Poly) * ((-(c / a)) • (x0 : Poly)) +
+                x1 ^ 2 * ((-(c / a)) • (x0 : Poly)) +
+                x0 * ((d * (c / a)) • (x0 ^ 2 : Poly)) := by
+                  rw [add_mul, add_mul]
+                  ac_rfl
+            _ =
+              a • (x0 ^ 2 : Poly) * ((c / a) • (x0 * x1 : Poly)) +
+                (x1 * ((c / a) • (x0 * x1 : Poly)) +
+                  x1 ^ 2 * ((-(c / a)) • (x0 : Poly))) +
+                (d • (x0 ^ 2 : Poly) * ((-(c / a)) • (x0 : Poly)) +
+                  x0 * ((d * (c / a)) • (x0 ^ 2 : Poly))) := by
+                    ac_rfl
+            _ = MvPolynomial.C c * x0 ^ 3 * x1 := by
+                  rw [hzero1, hzero2]
+                  simpa [MvPolynomial.smul_eq_C_mul, mul_assoc, mul_left_comm, mul_comm] using hlast
+        exact hcancel ▸ himg
+      have img_x22 (c : ℝ) : InAdmissibleImage u (MvPolynomial.C c * x0 ^ 2 * x1 ^ 2) := by
+        let img1 :=
+          inAdmissibleImage_of_relation_mul_const
+            (u := u)
+            (c := c2) (r := d • (x0 ^ 2 : Poly) + x1 ^ 2)
+            (q := c • (x0 ^ 2 : Poly))
+            h2
+            ((MvPolynomial.totalDegree_smul_le c (x0 ^ 2 : Poly)).trans <| by
+              simp [x0, MvPolynomial.totalDegree_X_pow])
+        have img2 : InAdmissibleImage u (MvPolynomial.C (d * c) * x0 ^ 4) := img_x40 (d * c)
+        have himg := inAdmissibleImage_sub u img1 img2
+        have hcancel :
+            (d • (x0 ^ 2 : Poly) + x1 ^ 2) * (c • (x0 ^ 2 : Poly)) -
+              (MvPolynomial.C (d * c) * x0 ^ 4) =
+                MvPolynomial.C c * x0 ^ 2 * x1 ^ 2 := by
+          simp [MvPolynomial.smul_eq_C_mul]
+          ring_nf
+        exact hcancel ▸ himg
+      have img_x13 (c : ℝ) : InAdmissibleImage u (MvPolynomial.C c * x0 * x1 ^ 3) := by
+        let img1 :=
+          inAdmissibleImage_of_relation_mul_const
+            (u := u)
+            (c := c2) (r := d • (x0 ^ 2 : Poly) + x1 ^ 2)
+            (q := c • (x0 * x1 : Poly))
+            h2
+            ((MvPolynomial.totalDegree_smul_le c (x0 * x1 : Poly)).trans isQuadratic_x0_mul_x1_early)
+        have img2 : InAdmissibleImage u (MvPolynomial.C (d * c) * x0 ^ 3 * x1) := img_x31 (d * c)
+        have himg := inAdmissibleImage_sub u img1 img2
+        have hcancel :
+            (d • (x0 ^ 2 : Poly) + x1 ^ 2) * (c • (x0 * x1 : Poly)) -
+              (MvPolynomial.C (d * c) * x0 ^ 3 * x1) =
+                MvPolynomial.C c * x0 * x1 ^ 3 := by
+          simp [MvPolynomial.smul_eq_C_mul]
+          ring_nf
+        exact hcancel ▸ himg
+      have img_x04 (c : ℝ) : InAdmissibleImage u (MvPolynomial.C c * x1 ^ 4) := by
+        let img1 :=
+          inAdmissibleImage_of_relation_mul_const
+            (u := u)
+            (c := c2) (r := d • (x0 ^ 2 : Poly) + x1 ^ 2)
+            (q := c • (x1 ^ 2 : Poly))
+            h2
+            ((MvPolynomial.totalDegree_smul_le c (x1 ^ 2 : Poly)).trans <| by
+              simp [x1, MvPolynomial.totalDegree_X_pow])
+        have img2 : InAdmissibleImage u (MvPolynomial.C (d * c) * x0 ^ 2 * x1 ^ 2) := img_x22 (d * c)
+        have himg := inAdmissibleImage_sub u img1 img2
+        have hcancel :
+            (d • (x0 ^ 2 : Poly) + x1 ^ 2) * (c • (x1 ^ 2 : Poly)) -
+              (MvPolynomial.C (d * c) * x0 ^ 2 * x1 ^ 2) =
+                MvPolynomial.C c * x1 ^ 4 := by
+          simp [MvPolynomial.smul_eq_C_mul]
+          ring_nf
+        exact hcancel ▸ himg
+      have hycases : e1 = 0 ∨ e1 = 1 ∨ e1 = 2 ∨ e1 = 3 ∨ e1 = 4 := by omega
+      rw [monomial_fin2_eq]
+      rcases hycases with hy0 | hy1 | hy2 | hy3 | hy4
+      · have hx4 : e0 = 4 := by omega
+        simpa [e0, e1, hx4, hy0] using img_x40 r
+      · have hx3 : e0 = 3 := by omega
+        simpa [e0, e1, hx3, hy1] using img_x31 r
+      · have hx2 : e0 = 2 := by omega
+        simpa [e0, e1, hx2, hy2] using img_x22 r
+      · have hx1 : e0 = 1 := by omega
+        simpa [e0, e1, hx1, hy3] using img_x13 r
+      · have hx0 : e0 = 0 := by omega
+        simpa [e0, e1, hx0, hy4] using img_x04 r
+
+theorem quartic_in_image_of_relations_const_x0_diagX1sq_x1PlusX0sq
+    {u : RankFourVec}
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {d : ℝ}
+    (h2 : ∑ i : Fin 4, c2 i • u i = d • (x0 ^ 2 : Poly) + x1 ^ 2)
+    {a : ℝ}
+    (h3 : ∑ i : Fin 4, c3 i • u i = x1 + a • (x0 ^ 2 : Poly))
+    (ha : a ≠ 0)
+    {p : Poly} (hp : IsQuartic p) :
+    InAdmissibleImage u p := by
+  classical
+  rw [← MvPolynomial.support_sum_monomial_coeff p]
+  let P : Finset (Fin 2 →₀ ℕ) → Prop := fun S =>
+    (∀ s ∈ S, s ∈ p.support) →
+      InAdmissibleImage u
+        (∑ s ∈ S, MvPolynomial.monomial s (MvPolynomial.coeff s p))
+  have hP : P p.support := by
+    refine Finset.induction_on p.support ?_ ?_
+    · intro hsub
+      simpa using inAdmissibleImage_zero u
+    · intro s ss hsnot ih hsub
+      rw [Finset.sum_insert hsnot]
+      refine inAdmissibleImage_add u ?_ (ih ?_)
+      · have hsdeg : s.sum (fun _ e => e) ≤ 4 :=
+          (MvPolynomial.le_totalDegree (hsub s (by simp))).trans hp
+        exact monomial_image_of_relations_const_x0_diagX1sq_x1PlusX0sq
+          h0 h1 h2 h3 ha s (MvPolynomial.coeff s p) hsdeg
+      · intro t ht
+        exact hsub t (by simp [ht])
+  exact hP (fun s hs => hs)
+
+theorem residual_eq_zero_of_relations_const_x0_diagX1sq_x1PlusX0sq
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {d : ℝ}
+    (h2 : ∑ i : Fin 4, c2 i • u i = d • (x0 ^ 2 : Poly) + x1 ^ 2)
+    {a : ℝ}
+    (h3 : ∑ i : Fin 4, c3 i • u i = x1 + a • (x0 ^ 2 : Poly))
+    (ha : a ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  exact residual_eq_zero_of_in_admissible_image
+    (B := B) hu hsocp
+    (quartic_in_image_of_relations_const_x0_diagX1sq_x1PlusX0sq h0 h1 h2 h3 ha hp.1)
+
+theorem residual_eq_zero_of_equiv_relations_const_x0_diagX1sq_x1PlusX0sq
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x0)
+    {d : ℝ}
+    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = d • (x0 ^ 2 : Poly) + x1 ^ 2)
+    {a : ℝ}
+    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = x1 + a • (x0 ^ 2 : Poly))
+    (ha : a ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_const_x0_diagX1sq_x1PlusX0sq
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 ha hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
 private theorem monomial_image_mixedAffineRank14Rep
     (s : Fin 2 →₀ ℕ) (a : ℝ)
     (hdeg : s.sum (fun _ e => e) ≤ 4)
