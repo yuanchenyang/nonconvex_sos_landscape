@@ -1128,6 +1128,19 @@ tailed coordinate to \(x_2 + a x_1^2\), and dispatches to the exact relation
 theorem above. So even the determinant-zero cross slice no longer needs the
 classification statement to hand back fully normalized coordinates; a
 coefficient-level pure-cross-plus-tail description now suffices.
+The same file now also contains the symmetric square-line wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x1sqTail} and its
+equivariant version
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_x1sqTail}. These
+start from exact relations to \(1\), \(x_1\), a pure \(x_2^2\) line, and a
+quadratic with zero \(x_1x_2\)-coefficient and nonzero \(x_2\)- and
+\(x_1^2\)-coefficients. Lean then rescales the \(x_2^2\) line to the canonical
+coordinate, removes the \(x_2^2\)-component from the tailed quadratic, rescales
+what remains to \(x_2 + a x_1^2\), and invokes the already-formalized
+\(x_2^2\)-type determinant-zero theorem in
+\texttt{RepresentativeMixedAffine.lean}. So both nonsurjective
+determinant-zero mixed-affine slices now have coefficient-level wrappers above
+the exact normalized relation layer.
 The remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these

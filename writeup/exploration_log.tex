@@ -1218,6 +1218,19 @@ slice is no longer waiting for the classification step to output fully
 normalized polynomial images; a coefficient-level pure-cross-plus-tail
 description now already closes the SOCP branch.
 
+The next Lean round then added the symmetric coefficient-level wrapper for the
+\(x_2^2\)-type determinant-zero slice. The new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x1sqTail} and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_x1sqTail} start
+from exact relations to \(1\), \(x_1\), a pure \(x_2^2\) homogeneous line, and
+a second quadratic whose \(x_1x_2\)-coefficient vanishes but whose \(x_2\)- and
+\(x_1^2\)-coefficients are both nonzero. The proof rescales the \(x_2^2\) line,
+subtracts the \(x_2^2\)-component from the tailed quadratic, rescales the
+remainder to \(x_2 + a x_1^2\), and then invokes the already-formalized exact
+\(x_2^2\)-tail theorem from \texttt{RepresentativeMixedAffine.lean}. So both
+nonsurjective determinant-zero mixed-affine slices now admit coefficient-level
+wrappers above the exact normalized relation layer.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
