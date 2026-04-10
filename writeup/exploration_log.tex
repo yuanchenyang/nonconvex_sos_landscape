@@ -1070,6 +1070,30 @@ nonzero cross term stays rank \(14\), and the \(b=0\) or discriminant-zero
 slices are already rank \(15\). That makes the earlier canonical picture much
 more believable: after the standard basis choice, only the pure cross-type
 determinant-zero family appears to require a nonsurjective theorem.
+I then added a small canonical tail-parameter sweep,
+\texttt{julia/mixed\_affine\_det\_zero\_canonical\_a\_sweep\_2026\_04\_10.jl},
+to check whether that picture depends on the choice of tail coefficient.
+Its output is
+\begin{verbatim}
+mixed_affine_det_zero_canonical_a_sweep = [
+  (family = "cross",  a = -1.0, rank = 14, missing = [(0, 4)]),
+  (family = "cross",  a =  1.0, rank = 14, missing = [(0, 4)]),
+  (family = "cross",  a =  2.0, rank = 14, missing = [(0, 4)]),
+  (family = "x1sq",   a = -1.0, rank = 15, missing = []),
+  (family = "x1sq",   a =  1.0, rank = 15, missing = []),
+  (family = "x1sq",   a =  2.0, rank = 15, missing = []),
+  (family = "sumsq",  a = -1.0, rank = 15, missing = []),
+  (family = "sumsq",  a =  1.0, rank = 15, missing = []),
+  (family = "sumsq",  a =  2.0, rank = 15, missing = []),
+  (family = "diffsq", a = -1.0, rank = 15, missing = []),
+  (family = "diffsq", a =  1.0, rank = 15, missing = []),
+  (family = "diffsq", a =  2.0, rank = 15, missing = [])
+]
+\end{verbatim}
+So the canonical determinant-zero picture is not just stable across one or two
+ad hoc examples. The cross family keeps the same codimension-one obstruction
+for all tested tails, while the \(x_2^2\), sum-square, and split-diagonal
+families stay surjective for all tested tails.
 The next Lean step removed one easy but real part of that determinant-zero
 picture. In \texttt{RepresentativeMixedAffinePlane.lean} I added the coefficient
 identity \texttt{relation\_x1\_of\_affineTail} and the SOCP consequences
@@ -1102,6 +1126,15 @@ coordinate. So, combined with the affine-tail theorem for the \(a=0\) case,
 the entire \(x_2^2\)-type determinant-zero tailed family is now formalized at
 representative level.
 
+I also tried to jump directly to a general diagonal determinant-zero Lean
+theorem for \((1,x_1,x_2^2 + c x_1^2, x_2 + a x_1^2)\), but that broad version
+was not stable enough to keep: the proof expanded into a large explicit
+monomial calculation with several heartbeat-heavy normalization steps. I backed
+that attempt out rather than leaving the theorem file dirty. So the strategy is
+now sharper again: use the new tail-parameter sweep as evidence that the next
+Lean target should be the cross-type branch or a smaller exact diagonal
+representative, not another over-general unfinished statement.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
@@ -1118,8 +1151,8 @@ orthonormal relation basis for that same data, together with the same
 determinant condition from the general branch. On the determinant-zero side,
 the new probe suggests that only the cross-type canonical family should still
 need a genuinely nonsurjective theorem; the \(x_2^2\)-type family is now
-formalized at representative level, and the diagonal types remain the next
-surjective transport targets.
+formalized at representative level, and the diagonal types look increasingly
+like classification-byproducts rather than true remaining obstructions.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this

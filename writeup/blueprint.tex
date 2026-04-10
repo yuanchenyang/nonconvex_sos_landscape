@@ -1025,6 +1025,17 @@ stable nonsurjective locus is the cross-type slice where the extracted
 homogeneous line has vanishing \(x_2^2\)-coefficient after the canonical basis
 choice, while the generic, \(x_2^2\)-type, and diagonal-type slices are already
 surjective.
+The new script
+\texttt{julia/mixed\_affine\_det\_zero\_canonical\_a\_sweep\_2026\_04\_10.jl}
+pushes that picture a bit further. It fixes the canonical families
+\[
+  (1,x_1,D,x_2 + a x_1^2)
+\]
+and varies \(a \in \{-1,1,2\}\). The result is again completely stable: the
+cross family always has rank \(14\) with only \(x_2^4\) missing, while the
+\(x_2^2\), sum-square, and split-diagonal families always have rank \(15\) with
+no missing monomials. So the evidence is now tail-parameter invariant on those
+canonical models, not just a one-off rank computation.
 There is now also a small formal reduction on the Lean side that removes one
 easy slice of this branch. In
 \texttt{RepresentativeMixedAffinePlane.lean}, the new theorems
@@ -1066,8 +1077,10 @@ the translation algebra or its integration with the mixed-affine plane
 certificate layer; it is the
 upstream normalization/classification step producing that coordinate picture
 from a general admissible factor, together with the now-sharper determinant-zero
-classification reducing the cross type to a rank-\(14\) theorem and leaving the
-diagonal determinant-zero slices as the next surjective transport targets.
+classification reducing the cross type to a rank-\(14\) theorem. The diagonal
+determinant-zero slices no longer look like separate obstructions; if they need
+additional Lean work at all, it should only be because they simplify the final
+classification step, not because the numerics suggest another missing case.
 
 \medskip
 \noindent
