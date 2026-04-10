@@ -252,6 +252,20 @@ and orthogonal normalization data for an arbitrary rank-$4$ factor. Once that
 data exists, the representative theorems can be pulled back through these two
 transport layers.
 
+\medskip
+\noindent
+That pullback step is now also packaged explicitly in
+\texttt{TernaryQuarticProof/RepresentativeTransport.lean}. The main theorem
+there says: if, after applying an affine inverse on the polynomial side and an
+orthogonal mixing on the factor side, the SOCP point becomes an already-solved
+representative $u_{\mathrm{rep}}$, then the original point has zero residual.
+So the remaining normalization problem is now sharply isolated to one kind of
+statement:
+\[
+  \text{produce exact data with }
+  \operatorname{mix}(M^\top,\; e^{-1}\!\cdot u) = u_{\mathrm{rep}}.
+\]
+
 \section*{Correction To The Previous Case Split}
 The earlier five-case list is not complete. The constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ branch splits further.

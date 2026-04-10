@@ -6,6 +6,7 @@ import TernaryQuarticProof.QuadraticNormalForm
 import TernaryQuarticProof.RepresentativeLowAffine
 import TernaryQuarticProof.RepresentativeMixedAffine
 import TernaryQuarticProof.RepresentativeSpanThree
+import TernaryQuarticProof.RepresentativeTransport
 import TernaryQuarticProof.RepresentativeSurjective
 
 set_option autoImplicit false
