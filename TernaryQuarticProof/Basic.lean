@@ -5,6 +5,7 @@ import TernaryQuarticProof.FactorTransform
 import TernaryQuarticProof.QuadraticNormalForm
 import TernaryQuarticProof.RepresentativeLowAffine
 import TernaryQuarticProof.RepresentativeMixedAffine
+import TernaryQuarticProof.MixedAffineNormalization
 import TernaryQuarticProof.RepresentativeSpanThree
 import TernaryQuarticProof.RepresentativeTransport
 import TernaryQuarticProof.RepresentativeSurjective

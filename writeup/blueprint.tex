@@ -365,6 +365,30 @@ The written reduction is therefore no longer mysterious: it should be the
 binary-quadratic completion-of-squares argument above, implemented inside the
 subgroup of affine changes preserving the line $\mathbb{R}x_1$.
 
+\medskip
+\noindent
+The first algebraic half of this reduction is now formalized in
+\texttt{TernaryQuarticProof/MixedAffineNormalization.lean}. That file defines
+the shear $x_2 \mapsto t x_1 + x_2$ and the scaling $x_2 \mapsto s x_2$ as
+explicit affine polynomial equivalences, and proves the key formulas
+\[
+  a x_1^2 + b x_1x_2 + c x_2^2
+  \;\longmapsto\;
+  \Bigl(a - \frac{b^2}{4c}\Bigr) x_1^2 + c x_2^2
+  \qquad (c \neq 0),
+\]
+and
+\[
+  a x_1^2 + b x_1x_2
+  \;\longmapsto\;
+  b x_1x_2
+  \qquad (b \neq 0),
+\]
+together with the diagonal scaling formula. So the remaining work is no longer
+to discover the completion-of-squares algebra, but to connect these explicit
+affine moves to a general rank-$4$ mixed-affine factor and then feed the result
+into the already-formalized representative theorems.
+
 \section*{Current Candidate Blueprint}
 At the level of a paper proof, the present candidate argument is:
 

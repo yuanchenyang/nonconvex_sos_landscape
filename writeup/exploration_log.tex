@@ -358,15 +358,32 @@ affine changes of variables:
     numerically surjective;
   \item if $c = 0$ and $b = 0$, the model is the rank-$14$ case $x_1^2$.
   \end{itemize}
+  The shear-and-scale formulas underlying this reduction are now formalized in
+  \texttt{TernaryQuarticProof/MixedAffineNormalization.lean}. That file proves
+  the explicit affine identities sending
+  \[
+    a x_1^2 + b x_1x_2 + c x_2^2
+  \]
+  to
+  \[
+    \Bigl(a - \frac{b^2}{4c}\Bigr) x_1^2 + c x_2^2
+    \qquad (c \neq 0),
+  \]
+  and to
+  \[
+    b x_1x_2
+    \qquad (c=0,\ b \neq 0),
+  \]
+  inside the affine subgroup preserving the line $\mathbb{R}x_1$.
   So the remaining classification gap is specifically the constant-containing
   $\dim = 2$ branch rather than the whole independent nonsurjective case.
 \end{itemize}
 
 The remaining gap is no longer the representative algebra in these cases; it is
-the normalization/invariance step that reduces a general admissible factor to
-them inside Lean. The new transport packaging means that this gap is now
-literally an equality-construction problem for exact affine and orthogonal
-normal-form data.
+the normalization step that extracts, from a general admissible factor, the
+quadratic annihilator and the coefficient vectors needed to apply those
+formalized shear/scale identities inside Lean. After that data is produced, the
+transport layer can pull back the already-formalized representative theorems.
 
 The newest strategy adjustment is therefore to split the old ``normalization''
 problem into two formally separate layers:
@@ -544,13 +561,13 @@ normalization.
 
 \section*{Open Subgoals}
 \begin{itemize}
-\item Formalize the completion-of-squares normalization for the
-constant-containing $\dim = 2$ branch, reducing a general annihilator
-$a x_1^2 + b x_1x_2 + c x_2^2$ to the already-formalized rank-$13$,
+\item Use the new file \texttt{MixedAffineNormalization.lean} to finish the
+constant-containing $\dim = 2$ classification lemma, reducing a general
+annihilator $a x_1^2 + b x_1x_2 + c x_2^2$ to the already-formalized rank-$13$,
 rank-$14$, or rank-$15$ mixed-affine representatives.
-\item Package the remaining normalization/classification data into the exact
-transport statement required by \texttt{RepresentativeTransport.lean} for the
-unresolved $\dim = 2$ cases.
+\item Extract from a general admissible factor the coefficient vectors and
+annihilator data needed to feed that classification into the existing transport
+lemmas.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}
