@@ -789,13 +789,21 @@ final normalization step no longer needs exact low-affine representative
 equalities in those two branches either.
 
 The linear low-affine branch has now advanced part of the same way. The file
-\texttt{RepresentativeLowAffine.lean} now proves an exact-relation theorem for
-the model \((x_1,x_1^2,x_1x_2,x_2^2)\): if an admissible factor admits
-relations to \(x_1\), \(x_1^2\), \(x_1x_2\), and \(x_2^2\), then the old
-representative image and kernel-line argument already closes the SOCP branch.
-So the remaining gap there is no longer the kernel algebra. It is the
-basis-invariant \(3\times 3\) homogeneous-quadratic reconstruction that should
-recover those exact canonical relations from an arbitrary independent triple.
+\texttt{RepresentativeLowAffine.lean} now proves both the exact-relation
+theorem and the basis-invariant homogeneous-basis theorem for the model
+\((x_1,x_1^2,x_1x_2,x_2^2)\). The new common helper in
+\texttt{RepresentativeSurjective.lean},
+\texttt{exact\_relations\_of\_homQuadBasis\_det}, reconstructs the exact
+canonical relations \(x_1^2,x_1x_2,x_2^2\) from any independent homogeneous
+quadratic triple. So the linear branch no longer needs separate representative
+normalization either: one linear relation plus a nondegenerate \(3\times 3\)
+homogeneous relation matrix now suffices, and the result is also transported
+across affine equivalences.
+
+The constant \(\dim=1\) branch has been lifted in parallel. The same new
+\(3\times 3\) reconstruction now upgrades
+\((1,x_1^2,x_1x_2,x_2^2)\) from a representative-only surjectivity theorem to
+a basis-invariant homogeneous-basis theorem with affine transport as well.
 
 The surjective mixed-affine layer is broader now as well. The same file now
 contains a fixed split-diagonal transport lemma for planes of the form
@@ -824,13 +832,11 @@ that branch by a fixed transport step.
 constant-containing $\dim = 2$ classification lemma, reducing a general
 annihilator $a x_1^2 + b x_1x_2 + c x_2^2$ to one of the already-formalized
 rank-$13$, rank-$14$, or rank-$15$ mixed-affine plane types.
-\item Finish the linear low-affine upgrade by turning the new exact-relation
-theorem into a basis-invariant \(3\times 3\) homogeneous-quadratic theorem for
-one linear relation and three independent homogeneous quadratic relations.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
-transport lemmas; for both rank-$14$ and rank-$13$ nonsurjective branches this
-now only needs determinant data inside the canonical plane type.
+transport lemmas; for the remaining mixed-affine and low-affine branches this
+now only needs determinant data inside the canonical homogeneous plane or
+triple type.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

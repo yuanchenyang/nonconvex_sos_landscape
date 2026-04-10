@@ -116,7 +116,7 @@ orthogonal recombination of the four coordinates.
 
 \medskip
 \noindent
-\textbf{Formalized representative surjectivity.} The constant
+\textbf{Formalized surjective constant branch.} The constant
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 1$ model
 \[
   u_{\mathrm{const}} = (1, x_1^2, x_1x_2, x_2^2)
@@ -126,7 +126,12 @@ is now fully formalized in
 that every quartic monomial of degree at most $4$ lies in
 $\operatorname{im}(A_{u_{\mathrm{const}}})$, hence every quartic polynomial does
 as well by linearity. Therefore every SOCP at this representative has zero
-residual by the already-formalized image case.
+residual by the already-formalized image case. The same file now also proves a
+basis-invariant upgrade: if an admissible factor contains $1$ and admits three
+independent homogeneous quadratic relations whose coefficient matrix in the
+basis $(x_1^2,x_1x_2,x_2^2)$ has nonzero determinant, then Lean reconstructs
+the exact monomial relations and closes the branch abstractly. This
+reconstruction is also transported across affine equivalences.
 
 \medskip
 \noindent
@@ -815,8 +820,9 @@ part and the plane type.
 
 \medskip
 \noindent
-The linear low-affine model has now been pushed one step further as well. The
-same file no longer uses only the rigid representative
+The linear low-affine model has now also been lifted through the same
+\(3\times 3\) homogeneous reconstruction. The same file no longer uses only
+the rigid representative
 \[
   (x_1,x_1^2,x_1x_2,x_2^2),
 \]
@@ -829,10 +835,11 @@ coefficient vectors satisfying
   \sum_i c_{3,i}u_i = x_2^2.
 \]
 The image reduction is now abstract at that level, and the kernel-line
-argument has been lifted to the same exact relation data. So the remaining
-upgrade is narrower: turn three independent homogeneous quadratic relations
-into those exact canonical relations by a basis-invariant $3\times 3$
-reconstruction step.
+argument has been lifted to the same exact relation data. The new
+\texttt{exact\_relations\_of\_homQuadBasis\_det} lemma now reconstructs those
+exact canonical relations from any independent homogeneous quadratic triple, so
+the linear low-affine branch also has a basis-invariant homogeneous-basis
+theorem and an affine-equivalence transport wrapper.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
