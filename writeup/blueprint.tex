@@ -513,6 +513,22 @@ the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
   every SOCP. So both nonsurjective mixed-affine representatives are now
   available as basis-invariant plane certificates rather than only as concrete
   coordinate models.
+\item A stronger version was tested and then backed out in Lean this round:
+  replace the exact monomial relation hypotheses above by an arbitrary
+  orthonormal coefficient-space basis of the canonical polynomial planes
+  \[
+    x_1 \cdot \operatorname{span}(x_1,x_2)
+    \qquad\text{or}\qquad
+    x_2 \cdot \operatorname{span}(x_1,x_2),
+  \]
+  so that normalization would only need to identify the plane type, not an
+  exact orthogonal monomial basis. The underlying algebra is still plausible,
+  but the current Lean attempt ran aground in low-level coefficient bookkeeping
+  for products of general linear forms. So the formalized state is still the
+  exact-relation plane theorems, and the remaining normalization gap can now be
+  stated even more sharply: produce exact coefficient vectors for those
+  canonical relations, or finish the stronger basis-invariant plane theorem in
+  a cleaner coefficient API.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
 $\sigma(u)=p$.
 \end{enumerate}
