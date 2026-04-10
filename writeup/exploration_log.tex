@@ -533,6 +533,36 @@ So the mixed-affine normalization problem is now expressed in Lean directly at
 the level of coefficient functionals on arbitrary quadratics, rather than only
 through hand-expanded representative formulas.
 
+The next strategy refinement is now very narrow: formalize the coefficient-
+selected normalization parameters themselves. For a quadratic with coefficients
+\[
+  (a_{00},a_{10},a_{01},a_{20},a_{11},a_{02}),
+\]
+the planned Lean lemmas are exactly the scalar choices used in the paper proof:
+\begin{itemize}
+\item if $a_{02}\neq 0$, translate by
+  \[
+    t_{\mathrm{tr}}=-\frac{a_{01}}{2a_{02}}
+  \]
+  to kill the $x_2$ term;
+\item if $a_{02}\neq 0$, shear by
+  \[
+    t_{\mathrm{sh}}=-\frac{a_{11}}{2a_{02}}
+  \]
+  to kill the $x_1x_2$ term and replace the $x_1^2$ coefficient by
+  \[
+    a_{20}-\frac{a_{11}^2}{4a_{02}};
+  \]
+\item if $a_{02}=0$ but $a_{11}\neq 0$, shear by
+  \[
+    t_{\mathrm{sh}}=-\frac{a_{20}}{a_{11}}
+  \]
+  to kill the $x_1^2$ term and reduce to the pure-cross orbit.
+\end{itemize}
+This is the last purely algebraic piece still missing before the mixed-affine
+classification can be stated as a direct case split on the annihilator
+coefficients.
+
 \section*{Additional Recorded Experiments}
 The checked-in Julia script now also records:
 \begin{verbatim}

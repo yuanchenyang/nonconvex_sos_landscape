@@ -331,6 +331,16 @@ theorem coeff_m02_affineHom_x1Translate
   rw [quadratic_eq_quadForm hq, affineHom_x1Translate_quadForm]
   simp
 
+theorem coeff_m01_affineHom_x1Translate_kill
+    {q : Poly} (hq : IsQuadratic q)
+    (h02 : MvPolynomial.coeff m02 q ≠ 0) :
+    MvPolynomial.coeff m01
+      (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ)
+        (x1TranslateVec (-(MvPolynomial.coeff m01 q / (2 * MvPolynomial.coeff m02 q)))) q) = 0 := by
+  rw [coeff_m01_affineHom_x1Translate hq]
+  field_simp [h02]
+  ring
+
 theorem coeff_m20_affineHom_x1Shear
     {q : Poly} (hq : IsQuadratic q) (t : ℝ) :
     MvPolynomial.coeff m20 (affineHom (x1ShearMatrix t) 0 q) =
@@ -351,6 +361,36 @@ theorem coeff_m02_affineHom_x1Shear
       MvPolynomial.coeff m02 q := by
   rw [quadratic_eq_quadForm hq, affineHom_x1Shear_quadForm]
   simp
+
+theorem coeff_m11_affineHom_x1Shear_kill
+    {q : Poly} (hq : IsQuadratic q)
+    (h02 : MvPolynomial.coeff m02 q ≠ 0) :
+    MvPolynomial.coeff m11
+      (affineHom (x1ShearMatrix (-(MvPolynomial.coeff m11 q / (2 * MvPolynomial.coeff m02 q)))) 0 q) = 0 := by
+  rw [coeff_m11_affineHom_x1Shear hq]
+  field_simp [h02]
+  ring
+
+theorem coeff_m20_affineHom_x1Shear_cancel_cross
+    {q : Poly} (hq : IsQuadratic q)
+    (h02 : MvPolynomial.coeff m02 q ≠ 0) :
+    MvPolynomial.coeff m20
+      (affineHom (x1ShearMatrix (-(MvPolynomial.coeff m11 q / (2 * MvPolynomial.coeff m02 q)))) 0 q) =
+        MvPolynomial.coeff m20 q -
+          (MvPolynomial.coeff m11 q) ^ 2 / (4 * MvPolynomial.coeff m02 q) := by
+  rw [coeff_m20_affineHom_x1Shear hq]
+  field_simp [h02]
+  ring
+
+theorem coeff_m20_affineHom_x1Shear_to_cross
+    {q : Poly} (hq : IsQuadratic q)
+    (h02 : MvPolynomial.coeff m02 q = 0)
+    (h11 : MvPolynomial.coeff m11 q ≠ 0) :
+    MvPolynomial.coeff m20
+      (affineHom (x1ShearMatrix (-(MvPolynomial.coeff m20 q / MvPolynomial.coeff m11 q))) 0 q) = 0 := by
+  rw [coeff_m20_affineHom_x1Shear hq, h02]
+  field_simp [h11]
+  ring
 
 theorem coeff_m20_affineHom_x1Scale
     {q : Poly} (hq : IsQuadratic q) (s : ℝ) :

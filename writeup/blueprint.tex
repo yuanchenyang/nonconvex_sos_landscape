@@ -433,6 +433,39 @@ read off the binary-quadratic annihilator of the resulting homogeneous
 $2$-plane, and then apply the already-formalized rank-$13$, rank-$14$, or
 rank-$15$ plane theorem.
 
+\medskip
+\noindent
+At this point the missing paper-level step is no longer ``find the right
+normalization formulas'' but ``apply the already-formalized formulas with the
+right chosen parameters.'' Concretely, for a quadratic
+\[
+  q = a_{00} + a_{10} x_1 + a_{01} x_2 + a_{20} x_1^2 + a_{11} x_1x_2 + a_{02} x_2^2,
+\]
+the intended normalization now runs as follows:
+\[
+  t_{\mathrm{tr}} = -\frac{a_{01}}{2 a_{02}}
+  \qquad (a_{02} \neq 0)
+\]
+kills the $x_2$ coefficient under translation $x_2 \mapsto x_2+t_{\mathrm{tr}}$,
+while
+\[
+  t_{\mathrm{sh}} = -\frac{a_{11}}{2 a_{02}}
+  \qquad (a_{02} \neq 0)
+\]
+kills the $x_1x_2$ coefficient under the shear $x_2 \mapsto x_2+t_{\mathrm{sh}}x_1$,
+leaving
+\[
+  a_{20} - \frac{a_{11}^2}{4 a_{02}}
+\]
+as the new $x_1^2$ coefficient. In the degenerate case $a_{02}=0$ but
+$a_{11}\neq 0$, the parameter
+\[
+  t_{\mathrm{sh}} = -\frac{a_{20}}{a_{11}}
+\]
+instead kills the $x_1^2$ coefficient and reduces directly to the pure-cross
+orbit. So the remaining formal gap is to convert these scalar coefficient
+choices into relation data for the mixed-affine plane theorems.
+
 \section*{Current Candidate Blueprint}
 At the level of a paper proof, the present candidate argument is:
 
