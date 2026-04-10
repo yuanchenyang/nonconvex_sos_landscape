@@ -488,6 +488,27 @@ $\mathbb{R}^4$, so it does not by itself force exact coordinates $1$, $x_1$,
 or $x_2$ to appear even when the corresponding affine lines lie in
 $\operatorname{span}(u_1,\dots,u_4)$.
 
+The next proof-serving abstraction is therefore more concrete: introduce an
+explicit six-coordinate normal form for quadratics,
+\[
+  a_{00} + a_{10} x_1 + a_{01} x_2 + a_{20} x_1^2 + a_{11} x_1x_2 + a_{02} x_2^2,
+\]
+and formalize how the affine subgroup preserving $\mathbb{R}x_1$ acts on those
+coordinates. The aim is not a generic symbolic algebra package; it is a small
+normalization API tailored to the remaining constant-containing mixed-affine
+branch. In particular, one wants explicit formulas for:
+\begin{itemize}
+\item translation in $x_2$, to absorb affine tails into the already-controlled
+  $\operatorname{span}(1,x_1)$ part;
+\item shear $x_2 \mapsto x_2 + t x_1$, to perform the completion-of-squares
+  reduction on the homogeneous coefficients;
+\item scaling $x_2 \mapsto s x_2$, to normalize the remaining nonzero diagonal
+  coefficient.
+\end{itemize}
+This should reduce the last unresolved branch to coefficient extraction and a
+binary-quadratic orbit calculation, rather than to another ad hoc representative
+proof.
+
 \section*{Additional Recorded Experiments}
 The checked-in Julia script now also records:
 \begin{verbatim}

@@ -390,6 +390,34 @@ to discover the completion-of-squares algebra, but to connect these explicit
 affine moves to a general rank-$4$ mixed-affine factor and then feed the result
 into the already-formalized representative theorems.
 
+\medskip
+\noindent
+The current plan for that last connection is to work in explicit quadratic
+coordinates. Every quadratic polynomial can be written uniquely as
+\[
+  a_{00} + a_{10} x_1 + a_{01} x_2 + a_{20} x_1^2 + a_{11} x_1x_2 + a_{02} x_2^2.
+\]
+Inside the affine subgroup preserving the line $\mathbb{R}x_1$, the three basic
+moves needed for the mixed-affine branch are:
+\[
+  x_2 \mapsto x_2 + t,\qquad
+  x_2 \mapsto s x_1 + x_2,\qquad
+  x_2 \mapsto s x_2.
+\]
+Their effect on the six coefficients is completely explicit. In particular, the
+translation controls the affine tail $(a_{00},a_{10},a_{01})$, while the
+shear-and-scale formulas act on the homogeneous triple
+\[
+  (a_{20},a_{11},a_{02})
+\]
+by the same completion-of-squares identities already proved in
+\texttt{MixedAffineNormalization.lean}. So the remaining normalization problem
+can be reframed as follows: extract from a general constant-containing
+$\dim = 2$ factor the relevant coefficient data, kill the unwanted affine tail,
+read off the binary-quadratic annihilator of the resulting homogeneous
+$2$-plane, and then apply the already-formalized rank-$13$, rank-$14$, or
+rank-$15$ plane theorem.
+
 \section*{Current Candidate Blueprint}
 At the level of a paper proof, the present candidate argument is:
 
@@ -543,7 +571,10 @@ the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
   products, but one still needs the normalization/classification step to
   produce from a general mixed-affine factor either an invertible surjective
   plane basis or an orthogonal nonsurjective plane basis, together with the
-  corresponding relation vectors.
+  corresponding relation vectors. The intended bridge is now an explicit
+  six-coefficient quadratic normal form plus formulas for the
+  $x_2$-translation, $x_2$-shear, and $x_2$-scaling subgroup preserving
+  $\mathbb{R}x_1$.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
 $\sigma(u)=p$.
 \end{enumerate}
