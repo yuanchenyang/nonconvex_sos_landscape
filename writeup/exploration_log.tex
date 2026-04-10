@@ -1254,6 +1254,51 @@ which start only from the coefficient conditions on a diagonal homogeneous
 line and a compatible tail. So the diagonal determinant-zero slice is no longer
 just a numerical observation; it is now part of the checked theorem layer.
 
+The next Lean round removed one more piece of explicit normalization from that
+same determinant-zero branch. In
+\texttt{RepresentativeMixedAffinePlane.lean} I added the new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_crossTail},
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_x1sqTail},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_diagX1sqTail},
+plus their affine-equivalence wrappers. These start only from exact relations
+to \(1\), \(x_1\), and a tailed quadratic pair \(q_2,q_3\) with vanishing
+constant and \(x_1\)-linear coefficients. Lean now forms the canonical
+homogeneous extractor
+\[
+  H(q_2,q_3)
+  =
+  \operatorname{coeff}_{x_2}(q_3)\,q_2
+  -
+  \operatorname{coeff}_{x_2}(q_2)\,q_3,
+\]
+proves the resulting relation internally, and then dispatches to the existing
+cross, \(x_2^2\)-type, or diagonal determinant-zero wrapper depending on the
+coefficient pattern of \(H(q_2,q_3)\). So the determinant-zero mixed-affine
+classification no longer has to output a separate explicit homogeneous-line
+relation in those three cases; the line is now extracted inside Lean from the
+tailed pair itself.
+
+I then weakened the diagonal slice one more step. The new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_diagX1sqTail\_det} and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_diagX1sqTail\_det}
+remove the old hypothesis that the tailed quadratic already have zero
+\(x_2^2\)-coefficient. Instead, Lean now subtracts the explicit multiple of the
+diagonal homogeneous line
+\[
+  t = \frac{\operatorname{coeff}_{x_2^2}(q_3)}
+           {\operatorname{coeff}_{x_2^2}(q_2)}
+\]
+internally, and the only extra condition is the nonvanishing determinant
+\[
+  \operatorname{coeff}_{x_2^2}(q_2)\operatorname{coeff}_{x_1^2}(q_3)
+  -
+  \operatorname{coeff}_{x_1^2}(q_2)\operatorname{coeff}_{x_2^2}(q_3) \neq 0,
+\]
+which guarantees that the corrected tail still has nonzero \(x_1^2\)-part. So
+even the diagonal determinant-zero branch is now one normalization step closer
+to the natural coefficient data expected from the remaining classification.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual

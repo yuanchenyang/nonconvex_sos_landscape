@@ -1284,6 +1284,58 @@ exact canonical relations from any independent homogeneous quadratic triple, so
 the linear low-affine branch also has a basis-invariant homogeneous-basis
 theorem and an affine-equivalence transport wrapper.
 
+\medskip
+\noindent
+The determinant-zero mixed-affine interface has now been lifted one more step
+as well. The file \texttt{RepresentativeMixedAffinePlane.lean} now contains the
+new theorems
+\[
+  \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_crossTail},
+\]
+\[
+  \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_x1sqTail},
+\]
+and
+\[
+  \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_diagX1sqTail},
+\]
+together with their affine-equivalence wrappers. These no longer require the
+classification step to hand back an explicit relation to the canonical
+homogeneous line itself. Instead, starting from exact relations to
+\[
+  1,\ x_1,\ q_2,\ q_3,
+\]
+with \(q_2,q_3\) having zero constant and \(x_1\)-linear coefficients, Lean
+now forms the canonical extracted line
+\[
+  H(q_2,q_3)
+  =
+  \operatorname{coeff}_{x_2}(q_3)\,q_2
+  -
+  \operatorname{coeff}_{x_2}(q_2)\,q_3
+\]
+internally and dispatches to the already-formalized cross, \(x_2^2\)-type, or
+diagonal determinant-zero tail theorem according to the coefficient pattern of
+\(H(q_2,q_3)\). So the remaining mixed-affine extraction step no longer has to
+produce a separate homogeneous-line relation in those determinant-zero
+subbranches; it only has to supply the tailed pair and verify the extracted
+line's coefficient case.
+The diagonal slice has now been weakened one step further as well. The same
+file also proves
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_diagX1sqTail\_det} and its
+equivariant version, so the classification step no longer has to pre-kill the
+\(x_2^2\)-coefficient of the tailed quadratic in the diagonal case. It is now
+enough to know that the homogeneous line has nonzero \(x_2^2\)-coefficient, the
+tail has zero \(x_1x_2\)-coefficient and nonzero \(x_2\)-coefficient, and the
+determinant
+\[
+  \operatorname{coeff}_{x_2^2}(q_2)\operatorname{coeff}_{x_1^2}(q_3)
+  -
+  \operatorname{coeff}_{x_1^2}(q_2)\operatorname{coeff}_{x_2^2}(q_3)
+\]
+is nonzero. Lean then subtracts the required multiple of the diagonal line
+internally and dispatches to the previous diagonal tail theorem.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data, especially for the constant-containing mixed-affine
