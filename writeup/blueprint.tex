@@ -1456,6 +1456,28 @@ the transformed factor: it is enough to produce exact normalized coordinates
 together with the relevant coefficient pattern for
 \(H(q_2,q_3)=\texttt{mixedAffineTailHomLine}(q_2,q_3)\), and Lean now finishes
 the determinant-zero branch directly from that data.
+The cross-type determinant-zero slice has now been weakened once more. The same
+file now proves
+\[
+  \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_crossShear\_origDetZero\_cases},
+\]
+together with its equivariant and
+\(\operatorname{mix}(M^\top,e^{-1}\!\cdot u)\)-transport wrappers. So the
+classification step no longer has to return a homogeneous line that is already
+exactly proportional to \(x_0x_1\). It is now enough that the extracted line
+\(H(q_2,q_3)\) satisfy
+\[
+  \operatorname{coeff}_{x_1^2} H(q_2,q_3)=0,\qquad
+  \operatorname{coeff}_{x_0x_1} H(q_2,q_3)\neq 0,
+\]
+along with the usual determinant-zero relation for \((q_2,q_3)\) and a nonzero
+\(x_1\)-tail coefficient on \(q_3\). Lean then applies the explicit internal
+\(x_1\)-shear killing the \(x_0^2\)-component of \(H(q_2,q_3)\), subtracts the
+induced \(x_0\)-tail from the transformed pair, and dispatches automatically to
+the already-formalized pure-cross determinant-zero theorem. So even the
+cross-type branch no longer needs a separate external ``normalize to the
+pure-cross representative'' lemma; the remaining work is entirely upstream
+extraction and transport.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and

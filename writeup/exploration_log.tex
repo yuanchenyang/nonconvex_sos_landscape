@@ -1425,6 +1425,27 @@ coordinate level
 plus the extracted-line coefficient pattern and the original determinant-zero
 relation, and then Lean handles the residual-zero conclusion from there.
 
+The next Lean round weakened the cross-type determinant-zero slice one step
+further. I added
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_crossShear\_origDetZero\_cases},
+together with its equivariant wrapper and the top transport theorem
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_const\_x0\_mixedAffineTailHomLine\_crossShear\_origDetZero\_cases}.
+This means the external classification no longer has to hand back a line
+already normalized to the pure-cross form. It is now enough to produce
+coordinates \((1,x_0,q_2,q_3)\) with zero constant and \(x_0\)-linear parts in
+\(q_2,q_3\), original determinant-zero relation for the pair, nonzero
+\(x_1\)-tail in \(q_3\), and extracted line \(H(q_2,q_3)\) satisfying only
+\[
+  \operatorname{coeff}_{x_1^2} H(q_2,q_3)=0,\qquad
+  \operatorname{coeff}_{x_0x_1} H(q_2,q_3)\neq 0.
+\]
+Lean now performs the remaining \(x_1\)-shear internally, subtracts the
+induced \(x_0\)-tail from the transformed pair, and falls through to the
+already-formalized pure-cross determinant-zero theorem. So the genuinely new
+content of this round is that the last cross-type shear normalization has been
+absorbed into the theorem interface itself rather than left as an external
+classification obligation.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
