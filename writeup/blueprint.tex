@@ -1478,6 +1478,28 @@ the already-formalized pure-cross determinant-zero theorem. So even the
 cross-type branch no longer needs a separate external ``normalize to the
 pure-cross representative'' lemma; the remaining work is entirely upstream
 extraction and transport.
+The complementary determinant-zero side now admits the same kind of internal
+normalization. The file also proves
+\[
+  \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_diagShear\_origDetZero\_cases},
+\]
+again with equivariant and
+\(\operatorname{mix}(M^\top,e^{-1}\!\cdot u)\)-transport wrappers. So the
+classification step no longer has to externally shear the extracted line
+\(H(q_2,q_3)\) into a pure \(x_1^2\)-type or diagonal representative. It is
+now enough to produce normalized coordinates \((1,x_0,q_2,q_3)\) with zero
+constant and \(x_0\)-linear parts in \(q_2,q_3\), the original
+determinant-zero relation for the pair, nonzero \(x_1\)-tail in \(q_3\), and
+\[
+  \operatorname{coeff}_{x_1^2} H(q_2,q_3)\neq 0.
+\]
+Lean then applies the internal \(x_1\)-shear killing the cross coefficient of
+\(H(q_2,q_3)\), subtracts the induced \(x_0\)-tails, re-extracts the
+homogeneous line, and dispatches automatically to the already-formalized
+diagonal/\(x_1^2\)-type determinant-zero theorem. So the determinant-zero
+mixed-affine branch now only needs a coarse extracted-line split:
+\(\operatorname{coeff}_{x_1^2} H=0\) with nonzero cross coefficient on one
+side, and \(\operatorname{coeff}_{x_1^2} H\neq 0\) on the other.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and

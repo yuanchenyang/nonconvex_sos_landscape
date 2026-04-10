@@ -1446,6 +1446,27 @@ content of this round is that the last cross-type shear normalization has been
 absorbed into the theorem interface itself rather than left as an external
 classification obligation.
 
+The next Lean round did the same for the complementary determinant-zero side.
+I added
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_diagShear\_origDetZero\_cases},
+its equivariant wrapper, and the corresponding top transport theorem. So the
+external classification no longer has to hand back a homogeneous line already
+sheared into pure \(x_1^2\)-type or diagonal form. It is now enough to produce
+coordinates \((1,x_0,q_2,q_3)\) with zero constant and \(x_0\)-linear parts in
+\(q_2,q_3\), the original determinant-zero relation for the pair, a nonzero
+\(x_1\)-tail in \(q_3\), and only the coarse condition
+\[
+  \operatorname{coeff}_{x_1^2} H(q_2,q_3)\neq 0,
+  \qquad H(q_2,q_3)=\texttt{mixedAffineTailHomLine}(q_2,q_3).
+\]
+Lean now performs the remaining \(x_1\)-shear internally, subtracts the
+induced \(x_0\)-tails, re-extracts the homogeneous line, and falls through to
+the already-formalized diagonal/\(x_1^2\)-type determinant-zero theorem. So
+the determinant-zero extracted-line layer is now genuinely two-way at theorem
+level: either \(\operatorname{coeff}_{x_1^2} H=0\) and the cross-shear theorem
+applies, or \(\operatorname{coeff}_{x_1^2} H\neq 0\) and the new diagonal-shear
+theorem applies.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
@@ -1460,10 +1481,11 @@ translation lemma and its integration are done, so the remaining work is to
 extract exact normalized coordinates of the form \(u=(1,x_1,q_2,q_3)\), or
 equivalently exact relation data for that same tuple, together with the same
 determinant condition from the general branch. On the determinant-zero side,
-the remaining work is now only extraction and transport: both the
-\(x_2^2\)-type and the cross-type canonical families are formalized, and the
-diagonal types look increasingly like classification-byproducts rather than
-true remaining obstructions.
+the remaining work is now only extraction and transport through the coarse
+split on the extracted line \(H(q_2,q_3)\): the cross-like
+\(\operatorname{coeff}_{x_1^2} H=0\), \(\operatorname{coeff}_{x_0x_1} H\neq 0\)
+branch and the complementary \(\operatorname{coeff}_{x_1^2} H\neq 0\) branch
+both have internal shear normalization already built into Lean.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this
