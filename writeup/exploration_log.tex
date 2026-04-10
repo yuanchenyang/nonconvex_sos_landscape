@@ -778,15 +778,25 @@ obstruction is no longer an in-plane algebra issue at all: it is the
 normalization/classification step that has to extract one of the canonical
 plane types together with nonzero determinant data.
 
-That low-affine simplification has now been carried out for the two
-\(\dim=2\) no-constant branches. The same file now contains
-basis-invariant plane theorems for the coprime and common-factor models: from
-explicit relations to \(x_1,x_2\) and any invertible basis of
-\(\operatorname{span}(x_1^2,x_2^2)\) or
-\(\operatorname{span}(x_1^2,x_1x_2)\), Lean reconstructs the exact canonical
-relations and reuses the representative image-plus-kernel certificates. So the
-final normalization step no longer needs exact low-affine representative
-equalities in those two branches either.
+That low-affine simplification needed one correction. The exploration script
+already recorded the additional rank-\(14\) no-constant plane
+\[
+  (x_1,x_2,x_1^2-x_2^2,x_1x_2),
+\]
+so the old claim that there were only two \(\dim=2\) low-affine plane types
+was too optimistic. The same file now contains basis-invariant plane theorems
+for the coprime and common-factor models, and in this round it also gained the
+exact-relation theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_x0x1\_diffsq}
+together with the determinant plane wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_x0x1\_diffsqPlane}.
+So the definite plane
+\[
+  \operatorname{span}(x_1x_2,\ x_1^2-x_2^2)
+\]
+is now formalized directly as well, and the final normalization step no longer
+needs exact low-affine representative equalities in the \(\dim=2\) no-constant
+branch.
 
 The linear low-affine branch has now advanced part of the same way. The file
 \texttt{RepresentativeLowAffine.lean} now proves both the exact-relation

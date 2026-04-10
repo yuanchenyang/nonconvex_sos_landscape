@@ -797,8 +797,17 @@ branch.
 
 \medskip
 \noindent
-This low-affine upgrade has now been carried out for the two
-\(\dim=2\) no-constant branches. The file
+This low-affine upgrade needed one correction. The original writeup treated
+only two \(\dim=2\) no-constant branches as canonical, but the exploration log
+already contained the additional rank-\(14\) definite plane
+\[
+  \operatorname{span}(x_1x_2,\ x_1^2-x_2^2),
+\]
+for example through the probe
+\[
+  (x_1,x_2,x_1^2-x_2^2,x_1x_2),
+\]
+which numerically has image rank \(14\). The file
 \texttt{TernaryQuarticProof/RepresentativeLowAffine.lean} no longer stops at
 the exact representatives
 \[
@@ -814,9 +823,17 @@ planes
   \qquad\text{and}\qquad
   \operatorname{span}(x_1^2,x_1x_2).
 \]
-So the final normalization step no longer needs exact representative
-equalities in those low-affine cases either: it only has to recover the linear
-part and the plane type.
+In addition, the new exact-relation theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_x0x1\_diffsq}
+and its determinant plane wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_x0x1\_diffsqPlane}
+now formalize the definite rank-\(14\) orbit
+\[
+  \operatorname{span}(x_1x_2,\ x_1^2-x_2^2)
+\]
+as well. So the final normalization step no longer needs exact representative
+equalities in the low-affine \(\dim=2\) cases either: it only has to recover
+the linear part and the resulting plane type.
 
 \medskip
 \noindent
