@@ -411,7 +411,22 @@ shear-and-scale formulas act on the homogeneous triple
   (a_{20},a_{11},a_{02})
 \]
 by the same completion-of-squares identities already proved in
-\texttt{MixedAffineNormalization.lean}. So the remaining normalization problem
+\texttt{MixedAffineNormalization.lean}. The new file
+\texttt{QuadraticCoordinateForm.lean} now also packages this at the level of
+arbitrary quadratics: it defines the translation equivalence $x_2 \mapsto x_2+t$
+inside the transport framework and proves the generic coefficient identities
+\[
+  \operatorname{coeff}_{x_2}\bigl(q(x_1,x_2+t)\bigr)
+  =
+  \operatorname{coeff}_{x_2}(q) + 2 t\, \operatorname{coeff}_{x_2^2}(q),
+\]
+\[
+  \operatorname{coeff}_{x_1x_2}\bigl(q(x_1+t x_2,x_2)\bigr)
+  =
+  \operatorname{coeff}_{x_1x_2}(q) + 2 t\, \operatorname{coeff}_{x_2^2}(q),
+\]
+together with the corresponding $x_1^2$, $x_1x_2$, and $x_2^2$ formulas under
+translation, shear, and scaling. So the remaining normalization problem
 can be reframed as follows: extract from a general constant-containing
 $\dim = 2$ factor the relevant coefficient data, kill the unwanted affine tail,
 read off the binary-quadratic annihilator of the resulting homogeneous

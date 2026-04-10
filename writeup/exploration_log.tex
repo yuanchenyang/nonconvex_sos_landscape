@@ -509,6 +509,30 @@ This should reduce the last unresolved branch to coefficient extraction and a
 binary-quadratic orbit calculation, rather than to another ad hoc representative
 proof.
 
+That coefficient layer is now strengthened in Lean. The same file
+\texttt{TernaryQuarticProof/QuadraticCoordinateForm.lean} now also:
+\begin{itemize}
+\item defines the actual affine equivalence for translation $x_2 \mapsto x_2+t$
+  inside the existing transport framework;
+\item proves generic coefficient identities for arbitrary quadratics under that
+  translation, for example
+  \[
+    \operatorname{coeff}_{x_2}(q(x_1,x_2+t))
+    =
+    \operatorname{coeff}_{x_2}(q)+2t\,\operatorname{coeff}_{x_2^2}(q),
+  \]
+  while the homogeneous coefficients
+  \[
+    \operatorname{coeff}_{x_1^2},\ \operatorname{coeff}_{x_1x_2},\ \operatorname{coeff}_{x_2^2}
+  \]
+  remain unchanged;
+\item proves the analogous generic coefficient-update rules under shear and
+  scaling.
+\end{itemize}
+So the mixed-affine normalization problem is now expressed in Lean directly at
+the level of coefficient functionals on arbitrary quadratics, rather than only
+through hand-expanded representative formulas.
+
 \section*{Additional Recorded Experiments}
 The checked-in Julia script now also records:
 \begin{verbatim}
