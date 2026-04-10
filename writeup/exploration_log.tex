@@ -834,7 +834,15 @@ canonical relations \(x_1^2,x_1x_2,x_2^2\) from any independent homogeneous
 quadratic triple. So the linear branch no longer needs separate representative
 normalization either: one linear relation plus a nondegenerate \(3\times 3\)
 homogeneous relation matrix now suffices, and the result is also transported
-across affine equivalences.
+across affine equivalences. The next cleanup now matches it to the same final
+transport surface as the mixed-affine branches: the new theorem
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_x0\_homQuadBasis\_det}
+consumes exact normalized coordinates
+\[
+  \operatorname{mix}(M^\top,e^{-1}\!\cdot u)=(x_1,q_1,q_2,q_3)
+\]
+with a nondegenerate homogeneous coefficient matrix and closes the branch
+directly.
 
 The constant \(\dim=1\) branch has been lifted in parallel. The same new
 \(3\times 3\) reconstruction now upgrades

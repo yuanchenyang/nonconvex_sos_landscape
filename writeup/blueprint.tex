@@ -1295,7 +1295,17 @@ argument has been lifted to the same exact relation data. The new
 \texttt{exact\_relations\_of\_homQuadBasis\_det} lemma now reconstructs those
 exact canonical relations from any independent homogeneous quadratic triple, so
 the linear low-affine branch also has a basis-invariant homogeneous-basis
-theorem and an affine-equivalence transport wrapper.
+theorem and an affine-equivalence transport wrapper. It now also has the
+transport-shaped theorem
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_x0\_homQuadBasis\_det}.
+So if the final classification step returns exact normalized coordinates
+\[
+  \operatorname{mix}(M^\top,e^{-1}\!\cdot u)=(x_1,q_1,q_2,q_3)
+\]
+with each \(q_j\) lying in the homogeneous quadratic span
+\(\operatorname{span}(x_1^2,x_1x_2,x_2^2)\) and with nonzero coefficient
+matrix determinant, this low-affine linear branch can now be consumed directly
+at the same top transport layer as the mixed-affine branches.
 
 \medskip
 \noindent
