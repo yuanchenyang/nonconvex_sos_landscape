@@ -1499,6 +1499,21 @@ longer open generically; the remaining pure-\(x_0^2\) difficulty is now the
 complementary \(\operatorname{coeff}_{x_1^2}(q_3)=0\) slice, which is exactly
 where the low-affine rank-\(13\) behavior lives numerically.
 
+The next Lean round removed another generic part of that complementary slice.
+In the same file I added
+\texttt{residual\_eq\_zero\_of\_const\_x0\_x0sqTail\_m11\_nonzero},
+\texttt{residual\_eq\_zero\_of\_equiv\_const\_x0\_x0sqTail\_m11\_nonzero}, and
+their transport wrappers. These cover exact normalized coordinates
+\((1,x_0,q_2,q_3)\) with \(q_2\) pure \(x_0^2\),
+\(\operatorname{coeff}_{x_1^2}(q_3)=0\), but
+\(\operatorname{coeff}_{x_0x_1}(q_3)\neq 0\). Lean now performs the explicit
+\(x_0\)-translation killing the \(x_1\)-tail of \(q_3\), subtracts the induced
+constant and \(x_0\) pieces from both coordinates, and reduces automatically to
+the existing homogeneous-plane theorem. So the only remaining pure-\(x_0^2\)
+determinant-zero slice is the special low-affine-looking one with both
+\(\operatorname{coeff}_{x_1^2}(q_3)=0\) and
+\(\operatorname{coeff}_{x_0x_1}(q_3)=0\).
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
