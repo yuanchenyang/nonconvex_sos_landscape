@@ -973,6 +973,22 @@ contains the transport-shaped theorem
 \texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_const\_x0\_tailedPair\_det},
 which packages the same branch in the exact ``affine normalization plus
 orthogonal factor mixing'' form used by \texttt{RepresentativeTransport.lean}.
+Finally, the same branch is now lifted one more step to explicit relation data:
+\texttt{RepresentativeMixedAffinePlane.lean} now proves
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_tailedPair\_det} and its
+equivariant version
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_tailedPair\_det}.
+So once four coefficient vectors \(c_0,c_1,c_2,c_3 \in \mathbb{R}^4\) are
+orthonormal and satisfy the explicit relations
+\[
+  \sum_i (c_0)_i u_i = 1,\qquad
+  \sum_i (c_1)_i u_i = x_1,\qquad
+  \sum_i (c_2)_i u_i = q_2,\qquad
+  \sum_i (c_3)_i u_i = q_3,
+\]
+the tailed-pair branch no longer needs any hand-built \(4\times4\) matrix:
+those theorems internally package the relation vectors into an orthogonal
+\texttt{mix} matrix and invoke the transport form automatically.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
@@ -982,7 +998,8 @@ canonical cross-product theorem. In other words, the next bridge no longer has
 to \emph{find} the homogeneous line; it only has to classify how the remaining
 tailed quadratic sits relative to that explicit extracted line, and in the
 nondegenerate determinant sub-branch it only has to extract exact normalized
-coordinates of the form \((1,x_1,q_2,q_3)\) and verify the same determinant
+coordinates of the form \((1,x_1,q_2,q_3)\) \emph{or equivalently} orthonormal
+relation vectors for that same data, together with the same determinant
 hypothesis after affine normalization. So the remaining gap there is no longer
 the translation algebra or its integration with the mixed-affine plane
 certificate layer; it is the

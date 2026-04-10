@@ -1015,11 +1015,19 @@ assembly interface by adding
 \texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_const\_x0\_tailedPair\_det},
 which consumes exactly the same kind of affine-normalization and orthogonal
 factor-mixing data as the existing representative transport layer.
+The next cleanup closed one more practical gap. The same file now proves
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_tailedPair\_det} and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_tailedPair\_det}.
+Those theorems take orthonormal coefficient vectors
+\(c_0,c_1,c_2,c_3 \in \mathbb{R}^4\) with explicit relations to
+\(1,x_1,q_2,q_3\), build the corresponding orthogonal factor-mixing matrix
+internally, and then dispatch to the transport-shaped tailed-pair certificate.
 So the determinant-nondegenerate branch is no longer blocked on translation
 algebra, on identifying the affine correction terms, or on integrating those
 corrections with the plane certificate layer. It is now blocked upstream on
-extracting the exact normalized coordinate picture \(u=(1,x_1,q_2,q_3)\) from a
-general constant-containing mixed-affine factor.
+extracting the exact normalized coordinate picture \(u=(1,x_1,q_2,q_3)\), or
+equivalently an orthonormal relation basis for that picture, from a general
+constant-containing mixed-affine factor.
 
 \section*{Open Subgoals}
 \begin{itemize}
@@ -1032,8 +1040,9 @@ homogeneous plane when available, so this step no longer has to hand-feed
 \((a,b,c)\) into the mixed-affine wrappers. The determinant-nondegenerate
 sub-branch is now sharper than that wording suggests: there the common-
 translation lemma and its integration are done, so the remaining work is to
-extract exact normalized coordinates of the form \(u=(1,x_1,q_2,q_3)\) and the
-same determinant condition from the general branch.
+extract exact normalized coordinates of the form \(u=(1,x_1,q_2,q_3)\), or an
+orthonormal relation basis for that same data, together with the same
+determinant condition from the general branch.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this

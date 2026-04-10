@@ -1,3 +1,4 @@
+import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 import TernaryQuarticProof.Certificate
 import TernaryQuarticProof.AffineSocpTransform
 import TernaryQuarticProof.RepresentativeTransport
@@ -5371,5 +5372,186 @@ theorem residual_eq_zero_of_socp_of_eq_mix_affineEquiv_const_x0_tailedPair_det
     (heQuadSymm := fun {_} hpq => isQuadratic_affineEquiv_symm A A' b b' hAA' hA'A hb hb' hpq)
     (heQuarticSymm := fun {_} hpq => isQuartic_affineEquiv_symm A A' b b' hAA' hA'A hb hb' hpq)
     (M := M) hMtM hMMt hB hp hq2 hq3 hdet huRep hsocp
+
+private def relationColsMatrix
+    (c0 c1 c2 c3 : Fin 4 → ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
+  fun i j =>
+    match j with
+    | 0 => c0 i
+    | 1 => c1 i
+    | 2 => c2 i
+    | 3 => c3 i
+
+private theorem mix_relationColsMatrix_transpose
+    (u : RankFourVec) (c0 c1 c2 c3 : Fin 4 → ℝ) :
+    mix (relationColsMatrix c0 c1 c2 c3).transpose u =
+      ![∑ i : Fin 4, c0 i • u i,
+        ∑ i : Fin 4, c1 i • u i,
+        ∑ i : Fin 4, c2 i • u i,
+        ∑ i : Fin 4, c3 i • u i] := by
+  funext i
+  fin_cases i <;> simp [mix, relationColsMatrix, Matrix.transpose_apply, Fin.sum_univ_four]
+
+private theorem relationColsMatrix_transpose_mul_self_eq_one
+    (c0 c1 c2 c3 : Fin 4 → ℝ)
+    (h00 : ∑ i : Fin 4, (c0 i) ^ 2 = 1)
+    (h11 : ∑ i : Fin 4, (c1 i) ^ 2 = 1)
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h01 : ∑ i : Fin 4, c0 i * c1 i = 0)
+    (h02 : ∑ i : Fin 4, c0 i * c2 i = 0)
+    (h03 : ∑ i : Fin 4, c0 i * c3 i = 0)
+    (h12 : ∑ i : Fin 4, c1 i * c2 i = 0)
+    (h13 : ∑ i : Fin 4, c1 i * c3 i = 0)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0) :
+    (relationColsMatrix c0 c1 c2 c3).transpose * relationColsMatrix c0 c1 c2 c3 = 1 := by
+  ext i j
+  fin_cases i <;> fin_cases j
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four, pow_two] using h00
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four] using h01
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four] using h02
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four] using h03
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four, mul_comm] using h01
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four, pow_two] using h11
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four] using h12
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four] using h13
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four, mul_comm] using h02
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four, mul_comm] using h12
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four, pow_two] using h22
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four] using h23
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four, mul_comm] using h03
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four, mul_comm] using h13
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four, mul_comm] using h23
+  · simpa [relationColsMatrix, Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply,
+      Fin.sum_univ_four, pow_two] using h33
+
+private theorem self_mul_transpose_eq_one_of_transpose_mul_self_eq_one
+    (M : Matrix (Fin 4) (Fin 4) ℝ)
+    (hMtM : M.transpose * M = 1) :
+    M * M.transpose = 1 := by
+  have hdetSq : M.det * M.det = 1 := by
+    have hdetEq := congrArg Matrix.det hMtM
+    simpa [Matrix.det_mul, Matrix.det_transpose] using hdetEq
+  have hdetUnit : IsUnit M.det := by
+    refine ⟨⟨M.det, M.det, hdetSq, ?_⟩, rfl⟩
+    simpa [mul_comm] using hdetSq
+  have hInv : M⁻¹ = M.transpose := by
+    exact Matrix.right_inv_eq_left_inv (Matrix.mul_nonsing_inv M hdetUnit) hMtM
+  rw [← hInv]
+  exact Matrix.mul_nonsing_inv M hdetUnit
+
+theorem residual_eq_zero_of_relations_const_x0_tailedPair_det
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (h00 : ∑ i : Fin 4, (c0 i) ^ 2 = 1)
+    (h11 : ∑ i : Fin 4, (c1 i) ^ 2 = 1)
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h01 : ∑ i : Fin 4, c0 i * c1 i = 0)
+    (h02 : ∑ i : Fin 4, c0 i * c2 i = 0)
+    (h03 : ∑ i : Fin 4, c0 i * c3 i = 0)
+    (h12 : ∑ i : Fin 4, c1 i * c2 i = 0)
+    (h13 : ∑ i : Fin 4, c1 i * c3 i = 0)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hdet :
+      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+        MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let M : Matrix (Fin 4) (Fin 4) ℝ := relationColsMatrix c0 c1 c2 c3
+  have hMtM : M.transpose * M = 1 := by
+    dsimp [M]
+    exact relationColsMatrix_transpose_mul_self_eq_one c0 c1 c2 c3
+      h00 h11 h22 h33 h01 h02 h03 h12 h13 h23
+  have hMMt : M * M.transpose = 1 := by
+    exact self_mul_transpose_eq_one_of_transpose_mul_self_eq_one M hMtM
+  have huRep :
+      mix M.transpose u = ![(1 : Poly), x0, q2, q3] := by
+    rw [mix_relationColsMatrix_transpose]
+    simp [h0, h1, h2, h3]
+  exact residual_eq_zero_of_socp_of_eq_mix_mapVec_const_x0_tailedPair_det
+    (e := AlgEquiv.refl)
+    (heQuad := fun {_} hq => hq)
+    (heQuadSymm := fun {_} hq => hq)
+    (heQuarticSymm := fun {_} hq => hq)
+    (M := M) hMtM hMMt
+    (hB := (Fact.out : B.toQuadraticMap.PosDef))
+    hp hq2 hq3 hdet huRep hsocp
+
+theorem residual_eq_zero_of_equiv_relations_const_x0_tailedPair_det
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x0)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (h00 : ∑ i : Fin 4, (c0 i) ^ 2 = 1)
+    (h11 : ∑ i : Fin 4, (c1 i) ^ 2 = 1)
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h01 : ∑ i : Fin 4, c0 i * c1 i = 0)
+    (h02 : ∑ i : Fin 4, c0 i * c2 i = 0)
+    (h03 : ∑ i : Fin 4, c0 i * c3 i = 0)
+    (h12 : ∑ i : Fin 4, c1 i * c2 i = 0)
+    (h13 : ∑ i : Fin 4, c1 i * c3 i = 0)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hdet :
+      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+        MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_const_x0_tailedPair_det
+      (B := B0) (u := mapVec e.toAlgHom u)
+      h0 h1 h2 h3 hq2 hq3
+      h00 h11 h22 h33 h01 h02 h03 h12 h13 h23 hdet hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
 end TernaryQuartic
