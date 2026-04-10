@@ -375,6 +375,23 @@ affine changes of variables:
     \qquad (c=0,\ b \neq 0),
   \]
   inside the affine subgroup preserving the line $\mathbb{R}x_1$.
+  In this round the same file is tightened further: it now also proves the
+  diagonal sign normalizations
+  \[
+    a x_1^2 + c x_2^2 \leadsto a(x_1^2+x_2^2)
+    \qquad \text{when } a/c>0,
+  \]
+  and
+  \[
+    a x_1^2 + c x_2^2 \leadsto a(x_1^2-x_2^2)
+    \qquad \text{when } -a/c>0,
+  \]
+  via the scalings
+  \(x_2 \mapsto \sqrt{a/c}\,x_2\) and
+  \(x_2 \mapsto \sqrt{-a/c}\,x_2\), and it combines those with the shear step
+  into explicit shear-plus-scale normal-form equalities. So the algebraic
+  normalization layer now already covers the three post-shear outcomes that the
+  mixed-affine classification needs: rank-$14$, sum-square, and split-diagonal.
   So the remaining classification gap is specifically the constant-containing
   $\dim = 2$ branch rather than the whole independent nonsurjective case.
 \end{itemize}

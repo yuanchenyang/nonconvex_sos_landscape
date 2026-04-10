@@ -390,7 +390,21 @@ and
   b x_1x_2
   \qquad (b \neq 0),
 \]
-together with the diagonal scaling formula. So the remaining work is no longer
+together with the diagonal scaling formula. In this round, the same file now
+packages the sign cases as explicit normal-form equalities:
+\[
+  a x_1^2 + c x_2^2 \leadsto a(x_1^2+x_2^2)
+  \qquad \text{when } a/c>0,
+\]
+and
+\[
+  a x_1^2 + c x_2^2 \leadsto a(x_1^2-x_2^2)
+  \qquad \text{when } -a/c>0,
+\]
+after the scaling \(x_2 \mapsto \sqrt{a/c}\,x_2\) or
+\(x_2 \mapsto \sqrt{-a/c}\,x_2\). It also combines these with the shear step,
+so the cross-killed diagonal form now normalizes directly to the sum-square or
+split-diagonal annihilator whenever the corresponding ratio is positive. So the remaining work is no longer
 to discover the completion-of-squares algebra, but to connect these explicit
 affine moves to a general rank-$4$ mixed-affine factor and then feed the result
 into the already-formalized representative theorems.

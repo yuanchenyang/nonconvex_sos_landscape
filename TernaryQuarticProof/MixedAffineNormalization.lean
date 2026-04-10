@@ -112,6 +112,58 @@ theorem affineHom_x1Scale_mixedAffineAnnihilator
   simp [mixedAffineAnnihilator, affineHom_x1Scale_x0, affineHom_x1Scale_x1]
   ring
 
+theorem affineHom_x1Scale_mixedAffineAnnihilator_to_sumsq
+    (a c : ℝ) (hpos : 0 < a / c) :
+    affineHom (x1ScaleMatrix (Real.sqrt (a / c))) 0 (mixedAffineAnnihilator a 0 c) =
+      mixedAffineAnnihilator a 0 a := by
+  rw [affineHom_x1Scale_mixedAffineAnnihilator]
+  have hc : c ≠ 0 := by
+    intro hc
+    simp [hc] at hpos
+  have hsq : (Real.sqrt (a / c)) ^ 2 = a / c := by
+    rw [Real.sq_sqrt]
+    exact le_of_lt hpos
+  have hC : c * (Real.sqrt (a / c)) ^ 2 = a := by
+    rw [hsq]
+    field_simp [hc]
+  simp [hC]
+
+theorem affineHom_x1Scale_mixedAffineAnnihilator_to_diffsq
+    (a c : ℝ) (hpos : 0 < (-a) / c) :
+    affineHom (x1ScaleMatrix (Real.sqrt ((-a) / c))) 0 (mixedAffineAnnihilator a 0 c) =
+      mixedAffineAnnihilator a 0 (-a) := by
+  rw [affineHom_x1Scale_mixedAffineAnnihilator]
+  have hc : c ≠ 0 := by
+    intro hc
+    simp [hc] at hpos
+  have hsq : (Real.sqrt ((-a) / c)) ^ 2 = (-a) / c := by
+    rw [Real.sq_sqrt]
+    exact le_of_lt hpos
+  have hC : c * (Real.sqrt ((-a) / c)) ^ 2 = -a := by
+    rw [hsq]
+    field_simp [hc]
+  simp [hC]
+
+theorem affineHom_x1ShearScale_mixedAffineAnnihilator_to_sumsq
+    (a b c : ℝ) (hc : c ≠ 0)
+    (hpos : 0 < (a - b ^ 2 / (4 * c)) / c) :
+    affineHom (x1ScaleMatrix (Real.sqrt ((a - b ^ 2 / (4 * c)) / c))) 0
+      (affineHom (x1ShearMatrix (-(b / (2 * c)))) 0 (mixedAffineAnnihilator a b c)) =
+        mixedAffineAnnihilator (a - b ^ 2 / (4 * c)) 0 (a - b ^ 2 / (4 * c)) := by
+  rw [affineHom_x1Shear_mixedAffineAnnihilator_cancel_cross a b c hc]
+  exact affineHom_x1Scale_mixedAffineAnnihilator_to_sumsq
+    (a - b ^ 2 / (4 * c)) c hpos
+
+theorem affineHom_x1ShearScale_mixedAffineAnnihilator_to_diffsq
+    (a b c : ℝ) (hc : c ≠ 0)
+    (hpos : 0 < (-(a - b ^ 2 / (4 * c))) / c) :
+    affineHom (x1ScaleMatrix (Real.sqrt ((-(a - b ^ 2 / (4 * c))) / c))) 0
+      (affineHom (x1ShearMatrix (-(b / (2 * c)))) 0 (mixedAffineAnnihilator a b c)) =
+        mixedAffineAnnihilator (a - b ^ 2 / (4 * c)) 0 (-(a - b ^ 2 / (4 * c))) := by
+  rw [affineHom_x1Shear_mixedAffineAnnihilator_cancel_cross a b c hc]
+  exact affineHom_x1Scale_mixedAffineAnnihilator_to_diffsq
+    (a - b ^ 2 / (4 * c)) c hpos
+
 /-- Polynomial equivalence induced by the `x₁`-shear preserving `x₀`. -/
 def x1ShearEquiv (t : ℝ) : Poly ≃ₐ[ℝ] Poly :=
   affineEquiv (x1ShearMatrix t) (x1ShearInvMatrix t) 0 0
