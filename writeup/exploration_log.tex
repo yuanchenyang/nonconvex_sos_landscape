@@ -794,9 +794,17 @@ So the definite plane
 \[
   \operatorname{span}(x_1x_2,\ x_1^2-x_2^2)
 \]
-is now formalized directly as well, and the final normalization step no longer
-needs exact low-affine representative equalities in the \(\dim=2\) no-constant
-branch.
+is now formalized directly as well. The same round also added the fixed
+transport theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_x0x1\_sumsqPlane}, so the
+split rank-\(14\) plane
+\[
+  \operatorname{span}(x_1x_2,\ x_1^2+x_2^2)
+\]
+is now discharged through the explicit linear map
+\((x_1,x_2)\mapsto(x_1+x_2,x_1-x_2)\). So the final normalization step no
+longer needs exact low-affine representative equalities in the \(\dim=2\)
+no-constant branch.
 
 The linear low-affine branch has now advanced part of the same way. The file
 \texttt{RepresentativeLowAffine.lean} now proves both the exact-relation
