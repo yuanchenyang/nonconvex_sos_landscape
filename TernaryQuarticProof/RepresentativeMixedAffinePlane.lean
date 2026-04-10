@@ -618,6 +618,38 @@ theorem sigma_add_relationDirections_of_orthonormal
           rw [hcd, hdc, hcc, hdd]
           simp [pow_two, mul_comm]
 
+/-- Sigma identity for two orthogonal relation directions with arbitrary
+coefficient norms. -/
+theorem sigma_add_relationDirections_of_orthogonal
+    (c d : Fin 4 → ℝ) (p q : Poly)
+    {rc rd : ℝ}
+    (hcc : ∑ i : Fin 4, (c i) ^ 2 = rc)
+    (hdd : ∑ i : Fin 4, (d i) ^ 2 = rd)
+    (hcd : ∑ i : Fin 4, c i * d i = 0) :
+    sigma (relationDirection c p + relationDirection d q) = rc • (p ^ 2) + rd • (q ^ 2) := by
+  have hdc : ∑ i : Fin 4, d i * c i = 0 := by
+    simpa [mul_comm] using hcd
+  calc
+    sigma (relationDirection c p + relationDirection d q)
+        = A (relationDirection c p + relationDirection d q)
+            (relationDirection c p + relationDirection d q) := by
+              rw [A_self_eq_sigma]
+    _ = A (relationDirection c p) (relationDirection c p)
+          + A (relationDirection c p) (relationDirection d q)
+          + (A (relationDirection d q) (relationDirection c p)
+            + A (relationDirection d q) (relationDirection d q)) := by
+          rw [A_add_left_local, A_add_right_local, A_add_right_local]
+    _ = (∑ i : Fin 4, (c i) ^ 2) • (p * p)
+          + (∑ i : Fin 4, c i * d i) • (p * q)
+          + ((∑ i : Fin 4, d i * c i) • (q * p)
+            + (∑ i : Fin 4, (d i) ^ 2) • (q * q)) := by
+          rw [A_relationDirection_pair, A_relationDirection_pair,
+            A_relationDirection_pair, A_relationDirection_pair]
+          simp [pow_two]
+    _ = rc • (p ^ 2) + rd • (q ^ 2) := by
+          rw [hcc, hcd, hdc, hdd]
+          simp [pow_two, mul_comm]
+
 /-- Sign-flipped version of the orthonormal sigma identity. This is the exact
 shape used by kernel syzygies of the form `(-d₂)·(bℓ) + d₃·(aℓ)`. -/
 theorem sigma_sub_add_relationDirections_of_orthonormal
@@ -632,6 +664,23 @@ theorem sigma_sub_add_relationDirections_of_orthonormal
     simpa [Pi.neg_apply] using hcc
   simpa [Pi.neg_apply] using
     sigma_add_relationDirections_of_orthonormal (-c) d p q hcc' hdd hneg
+
+/-- Sign-flipped sigma identity for orthogonal relation directions with
+arbitrary coefficient norms. -/
+theorem sigma_sub_add_relationDirections_of_orthogonal
+    (c d : Fin 4 → ℝ) (p q : Poly)
+    {rc rd : ℝ}
+    (hcc : ∑ i : Fin 4, (c i) ^ 2 = rc)
+    (hdd : ∑ i : Fin 4, (d i) ^ 2 = rd)
+    (hcd : ∑ i : Fin 4, c i * d i = 0) :
+    sigma (relationDirection (-c) p + relationDirection d q) =
+      rc • (p ^ 2) + rd • (q ^ 2) := by
+  have hneg : ∑ i : Fin 4, ((-c) i) * d i = 0 := by
+    simpa [Pi.neg_apply] using congrArg Neg.neg hcd
+  have hcc' : ∑ i : Fin 4, (((-c) i) ^ 2) = rc := by
+    simpa [Pi.neg_apply] using hcc
+  simpa [Pi.neg_apply] using
+    sigma_add_relationDirections_of_orthogonal (-c) d p q hcc' hdd hneg
 
 /-- Any quartic with zero `x₀⁴` coefficient lies in the image once the factor
 coordinates admit explicit scalar relations for the canonical mixed-affine
@@ -839,6 +888,99 @@ private theorem coeff_m40_sigma_rank14PlaneKer
   rw [MvPolynomial.coeff_add, hxy, hx0]
   ring
 
+private theorem coeff_m40_sigma_rank14PlaneKer_of_orthogonal
+    (c2 c3 : Fin 4 → ℝ) (t : ℝ)
+    {r2 r3 : ℝ}
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = r2)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = r3)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0) :
+    MvPolynomial.coeff m40 (sigma (rank14PlaneKer c2 c3 t)) = r3 * t ^ 2 := by
+  rw [rank14PlaneKer, sigma_sub_add_relationDirections_of_orthogonal c2 c3
+    (t • (x0 * x1 : Poly)) (t • (x0 ^ 2 : Poly)) h22 h33 h23]
+  have hxy :
+      MvPolynomial.coeff m40 ((t • (x0 * x1 : Poly)) ^ 2) = 0 := by
+    rw [coeff_m40_sq_of_quadratic_eq _ (isQuadratic_smul_x0_mul_x1_local t)]
+    rw [coeff_m20_smul_x0_mul_x1_local]
+    ring
+  have hx0 :
+      MvPolynomial.coeff m40 ((t • (x0 ^ 2 : Poly)) ^ 2) = t ^ 2 := by
+    rw [coeff_m40_sq_of_quadratic_eq _ (isQuadratic_smul_x0_sq_local t)]
+    rw [coeff_m20_smul_x0_sq_local]
+  rw [MvPolynomial.coeff_add, MvPolynomial.coeff_smul, MvPolynomial.coeff_smul, hxy, hx0]
+  simp [smul_eq_mul]
+
+/-- Rank-14 mixed-affine certificate with orthogonal, not necessarily unit,
+coefficient directions. -/
+theorem residual_eq_zero_of_relations_const_x0_x0x1_x1sq_of_orthogonal
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    (h2 : ∑ i : Fin 4, c2 i • u i = x0 * x1)
+    (h3 : ∑ i : Fin 4, c3 i • u i = x1 ^ 2)
+    {r2 r3 : ℝ}
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = r2)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = r3)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hr3 : r3 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  rcases hp with ⟨hpquartic, k, qs, hqdeg, hpq⟩
+  let s : ℝ := ∑ i : Fin k, (MvPolynomial.coeff m20 (qs i)) ^ 2
+  let t : ℝ := Real.sqrt (s / r3)
+  let w : RankFourVec := rank14PlaneKer c2 c3 t
+  have hsnonneg : 0 ≤ s := by
+    dsimp [s]
+    positivity
+  have hr3_nonneg : 0 ≤ r3 := by
+    rw [← h33]
+    positivity
+  have hr3_pos : 0 < r3 := lt_of_le_of_ne hr3_nonneg hr3.symm
+  have hsdiv_nonneg : 0 ≤ s / r3 := by positivity
+  have hp40 : MvPolynomial.coeff m40 p = s := by
+    rw [hpq, MvPolynomial.coeff_sum]
+    refine Finset.sum_congr rfl ?_
+    intro i hi
+    exact coeff_m40_sq_of_quadratic_eq (qs i) (hqdeg i)
+  have hwker : InAdmissibleKer u w := by
+    dsimp [w]
+    exact rank14PlaneKer_inKer h2 h3
+  have hw40 : MvPolynomial.coeff m40 (sigma w) = s := by
+    change MvPolynomial.coeff m40 (sigma (rank14PlaneKer c2 c3 t)) = s
+    calc
+      MvPolynomial.coeff m40 (sigma (rank14PlaneKer c2 c3 t)) = r3 * t ^ 2 := by
+        exact coeff_m40_sigma_rank14PlaneKer_of_orthogonal c2 c3 t h22 h33 h23
+      _ = r3 * (s / r3) := by
+        dsimp [t]
+        rw [Real.sq_sqrt hsdiv_nonneg]
+      _ = s := by
+        field_simp [hr3]
+  have hquartic_sub : IsQuartic (p - sigma w) := by
+    calc
+      (p - sigma w).totalDegree ≤ max p.totalDegree (sigma w).totalDegree := by
+        exact MvPolynomial.totalDegree_sub _ _
+      _ ≤ 4 := by
+        exact max_le hpquartic (isQuartic_sigma_of_admissible hwker.1)
+  have h40_sub : MvPolynomial.coeff m40 (p - sigma w) = 0 := by
+    rw [MvPolynomial.coeff_sub, hp40, hw40]
+    ring
+  have himg : InAdmissibleImage u (p - sigma w) :=
+    quartic_in_image_of_relations_const_x0_x0x1_x1sq h0 h1 h2 h3 hquartic_sub h40_sub
+  refine admissible_image_plus_cone_residual_eq_zero (B := B)
+    (u := u) (uImg := u)
+    hu hsocp
+    (imageOrthogonalResidual_self (B := B) hsocp.1) ?_
+  refine ⟨p - sigma w, {w}, himg, ?_, ?_⟩
+  · intro w' hw'
+    have hw' : w' = w := by simpa using hw'
+    subst hw'
+    exact hwker
+  · simp [w, sub_eq_add_neg]
+
 /-- Abstract rank-14 mixed-affine certificate: once the factor admits explicit
 relations for `1`, `x₀`, `x₀x₁`, and `x₁²`, and the last two relation vectors
 are orthonormal in coefficient space, every SOCP has zero residual. -/
@@ -973,6 +1115,136 @@ theorem residual_eq_zero_of_relations_const_x0_x1Plane
       _ = 0 := by rw [h22, h23, h33]; nlinarith [hcol01]
   exact residual_eq_zero_of_relations_const_x0_x0x1_x1sq
     (B := B) (u := u) hu h0 h1 h2' h3' h22' h33' h23' hp hsocp
+
+/-- Rank-14 plane theorem with orthogonal but not necessarily unit column
+coefficients in the canonical plane. -/
+theorem residual_eq_zero_of_relations_const_x0_x1Plane_scaled
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {a b c d : ℝ}
+    (h2 : ∑ i : Fin 4, c2 i • u i = a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly))
+    (h3 : ∑ i : Fin 4, c3 i • u i = c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly))
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hcol01 : a * b + c * d = 0)
+    (hcol0nz : a ^ 2 + c ^ 2 ≠ 0)
+    (hcol1nz : b ^ 2 + d ^ 2 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let n0 : ℝ := a ^ 2 + c ^ 2
+  let n1 : ℝ := b ^ 2 + d ^ 2
+  let c2' : Fin 4 → ℝ := fun i => (a / n0) * c2 i + (c / n0) * c3 i
+  let c3' : Fin 4 → ℝ := fun i => (b / n1) * c2 i + (d / n1) * c3 i
+  have hn0 : n0 ≠ 0 := by simpa [n0] using hcol0nz
+  have hn1 : n1 ≠ 0 := by simpa [n1] using hcol1nz
+  have h2' : ∑ i : Fin 4, c2' i • u i = x0 * x1 := by
+    calc
+      ∑ i : Fin 4, c2' i • u i
+          = (a / n0) • (a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly)) +
+              (c / n0) • (c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly)) := by
+                simp [c2', n0, relation_linearCombination, h2, h3]
+      _ = (a / n0) • (a • (x0 * x1 : Poly)) + (a / n0) • (b • (x1 ^ 2 : Poly)) +
+            ((c / n0) • (c • (x0 * x1 : Poly)) + (c / n0) • (d • (x1 ^ 2 : Poly))) := by
+              rw [smul_add, smul_add, add_assoc]
+      _ = (((a / n0) * a + (c / n0) * c) • (x0 * x1 : Poly)) +
+            (((a / n0) * b + (c / n0) * d) • (x1 ^ 2 : Poly)) := by
+              rw [smul_smul, smul_smul, smul_smul, smul_smul]
+              calc
+                (a / n0 * a) • (x0 * x1 : Poly) + (a / n0 * b) • (x1 ^ 2 : Poly) +
+                    ((c / n0 * c) • (x0 * x1 : Poly) + (c / n0 * d) • (x1 ^ 2 : Poly))
+                    =
+                    ((a / n0 * a) • (x0 * x1 : Poly) + (c / n0 * c) • (x0 * x1 : Poly)) +
+                      ((a / n0 * b) • (x1 ^ 2 : Poly) + (c / n0 * d) • (x1 ^ 2 : Poly)) := by
+                        abel_nf
+                _ = (((a / n0) * a + (c / n0) * c) • (x0 * x1 : Poly)) +
+                      (((a / n0) * b + (c / n0) * d) • (x1 ^ 2 : Poly)) := by
+                        rw [← add_smul, ← add_smul]
+      _ = ((a ^ 2 + c ^ 2) / n0) • (x0 * x1 : Poly) +
+            ((a * b + c * d) / n0) • (x1 ^ 2 : Poly) := by
+              have hs0 : (a / n0) * a + (c / n0) * c = (a ^ 2 + c ^ 2) / n0 := by
+                field_simp [hn0]
+              have hs1 : (a / n0) * b + (c / n0) * d = (a * b + c * d) / n0 := by
+                field_simp [hn0]
+              simp [hs0, hs1]
+      _ = x0 * x1 := by
+            rw [hcol01]
+            simp [n0, hn0]
+  have h3' : ∑ i : Fin 4, c3' i • u i = x1 ^ 2 := by
+    calc
+      ∑ i : Fin 4, c3' i • u i
+          = (b / n1) • (a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly)) +
+              (d / n1) • (c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly)) := by
+                simp [c3', n1, relation_linearCombination, h2, h3]
+      _ = (b / n1) • (a • (x0 * x1 : Poly)) + (b / n1) • (b • (x1 ^ 2 : Poly)) +
+            ((d / n1) • (c • (x0 * x1 : Poly)) + (d / n1) • (d • (x1 ^ 2 : Poly))) := by
+              rw [smul_add, smul_add, add_assoc]
+      _ = (((b / n1) * a + (d / n1) * c) • (x0 * x1 : Poly)) +
+            (((b / n1) * b + (d / n1) * d) • (x1 ^ 2 : Poly)) := by
+              rw [smul_smul, smul_smul, smul_smul, smul_smul]
+              calc
+                (b / n1 * a) • (x0 * x1 : Poly) + (b / n1 * b) • (x1 ^ 2 : Poly) +
+                    ((d / n1 * c) • (x0 * x1 : Poly) + (d / n1 * d) • (x1 ^ 2 : Poly))
+                    =
+                    ((b / n1 * a) • (x0 * x1 : Poly) + (d / n1 * c) • (x0 * x1 : Poly)) +
+                      ((b / n1 * b) • (x1 ^ 2 : Poly) + (d / n1 * d) • (x1 ^ 2 : Poly)) := by
+                        abel_nf
+                _ = (((b / n1) * a + (d / n1) * c) • (x0 * x1 : Poly)) +
+                      (((b / n1) * b + (d / n1) * d) • (x1 ^ 2 : Poly)) := by
+                        rw [← add_smul, ← add_smul]
+      _ = ((a * b + c * d) / n1) • (x0 * x1 : Poly) +
+            ((b ^ 2 + d ^ 2) / n1) • (x1 ^ 2 : Poly) := by
+              have hs0 : (b / n1) * a + (d / n1) * c = (a * b + c * d) / n1 := by
+                field_simp [hn1]
+              have hs1 : (b / n1) * b + (d / n1) * d = (b ^ 2 + d ^ 2) / n1 := by
+                field_simp [hn1]
+              simp [hs0, hs1]
+      _ = x1 ^ 2 := by
+            rw [hcol01]
+            simp [n1, hn1]
+  have h22' : ∑ i : Fin 4, (c2' i) ^ 2 = 1 / n0 := by
+    calc
+      ∑ i : Fin 4, (c2' i) ^ 2
+          = (a / n0) ^ 2 * (∑ i : Fin 4, (c2 i) ^ 2) +
+              (2 * (a / n0) * (c / n0)) * (∑ i : Fin 4, c2 i * c3 i) +
+                (c / n0) ^ 2 * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa [c2'] using sum_sq_linearCombination c2 c3 (a / n0) (c / n0)
+      _ = 1 / n0 := by
+            rw [h22, h23, h33]
+            field_simp [hn0]
+            ring
+  have h33' : ∑ i : Fin 4, (c3' i) ^ 2 = 1 / n1 := by
+    calc
+      ∑ i : Fin 4, (c3' i) ^ 2
+          = (b / n1) ^ 2 * (∑ i : Fin 4, (c2 i) ^ 2) +
+              (2 * (b / n1) * (d / n1)) * (∑ i : Fin 4, c2 i * c3 i) +
+                (d / n1) ^ 2 * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa [c3'] using sum_sq_linearCombination c2 c3 (b / n1) (d / n1)
+      _ = 1 / n1 := by
+            rw [h22, h23, h33]
+            field_simp [hn1]
+            ring
+  have h23' : ∑ i : Fin 4, c2' i * c3' i = 0 := by
+    calc
+      ∑ i : Fin 4, c2' i * c3' i
+          = ((a / n0) * (b / n1)) * (∑ i : Fin 4, (c2 i) ^ 2) +
+              ((a / n0) * (d / n1) + (c / n0) * (b / n1)) * (∑ i : Fin 4, c2 i * c3 i) +
+                ((c / n0) * (d / n1)) * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa [c2', c3'] using
+                    sum_mul_linearCombination c2 c3 (a / n0) (c / n0) (b / n1) (d / n1)
+      _ = 0 := by
+            rw [h22, h23, h33]
+            field_simp [hn0, hn1]
+            ring_nf
+            nlinarith [hcol01]
+  exact residual_eq_zero_of_relations_const_x0_x0x1_x1sq_of_orthogonal
+    (B := B) (u := u) hu h0 h1 h2' h3' h22' h33' h23' (by simpa [n1] using one_div_ne_zero hn1) hp hsocp
 
 /-- Any quartic with zero `x₁³` and `x₁⁴` coefficients lies in the image once
 the factor admits explicit scalar relations for `1`, `x₀²`, and `x₀x₁`. This
@@ -1263,6 +1535,161 @@ private theorem coeff_m04_sigma_rank13PlaneKer
   rw [MvPolynomial.coeff_add, h1, h0]
   ring
 
+private theorem coeff_m03_sigma_rank13PlaneKer_of_orthogonal
+    (c2 c3 : Fin 4 → ℝ) (b c : ℝ)
+    {r2 r3 : ℝ}
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = r2)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = r3)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0) :
+    MvPolynomial.coeff m03 (sigma (rank13PlaneKer c2 c3 b c)) = r2 * (2 * b * c) := by
+  rw [rank13PlaneKer, sigma_sub_add_relationDirections_of_orthogonal c2 c3
+    (x1 * mixedAffineRank13Line b c) (x0 * mixedAffineRank13Line b c) h22 h33 h23]
+  have h1 :
+      MvPolynomial.coeff m03 ((x1 * mixedAffineRank13Line b c) ^ 2) = 2 * b * c := by
+    rw [coeff_m03_sq_of_quadratic_eq _ (isQuadratic_x1_mul_mixedAffineRank13Line_local b c)]
+    rw [coeff_m01_x1_mul_mixedAffineRank13Line_local, coeff_m02_x1_mul_mixedAffineRank13Line_local]
+  have h0 :
+      MvPolynomial.coeff m03 ((x0 * mixedAffineRank13Line b c) ^ 2) = 0 := by
+    rw [coeff_m03_sq_of_quadratic_eq _ (isQuadratic_x0_mul_mixedAffineRank13Line_local b c)]
+    rw [coeff_m01_x0_mul_mixedAffineRank13Line_local, coeff_m02_x0_mul_mixedAffineRank13Line_local]
+    ring
+  rw [MvPolynomial.coeff_add, MvPolynomial.coeff_smul, MvPolynomial.coeff_smul, h1, h0]
+  simp [smul_eq_mul]
+
+private theorem coeff_m04_sigma_rank13PlaneKer_of_orthogonal
+    (c2 c3 : Fin 4 → ℝ) (b c : ℝ)
+    {r2 r3 : ℝ}
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = r2)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = r3)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0) :
+    MvPolynomial.coeff m04 (sigma (rank13PlaneKer c2 c3 b c)) = r2 * c ^ 2 := by
+  rw [rank13PlaneKer, sigma_sub_add_relationDirections_of_orthogonal c2 c3
+    (x1 * mixedAffineRank13Line b c) (x0 * mixedAffineRank13Line b c) h22 h33 h23]
+  have h1 :
+      MvPolynomial.coeff m04 ((x1 * mixedAffineRank13Line b c) ^ 2) = c ^ 2 := by
+    rw [coeff_m04_sq_of_quadratic_eq _ (isQuadratic_x1_mul_mixedAffineRank13Line_local b c)]
+    rw [coeff_m02_x1_mul_mixedAffineRank13Line_local]
+  have h0 :
+      MvPolynomial.coeff m04 ((x0 * mixedAffineRank13Line b c) ^ 2) = 0 := by
+    rw [coeff_m04_sq_of_quadratic_eq _ (isQuadratic_x0_mul_mixedAffineRank13Line_local b c)]
+    rw [coeff_m02_x0_mul_mixedAffineRank13Line_local]
+    ring
+  rw [MvPolynomial.coeff_add, MvPolynomial.coeff_smul, MvPolynomial.coeff_smul, h1, h0]
+  simp [smul_eq_mul]
+
+/-- Rank-13 mixed-affine certificate with orthogonal, not necessarily unit,
+coefficient directions. -/
+theorem residual_eq_zero_of_relations_const_x0sq_x0x1_of_orthogonal
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h2 : ∑ i : Fin 4, c2 i • u i = x0 ^ 2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = x0 * x1)
+    {r2 r3 : ℝ}
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = r2)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = r3)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hr2 : r2 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  rcases hp with ⟨hpquartic, k, qs, hqdeg, hpq⟩
+  let s3 : ℝ := ∑ i : Fin k, MvPolynomial.coeff m01 (qs i) * MvPolynomial.coeff m02 (qs i)
+  let s4 : ℝ := ∑ i : Fin k, (MvPolynomial.coeff m02 (qs i)) ^ 2
+  let c : ℝ := Real.sqrt (s4 / r2)
+  let b : ℝ := s3 / (r2 * c)
+  let w : RankFourVec := rank13PlaneKer c2 c3 b c
+  have hs4_nonneg : 0 ≤ s4 := by
+    dsimp [s4]
+    positivity
+  have hr2_nonneg : 0 ≤ r2 := by
+    rw [← h22]
+    positivity
+  have hr2_pos : 0 < r2 := lt_of_le_of_ne hr2_nonneg hr2.symm
+  have hsdiv_nonneg : 0 ≤ s4 / r2 := by positivity
+  have hp03 : MvPolynomial.coeff m03 p = 2 * s3 := by
+    calc
+      MvPolynomial.coeff m03 p = ∑ i : Fin k, MvPolynomial.coeff m03 ((qs i) ^ 2) := by
+        rw [hpq, MvPolynomial.coeff_sum]
+      _ = ∑ i : Fin k, 2 * MvPolynomial.coeff m01 (qs i) * MvPolynomial.coeff m02 (qs i) := by
+        refine Finset.sum_congr rfl ?_
+        intro i hi
+        exact coeff_m03_sq_of_quadratic_eq (qs i) (hqdeg i)
+      _ = 2 * s3 := by
+        dsimp [s3]
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl ?_
+        intro i hi
+        ring
+  have hp04 : MvPolynomial.coeff m04 p = s4 := by
+    calc
+      MvPolynomial.coeff m04 p = ∑ i : Fin k, MvPolynomial.coeff m04 ((qs i) ^ 2) := by
+        rw [hpq, MvPolynomial.coeff_sum]
+      _ = ∑ i : Fin k, (MvPolynomial.coeff m02 (qs i)) ^ 2 := by
+        refine Finset.sum_congr rfl ?_
+        intro i hi
+        exact coeff_m04_sq_of_quadratic_eq (qs i) (hqdeg i)
+      _ = s4 := by
+        rfl
+  have hc_sq : c ^ 2 = s4 / r2 := by
+    dsimp [c]
+    rw [Real.sq_sqrt hsdiv_nonneg]
+  have hs3_zero_of_c_zero (hc0 : c = 0) : s3 = 0 := by
+    have hs4_zero : s4 = 0 := by
+      have hdiv0 : s4 / r2 = 0 := by simpa [hc0] using hc_sq.symm
+      exact ((div_eq_zero_iff).mp hdiv0).resolve_right hr2
+    have htermzero :=
+      (Finset.sum_eq_zero_iff_of_nonneg
+        (fun i _ => sq_nonneg (MvPolynomial.coeff m02 (qs i)))).mp hs4_zero
+    dsimp [s3]
+    refine Finset.sum_eq_zero ?_
+    intro i hi
+    have hi0 : MvPolynomial.coeff m02 (qs i) = 0 := by
+      exact sq_eq_zero_iff.mp (htermzero i (by simp))
+    simp [hi0]
+  have hwker : InAdmissibleKer u w := by
+    dsimp [w]
+    exact rank13PlaneKer_inKer h2 h3
+  have hw03 : MvPolynomial.coeff m03 (sigma w) = 2 * s3 := by
+    change MvPolynomial.coeff m03 (sigma (rank13PlaneKer c2 c3 b c)) = 2 * s3
+    rw [coeff_m03_sigma_rank13PlaneKer_of_orthogonal c2 c3 b c h22 h33 h23]
+    by_cases hc0 : c = 0
+    · have hs3zero : s3 = 0 := hs3_zero_of_c_zero hc0
+      simp [b, hc0, hs3zero]
+    · dsimp [b]
+      field_simp [hc0, hr2]
+  have hw04 : MvPolynomial.coeff m04 (sigma w) = s4 := by
+    change MvPolynomial.coeff m04 (sigma (rank13PlaneKer c2 c3 b c)) = s4
+    rw [coeff_m04_sigma_rank13PlaneKer_of_orthogonal c2 c3 b c h22 h33 h23, hc_sq]
+    field_simp [hr2]
+  have hquartic_sub : IsQuartic (p - sigma w) := by
+    calc
+      (p - sigma w).totalDegree ≤ max p.totalDegree (sigma w).totalDegree := by
+        exact MvPolynomial.totalDegree_sub _ _
+      _ ≤ 4 := by
+        exact max_le hpquartic (isQuartic_sigma_of_admissible hwker.1)
+  have h03_sub : MvPolynomial.coeff m03 (p - sigma w) = 0 := by
+    rw [MvPolynomial.coeff_sub, hp03, hw03]
+    ring
+  have h04_sub : MvPolynomial.coeff m04 (p - sigma w) = 0 := by
+    rw [MvPolynomial.coeff_sub, hp04, hw04]
+    ring
+  have himg : InAdmissibleImage u (p - sigma w) :=
+    quartic_in_image_of_relations_const_x0sq_x0x1 h0 h2 h3 hquartic_sub h03_sub h04_sub
+  refine admissible_image_plus_cone_residual_eq_zero (B := B)
+    (u := u) (uImg := u)
+    hu hsocp
+    (imageOrthogonalResidual_self (B := B) hsocp.1) ?_
+  refine ⟨p - sigma w, {w}, himg, ?_, ?_⟩
+  · intro w' hw'
+    have hw' : w' = w := by simpa using hw'
+    subst hw'
+    exact hwker
+  · simp [w, sub_eq_add_neg]
+
 /-- Abstract rank-13 mixed-affine certificate: if a factor admits explicit
 relations for `1`, `x₀²`, and `x₀x₁`, and the last two relation vectors are
 orthonormal in coefficient space, every SOCP has zero residual. -/
@@ -1438,6 +1865,133 @@ theorem residual_eq_zero_of_relations_const_x0Plane
   exact residual_eq_zero_of_relations_const_x0sq_x0x1
     (B := B) (u := u) hu h0 h2' h3' h22' h33' h23' hp hsocp
 
+/-- Rank-13 plane theorem with orthogonal but not necessarily unit column
+coefficients in the canonical plane. -/
+theorem residual_eq_zero_of_relations_const_x0Plane_scaled
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    {a b c d : ℝ}
+    (h2 : ∑ i : Fin 4, c2 i • u i = a • (x0 ^ 2 : Poly) + b • (x0 * x1 : Poly))
+    (h3 : ∑ i : Fin 4, c3 i • u i = c • (x0 ^ 2 : Poly) + d • (x0 * x1 : Poly))
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hcol01 : a * b + c * d = 0)
+    (hcol0nz : a ^ 2 + c ^ 2 ≠ 0)
+    (hcol1nz : b ^ 2 + d ^ 2 ≠ 0) : 
+    {p : Poly} → IsSOSQuartic p → IsSOCP B p u → residual p u = 0 := by
+  intro p hp hsocp
+  let n0 : ℝ := a ^ 2 + c ^ 2
+  let n1 : ℝ := b ^ 2 + d ^ 2
+  let c2' : Fin 4 → ℝ := fun i => (a / n0) * c2 i + (c / n0) * c3 i
+  let c3' : Fin 4 → ℝ := fun i => (b / n1) * c2 i + (d / n1) * c3 i
+  have hn0 : n0 ≠ 0 := by simpa [n0] using hcol0nz
+  have hn1 : n1 ≠ 0 := by simpa [n1] using hcol1nz
+  have h2' : ∑ i : Fin 4, c2' i • u i = x0 ^ 2 := by
+    calc
+      ∑ i : Fin 4, c2' i • u i
+          = (a / n0) • (a • (x0 ^ 2 : Poly) + b • (x0 * x1 : Poly)) +
+              (c / n0) • (c • (x0 ^ 2 : Poly) + d • (x0 * x1 : Poly)) := by
+                simp [c2', n0, relation_linearCombination, h2, h3]
+      _ = (a / n0) • (a • (x0 ^ 2 : Poly)) + (a / n0) • (b • (x0 * x1 : Poly)) +
+            ((c / n0) • (c • (x0 ^ 2 : Poly)) + (c / n0) • (d • (x0 * x1 : Poly))) := by
+              rw [smul_add, smul_add, add_assoc]
+      _ = (((a / n0) * a + (c / n0) * c) • (x0 ^ 2 : Poly)) +
+            (((a / n0) * b + (c / n0) * d) • (x0 * x1 : Poly)) := by
+              rw [smul_smul, smul_smul, smul_smul, smul_smul]
+              calc
+                (a / n0 * a) • (x0 ^ 2 : Poly) + (a / n0 * b) • (x0 * x1 : Poly) +
+                    ((c / n0 * c) • (x0 ^ 2 : Poly) + (c / n0 * d) • (x0 * x1 : Poly))
+                    =
+                    ((a / n0 * a) • (x0 ^ 2 : Poly) + (c / n0 * c) • (x0 ^ 2 : Poly)) +
+                      ((a / n0 * b) • (x0 * x1 : Poly) + (c / n0 * d) • (x0 * x1 : Poly)) := by
+                        abel_nf
+                _ = (((a / n0) * a + (c / n0) * c) • (x0 ^ 2 : Poly)) +
+                      (((a / n0) * b + (c / n0) * d) • (x0 * x1 : Poly)) := by
+                        rw [← add_smul, ← add_smul]
+      _ = ((a ^ 2 + c ^ 2) / n0) • (x0 ^ 2 : Poly) +
+            ((a * b + c * d) / n0) • (x0 * x1 : Poly) := by
+              have hs0 : (a / n0) * a + (c / n0) * c = (a ^ 2 + c ^ 2) / n0 := by
+                field_simp [hn0]
+              have hs1 : (a / n0) * b + (c / n0) * d = (a * b + c * d) / n0 := by
+                field_simp [hn0]
+              simp [hs0, hs1]
+      _ = x0 ^ 2 := by
+            rw [hcol01]
+            simp [n0, hn0]
+  have h3' : ∑ i : Fin 4, c3' i • u i = x0 * x1 := by
+    calc
+      ∑ i : Fin 4, c3' i • u i
+          = (b / n1) • (a • (x0 ^ 2 : Poly) + b • (x0 * x1 : Poly)) +
+              (d / n1) • (c • (x0 ^ 2 : Poly) + d • (x0 * x1 : Poly)) := by
+                simp [c3', n1, relation_linearCombination, h2, h3]
+      _ = (b / n1) • (a • (x0 ^ 2 : Poly)) + (b / n1) • (b • (x0 * x1 : Poly)) +
+            ((d / n1) • (c • (x0 ^ 2 : Poly)) + (d / n1) • (d • (x0 * x1 : Poly))) := by
+              rw [smul_add, smul_add, add_assoc]
+      _ = (((b / n1) * a + (d / n1) * c) • (x0 ^ 2 : Poly)) +
+            (((b / n1) * b + (d / n1) * d) • (x0 * x1 : Poly)) := by
+              rw [smul_smul, smul_smul, smul_smul, smul_smul]
+              calc
+                (b / n1 * a) • (x0 ^ 2 : Poly) + (b / n1 * b) • (x0 * x1 : Poly) +
+                    ((d / n1 * c) • (x0 ^ 2 : Poly) + (d / n1 * d) • (x0 * x1 : Poly))
+                    =
+                    ((b / n1 * a) • (x0 ^ 2 : Poly) + (d / n1 * c) • (x0 ^ 2 : Poly)) +
+                      ((b / n1 * b) • (x0 * x1 : Poly) + (d / n1 * d) • (x0 * x1 : Poly)) := by
+                        abel_nf
+                _ = (((b / n1) * a + (d / n1) * c) • (x0 ^ 2 : Poly)) +
+                      (((b / n1) * b + (d / n1) * d) • (x0 * x1 : Poly)) := by
+                        rw [← add_smul, ← add_smul]
+      _ = ((a * b + c * d) / n1) • (x0 ^ 2 : Poly) +
+            ((b ^ 2 + d ^ 2) / n1) • (x0 * x1 : Poly) := by
+              have hs0 : (b / n1) * a + (d / n1) * c = (a * b + c * d) / n1 := by
+                field_simp [hn1]
+              have hs1 : (b / n1) * b + (d / n1) * d = (b ^ 2 + d ^ 2) / n1 := by
+                field_simp [hn1]
+              simp [hs0, hs1]
+      _ = x0 * x1 := by
+            rw [hcol01]
+            simp [n1, hn1]
+  have h22' : ∑ i : Fin 4, (c2' i) ^ 2 = 1 / n0 := by
+    calc
+      ∑ i : Fin 4, (c2' i) ^ 2
+          = (a / n0) ^ 2 * (∑ i : Fin 4, (c2 i) ^ 2) +
+              (2 * (a / n0) * (c / n0)) * (∑ i : Fin 4, c2 i * c3 i) +
+                (c / n0) ^ 2 * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa [c2'] using sum_sq_linearCombination c2 c3 (a / n0) (c / n0)
+      _ = 1 / n0 := by
+            rw [h22, h23, h33]
+            field_simp [hn0]
+            ring
+  have h33' : ∑ i : Fin 4, (c3' i) ^ 2 = 1 / n1 := by
+    calc
+      ∑ i : Fin 4, (c3' i) ^ 2
+          = (b / n1) ^ 2 * (∑ i : Fin 4, (c2 i) ^ 2) +
+              (2 * (b / n1) * (d / n1)) * (∑ i : Fin 4, c2 i * c3 i) +
+                (d / n1) ^ 2 * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa [c3'] using sum_sq_linearCombination c2 c3 (b / n1) (d / n1)
+      _ = 1 / n1 := by
+            rw [h22, h23, h33]
+            field_simp [hn1]
+            ring
+  have h23' : ∑ i : Fin 4, c2' i * c3' i = 0 := by
+    calc
+      ∑ i : Fin 4, c2' i * c3' i
+          = ((a / n0) * (b / n1)) * (∑ i : Fin 4, (c2 i) ^ 2) +
+              ((a / n0) * (d / n1) + (c / n0) * (b / n1)) * (∑ i : Fin 4, c2 i * c3 i) +
+                ((c / n0) * (d / n1)) * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa [c2', c3'] using
+                    sum_mul_linearCombination c2 c3 (a / n0) (c / n0) (b / n1) (d / n1)
+      _ = 0 := by
+            rw [h22, h23, h33]
+            field_simp [hn0, hn1]
+            ring_nf
+            nlinarith [hcol01]
+  exact residual_eq_zero_of_relations_const_x0sq_x0x1_of_orthogonal
+    (B := B) (u := u) hu h0 h2' h3' h22' h33' h23' (by simpa [n0] using one_div_ne_zero hn0) hp hsocp
+
 /-- Transport the strengthened rank-14 mixed-affine plane certificate across
 an algebra equivalence. This is the affine-normalization wrapper needed later:
 it is enough to produce the orthogonal in-plane relation data after
@@ -1487,6 +2041,54 @@ theorem residual_eq_zero_of_equiv_relations_const_x0_x1Plane
       hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
+/-- Transport the scaled rank-14 mixed-affine plane certificate across
+an algebra equivalence. This lets the affine-normalization step feed
+non-unit orthogonal plane data directly to the mixed-affine theorem. -/
+theorem residual_eq_zero_of_equiv_relations_const_x0_x1Plane_scaled
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x0)
+    {a b c d : ℝ}
+    (h2 :
+      ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i =
+        a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly))
+    (h3 :
+      ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i =
+        c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly))
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hcol01 : a * b + c * d = 0)
+    (hcol0nz : a ^ 2 + c ^ 2 ≠ 0)
+    (hcol1nz : b ^ 2 + d ^ 2 ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_const_x0_x1Plane_scaled
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 h22 h33 h23 hcol01 hcol0nz hcol1nz
+      hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
 /-- Transport the strengthened rank-13 mixed-affine plane certificate across
 an algebra equivalence. -/
 theorem residual_eq_zero_of_equiv_relations_const_x0Plane
@@ -1530,6 +2132,52 @@ theorem residual_eq_zero_of_equiv_relations_const_x0Plane
       residual (e p) (mapVec e.toAlgHom u) = 0 := by
     exact residual_eq_zero_of_relations_const_x0Plane
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h2 h3 h22 h33 h23 hcol0 hcol1 hcol01
+      hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+/-- Transport the scaled rank-13 mixed-affine plane certificate across
+an algebra equivalence. -/
+theorem residual_eq_zero_of_equiv_relations_const_x0Plane_scaled
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = (1 : Poly))
+    {a b c d : ℝ}
+    (h2 :
+      ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i =
+        a • (x0 ^ 2 : Poly) + b • (x0 * x1 : Poly))
+    (h3 :
+      ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i =
+        c • (x0 ^ 2 : Poly) + d • (x0 * x1 : Poly))
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hcol01 : a * b + c * d = 0)
+    (hcol0nz : a ^ 2 + c ^ 2 ≠ 0)
+    (hcol1nz : b ^ 2 + d ^ 2 ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_const_x0Plane_scaled
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h2 h3 h22 h33 h23 hcol01 hcol0nz hcol1nz
       hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 

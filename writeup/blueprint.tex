@@ -612,15 +612,17 @@ the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
     \qquad\text{and}\qquad
     \operatorname{span}(x_1^2,\ x_1x_2),
   \]
-  the file proves orthogonal in-plane basis reductions back to the exact
-  rank-$14$ and rank-$13$ certificates, again wrapped through arbitrary
-  polynomial algebra equivalences. So the remaining gap has tightened again:
-  one no longer needs a full coefficient API for arbitrary linear-form
-  products, but one still needs the normalization/classification step to
-  produce from a general mixed-affine factor either an invertible surjective
-  plane basis or an orthogonal nonsurjective plane basis, together with the
-  corresponding relation vectors. The intended bridge is now an explicit
-  six-coefficient quadratic normal form plus formulas for the
+  the file first proved orthogonal in-plane basis reductions back to the exact
+  rank-$14$ and rank-$13$ certificates, and now those same nonsurjective
+  theorems have been strengthened to allow orthogonal but not necessarily unit
+  column data, again wrapped through arbitrary polynomial algebra
+  equivalences. So the remaining gap has tightened again: one no longer needs
+  to normalize the column lengths inside the mixed-affine plane, but one still
+  needs the normalization/classification step to produce from a general
+  mixed-affine factor either an invertible surjective plane basis or an
+  orthogonal nonsurjective plane basis, together with the corresponding
+  relation vectors. The intended bridge is now an explicit six-coefficient
+  quadratic normal form plus formulas for the
   $x_2$-translation, $x_2$-shear, and $x_2$-scaling subgroup preserving
   $\mathbb{R}x_1$.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
@@ -650,8 +652,10 @@ proof-serving finite-support lemma rather than a general coefficient API.
 \noindent
 The mixed-affine analysis is now complete at the representative-or-plane level:
 the rank-$13$ and rank-$14$ nonsurjective models are formalized both as concrete
-representatives and as abstract plane certificates, and the surjective rank-$15$
-branch is formalized for both real plane orbits
+representatives and as abstract plane certificates, now in a form that also
+accepts non-unit orthogonal in-plane coefficient data and transports directly
+across affine algebra equivalences, and the surjective rank-$15$ branch is
+formalized for both real plane orbits
 \[
   \operatorname{span}(x_1^2,x_2^2)
   \qquad\text{and}\qquad

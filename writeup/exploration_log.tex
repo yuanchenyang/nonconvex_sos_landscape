@@ -725,6 +725,18 @@ gives a full no-spurious-SOCP theorem for the whole
 $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 3$ branch without any exact
 normalization.
 
+The mixed-affine plane layer has now been strengthened one more step.
+\texttt{RepresentativeMixedAffinePlane.lean} no longer stops at orthonormal
+in-plane coefficient vectors for the nonsurjective rank-$14$ and rank-$13$
+branches. It now proves the same residual-vanishing statements for orthogonal
+but not necessarily unit column data, and it includes the matching
+algebra-equivalence transport wrappers. So the affine-normalization step no
+longer needs to rescale those relation vectors back to unit length before
+pulling the theorem back to the original SOCP point. This removes one more
+artifact of the earlier representative-first approach: the remaining obstacle
+is now exactly to extract orthogonal mixed-affine plane data from the constant-
+containing $\dim=2$ branch, not to renormalize it afterward.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Use the new file \texttt{MixedAffineNormalization.lean} to finish the
