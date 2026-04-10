@@ -1015,6 +1015,124 @@ private theorem coeff_m20_smul_x0_sq_local (t : ℝ) :
     simp [x0, m20, MvPolynomial.coeff_X_pow]
   simp [hx]
 
+/-- Homogeneous linear form `a x₀ + b x₁`. -/
+private def homLine (a b : ℝ) : Poly :=
+  MvPolynomial.C a * x0 + MvPolynomial.C b * x1
+
+private theorem totalDegree_homLine_le (a b : ℝ) :
+    (homLine a b).totalDegree ≤ 1 := by
+  unfold homLine
+  calc
+    (MvPolynomial.C a * x0 + MvPolynomial.C b * x1 : Poly).totalDegree ≤
+        max (MvPolynomial.C a * x0).totalDegree (MvPolynomial.C b * x1).totalDegree := by
+          exact MvPolynomial.totalDegree_add _ _
+    _ ≤ 1 := by
+      refine max_le ?_ ?_
+      · calc
+          (MvPolynomial.C a * x0 : Poly).totalDegree ≤
+              (MvPolynomial.C a).totalDegree + x0.totalDegree := by
+                exact MvPolynomial.totalDegree_mul _ _
+          _ = 1 := by simp [x0]
+      · calc
+          (MvPolynomial.C b * x1 : Poly).totalDegree ≤
+              (MvPolynomial.C b).totalDegree + x1.totalDegree := by
+                exact MvPolynomial.totalDegree_mul _ _
+          _ = 1 := by simp [x1]
+
+private theorem isQuadratic_smul_x0_mul_homLine (a b t : ℝ) :
+    IsQuadratic (t • (x0 * homLine a b : Poly)) := by
+  have hx0 : x0.totalDegree ≤ 1 := by simp [x0]
+  calc
+    (t • (x0 * homLine a b : Poly)).totalDegree ≤ (x0 * homLine a b : Poly).totalDegree := by
+      exact MvPolynomial.totalDegree_smul_le t _
+    _ ≤ x0.totalDegree + (homLine a b).totalDegree := by
+      exact MvPolynomial.totalDegree_mul _ _
+    _ ≤ 1 + 1 := by
+      exact add_le_add hx0 (totalDegree_homLine_le a b)
+    _ = 2 := by norm_num
+
+private theorem coeff_m20_smul_x0_mul_homLine (a b t : ℝ) :
+    MvPolynomial.coeff m20 (t • (x0 * homLine a b : Poly)) = t * a := by
+  rw [MvPolynomial.coeff_smul]
+  have hEq : (x0 * homLine a b : Poly) = a • (x0 ^ 2 : Poly) + b • (x0 * x1 : Poly) := by
+    unfold homLine
+    calc
+      (x0 * (MvPolynomial.C a * x0 + MvPolynomial.C b * x1) : Poly)
+          = x0 * (MvPolynomial.C a * x0) + x0 * (MvPolynomial.C b * x1) := by
+              ring
+      _ = MvPolynomial.C a * (x0 ^ 2 : Poly) + MvPolynomial.C b * (x0 * x1 : Poly) := by
+            ring
+      _ = a • (x0 ^ 2 : Poly) + b • (x0 * x1 : Poly) := by
+            simp [MvPolynomial.smul_eq_C_mul]
+  have hx0sq : MvPolynomial.coeff m20 (x0 ^ 2 : Poly) = 1 := by
+    simpa using coeff_m20_smul_x0_sq_local (1 : ℝ)
+  have hx0x1 : MvPolynomial.coeff m20 (x0 * x1 : Poly) = 0 := by
+    simpa using coeff_m20_smul_x0_mul_x1_local (1 : ℝ)
+  rw [hEq, MvPolynomial.coeff_add, MvPolynomial.coeff_smul, MvPolynomial.coeff_smul, hx0sq, hx0x1]
+  simp [smul_eq_mul]
+
+/-- Rank-14 kernel built from an arbitrary basis of `span(x₀x₁,x₁²)`. -/
+private def rank14PlaneKerDet (c2 c3 : Fin 4 → ℝ)
+    (a b c d t : ℝ) : RankFourVec :=
+  relationDirection (-c2) (t • (x0 * homLine c d : Poly)) +
+    relationDirection c3 (t • (x0 * homLine a b : Poly))
+
+private theorem rank14PlaneKerDet_admissible
+    (c2 c3 : Fin 4 → ℝ) (a b c d t : ℝ) :
+    IsAdmissibleDirection (rank14PlaneKerDet c2 c3 a b c d t) := by
+  refine isAdmissibleDirection_add
+    (relationDirection_admissible (-c2) (isQuadratic_smul_x0_mul_homLine c d t))
+    (relationDirection_admissible c3 (isQuadratic_smul_x0_mul_homLine a b t))
+
+private theorem rank14PlaneKerDet_inKer
+    {u : RankFourVec} {c2 c3 : Fin 4 → ℝ}
+    {a b c d t : ℝ}
+    (h2 : ∑ i : Fin 4, c2 i • u i = a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly))
+    (h3 : ∑ i : Fin 4, c3 i • u i = c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly)) :
+    InAdmissibleKer u (rank14PlaneKerDet c2 c3 a b c d t) := by
+  refine ⟨rank14PlaneKerDet_admissible c2 c3 a b c d t, ?_⟩
+  have hh2 : a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly) = x1 * homLine a b := by
+    unfold homLine
+    calc
+      (a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly))
+          = MvPolynomial.C a * (x0 * x1 : Poly) + MvPolynomial.C b * (x1 ^ 2 : Poly) := by
+              simp [MvPolynomial.smul_eq_C_mul]
+      _ = x1 * (MvPolynomial.C a * x0) + x1 * (MvPolynomial.C b * x1) := by
+            ring
+      _ = x1 * (MvPolynomial.C a * x0 + MvPolynomial.C b * x1) := by ring
+  have hh3 : c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly) = x1 * homLine c d := by
+    unfold homLine
+    calc
+      (c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly))
+          = MvPolynomial.C c * (x0 * x1 : Poly) + MvPolynomial.C d * (x1 ^ 2 : Poly) := by
+              simp [MvPolynomial.smul_eq_C_mul]
+      _ = x1 * (MvPolynomial.C c * x0) + x1 * (MvPolynomial.C d * x1) := by
+            ring
+      _ = x1 * (MvPolynomial.C c * x0 + MvPolynomial.C d * x1) := by ring
+  rw [rank14PlaneKerDet, A_add_right_local, A_relationDirection, A_relationDirection]
+  simp [Pi.neg_apply, h2, h3, hh2, hh3, homLine, mul_assoc, mul_left_comm,
+    mul_comm]
+
+private theorem coeff_m40_sigma_rank14PlaneKerDet
+    (c2 c3 : Fin 4 → ℝ) (a b c d t : ℝ)
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0) :
+    MvPolynomial.coeff m40 (sigma (rank14PlaneKerDet c2 c3 a b c d t)) =
+      (a ^ 2 + c ^ 2) * t ^ 2 := by
+  rw [rank14PlaneKerDet, sigma_sub_add_relationDirections_of_orthonormal c2 c3
+    (t • (x0 * homLine c d : Poly)) (t • (x0 * homLine a b : Poly)) h22 h33 h23]
+  have h2sq :
+      MvPolynomial.coeff m40 ((t • (x0 * homLine c d : Poly)) ^ 2) = (t * c) ^ 2 := by
+    rw [coeff_m40_sq_of_quadratic_eq _ (isQuadratic_smul_x0_mul_homLine c d t)]
+    rw [coeff_m20_smul_x0_mul_homLine]
+  have h3sq :
+      MvPolynomial.coeff m40 ((t • (x0 * homLine a b : Poly)) ^ 2) = (t * a) ^ 2 := by
+    rw [coeff_m40_sq_of_quadratic_eq _ (isQuadratic_smul_x0_mul_homLine a b t)]
+    rw [coeff_m20_smul_x0_mul_homLine]
+  rw [MvPolynomial.coeff_add, h2sq, h3sq]
+  ring
+
 /-- The abstract rank-14 kernel built from relation data for `x₀x₁` and
 `x₁²`. -/
 private def rank14PlaneKer (c2 c3 : Fin 4 → ℝ) (t : ℝ) : RankFourVec :=
@@ -1414,6 +1532,136 @@ theorem residual_eq_zero_of_relations_const_x0_x1Plane_scaled
             nlinarith [hcol01]
   exact residual_eq_zero_of_relations_const_x0_x0x1_x1sq_of_orthogonal
     (B := B) (u := u) hu h0 h1 h2' h3' h22' h33' h23' (by simpa [n1] using one_div_ne_zero hn1) hp hsocp
+
+/-- Rank-14 plane theorem with an arbitrary invertible basis of
+`span(x₀x₁, x₁²)`. The kernel certificate works directly with determinant data,
+so no polynomial-column orthogonality is required. -/
+theorem residual_eq_zero_of_relations_const_x0_x1Plane_det
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {a b c d : ℝ}
+    (h2 : ∑ i : Fin 4, c2 i • u i = a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly))
+    (h3 : ∑ i : Fin 4, c3 i • u i = c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly))
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hdet : a * d - b * c ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  rcases hp with ⟨hpquartic, k, qs, hqdeg, hpq⟩
+  let det : ℝ := a * d - b * c
+  let n : ℝ := a ^ 2 + c ^ 2
+  let c2' : Fin 4 → ℝ := fun i => (d / det) * c2 i + (-b / det) * c3 i
+  let c3' : Fin 4 → ℝ := fun i => (-c / det) * c2 i + (a / det) * c3 i
+  let s : ℝ := ∑ i : Fin k, (MvPolynomial.coeff m20 (qs i)) ^ 2
+  let t : ℝ := Real.sqrt (s / n)
+  let w : RankFourVec := rank14PlaneKerDet c2 c3 a b c d t
+  have hdet0 : det ≠ 0 := by
+    simpa [det] using hdet
+  have hn : n ≠ 0 := by
+    intro hn0
+    have hn0' : a ^ 2 + c ^ 2 = 0 := by
+      simpa [n] using hn0
+    have hsqa : a ^ 2 = 0 := by
+      nlinarith [sq_nonneg c, hn0']
+    have hsqc : c ^ 2 = 0 := by
+      nlinarith [sq_nonneg a, hn0']
+    have ha0 : a = 0 := by
+      nlinarith [sq_nonneg a, hsqa]
+    have hc0 : c = 0 := by
+      nlinarith [sq_nonneg c, hsqc]
+    exact hdet (by simp [ha0, hc0])
+  have hsnonneg : 0 ≤ s := by
+    dsimp [s]
+    positivity
+  have hnnonneg : 0 ≤ n := by
+    dsimp [n]
+    positivity
+  have hsdiv_nonneg : 0 ≤ s / n := by
+    exact div_nonneg hsnonneg hnnonneg
+  have hcoeff20 : (d / det) * a + (-b / det) * c = 1 := by
+    field_simp [det, hdet0]
+    ring
+  have hcoeff21 : (d / det) * b + (-b / det) * d = 0 := by
+    field_simp [det, hdet0]
+    ring
+  have hcoeff30 : (-c / det) * a + (a / det) * c = 0 := by
+    field_simp [det, hdet0]
+    ring
+  have hcoeff31 : (-c / det) * b + (a / det) * d = 1 := by
+    field_simp [det, hdet0]
+    ring
+  have h2' : ∑ i : Fin 4, c2' i • u i = x0 * x1 := by
+    calc
+      ∑ i : Fin 4, c2' i • u i
+          = (d / det) • (a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly)) +
+              (-b / det) • (c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly)) := by
+                simp [c2', det, relation_linearCombination, h2, h3]
+      _ = ((d / det) * a + (-b / det) * c) • (x0 * x1 : Poly) +
+            ((d / det) * b + (-b / det) * d) • (x1 ^ 2 : Poly) := by
+              simp [smul_add, smul_smul, add_smul, add_assoc, add_left_comm, mul_comm]
+      _ = x0 * x1 := by
+            rw [hcoeff20, hcoeff21]
+            simp
+  have h3' : ∑ i : Fin 4, c3' i • u i = x1 ^ 2 := by
+    calc
+      ∑ i : Fin 4, c3' i • u i
+          = (-c / det) • (a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly)) +
+              (a / det) • (c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly)) := by
+                simp [c3', det, relation_linearCombination, h2, h3]
+      _ = ((-c / det) * a + (a / det) * c) • (x0 * x1 : Poly) +
+            ((-c / det) * b + (a / det) * d) • (x1 ^ 2 : Poly) := by
+              simp [smul_add, smul_smul, add_smul, add_assoc, add_left_comm, add_comm,
+                mul_comm]
+      _ = x1 ^ 2 := by
+            rw [hcoeff30, hcoeff31]
+            simp
+  have hp40 : MvPolynomial.coeff m40 p = s := by
+    rw [hpq, MvPolynomial.coeff_sum]
+    refine Finset.sum_congr rfl ?_
+    intro i hi
+    exact coeff_m40_sq_of_quadratic_eq (qs i) (hqdeg i)
+  have hwker : InAdmissibleKer u w := by
+    dsimp [w, t]
+    exact rank14PlaneKerDet_inKer h2 h3
+  have hw40 : MvPolynomial.coeff m40 (sigma w) = s := by
+    change MvPolynomial.coeff m40 (sigma (rank14PlaneKerDet c2 c3 a b c d t)) = s
+    calc
+      MvPolynomial.coeff m40 (sigma (rank14PlaneKerDet c2 c3 a b c d t))
+          = (a ^ 2 + c ^ 2) * t ^ 2 := by
+              exact coeff_m40_sigma_rank14PlaneKerDet c2 c3 a b c d t h22 h33 h23
+      _ = n * (s / n) := by
+            dsimp [t, n]
+            rw [Real.sq_sqrt hsdiv_nonneg]
+      _ = s := by
+            field_simp [n, hn]
+  have hquartic_sub : IsQuartic (p - sigma w) := by
+    calc
+      (p - sigma w).totalDegree ≤ max p.totalDegree (sigma w).totalDegree := by
+        exact MvPolynomial.totalDegree_sub _ _
+      _ ≤ 4 := by
+        exact max_le hpquartic (isQuartic_sigma_of_admissible hwker.1)
+  have h40_sub : MvPolynomial.coeff m40 (p - sigma w) = 0 := by
+    rw [MvPolynomial.coeff_sub, hp40, hw40]
+    ring
+  have himg : InAdmissibleImage u (p - sigma w) :=
+    quartic_in_image_of_relations_const_x0_x0x1_x1sq h0 h1 h2' h3' hquartic_sub h40_sub
+  refine admissible_image_plus_cone_residual_eq_zero (B := B)
+    (u := u) (uImg := u)
+    hu hsocp
+    (imageOrthogonalResidual_self (B := B) hsocp.1) ?_
+  refine ⟨p - sigma w, {w}, himg, ?_, ?_⟩
+  · intro w' hw'
+    have hw' : w' = w := by simpa using hw'
+    subst hw'
+    exact hwker
+  · simp [w, sub_eq_add_neg]
 
 /-- Any quartic with zero `x₁³` and `x₁⁴` coefficients lies in the image once
 the factor admits explicit scalar relations for `1`, `x₀²`, and `x₀x₁`. This

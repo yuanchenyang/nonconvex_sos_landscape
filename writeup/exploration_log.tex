@@ -737,6 +737,31 @@ artifact of the earlier representative-first approach: the remaining obstacle
 is now exactly to extract orthogonal mixed-affine plane data from the constant-
 containing $\dim=2$ branch, not to renormalize it afterward.
 
+The rank-$14$ nonsurjective plane has now been strengthened again beyond the
+orthogonal-column formulation. The same file introduces a determinant-based
+kernel for an arbitrary basis
+\[
+  x_2(a x_1+b x_2),\qquad x_2(c x_1+d x_2)
+\]
+of \(\operatorname{span}(x_1x_2,x_2^2)\) and formalizes the theorem
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x1Plane\_det}. The
+coefficient-space relation vectors are still assumed orthonormal, but the
+polynomial columns now only need
+\[
+  ad-bc \neq 0.
+\]
+Lean reconstructs the exact \(x_1x_2\) and \(x_2^2\) relations by the inverse
+\(2\times2\) matrix and then uses the syzygy built from
+\[
+  -x_1(c x_1+d x_2)\cdot x_2(a x_1+b x_2)
+  +x_1(a x_1+b x_2)\cdot x_2(c x_1+d x_2),
+\]
+whose square still matches the missing \(x_1^4\) coefficient up to the factor
+\(a^2+c^2\neq 0\). So the remaining mixed-affine obstruction is no longer the
+rank-$14$ orthogonal-column condition; it has narrowed further to the
+normalization step itself and, on the theorem side, the analogous rank-$13$
+determinant strengthening.
+
 The surjective mixed-affine layer is broader now as well. The same file now
 contains a fixed split-diagonal transport lemma for planes of the form
 \[
@@ -765,8 +790,10 @@ constant-containing $\dim = 2$ classification lemma, reducing a general
 annihilator $a x_1^2 + b x_1x_2 + c x_2^2$ to one of the already-formalized
 rank-$13$, rank-$14$, or rank-$15$ mixed-affine plane types.
 \item Extract from a general admissible factor the coefficient vectors and
-annihilator data needed to feed that classification into the existing transport
-lemmas.
+annihilator data needed to feed that classification into the existing
+transport lemmas; for rank-$14$ this now only needs determinant data inside
+\(\operatorname{span}(x_1x_2,x_2^2)\), while rank-$13$ still needs the extra
+plane normalization currently built into the theorem.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

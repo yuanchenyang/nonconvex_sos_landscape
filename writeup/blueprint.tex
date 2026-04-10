@@ -658,11 +658,52 @@ the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
   to normalize the column lengths inside the mixed-affine plane, but one still
   needs the normalization/classification step to produce from a general
   mixed-affine factor either an invertible surjective plane basis or an
-  orthogonal nonsurjective plane basis, together with the corresponding
-  relation vectors. The intended bridge is now an explicit six-coefficient
-  quadratic normal form plus formulas for the
+  orthonormal relation basis whose polynomial images lie in one of the two
+  canonical nonsurjective planes. The intended bridge is now an explicit
+  six-coefficient quadratic normal form plus formulas for the
   $x_2$-translation, $x_2$-shear, and $x_2$-scaling subgroup preserving
   $\mathbb{R}x_1$.
+
+\medskip
+\noindent
+The sharper nonsurjective-plane picture has now partially been formalized. For
+the rank-$14$ plane \(\operatorname{span}(x_1x_2,x_2^2)\), the Lean file now
+proves the stronger determinant-based theorem:
+\begin{itemize}
+\item any orthonormal relation basis with polynomial images
+  \[
+    x_2(a x_1 + b x_2),\qquad x_2(c x_1 + d x_2),
+  \]
+  and
+  \[
+    \det\!\begin{pmatrix}a&b\\ c&d\end{pmatrix}\neq 0
+  \]
+  already
+  forces zero residual;
+\item the proof reconstructs the exact \(x_1x_2\) and \(x_2^2\) relations by
+  the inverse \(2\times 2\) matrix and uses the kernel syzygy
+  \[
+    -x_1(c x_1+d x_2)\cdot x_2(a x_1+b x_2)
+    +x_1(a x_1+b x_2)\cdot x_2(c x_1+d x_2)=0
+  \]
+  whose square still misses only the \(x_1^4\) coefficient, now scaled by
+  \(a^2+c^2\neq 0\).
+\end{itemize}
+So the rank-$14$ branch no longer needs any extra polynomial-column
+orthogonality inside the plane. The analogous rank-$13$ strengthening remains
+the next plausible simplification:
+\begin{itemize}
+\item for the rank-$13$ plane \(\operatorname{span}(x_1^2,x_1x_2)\), the same
+  determinant-based idea with
+  \[
+    x_1(a x_1+b x_2),\qquad x_1(c x_1+d x_2)
+  \]
+  should show that only the pure \(x_2^3\) and \(x_2^4\) coefficients matter,
+  scaled by \(b^2+d^2\).
+\end{itemize}
+If that last rank-$13$ strengthening is formalized, the normalization would
+only have to produce the canonical plane type, not an extra orthogonal column
+condition inside either nonsurjective plane.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
 $\sigma(u)=p$.
 \end{enumerate}
