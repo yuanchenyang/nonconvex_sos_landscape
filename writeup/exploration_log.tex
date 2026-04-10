@@ -1007,6 +1007,10 @@ translation, removes the induced \(1\)- and \(x_1\)-corrections, proves the
 resulting Gram determinant is automatically nonzero, and then dispatches to the
 existing homogeneous-plane theorem
 \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_homQuadratics\_plane\_nontrivial}.
+The same file now also exports the affine-equivalence wrapper
+\texttt{residual\_eq\_zero\_of\_equiv\_const\_x0\_tailedPair\_det}, so this
+determinant-nondegenerate tail certificate is available directly after affine
+normalization.
 So the determinant-nondegenerate branch is no longer blocked on translation
 algebra, on identifying the affine correction terms, or on integrating those
 corrections with the plane certificate layer. It is now blocked upstream on

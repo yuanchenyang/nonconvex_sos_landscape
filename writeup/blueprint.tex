@@ -966,6 +966,9 @@ applies the explicit common translation, subtracts the induced \(1\)- and
 \(x_1\)-corrections, computes the resulting Gram determinant in coefficient
 space, and then dispatches to the already-formalized theorem
 \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_homQuadratics\_plane\_nontrivial}.
+The same file also now contains the affine-equivalence wrapper
+\texttt{residual\_eq\_zero\_of\_equiv\_const\_x0\_tailedPair\_det}, so this
+certificate can be applied after a prior affine normalization step.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
@@ -976,8 +979,9 @@ to \emph{find} the homogeneous line; it only has to classify how the remaining
 tailed quadratic sits relative to that explicit extracted line, and in the
 nondegenerate determinant sub-branch it only has to extract exact normalized
 coordinates of the form \((1,x_1,q_2,q_3)\) and verify the same determinant
-hypothesis. So the remaining gap there is no longer the translation algebra or
-its integration with the mixed-affine plane certificate layer; it is the
+hypothesis after affine normalization. So the remaining gap there is no longer
+the translation algebra or its integration with the mixed-affine plane
+certificate layer; it is the
 upstream normalization/classification step producing that coordinate picture
 from a general admissible factor.
 
