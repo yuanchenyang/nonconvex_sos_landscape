@@ -965,6 +965,33 @@ and similarly for \(x_1x_2\) and \(x_2^2\). So the remaining bridge is now even
 more concrete: classify the companion tailed quadratic relative to this
 explicit homogeneous line, rather than searching abstractly for a hidden
 homogeneous subspace.
+The next experiment then checked the strongest easy sub-branch of that bridge.
+The new script
+\texttt{julia/mixed\_affine\_common\_translation\_2026\_04\_10.jl} samples
+random tailed quadratic pairs
+\[
+  q_i=a_i x_1^2+b_i x_1x_2+c_i x_2^2+e_i x_2
+\]
+with
+\(
+  b_2c_3-c_2b_3 \neq 0
+\),
+solves the common-translation system
+\[
+  e_i + u\,b_i + 2v\,c_i = 0,
+\]
+and measures the residual tail coefficients after
+\((x_1,x_2)\mapsto(x_1+u,x_2+v)\). The output was
+\begin{verbatim}
+mixed_affine_common_translation_probe = (samples = 20,
+  max_tail_error = 1.4210854715202004e-14,
+  min_abs_det = 0.02515974405263005, ...)
+\end{verbatim}
+so the explicit common-translation formula is numerically stable at machine
+precision on random nondegenerate samples. This sharpens the next Lean target:
+the determinant-nondegenerate mixed-affine sub-branch should be reduced by a
+formal common-translation lemma matching that explicit formula, after which the
+existing homogeneous-plane theorem can take over.
 
 \section*{Open Subgoals}
 \begin{itemize}
@@ -974,7 +1001,10 @@ coefficient side: extract a nontrivial homogeneous quadratic plane together
 one tailed quadratic together with the linear relation \(x_1\)-direction data.
 The canonical annihilator coefficients are now computed internally from the
 homogeneous plane when available, so this step no longer has to hand-feed
-\((a,b,c)\) into the mixed-affine wrappers.
+\((a,b,c)\) into the mixed-affine wrappers. The determinant-nondegenerate
+sub-branch is now sharper than that wording suggests: there the remaining work
+is to formalize the common-translation lemma suggested by the new probe and then
+combine it with the existing homogeneous-plane theorem.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this
