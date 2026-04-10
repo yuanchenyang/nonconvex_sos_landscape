@@ -1420,6 +1420,19 @@ falls back to the affine-tail theorem. So all three determinant-zero extracted
 line types are now handled from the same natural data: the extracted-line
 coefficient pattern, the original determinant-zero relation, and the nonzero
 linear tail.
+That layer is now also available at the same top transport interface used by
+the determinant-nondegenerate tailed-pair theorem. For each of the three
+determinant-zero extracted-line types, \texttt{RepresentativeMixedAffinePlane.lean}
+now exports coordinate-level equivariant theorems and
+\(\mathrm{eq\_mix}\)-plus-affine-equivalence pullback theorems. So the
+remaining classification step no longer has to descend to relation vectors on
+the transformed factor: it is enough to produce exact normalized coordinates
+\[
+  \operatorname{mix}(M^\top, e^{-1}\!\cdot u) = (1,x_0,q_2,q_3)
+\]
+together with the relevant coefficient pattern for
+\(H(q_2,q_3)=\texttt{mixedAffineTailHomLine}(q_2,q_3)\), and Lean now finishes
+the determinant-zero branch directly from that data.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and

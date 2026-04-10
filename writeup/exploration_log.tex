@@ -1391,6 +1391,20 @@ all three coefficient types: the external classification only has to identify
 the extracted-line type and the original determinant-zero relation, while the
 remaining affine-vs-quadratic tail split is handled internally in Lean.
 
+The next Lean round lifted those three determinant-zero extracted-line slices
+to the top transport interface. For the cross, \(x_2^2\)-type, and diagonal
+extracted-line branches, \texttt{RepresentativeMixedAffinePlane.lean} now has
+coordinate-level equivariant theorems and matching
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_\dots} wrappers.
+So the remaining mixed-affine classification no longer needs to output
+relation-level data on the transformed point. It can work at the cleaner
+coordinate level
+\[
+  \operatorname{mix}(M^\top, e^{-1}\!\cdot u) = (1,x_0,q_2,q_3),
+\]
+plus the extracted-line coefficient pattern and the original determinant-zero
+relation, and then Lean handles the residual-zero conclusion from there.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
