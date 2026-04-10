@@ -451,6 +451,13 @@ The first formal Lean infrastructure for that alternative is now added in
   rank-$13$ mixed-affine theorem. So the obstruction has narrowed from
   ``arbitrary plane-basis algebra'' to ``produce orthogonal in-plane basis
   data from a general mixed-affine factor.''
+\item that new partial strengthening is now connected to the affine transport
+  layer as well: the same file now wraps the rank-$14$ and rank-$13$ orthogonal
+  in-plane basis theorems through an arbitrary polynomial algebra equivalence.
+  In practical terms, once an affine normalization sends a mixed-affine factor
+  to one of these orthogonal plane-basis configurations, Lean can conclude
+  zero residual for the original SOCP point without building a separate
+  transport proof each time.
 \end{itemize}
 So the remaining work for the plane strategy is now geometric rather than
 algebraic: identify the right orthonormal relation data canonically from a

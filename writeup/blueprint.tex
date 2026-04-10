@@ -532,11 +532,14 @@ the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
   \]
   by an orthogonal $2 \times 2$ change of basis, then the file explicitly
   reconstructs monomial relation vectors and reduces back to the exact
-  rank-$14$ or rank-$13$ plane theorem. So the remaining gap has tightened
-  again: one no longer needs a full coefficient API for arbitrary linear-form
-  products, but one still needs the normalization/classification step to
-  produce this orthogonal in-plane basis data from a general mixed-affine
-  factor.
+  rank-$14$ or rank-$13$ plane theorem. Those strengthened plane certificates
+  are now also wrapped through arbitrary polynomial algebra equivalences, so an
+  affine normalization step can feed its relation data directly into the new
+  theorem and pull the zero-residual conclusion back to the original SOCP
+  point. So the remaining gap has tightened again: one no longer needs a full
+  coefficient API for arbitrary linear-form products, but one still needs the
+  normalization/classification step to produce this orthogonal in-plane basis
+  data from a general mixed-affine factor.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
 $\sigma(u)=p$.
 \end{enumerate}
