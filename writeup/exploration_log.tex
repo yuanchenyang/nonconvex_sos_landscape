@@ -903,6 +903,20 @@ and
 so once the dual relation has already been cross-killed, the positive and
 negative diagonal cases reduce directly to the sum-square and split-diagonal
 plane theorems by one explicit scaling step.
+That bridge is now composed one step further as well. The theorems
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_homQuadratics\_annihilator\_sum}
+and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_homQuadratics\_annihilator\_diff}
+first shear a general dual annihilator
+\(
+  a\,\operatorname{coeff}_{x_1^2} +
+  b\,\operatorname{coeff}_{x_1x_2} +
+  c\,\operatorname{coeff}_{x_2^2}
+\)
+to kill the middle coefficient, then call the diagonal scaling wrappers. So the
+mixed-affine normal-form algebra is now essentially theorem-complete: the
+remaining gap is the extraction of the dual annihilator and determinant data
+from an arbitrary constant-containing factor.
 
 \section*{Open Subgoals}
 \begin{itemize}
