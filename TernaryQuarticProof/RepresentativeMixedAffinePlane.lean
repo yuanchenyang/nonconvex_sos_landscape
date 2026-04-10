@@ -30,6 +30,22 @@ private theorem isQuadratic_C_mul_pow_pow (a : ℝ) (m n : ℕ) (h : m + n ≤ 2
     _ = m + n := by simp [x0, x1, MvPolynomial.totalDegree_X_pow]
     _ ≤ 2 := h
 
+private theorem isQuadratic_smul_local (a : ℝ) {q : Poly}
+    (hq : IsQuadratic q) :
+    IsQuadratic (a • q) := by
+  exact (MvPolynomial.totalDegree_smul_le a q).trans hq
+
+private theorem isQuadratic_linearCombination_local
+    {p q : Poly} (hp : IsQuadratic p) (hq : IsQuadratic q) (a b : ℝ) :
+    IsQuadratic (a • p + b • q) := by
+  calc
+    (a • p + b • q).totalDegree ≤ max (a • p).totalDegree (b • q).totalDegree := by
+      exact MvPolynomial.totalDegree_add _ _
+    _ ≤ 2 := by
+      exact max_le
+        ((MvPolynomial.totalDegree_smul_le a p).trans hp)
+        ((MvPolynomial.totalDegree_smul_le b q).trans hq)
+
 /-- Turn any explicit scalar relation `∑ cᵢ uᵢ = r` into an admissible image
 statement for `r * q`. -/
 theorem inAdmissibleImage_of_relation_mul
@@ -751,6 +767,14 @@ private theorem sum_mul_linearCombination
           (b * b') * (∑ i : Fin 4, (d i) ^ 2) := by
   rw [Fin.sum_univ_four, Fin.sum_univ_four, Fin.sum_univ_four, Fin.sum_univ_four]
   ring
+
+private theorem eq_zero_of_sum_sq_eq_zero {c : Fin 4 → ℝ}
+    (h : ∑ i : Fin 4, (c i) ^ 2 = 0) (i : Fin 4) :
+    c i = 0 := by
+  have hzero :=
+    (Finset.sum_eq_zero_iff_of_nonneg
+      (fun j _ => sq_nonneg (c j))).mp h
+  exact sq_eq_zero_iff.mp (hzero i (by simp))
 
 /-- Sigma of two coefficient-space relation directions with orthogonal
 coefficients. This is the clean quadratic identity needed for the planned
@@ -3230,6 +3254,229 @@ theorem residual_eq_zero_of_relations_const_x0_homQuadratics_coeff_m20_zero
   exact residual_eq_zero_of_relations_const_x0_x1Plane_det
     (B := B) (u := u) hu h0 h1 h2' h3' h22 h33 h23 hdet hp hsocp
 
+theorem residual_eq_zero_of_relations_const_x0_homQuadratics_coeff_m20_zero_gram
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq2_20 : MvPolynomial.coeff m20 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hq3_20 : MvPolynomial.coeff m20 q3 = 0)
+    (hgram :
+      (∑ i : Fin 4, (c2 i) ^ 2) * (∑ i : Fin 4, (c3 i) ^ 2) -
+        (∑ i : Fin 4, c2 i * c3 i) ^ 2 ≠ 0)
+    (hdet :
+      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+        MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let n2 : ℝ := ∑ i : Fin 4, (c2 i) ^ 2
+  let n3 : ℝ := ∑ i : Fin 4, (c3 i) ^ 2
+  let m23 : ℝ := ∑ i : Fin 4, c2 i * c3 i
+  let g : ℝ := n2 * n3 - m23 ^ 2
+  have hg : g ≠ 0 := by
+    simpa [g, n2, n3, m23] using hgram
+  have hn2_nonneg : 0 ≤ n2 := by
+    dsimp [n2]
+    positivity
+  have hn2 : n2 ≠ 0 := by
+    intro hn20
+    have hc20 : ∀ i : Fin 4, c2 i = 0 := by
+      intro i
+      exact eq_zero_of_sum_sq_eq_zero (by simpa [n2] using hn20) i
+    have hm23 : m23 = 0 := by
+      dsimp [m23]
+      refine Finset.sum_eq_zero ?_
+      intro i hi
+      simp [hc20 i]
+    have : g = 0 := by
+      simp [g, n2, hn20, hm23]
+    exact hg this
+  let o3 : ℝ := g / n2
+  let s2 : ℝ := Real.sqrt n2
+  let s3 : ℝ := Real.sqrt o3
+  let c2' : Fin 4 → ℝ := fun i => (1 / s2) * c2 i
+  let c3' : Fin 4 → ℝ := fun i => (((-m23 / n2) / s3) * c2 i) + ((1 / s3) * c3 i)
+  let q2' : Poly := (1 / s2) • q2
+  let q3' : Poly := (((-m23 / n2) / s3) • q2) + ((1 / s3) • q3)
+  have ho3_formula : o3 = n3 - m23 ^ 2 / n2 := by
+    dsimp [o3, g]
+    field_simp [hn2]
+  have ho3_eq :
+      ∑ i : Fin 4, ((-m23 / n2) * c2 i + c3 i) ^ 2 = o3 := by
+    calc
+      ∑ i : Fin 4, ((-m23 / n2) * c2 i + c3 i) ^ 2
+          = (-m23 / n2) ^ 2 * (∑ i : Fin 4, (c2 i) ^ 2) +
+              (2 * (-m23 / n2) * 1) * (∑ i : Fin 4, c2 i * c3 i) +
+                1 ^ 2 * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa using sum_sq_linearCombination c2 c3 (-m23 / n2) 1
+      _ = n3 - m23 ^ 2 / n2 := by
+            dsimp [n2, n3, m23]
+            field_simp [hn2]
+            ring
+      _ = o3 := by exact ho3_formula.symm
+  have ho3_nonneg : 0 ≤ o3 := by
+    have hs : 0 ≤ ∑ i : Fin 4, ((-m23 / n2) * c2 i + c3 i) ^ 2 := by
+      positivity
+    simpa [ho3_eq] using hs
+  have ho3 : o3 ≠ 0 := by
+    intro ho30
+    have hg0 : g = 0 := by
+      have hdiv0 : g / n2 = 0 := by simpa [o3] using ho30
+      exact ((div_eq_zero_iff).mp hdiv0).resolve_right hn2
+    exact hg hg0
+  have hs2 : s2 ≠ 0 := by
+    exact Real.sqrt_ne_zero'.mpr (lt_of_le_of_ne hn2_nonneg hn2.symm)
+  have hs3 : s3 ≠ 0 := by
+    exact Real.sqrt_ne_zero'.mpr (lt_of_le_of_ne ho3_nonneg ho3.symm)
+  have h2' :
+      ∑ i : Fin 4, c2' i • u i = q2' := by
+    calc
+      ∑ i : Fin 4, c2' i • u i = (1 / s2) • (∑ i : Fin 4, c2 i • u i) := by
+        simp [c2', Finset.smul_sum, smul_smul]
+      _ = q2' := by
+        rw [h2]
+  have h3' :
+      ∑ i : Fin 4, c3' i • u i = q3' := by
+    calc
+      ∑ i : Fin 4, c3' i • u i
+          = ((-m23 / n2) / s3) • (∑ i : Fin 4, c2 i • u i) +
+              (1 / s3) • (∑ i : Fin 4, c3 i • u i) := by
+                simp [c3', Finset.sum_add_distrib, Finset.smul_sum, add_smul, smul_smul]
+      _ = q3' := by
+        rw [h2, h3]
+  have hq2' : IsQuadratic q2' := by
+    exact isQuadratic_smul_local (1 / s2) hq2
+  have hq3' : IsQuadratic q3' := by
+    exact isQuadratic_linearCombination_local hq2 hq3 (((-m23 / n2) / s3)) (1 / s3)
+  have hq2_00' : MvPolynomial.coeff m00 q2' = 0 := by
+    simp [q2', hq2_00]
+  have hq2_10' : MvPolynomial.coeff m10 q2' = 0 := by
+    simp [q2', hq2_10]
+  have hq2_01' : MvPolynomial.coeff m01 q2' = 0 := by
+    simp [q2', hq2_01]
+  have hq2_20' : MvPolynomial.coeff m20 q2' = 0 := by
+    simp [q2', hq2_20]
+  have hq3_00' : MvPolynomial.coeff m00 q3' = 0 := by
+    simp [q3', hq2_00, hq3_00]
+  have hq3_10' : MvPolynomial.coeff m10 q3' = 0 := by
+    simp [q3', hq2_10, hq3_10]
+  have hq3_01' : MvPolynomial.coeff m01 q3' = 0 := by
+    simp [q3', hq2_01, hq3_01]
+  have hq3_20' : MvPolynomial.coeff m20 q3' = 0 := by
+    simp [q3', hq2_20, hq3_20]
+  have h22' : ∑ i : Fin 4, (c2' i) ^ 2 = 1 := by
+    let z : Fin 4 → ℝ := fun _ => 0
+    have hs2sq : s2 ^ 2 = n2 := by
+      dsimp [s2]
+      rw [Real.sq_sqrt hn2_nonneg]
+    calc
+      ∑ i : Fin 4, (c2' i) ^ 2
+          = (1 / s2) ^ 2 * (∑ i : Fin 4, (c2 i) ^ 2) := by
+              simpa [c2', z] using sum_sq_linearCombination c2 z (1 / s2) 0
+      _ = (1 / s2) ^ 2 * s2 ^ 2 := by
+            rw [show ∑ i : Fin 4, (c2 i) ^ 2 = s2 ^ 2 by simpa [n2] using hs2sq.symm]
+      _ = 1 := by
+            field_simp [hs2]
+  have h33' : ∑ i : Fin 4, (c3' i) ^ 2 = 1 := by
+    let v3 : Fin 4 → ℝ := fun i => (-m23 / n2) * c2 i + c3 i
+    let z : Fin 4 → ℝ := fun _ => 0
+    have hc3' : ∀ i : Fin 4, c3' i = (1 / s3) * v3 i := by
+      intro i
+      simp [c3', v3]
+      ring
+    have hv3sq : ∑ i : Fin 4, (v3 i) ^ 2 = o3 := by
+      simpa [v3] using ho3_eq
+    have hs3sq : s3 ^ 2 = o3 := by
+      dsimp [s3]
+      rw [Real.sq_sqrt ho3_nonneg]
+    calc
+      ∑ i : Fin 4, (c3' i) ^ 2
+          = ∑ i : Fin 4, (((1 / s3) * v3 i) + 0 * z i) ^ 2 := by
+              refine Finset.sum_congr rfl ?_
+              intro i hi
+              rw [hc3' i]
+              ring
+      _ 
+          = (1 / s3) ^ 2 * (∑ i : Fin 4, (v3 i) ^ 2) := by
+              simpa [z] using sum_sq_linearCombination v3 z (1 / s3) 0
+      _ = (1 / s3) ^ 2 * o3 := by rw [hv3sq]
+      _ = (1 / s3) ^ 2 * s3 ^ 2 := by rw [← hs3sq]
+      _ = 1 := by
+            field_simp [hs3]
+  have h23' : ∑ i : Fin 4, c2' i * c3' i = 0 := by
+    let v3 : Fin 4 → ℝ := fun i => (-m23 / n2) * c2 i + c3 i
+    have hc3' : ∀ i : Fin 4, c3' i = (1 / s3) * v3 i := by
+      intro i
+      simp [c3', v3]
+      ring
+    have hdotv3 : ∑ i : Fin 4, c2 i * v3 i = 0 := by
+      calc
+        ∑ i : Fin 4, c2 i * v3 i
+            = ∑ i : Fin 4, (1 * c2 i + 0 * c3 i) * ((-m23 / n2) * c2 i + 1 * c3 i) := by
+                refine Finset.sum_congr rfl ?_
+                intro i hi
+                simp [v3]
+        _ = (-m23 / n2) * (∑ i : Fin 4, (c2 i) ^ 2) + ∑ i : Fin 4, c2 i * c3 i := by
+              simpa using sum_mul_linearCombination c2 c3 1 0 (-m23 / n2) 1
+        _ = (-m23 / n2) * n2 + m23 := by rfl
+        _ = 0 := by
+              field_simp [hn2]
+              ring
+    calc
+      ∑ i : Fin 4, c2' i * c3' i
+          = ∑ i : Fin 4, (((1 / s2) * c2 i + 0 * v3 i) * (0 * c2 i + (1 / s3) * v3 i)) := by
+              refine Finset.sum_congr rfl ?_
+              intro i hi
+              rw [hc3' i]
+              simp [c2']
+      _ = ((1 / s2) * (1 / s3)) * (∑ i : Fin 4, c2 i * v3 i) := by
+              simpa using sum_mul_linearCombination c2 v3 (1 / s2) 0 0 (1 / s3)
+      _ = 0 := by rw [hdotv3]; ring
+  have hdet' :
+      MvPolynomial.coeff m11 q2' * MvPolynomial.coeff m02 q3' -
+        MvPolynomial.coeff m02 q2' * MvPolynomial.coeff m11 q3' ≠ 0 := by
+    have hEq :
+        MvPolynomial.coeff m11 q2' * MvPolynomial.coeff m02 q3' -
+          MvPolynomial.coeff m02 q2' * MvPolynomial.coeff m11 q3' =
+        (1 / (s2 * s3)) *
+          (MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+            MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3) := by
+      simp [q2', q3']
+      ring
+    intro hz
+    have hmul :
+        (1 / (s2 * s3)) *
+          (MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+            MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3) = 0 := by
+      simpa [hEq] using hz
+    have hscale : 1 / (s2 * s3) ≠ 0 := by
+      exact one_div_ne_zero (mul_ne_zero hs2 hs3)
+    have hdet0 :
+        MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+          MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 = 0 := by
+      exact (mul_eq_zero.mp hmul).resolve_left hscale
+    exact hdet hdet0
+  exact residual_eq_zero_of_relations_const_x0_homQuadratics_coeff_m20_zero
+    (B := B) (u := u) hu h0 h1 h2' h3' hq2' hq3'
+    hq2_00' hq2_10' hq2_01' hq2_20'
+    hq3_00' hq3_10' hq3_01' hq3_20'
+    h22' h33' h23' hdet' hp hsocp
+
 theorem residual_eq_zero_of_relations_const_x0_homQuadratics_coeff_m02_zero
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}
@@ -3285,6 +3532,228 @@ theorem residual_eq_zero_of_relations_const_x0_homQuadratics_coeff_m02_zero
                   hq3 hq3_00 hq3_10 hq3_01 hq3_02
   exact residual_eq_zero_of_relations_const_x0Plane_det
     (B := B) (u := u) hu h0 h2' h3' h22 h33 h23 hdet hp hsocp
+
+theorem residual_eq_zero_of_relations_const_homQuadratics_coeff_m02_zero_gram
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq2_02 : MvPolynomial.coeff m02 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hq3_02 : MvPolynomial.coeff m02 q3 = 0)
+    (hgram :
+      (∑ i : Fin 4, (c2 i) ^ 2) * (∑ i : Fin 4, (c3 i) ^ 2) -
+        (∑ i : Fin 4, c2 i * c3 i) ^ 2 ≠ 0)
+    (hdet :
+      MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+        MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let n2 : ℝ := ∑ i : Fin 4, (c2 i) ^ 2
+  let n3 : ℝ := ∑ i : Fin 4, (c3 i) ^ 2
+  let m23 : ℝ := ∑ i : Fin 4, c2 i * c3 i
+  let g : ℝ := n2 * n3 - m23 ^ 2
+  have hg : g ≠ 0 := by
+    simpa [g, n2, n3, m23] using hgram
+  have hn2_nonneg : 0 ≤ n2 := by
+    dsimp [n2]
+    positivity
+  have hn2 : n2 ≠ 0 := by
+    intro hn20
+    have hc20 : ∀ i : Fin 4, c2 i = 0 := by
+      intro i
+      exact eq_zero_of_sum_sq_eq_zero (by simpa [n2] using hn20) i
+    have hm23 : m23 = 0 := by
+      dsimp [m23]
+      refine Finset.sum_eq_zero ?_
+      intro i hi
+      simp [hc20 i]
+    have : g = 0 := by
+      simp [g, n2, hn20, hm23]
+    exact hg this
+  let o3 : ℝ := g / n2
+  let s2 : ℝ := Real.sqrt n2
+  let s3 : ℝ := Real.sqrt o3
+  let c2' : Fin 4 → ℝ := fun i => (1 / s2) * c2 i
+  let c3' : Fin 4 → ℝ := fun i => (((-m23 / n2) / s3) * c2 i) + ((1 / s3) * c3 i)
+  let q2' : Poly := (1 / s2) • q2
+  let q3' : Poly := (((-m23 / n2) / s3) • q2) + ((1 / s3) • q3)
+  have ho3_formula : o3 = n3 - m23 ^ 2 / n2 := by
+    dsimp [o3, g]
+    field_simp [hn2]
+  have ho3_eq :
+      ∑ i : Fin 4, ((-m23 / n2) * c2 i + c3 i) ^ 2 = o3 := by
+    calc
+      ∑ i : Fin 4, ((-m23 / n2) * c2 i + c3 i) ^ 2
+          = (-m23 / n2) ^ 2 * (∑ i : Fin 4, (c2 i) ^ 2) +
+              (2 * (-m23 / n2) * 1) * (∑ i : Fin 4, c2 i * c3 i) +
+                1 ^ 2 * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa using sum_sq_linearCombination c2 c3 (-m23 / n2) 1
+      _ = n3 - m23 ^ 2 / n2 := by
+            dsimp [n2, n3, m23]
+            field_simp [hn2]
+            ring
+      _ = o3 := by exact ho3_formula.symm
+  have ho3_nonneg : 0 ≤ o3 := by
+    have hs : 0 ≤ ∑ i : Fin 4, ((-m23 / n2) * c2 i + c3 i) ^ 2 := by
+      positivity
+    simpa [ho3_eq] using hs
+  have ho3 : o3 ≠ 0 := by
+    intro ho30
+    have hg0 : g = 0 := by
+      have hdiv0 : g / n2 = 0 := by simpa [o3] using ho30
+      exact ((div_eq_zero_iff).mp hdiv0).resolve_right hn2
+    exact hg hg0
+  have hs2 : s2 ≠ 0 := by
+    exact Real.sqrt_ne_zero'.mpr (lt_of_le_of_ne hn2_nonneg hn2.symm)
+  have hs3 : s3 ≠ 0 := by
+    exact Real.sqrt_ne_zero'.mpr (lt_of_le_of_ne ho3_nonneg ho3.symm)
+  have h2' :
+      ∑ i : Fin 4, c2' i • u i = q2' := by
+    calc
+      ∑ i : Fin 4, c2' i • u i = (1 / s2) • (∑ i : Fin 4, c2 i • u i) := by
+        simp [c2', Finset.smul_sum, smul_smul]
+      _ = q2' := by
+        rw [h2]
+  have h3' :
+      ∑ i : Fin 4, c3' i • u i = q3' := by
+    calc
+      ∑ i : Fin 4, c3' i • u i
+          = ((-m23 / n2) / s3) • (∑ i : Fin 4, c2 i • u i) +
+              (1 / s3) • (∑ i : Fin 4, c3 i • u i) := by
+                simp [c3', Finset.sum_add_distrib, Finset.smul_sum, add_smul, smul_smul]
+      _ = q3' := by
+        rw [h2, h3]
+  have hq2' : IsQuadratic q2' := by
+    exact isQuadratic_smul_local (1 / s2) hq2
+  have hq3' : IsQuadratic q3' := by
+    exact isQuadratic_linearCombination_local hq2 hq3 (((-m23 / n2) / s3)) (1 / s3)
+  have hq2_00' : MvPolynomial.coeff m00 q2' = 0 := by
+    simp [q2', hq2_00]
+  have hq2_10' : MvPolynomial.coeff m10 q2' = 0 := by
+    simp [q2', hq2_10]
+  have hq2_01' : MvPolynomial.coeff m01 q2' = 0 := by
+    simp [q2', hq2_01]
+  have hq2_02' : MvPolynomial.coeff m02 q2' = 0 := by
+    simp [q2', hq2_02]
+  have hq3_00' : MvPolynomial.coeff m00 q3' = 0 := by
+    simp [q3', hq2_00, hq3_00]
+  have hq3_10' : MvPolynomial.coeff m10 q3' = 0 := by
+    simp [q3', hq2_10, hq3_10]
+  have hq3_01' : MvPolynomial.coeff m01 q3' = 0 := by
+    simp [q3', hq2_01, hq3_01]
+  have hq3_02' : MvPolynomial.coeff m02 q3' = 0 := by
+    simp [q3', hq2_02, hq3_02]
+  have h22' : ∑ i : Fin 4, (c2' i) ^ 2 = 1 := by
+    let z : Fin 4 → ℝ := fun _ => 0
+    have hs2sq : s2 ^ 2 = n2 := by
+      dsimp [s2]
+      rw [Real.sq_sqrt hn2_nonneg]
+    calc
+      ∑ i : Fin 4, (c2' i) ^ 2
+          = (1 / s2) ^ 2 * (∑ i : Fin 4, (c2 i) ^ 2) := by
+              simpa [c2', z] using sum_sq_linearCombination c2 z (1 / s2) 0
+      _ = (1 / s2) ^ 2 * s2 ^ 2 := by
+            rw [show ∑ i : Fin 4, (c2 i) ^ 2 = s2 ^ 2 by simpa [n2] using hs2sq.symm]
+      _ = 1 := by
+            field_simp [hs2]
+  have h33' : ∑ i : Fin 4, (c3' i) ^ 2 = 1 := by
+    let v3 : Fin 4 → ℝ := fun i => (-m23 / n2) * c2 i + c3 i
+    let z : Fin 4 → ℝ := fun _ => 0
+    have hc3' : ∀ i : Fin 4, c3' i = (1 / s3) * v3 i := by
+      intro i
+      simp [c3', v3]
+      ring
+    have hv3sq : ∑ i : Fin 4, (v3 i) ^ 2 = o3 := by
+      simpa [v3] using ho3_eq
+    have hs3sq : s3 ^ 2 = o3 := by
+      dsimp [s3]
+      rw [Real.sq_sqrt ho3_nonneg]
+    calc
+      ∑ i : Fin 4, (c3' i) ^ 2
+          = ∑ i : Fin 4, (((1 / s3) * v3 i) + 0 * z i) ^ 2 := by
+              refine Finset.sum_congr rfl ?_
+              intro i hi
+              rw [hc3' i]
+              ring
+      _ 
+          = (1 / s3) ^ 2 * (∑ i : Fin 4, (v3 i) ^ 2) := by
+              simpa [z] using sum_sq_linearCombination v3 z (1 / s3) 0
+      _ = (1 / s3) ^ 2 * o3 := by rw [hv3sq]
+      _ = (1 / s3) ^ 2 * s3 ^ 2 := by rw [← hs3sq]
+      _ = 1 := by
+            field_simp [hs3]
+  have h23' : ∑ i : Fin 4, c2' i * c3' i = 0 := by
+    let v3 : Fin 4 → ℝ := fun i => (-m23 / n2) * c2 i + c3 i
+    have hc3' : ∀ i : Fin 4, c3' i = (1 / s3) * v3 i := by
+      intro i
+      simp [c3', v3]
+      ring
+    have hdotv3 : ∑ i : Fin 4, c2 i * v3 i = 0 := by
+      calc
+        ∑ i : Fin 4, c2 i * v3 i
+            = ∑ i : Fin 4, (1 * c2 i + 0 * c3 i) * ((-m23 / n2) * c2 i + 1 * c3 i) := by
+                refine Finset.sum_congr rfl ?_
+                intro i hi
+                simp [v3]
+        _ = (-m23 / n2) * (∑ i : Fin 4, (c2 i) ^ 2) + ∑ i : Fin 4, c2 i * c3 i := by
+              simpa using sum_mul_linearCombination c2 c3 1 0 (-m23 / n2) 1
+        _ = (-m23 / n2) * n2 + m23 := by rfl
+        _ = 0 := by
+              field_simp [hn2]
+              ring
+    calc
+      ∑ i : Fin 4, c2' i * c3' i
+          = ∑ i : Fin 4, (((1 / s2) * c2 i + 0 * v3 i) * (0 * c2 i + (1 / s3) * v3 i)) := by
+              refine Finset.sum_congr rfl ?_
+              intro i hi
+              rw [hc3' i]
+              simp [c2']
+      _ = ((1 / s2) * (1 / s3)) * (∑ i : Fin 4, c2 i * v3 i) := by
+              simpa using sum_mul_linearCombination c2 v3 (1 / s2) 0 0 (1 / s3)
+      _ = 0 := by rw [hdotv3]; ring
+  have hdet' :
+      MvPolynomial.coeff m20 q2' * MvPolynomial.coeff m11 q3' -
+        MvPolynomial.coeff m11 q2' * MvPolynomial.coeff m20 q3' ≠ 0 := by
+    have hEq :
+        MvPolynomial.coeff m20 q2' * MvPolynomial.coeff m11 q3' -
+          MvPolynomial.coeff m11 q2' * MvPolynomial.coeff m20 q3' =
+        (1 / (s2 * s3)) *
+          (MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+            MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3) := by
+      simp [q2', q3']
+      ring
+    intro hz
+    have hmul :
+        (1 / (s2 * s3)) *
+          (MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+            MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3) = 0 := by
+      simpa [hEq] using hz
+    have hscale : 1 / (s2 * s3) ≠ 0 := by
+      exact one_div_ne_zero (mul_ne_zero hs2 hs3)
+    have hdet0 :
+        MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+          MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 = 0 := by
+      exact (mul_eq_zero.mp hmul).resolve_left hscale
+    exact hdet hdet0
+  exact residual_eq_zero_of_relations_const_x0_homQuadratics_coeff_m02_zero
+    (B := B) (u := u) hu h0 h2' h3' hq2' hq3'
+    hq2_00' hq2_10' hq2_01' hq2_02'
+    hq3_00' hq3_10' hq3_01' hq3_02'
+    h22' h33' h23' hdet' hp hsocp
 
 theorem residual_eq_zero_of_equiv_relations_const_homQuadratics_crossAnnihilator
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
@@ -3464,9 +3933,9 @@ theorem residual_eq_zero_of_equiv_relations_const_x0_homQuadratics_annihilator_d
     (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
     (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
     (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
-    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
-    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
-    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hgram :
+      (∑ i : Fin 4, (c2 i) ^ 2) * (∑ i : Fin 4, (c3 i) ^ 2) -
+        (∑ i : Fin 4, c2 i * c3 i) ^ 2 ≠ 0)
     {a b c : ℝ}
     (ha : a ≠ 0)
     (hrel2 :
@@ -3595,10 +4064,10 @@ theorem residual_eq_zero_of_equiv_relations_const_x0_homQuadratics_annihilator_d
     simpa [hdetEq] using hz
   have hres0 :
       residual (e p) (mapVec e.toAlgHom u) = 0 := by
-    exact residual_eq_zero_of_relations_const_x0_homQuadratics_coeff_m20_zero
+    exact residual_eq_zero_of_relations_const_x0_homQuadratics_coeff_m20_zero_gram
       (B := B0) (u := mapVec e.toAlgHom u) hu0
       h0' h1' h2' h3' hq2' hq3' hq2_00' hq2_10' hq2_01' hq2_20'
-      hq3_00' hq3_10' hq3_01' hq3_20' h22 h33 h23 hdet' hp0 hsocp0
+      hq3_00' hq3_10' hq3_01' hq3_20' hgram hdet' hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
 theorem residual_eq_zero_of_equiv_relations_const_homQuadratics_diagAnnihilator_sum

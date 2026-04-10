@@ -817,6 +817,15 @@ transport wrappers
 \texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_homQuadratics\_crossAnnihilator}
 and
 \texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_homQuadratics\_annihilator\_disc\_zero}.
+That discriminant-zero wrapper has now been strengthened further: it no longer
+assumes the last two relation directions are already orthonormal in coefficient
+space. A nonzero Gram determinant
+\[
+  \|c_2\|^2 \|c_3\|^2 - \langle c_2,c_3\rangle^2 \neq 0
+\]
+is enough, because \texttt{RepresentativeMixedAffinePlane.lean} now performs the
+normalization to an orthonormal pair internally before invoking the canonical
+rank-$14$ plane theorem.
 The same file now also handles the purely diagonal dual relation
 \(a\,\operatorname{coeff}_{x_1^2} + d\,\operatorname{coeff}_{x_2^2}=0\) by a
 single \(x_2\)-scaling, via the wrappers

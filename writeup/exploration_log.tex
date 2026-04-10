@@ -896,6 +896,11 @@ shears a pure-cross dual relation to the already-solved
 \texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_homQuadratics\_annihilator\_disc\_zero}
 shears the discriminant-zero dual relation to the already-solved
 \(\operatorname{coeff}_{x_1^2}=0\) rank-$14$ plane.
+That wrapper has now been strengthened once more: it no longer needs the last
+two coefficient-space relation vectors to be given in orthonormal form. A
+nonzero Gram determinant suffices, and the file now carries out the necessary
+Gram--Schmidt normalization internally before calling the existing rank-$14$
+plane theorem.
 The same file now also contains the diagonal scaling wrappers
 \texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_homQuadratics\_diagAnnihilator\_sum}
 and
