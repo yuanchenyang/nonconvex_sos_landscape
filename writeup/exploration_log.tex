@@ -385,6 +385,43 @@ quadratic annihilator and the coefficient vectors needed to apply those
 formalized shear/scale identities inside Lean. After that data is produced, the
 transport layer can pull back the already-formalized representative theorems.
 
+One smaller alternative is now on the table for the mixed-affine branch:
+replace exact representative transport by basis-invariant plane theorems.
+For a plane of the form
+\[
+  x_1 \cdot \operatorname{span}(x_1,x_2)
+  \qquad\text{or}\qquad
+  x_2 \cdot \operatorname{span}(x_1,x_2),
+\]
+the image part depends only on the plane itself, not on the chosen basis of
+its two coordinates. If one chooses an orthonormal coefficient-space basis of
+that plane, the same syzygy as in the representative proofs produces kernel
+families with a clean
+\[
+  \sigma = (a^2+b^2)\ell^2
+\]
+formula. This may avoid the last orthogonal-normalization obstruction in the
+constant-containing $\dim = 2$ branch.
+
+The first formal Lean infrastructure for that alternative is now added in
+\texttt{TernaryQuarticProof/RepresentativeMixedAffinePlane.lean}. It proves:
+\begin{itemize}
+\item any explicit scalar relation $\sum_i c_i u_i=r$ produces an admissible
+  image witness for $r q$;
+\item if coefficient vectors $c,d \in \mathbb{R}^4$ are orthonormal, then
+  their relation directions satisfy
+  \[
+    \sigma\bigl(\mathrm{rel}_c(p)+\mathrm{rel}_d(q)\bigr)=p^2+q^2.
+  \]
+\item the whole image half of the rank-$14$ mixed-affine representative proof
+  is now abstracted away from the concrete representative: if a factor admits
+  explicit relations for $1$, $x_1$, $x_1x_2$, and $x_2^2$, then every quartic
+  with zero $x_1^4$ coefficient lies in its admissible image.
+\end{itemize}
+So the remaining work for the plane strategy is now geometric rather than
+algebraic: identify the right orthonormal relation data canonically from a
+general mixed-affine factor.
+
 The newest strategy adjustment is therefore to split the old ``normalization''
 problem into two formally separate layers:
 \begin{itemize}

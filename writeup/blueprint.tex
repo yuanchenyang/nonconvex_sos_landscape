@@ -454,6 +454,42 @@ the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
   and the third is now formalized as surjective. What is still missing is the written
   proof that every constant-containing $\dim = 2$ factor can be normalized into
   one of these representatives.
+\item A smaller replacement for exact representative transport is now plausible
+  in this branch: prove basis-invariant mixed-affine plane theorems. Instead of
+  forcing the last two coordinates to be exactly
+  \[
+    (x_1^2,x_1x_2)\quad\text{or}\quad(x_1x_2,x_2^2),
+  \]
+  one can work with an arbitrary orthonormal coefficient-space basis of the
+  quadratic plane
+  \[
+    x_1 \cdot \operatorname{span}(x_1,x_2)
+    \qquad\text{or}\qquad
+    x_2 \cdot \operatorname{span}(x_1,x_2),
+  \]
+  and build the kernel family directly from the syzygy
+  \[
+    (x_1 a)(b \ell) - (x_1 b)(a \ell)=0
+  \]
+  or its $x_2$-analogue. In these plane-type formulations, the image part
+  depends only on the plane itself, while orthonormality restores the clean
+  $\sigma = (a^2+b^2)\ell^2$ identity used in the representative proofs. The
+  current Lean support for this approach is now in place: the new file
+  \texttt{RepresentativeMixedAffinePlane.lean} proves that any explicit scalar
+  relation $\sum c_i u_i=r$ yields an admissible image witness for $rq$, that
+  two orthonormal coefficient-space relation directions satisfy
+  \[
+    \sigma\bigl(\mathrm{rel}_c(p)+\mathrm{rel}_d(q)\bigr)=p^2+q^2.
+  \]
+  More importantly, it now abstracts the whole image half of the rank-$14$
+  mixed-affine proof: if a factor admits explicit relations for
+  \[
+    1,\qquad x_1,\qquad x_1x_2,\qquad x_2^2,
+  \]
+  then every quartic with zero $x_1^4$ coefficient lies in its admissible
+  image. So the missing step is no longer the monomial image algebra itself,
+  but the extraction of the correct canonical relation data from an arbitrary
+  factor.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
 $\sigma(u)=p$.
 \end{enumerate}
