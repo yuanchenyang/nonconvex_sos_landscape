@@ -1389,6 +1389,20 @@ again with equivariant wrappers. So the remaining classification no longer has
 to rewrite determinant-zero conditions from the original tailed pair
 \((q_2,q_3)\) into a second determinant involving the extracted line
 \(H(q_2,q_3)\); Lean now performs that conversion internally.
+The diagonal determinant-zero slice has now been compressed one step further.
+The new theorem
+\[
+  \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_diagX1sqTail\_origDetZero\_cases}
+\]
+and its equivariant wrapper no longer require the second diagonal determinant as
+input. If that determinant is nonzero, Lean calls the existing diagonal tail
+theorem. If it vanishes, Lean subtracts the corresponding multiple of the
+extracted homogeneous line and shows that the remaining coordinate is affine,
+so the branch falls back to \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_affineTail}
+and hence to the already-solved \(\dim(W \cap \mathrm{Aff}_1)=3\) case. So the
+classification step now only has to identify the diagonal extracted-line type
+and the original determinant-zero relation; the secondary diagonal determinant
+is handled internally by a Lean case split.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
