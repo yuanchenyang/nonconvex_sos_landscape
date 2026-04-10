@@ -999,11 +999,19 @@ That Lean reduction now exists in its minimal algebraic form. In
 and then formalized the nested tail-killing theorem for the Cramér-rule choice
 of \((u,v)\). The next Lean refinement then added the corresponding transformed
 \(\operatorname{coeff}_{1}\) and \(\operatorname{coeff}_{x_1}\) formulas for the
-nested translation as well. So the determinant-nondegenerate branch is no
-longer blocked on translation algebra or on identifying the affine correction
-terms; it is blocked on feeding the translated-and-affine-corrected relations
-into the already-formalized homogeneous-plane theorem without losing the needed
-coefficient-space nondegeneracy data.
+nested translation as well. That integration step is now formalized too:
+\texttt{RepresentativeMixedAffinePlane.lean} contains the new theorem
+\texttt{residual\_eq\_zero\_of\_const\_x0\_tailedPair\_det}, which starts from
+exact coordinates \(u=(1,x_1,q_2,q_3)\), applies the explicit common
+translation, removes the induced \(1\)- and \(x_1\)-corrections, proves the
+resulting Gram determinant is automatically nonzero, and then dispatches to the
+existing homogeneous-plane theorem
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_homQuadratics\_plane\_nontrivial}.
+So the determinant-nondegenerate branch is no longer blocked on translation
+algebra, on identifying the affine correction terms, or on integrating those
+corrections with the plane certificate layer. It is now blocked upstream on
+extracting the exact normalized coordinate picture \(u=(1,x_1,q_2,q_3)\) from a
+general constant-containing mixed-affine factor.
 
 \section*{Open Subgoals}
 \begin{itemize}
@@ -1014,9 +1022,10 @@ one tailed quadratic together with the linear relation \(x_1\)-direction data.
 The canonical annihilator coefficients are now computed internally from the
 homogeneous plane when available, so this step no longer has to hand-feed
 \((a,b,c)\) into the mixed-affine wrappers. The determinant-nondegenerate
-sub-branch is now sharper than that wording suggests: there the remaining work
-is to formalize the common-translation lemma suggested by the new probe and then
-combine it with the existing homogeneous-plane theorem.
+sub-branch is now sharper than that wording suggests: there the common-
+translation lemma and its integration are done, so the remaining work is to
+extract exact normalized coordinates of the form \(u=(1,x_1,q_2,q_3)\) and the
+same determinant condition from the general branch.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this

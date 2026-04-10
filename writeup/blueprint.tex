@@ -945,6 +945,27 @@ showing that the explicit Cramér-rule choice of \((u,v)\) kills the
 \(\operatorname{coeff}_{1}\) and \(\operatorname{coeff}_{x_1}\) correction
 terms after that same nested translation, so the affine part that must be
 removed using the existing \(1\) and \(x_1\) relations is explicit in Lean.
+That whole coordinate-level bridge is now formalized in
+\texttt{RepresentativeMixedAffinePlane.lean} as
+\[
+  \texttt{residual\_eq\_zero\_of\_const\_x0\_tailedPair\_det},
+\]
+which proves that for
+\[
+  u=(1,x_1,q_2,q_3)
+\]
+the determinant condition
+\[
+  \operatorname{coeff}_{x_1x_2}(q_2)\operatorname{coeff}_{x_2^2}(q_3)
+  -
+  \operatorname{coeff}_{x_2^2}(q_2)\operatorname{coeff}_{x_1x_2}(q_3)
+  \neq 0
+\]
+already implies \(\operatorname{residual}(p,u)=0\) for every SOCP. The proof
+applies the explicit common translation, subtracts the induced \(1\)- and
+\(x_1\)-corrections, computes the resulting Gram determinant in coefficient
+space, and then dispatches to the already-formalized theorem
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_homQuadratics\_plane\_nontrivial}.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
@@ -953,12 +974,12 @@ line together with the extra affine-tail relation needed to invoke this
 canonical cross-product theorem. In other words, the next bridge no longer has
 to \emph{find} the homogeneous line; it only has to classify how the remaining
 tailed quadratic sits relative to that explicit extracted line, and in the
-nondegenerate determinant sub-branch it only has to feed the explicit common
-translation into the existing homogeneous-plane theorem while handling the
-induced affine correction terms. So the remaining gap there is not the
-translation algebra itself but its integration with the mixed-affine plane
-certificate layer, especially the coefficient-space nondegeneracy hypotheses
-after those affine corrections are absorbed.
+nondegenerate determinant sub-branch it only has to extract exact normalized
+coordinates of the form \((1,x_1,q_2,q_3)\) and verify the same determinant
+hypothesis. So the remaining gap there is no longer the translation algebra or
+its integration with the mixed-affine plane certificate layer; it is the
+upstream normalization/classification step producing that coordinate picture
+from a general admissible factor.
 
 \medskip
 \noindent
