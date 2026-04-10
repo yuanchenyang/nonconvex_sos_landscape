@@ -895,13 +895,27 @@ translation formulas now formalized in
 \(\operatorname{coeff}_{1}\) and \(\operatorname{coeff}_{x_1}\) identities under
 \(x_2 \mapsto x_2+t\), are exactly the API needed to turn that one-line-plus-tail
 configuration into the homogeneous-plane theorem above when the tail lies in the
-right orbit.
+right orbit. More concretely, the new Lean definition
+\[
+  H(q_2,q_3)
+  :=
+  \operatorname{coeff}_{x_2}(q_3)\,q_2
+  -
+  \operatorname{coeff}_{x_2}(q_2)\,q_3
+\]
+now canonically extracts the unique homogeneous quadratic line from any pair of
+quadratics with zero constant and \(x_1\) coefficients: the
+\(\operatorname{coeff}_{x_2}\) term cancels by construction, and the resulting
+\(x_1^2\), \(x_1x_2\), and \(x_2^2\) coefficients are explicit \(2\times2\)
+minors of the original coefficient matrix.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
 already-formalized plane types and supplies a nontrivial homogeneous quadratic
 line together with the extra affine-tail relation needed to invoke this
-canonical cross-product theorem.
+canonical cross-product theorem. In other words, the next bridge no longer has
+to \emph{find} the homogeneous line; it only has to classify how the remaining
+tailed quadratic sits relative to that explicit extracted line.
 
 \medskip
 \noindent

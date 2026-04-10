@@ -71,6 +71,17 @@ private theorem relation_linearCombination
           simp [Finset.smul_sum, smul_smul]
     _ = a • r + b • s := by rw [hc, hd]
 
+theorem relation_mixedAffineTailHomLine
+    {u : RankFourVec} {c2 c3 : Fin 4 → ℝ} {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3) :
+    ∑ i : Fin 4,
+        (MvPolynomial.coeff m01 q3 * c2 i - MvPolynomial.coeff m01 q2 * c3 i) • u i =
+      mixedAffineTailHomLine q2 q3 := by
+  simpa [mixedAffineTailHomLine, sub_eq_add_neg, smul_smul, mul_comm, mul_left_comm, mul_assoc]
+    using relation_linearCombination h2 h3
+      (MvPolynomial.coeff m01 q3) (-MvPolynomial.coeff m01 q2)
+
 /-- Exact surjective plane theorem for the mixed-affine model with quadratic
 plane `span(x₀², x₁²)`. -/
 theorem quartic_in_image_of_relations_const_x0sq_x1sq

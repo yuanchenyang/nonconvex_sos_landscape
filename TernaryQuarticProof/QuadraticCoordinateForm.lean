@@ -352,6 +352,109 @@ theorem homogeneousQuadratic_eq_x0x1_sumsq_of_diag_diff_zero
           MvPolynomial.coeff m20 q • (x0 ^ 2 + x1 ^ 2 : Poly) := by
             simp [smul_add, add_assoc, add_left_comm, add_comm]
 
+/-- Canonical homogeneous quadratic extracted from a mixed-affine tail pair by
+killing the `x₁` coefficient. -/
+def mixedAffineTailHomLine (q2 q3 : Poly) : Poly :=
+  MvPolynomial.coeff m01 q3 • q2 - MvPolynomial.coeff m01 q2 • q3
+
+theorem coeff_m00_mixedAffineTailHomLine
+    {q2 q3 : Poly} :
+    MvPolynomial.coeff m00 (mixedAffineTailHomLine q2 q3) =
+      MvPolynomial.coeff m01 q3 * MvPolynomial.coeff m00 q2 -
+        MvPolynomial.coeff m01 q2 * MvPolynomial.coeff m00 q3 := by
+  simp [mixedAffineTailHomLine, sub_eq_add_neg]
+
+theorem coeff_m10_mixedAffineTailHomLine
+    {q2 q3 : Poly} :
+    MvPolynomial.coeff m10 (mixedAffineTailHomLine q2 q3) =
+      MvPolynomial.coeff m01 q3 * MvPolynomial.coeff m10 q2 -
+        MvPolynomial.coeff m01 q2 * MvPolynomial.coeff m10 q3 := by
+  simp [mixedAffineTailHomLine, sub_eq_add_neg]
+
+theorem coeff_m01_mixedAffineTailHomLine
+    {q2 q3 : Poly} :
+    MvPolynomial.coeff m01 (mixedAffineTailHomLine q2 q3) = 0 := by
+  simp [mixedAffineTailHomLine, sub_eq_add_neg]
+  ring
+
+theorem coeff_m20_mixedAffineTailHomLine
+    {q2 q3 : Poly} :
+    MvPolynomial.coeff m20 (mixedAffineTailHomLine q2 q3) =
+      MvPolynomial.coeff m01 q3 * MvPolynomial.coeff m20 q2 -
+        MvPolynomial.coeff m01 q2 * MvPolynomial.coeff m20 q3 := by
+  simp [mixedAffineTailHomLine, sub_eq_add_neg]
+
+theorem coeff_m11_mixedAffineTailHomLine
+    {q2 q3 : Poly} :
+    MvPolynomial.coeff m11 (mixedAffineTailHomLine q2 q3) =
+      MvPolynomial.coeff m01 q3 * MvPolynomial.coeff m11 q2 -
+        MvPolynomial.coeff m01 q2 * MvPolynomial.coeff m11 q3 := by
+  simp [mixedAffineTailHomLine, sub_eq_add_neg]
+
+theorem coeff_m02_mixedAffineTailHomLine
+    {q2 q3 : Poly} :
+    MvPolynomial.coeff m02 (mixedAffineTailHomLine q2 q3) =
+      MvPolynomial.coeff m01 q3 * MvPolynomial.coeff m02 q2 -
+        MvPolynomial.coeff m01 q2 * MvPolynomial.coeff m02 q3 := by
+  simp [mixedAffineTailHomLine, sub_eq_add_neg]
+
+theorem isQuadratic_mixedAffineTailHomLine
+    {q2 q3 : Poly} (hq2 : IsQuadratic q2) (hq3 : IsQuadratic q3) :
+    IsQuadratic (mixedAffineTailHomLine q2 q3) := by
+  calc
+    (mixedAffineTailHomLine q2 q3).totalDegree ≤
+        max ((MvPolynomial.coeff m01 q3) • q2).totalDegree
+          (((-MvPolynomial.coeff m01 q2)) • q3).totalDegree := by
+            simpa [mixedAffineTailHomLine, sub_eq_add_neg] using
+              (MvPolynomial.totalDegree_add
+                ((MvPolynomial.coeff m01 q3) • q2)
+                (((-MvPolynomial.coeff m01 q2)) • q3))
+    _ ≤ 2 := by
+          exact max_le
+            ((MvPolynomial.totalDegree_smul_le (MvPolynomial.coeff m01 q3) q2).trans hq2)
+            ((MvPolynomial.totalDegree_smul_le (-MvPolynomial.coeff m01 q2) q3).trans hq3)
+
+theorem homogeneousQuadratic_eq_mixedAffineTailHomLine
+    {q2 q3 : Poly}
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0) :
+    mixedAffineTailHomLine q2 q3 =
+      (MvPolynomial.coeff m01 q3 * MvPolynomial.coeff m20 q2 -
+          MvPolynomial.coeff m01 q2 * MvPolynomial.coeff m20 q3) • (x0 ^ 2 : Poly) +
+        (MvPolynomial.coeff m01 q3 * MvPolynomial.coeff m11 q2 -
+            MvPolynomial.coeff m01 q2 * MvPolynomial.coeff m11 q3) • (x0 * x1 : Poly) +
+          (MvPolynomial.coeff m01 q3 * MvPolynomial.coeff m02 q2 -
+              MvPolynomial.coeff m01 q2 * MvPolynomial.coeff m02 q3) • (x1 ^ 2 : Poly) := by
+  have hq : IsQuadratic (mixedAffineTailHomLine q2 q3) :=
+    isQuadratic_mixedAffineTailHomLine hq2 hq3
+  have h00 : MvPolynomial.coeff m00 (mixedAffineTailHomLine q2 q3) = 0 := by
+    rw [coeff_m00_mixedAffineTailHomLine, hq2_00, hq3_00]
+    ring
+  have h10 : MvPolynomial.coeff m10 (mixedAffineTailHomLine q2 q3) = 0 := by
+    rw [coeff_m10_mixedAffineTailHomLine, hq2_10, hq3_10]
+    ring
+  have h01 : MvPolynomial.coeff m01 (mixedAffineTailHomLine q2 q3) = 0 :=
+    coeff_m01_mixedAffineTailHomLine
+  calc
+    mixedAffineTailHomLine q2 q3 =
+      MvPolynomial.coeff m20 (mixedAffineTailHomLine q2 q3) • (x0 ^ 2 : Poly) +
+        MvPolynomial.coeff m11 (mixedAffineTailHomLine q2 q3) • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m02 (mixedAffineTailHomLine q2 q3) • (x1 ^ 2 : Poly) := by
+            exact homogeneousQuadratic_eq hq h00 h10 h01
+    _ =
+      (MvPolynomial.coeff m01 q3 * MvPolynomial.coeff m20 q2 -
+          MvPolynomial.coeff m01 q2 * MvPolynomial.coeff m20 q3) • (x0 ^ 2 : Poly) +
+        (MvPolynomial.coeff m01 q3 * MvPolynomial.coeff m11 q2 -
+            MvPolynomial.coeff m01 q2 * MvPolynomial.coeff m11 q3) • (x0 * x1 : Poly) +
+          (MvPolynomial.coeff m01 q3 * MvPolynomial.coeff m02 q2 -
+              MvPolynomial.coeff m01 q2 * MvPolynomial.coeff m02 q3) • (x1 ^ 2 : Poly) := by
+            rw [coeff_m20_mixedAffineTailHomLine, coeff_m11_mixedAffineTailHomLine,
+              coeff_m02_mixedAffineTailHomLine]
+
 /-- Translation fixing `x₀` and sending `x₁` to `x₁ + t`. -/
 def x1TranslateVec (t : ℝ) : Fin 2 → ℝ := ![0, t]
 
