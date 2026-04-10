@@ -1143,6 +1143,23 @@ now sharper again: use the new tail-parameter sweep as evidence that the next
 Lean target should be the cross-type branch or a smaller exact diagonal
 representative, not another over-general unfinished statement.
 
+I then pinned that diagonal evidence down in a dedicated script,
+\texttt{julia/mixed\_affine\_det\_zero\_diag\_tail\_2026\_04\_10.jl}, for the
+two-parameter family
+\[
+  (1,x_1,d x_1^2 + x_2^2,\ x_2 + a x_1^2),
+  \qquad
+  d \in \{-2,-1,0,1,2\},\ 
+  a \in \{-2,-1,1,2\}.
+\]
+All \(20\) sampled points have image rank \(15\) and no missing quartic
+monomials. So the failed direct Lean generalization was not pointing at a bad
+numerical guess; it was only a proof-shape problem. Numerically, the
+determinant-zero mixed-affine branch now looks even more rigid: once the
+homogeneous line carries a nonzero \(x_2^2\)-coefficient in the canonical
+basis, the tailed family appears uniformly surjective, and the only stable
+nonsurjective slice still visible is the cross-type \(x_1 x_2\) direction.
+
 The next Lean round then did exactly that. In
 \texttt{RepresentativeMixedAffine.lean} I added the cross-type determinant-zero
 representative

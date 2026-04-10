@@ -1036,6 +1036,19 @@ cross family always has rank \(14\) with only \(x_2^4\) missing, while the
 \(x_2^2\), sum-square, and split-diagonal families always have rank \(15\) with
 no missing monomials. So the evidence is now tail-parameter invariant on those
 canonical models, not just a one-off rank computation.
+The new script
+\texttt{julia/mixed\_affine\_det\_zero\_diag\_tail\_2026\_04\_10.jl} isolates
+the simplest two-parameter diagonal family
+\[
+  (1,x_1,d x_1^2 + x_2^2,\ x_2 + a x_1^2)
+\]
+with \(d \in \{-2,-1,0,1,2\}\) and \(a \in \{-2,-1,1,2\}\). Every one of the
+resulting \(20\) samples again has \(\operatorname{rank}(A_u)=15\) with no
+missing quartic monomials. So the numerical picture is now even sharper: once
+the extracted homogeneous line has a nonzero \(x_2^2\)-coefficient after the
+canonical determinant-zero basis choice, the tailed branch looks uniformly
+surjective, and only the cross-type slice with vanishing \(x_2^2\)-coefficient
+still behaves like a genuine rank-\(14\) obstruction.
 There is now also a small formal reduction on the Lean side that removes one
 easy slice of this branch. In
 \texttt{RepresentativeMixedAffinePlane.lean}, the new theorems
