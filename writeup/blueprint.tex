@@ -497,6 +497,22 @@ the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
   SOCP. So the missing step is no longer the monomial image or kernel algebra
   itself, but the extraction of the correct canonical relation data from an
   arbitrary factor.
+\item The rank-$13$ mixed-affine branch is now abstracted in the same style.
+  The new plane-level theorem only assumes explicit scalar relations for
+  \[
+    1,\qquad x_1^2,\qquad x_1x_2,
+  \]
+  plus an orthonormal coefficient-space pair for the last two directions. Under
+  those hypotheses, every quartic with vanishing $x_2^3$ and $x_2^4$
+  coefficients lies in the admissible image, and the formalized kernel
+  \[
+    w=\mathrm{rel}_{-c_2}(x_2\ell)+\mathrm{rel}_{c_3}(x_1\ell),
+    \qquad \ell=b+c x_2,
+  \]
+  matches the missing $(x_2^3,x_2^4)$ classes and forces zero residual for
+  every SOCP. So both nonsurjective mixed-affine representatives are now
+  available as basis-invariant plane certificates rather than only as concrete
+  coordinate models.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
 $\sigma(u)=p$.
 \end{enumerate}

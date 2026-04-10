@@ -428,6 +428,17 @@ The first formal Lean infrastructure for that alternative is now added in
     \operatorname{coeff}_{x_1^4}(\sigma(w))=t^2
   \]
   and the admissible image-plus-cone certificate gives zero residual.
+\item the rank-$13$ branch is now abstracted in the same basis-invariant way:
+  from explicit relations for $1$, $x_1^2$, and $x_1x_2$, together with an
+  orthonormal coefficient-space pair for the last two directions, the file now
+  proves both the codimension-two image theorem and the full SOCP certificate.
+  The abstract kernel is
+  \[
+    w=\mathrm{rel}_{-c_2}(x_2\ell)+\mathrm{rel}_{c_3}(x_1\ell),
+    \qquad \ell=b+c x_2,
+  \]
+  and its $(x_2^3,x_2^4)$ coefficients match the representative formulas
+  $(2bc,c^2)$.
 \end{itemize}
 So the remaining work for the plane strategy is now geometric rather than
 algebraic: identify the right orthonormal relation data canonically from a
