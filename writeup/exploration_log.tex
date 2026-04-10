@@ -737,9 +737,9 @@ artifact of the earlier representative-first approach: the remaining obstacle
 is now exactly to extract orthogonal mixed-affine plane data from the constant-
 containing $\dim=2$ branch, not to renormalize it afterward.
 
-The rank-$14$ nonsurjective plane has now been strengthened again beyond the
-orthogonal-column formulation. The same file introduces a determinant-based
-kernel for an arbitrary basis
+The nonsurjective mixed-affine planes have now both been strengthened beyond
+the orthogonal-column formulation. For rank $14$, the same file introduces a
+determinant-based kernel for an arbitrary basis
 \[
   x_2(a x_1+b x_2),\qquad x_2(c x_1+d x_2)
 \]
@@ -757,10 +757,26 @@ Lean reconstructs the exact \(x_1x_2\) and \(x_2^2\) relations by the inverse
   +x_1(a x_1+b x_2)\cdot x_2(c x_1+d x_2),
 \]
 whose square still matches the missing \(x_1^4\) coefficient up to the factor
-\(a^2+c^2\neq 0\). So the remaining mixed-affine obstruction is no longer the
-rank-$14$ orthogonal-column condition; it has narrowed further to the
-normalization step itself and, on the theorem side, the analogous rank-$13$
-determinant strengthening.
+\(a^2+c^2\neq 0\).
+
+For rank $13$, the file now also formalizes the exact analogue
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0Plane\_det}. Starting from
+an arbitrary basis
+\[
+  x_1(a x_1+b x_2),\qquad x_1(c x_1+d x_2)
+\]
+of \(\operatorname{span}(x_1^2,x_1x_2)\), Lean reconstructs the exact
+\(x_1^2\) and \(x_1x_2\) relations by the inverse matrix and uses the kernel
+\[
+  \mathrm{rel}_{-c_2}\bigl((c x_1+d x_2)(\beta+\gamma x_2)\bigr)
+  +\mathrm{rel}_{c_3}\bigl((a x_1+b x_2)(\beta+\gamma x_2)\bigr),
+\]
+whose square matches the missing \(x_2^3\) and \(x_2^4\) coefficients up to
+the common factor \(b^2+d^2\neq 0\). Both determinant theorems now also have
+affine-equivalence transport wrappers. So the remaining mixed-affine
+obstruction is no longer an in-plane algebra issue at all: it is the
+normalization/classification step that has to extract one of the canonical
+plane types together with nonzero determinant data.
 
 The surjective mixed-affine layer is broader now as well. The same file now
 contains a fixed split-diagonal transport lemma for planes of the form
@@ -791,9 +807,8 @@ annihilator $a x_1^2 + b x_1x_2 + c x_2^2$ to one of the already-formalized
 rank-$13$, rank-$14$, or rank-$15$ mixed-affine plane types.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
-transport lemmas; for rank-$14$ this now only needs determinant data inside
-\(\operatorname{span}(x_1x_2,x_2^2)\), while rank-$13$ still needs the extra
-plane normalization currently built into the theorem.
+transport lemmas; for both rank-$14$ and rank-$13$ nonsurjective branches this
+now only needs determinant data inside the canonical plane type.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

@@ -690,20 +690,40 @@ proves the stronger determinant-based theorem:
   \(a^2+c^2\neq 0\).
 \end{itemize}
 So the rank-$14$ branch no longer needs any extra polynomial-column
-orthogonality inside the plane. The analogous rank-$13$ strengthening remains
-the next plausible simplification:
+orthogonality inside the plane. The analogous rank-$13$ strengthening is now
+formalized as well:
 \begin{itemize}
-\item for the rank-$13$ plane \(\operatorname{span}(x_1^2,x_1x_2)\), the same
-  determinant-based idea with
+\item for the rank-$13$ plane \(\operatorname{span}(x_1^2,x_1x_2)\), any
+  orthonormal relation basis with polynomial images
   \[
     x_1(a x_1+b x_2),\qquad x_1(c x_1+d x_2)
   \]
-  should show that only the pure \(x_2^3\) and \(x_2^4\) coefficients matter,
-  scaled by \(b^2+d^2\).
+  and
+  \[
+    \det\!\begin{pmatrix}a&b\\ c&d\end{pmatrix}\neq 0
+  \]
+  already forces zero residual;
+\item the proof uses the kernel
+  \[
+    \mathrm{rel}_{-c_2}\bigl((c x_1+d x_2)(\beta+\gamma x_2)\bigr)
+    + \mathrm{rel}_{c_3}\bigl((a x_1+b x_2)(\beta+\gamma x_2)\bigr),
+  \]
+  because
+  \[
+    -x_1(a x_1+b x_2)\cdot (c x_1+d x_2)(\beta+\gamma x_2)
+    +x_1(c x_1+d x_2)\cdot (a x_1+b x_2)(\beta+\gamma x_2)=0.
+  \]
+  Its square still affects only the pure \(x_2^3\) and \(x_2^4\)
+  coefficients modulo the already-formalized image, now scaled by
+  \(b^2+d^2\neq 0\).
 \end{itemize}
-If that last rank-$13$ strengthening is formalized, the normalization would
-only have to produce the canonical plane type, not an extra orthogonal column
-condition inside either nonsurjective plane.
+So neither nonsurjective mixed-affine plane now needs an extra polynomial-column
+orthogonality condition. The normalization only has to produce the canonical
+plane type and a nonzero determinant inside that plane, not a special
+orthogonal basis of polynomial columns. Both determinant-based theorems are
+also wrapped through the affine transport layer, so once a normalized factor
+lands in either canonical plane type, the result pulls back directly to the
+original SOCP point.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
 $\sigma(u)=p$.
 \end{enumerate}
