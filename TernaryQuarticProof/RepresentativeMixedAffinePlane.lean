@@ -1294,10 +1294,44 @@ private theorem admissiblePoint_const_x0_pair
   · simpa using hq2
   · simpa using hq3
 
-private def stdRel0 : Fin 4 → ℝ := ![1, 0, 0, 0]
-private def stdRel1 : Fin 4 → ℝ := ![0, 1, 0, 0]
-private def stdRel2 : Fin 4 → ℝ := ![0, 0, 1, 0]
-private def stdRel3 : Fin 4 → ℝ := ![0, 0, 0, 1]
+private def stdRel0 : Fin 4 → ℝ
+  | 0 => 1
+  | 1 => 0
+  | 2 => 0
+  | 3 => 0
+
+private def stdRel1 : Fin 4 → ℝ
+  | 0 => 0
+  | 1 => 1
+  | 2 => 0
+  | 3 => 0
+
+private def stdRel2 : Fin 4 → ℝ
+  | 0 => 0
+  | 1 => 0
+  | 2 => 1
+  | 3 => 0
+
+private def stdRel3 : Fin 4 → ℝ
+  | 0 => 0
+  | 1 => 0
+  | 2 => 0
+  | 3 => 1
+
+private theorem stdRel23_gram_ne_zero :
+    (∑ i : Fin 4, (stdRel2 i) ^ 2) * (∑ i : Fin 4, (stdRel3 i) ^ 2) -
+      (∑ i : Fin 4, stdRel2 i * stdRel3 i) ^ 2 ≠ 0 := by
+  have hsum2 : ∑ i : Fin 4, (stdRel2 i) ^ 2 = 1 := by
+    rw [Fin.sum_univ_four]
+    norm_num [stdRel2]
+  have hsum3 : ∑ i : Fin 4, (stdRel3 i) ^ 2 = 1 := by
+    rw [Fin.sum_univ_four]
+    norm_num [stdRel3]
+  have hdot : ∑ i : Fin 4, stdRel2 i * stdRel3 i = 0 := by
+    rw [Fin.sum_univ_four]
+    norm_num [stdRel2, stdRel3]
+  rw [hsum2, hsum3, hdot]
+  norm_num
 
 theorem residual_eq_zero_of_equiv_const_x0_mixedAffineTailHomLine_crossTail_origDetZero_cases
     (e : Poly ≃ₐ[ℝ] Poly)
@@ -7378,6 +7412,146 @@ theorem residual_eq_zero_of_relations_const_x0_homQuadratics_plane_nontrivial
             hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
             (a := a) (b := -b) (c := c) ha
             hrel2 hrel3 hpos' hdet hp hsocp)
+
+theorem residual_eq_zero_of_equiv_const_x0_homQuadratics_plane_nontrivial
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {q2 q3 : Poly}
+    (h0 : mapVec e.toAlgHom u 0 = (1 : Poly))
+    (h1 : mapVec e.toAlgHom u 1 = x0)
+    (h2 : mapVec e.toAlgHom u 2 = q2)
+    (h3 : mapVec e.toAlgHom u 3 = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hplane :
+      homQuadPlaneA q2 q3 ≠ 0 ∨
+        homQuadPlaneB q2 q3 ≠ 0 ∨
+          homQuadPlaneC q2 q3 ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_const_x0_homQuadratics_plane_nontrivial
+      (c0 := stdRel0) (c1 := stdRel1) (c2 := stdRel2) (c3 := stdRel3)
+      (B := B0) (u := mapVec e.toAlgHom u) hu0
+      (h0 := by simpa [stdRel0, Fin.sum_univ_four] using h0)
+      (h1 := by simpa [stdRel1, Fin.sum_univ_four] using h1)
+      (h2 := by simpa [stdRel2, Fin.sum_univ_four] using h2)
+      (h3 := by simpa [stdRel3, Fin.sum_univ_four] using h3)
+      hq2 hq3 hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+      (hgram := stdRel23_gram_ne_zero)
+      hplane hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+theorem residual_eq_zero_of_socp_of_eq_mix_mapVec_const_x0_homQuadratics_plane_nontrivial
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuarticSymm : ∀ {p : Poly}, IsQuartic p → IsQuartic (e.symm p))
+    (M : Matrix (Fin 4) (Fin 4) ℝ)
+    (hMtM : M.transpose * M = 1)
+    (hMMt : M * M.transpose = 1)
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    {q2 q3 : Poly}
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hplane :
+      homQuadPlaneA q2 q3 ≠ 0 ∨
+        homQuadPlaneB q2 q3 ≠ 0 ∨
+          homQuadPlaneC q2 q3 ≠ 0)
+    (huRep : mix M.transpose (mapVec e.symm.toAlgHom u) = ![(1 : Poly), x0, q2, q3])
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have huRepAdmissible : IsAdmissiblePoint (![(1 : Poly), x0, q2, q3] : RankFourVec) := by
+    exact admissiblePoint_const_x0_pair hq2 hq3
+  have hRep :
+      ∀ {B0 : DotForm} [Fact B0.toQuadraticMap.PosDef] {p0 : Poly},
+        IsSOSQuartic p0 → IsSOCP B0 p0 (![(1 : Poly), x0, q2, q3] : RankFourVec) →
+          residual p0 (![(1 : Poly), x0, q2, q3] : RankFourVec) = 0 := by
+    intro B0 _ p0 hp0 hsocp0
+    exact residual_eq_zero_of_relations_const_x0_homQuadratics_plane_nontrivial
+      (c0 := stdRel0) (c1 := stdRel1) (c2 := stdRel2) (c3 := stdRel3)
+      (B := B0) (u := ![(1 : Poly), x0, q2, q3]) huRepAdmissible
+      (h0 := by simp [stdRel0, Fin.sum_univ_four])
+      (h1 := by simp [stdRel1, Fin.sum_univ_four, x0])
+      (h2 := by simp [stdRel2, Fin.sum_univ_four])
+      (h3 := by simp [stdRel3, Fin.sum_univ_four])
+      hq2 hq3 hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+      (hgram := stdRel23_gram_ne_zero)
+      hplane hp0 hsocp0
+  exact residual_eq_zero_of_socp_of_eq_mix_mapVec
+    (![(1 : Poly), x0, q2, q3])
+    hRep e heQuad heQuadSymm heQuarticSymm M hMtM hMMt hB hp huRep hsocp
+
+theorem residual_eq_zero_of_socp_of_eq_mix_affineEquiv_const_x0_homQuadratics_plane_nontrivial
+    (A A' : Matrix (Fin 2) (Fin 2) ℝ) (b b' : Fin 2 → ℝ)
+    (hAA' : A * A' = 1) (hA'A : A' * A = 1)
+    (hb : ∀ i, b' i + Matrix.mulVec A' b i = 0)
+    (hb' : ∀ i, b i + Matrix.mulVec A b' i = 0)
+    (M : Matrix (Fin 4) (Fin 4) ℝ)
+    (hMtM : M.transpose * M = 1)
+    (hMMt : M * M.transpose = 1)
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    {q2 q3 : Poly}
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hplane :
+      homQuadPlaneA q2 q3 ≠ 0 ∨
+        homQuadPlaneB q2 q3 ≠ 0 ∨
+          homQuadPlaneC q2 q3 ≠ 0)
+    (huRep :
+      mix M.transpose
+        (mapVec (affineEquiv A A' b b' hAA' hA'A hb hb').symm.toAlgHom u) =
+          ![(1 : Poly), x0, q2, q3])
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  exact residual_eq_zero_of_socp_of_eq_mix_mapVec_const_x0_homQuadratics_plane_nontrivial
+    (e := affineEquiv A A' b b' hAA' hA'A hb hb')
+    (heQuad := fun {_} hpq => isQuadratic_affineEquiv A A' b b' hAA' hA'A hb hb' hpq)
+    (heQuadSymm := fun {_} hpq => isQuadratic_affineEquiv_symm A A' b b' hAA' hA'A hb hb' hpq)
+    (heQuarticSymm := fun {_} hpq => isQuartic_affineEquiv_symm A A' b b' hAA' hA'A hb hb' hpq)
+    (M := M) hMtM hMMt hB hp
+    hq2 hq3 hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+    hplane huRep hsocp
 
 theorem residual_eq_zero_of_const_x0_tailedPair_det
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]

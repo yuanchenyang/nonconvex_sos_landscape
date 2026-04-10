@@ -1028,6 +1028,18 @@ corrections with the plane certificate layer. It is now blocked upstream on
 extracting the exact normalized coordinate picture \(u=(1,x_1,q_2,q_3)\), or
 equivalently an orthonormal relation basis for that picture, from a general
 constant-containing mixed-affine factor.
+The next Lean cleanup removed the same interface mismatch for the homogeneous
+mixed-affine subcase itself. \texttt{RepresentativeMixedAffinePlane.lean} now
+contains
+\texttt{residual\_eq\_zero\_of\_equiv\_const\_x0\_homQuadratics\_plane\_nontrivial}
+and
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_const\_x0\_homQuadratics\_plane\_nontrivial}.
+So both constant-containing mixed-affine outputs are now available in the same
+exact-coordinate transport form: after affine normalization and orthogonal
+factor mixing, the remaining classification theorem can hand back
+\((1,x_1,q_2,q_3)\) either with a tailed-pair determinant condition or with a
+nontrivial homogeneous quadratic plane, and the top-level transport layer
+handles either branch directly.
 The next probe targeted the determinant-zero side directly. The new script
 \texttt{julia/mixed\_affine\_det\_zero\_2026\_04\_10.jl} uses only coefficient
 linear algebra, so it runs in the current workspace without the unavailable SDP

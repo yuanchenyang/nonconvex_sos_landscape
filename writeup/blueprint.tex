@@ -978,6 +978,19 @@ Finally, the same branch is now lifted one more step to explicit relation data:
 \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_tailedPair\_det} and its
 equivariant version
 \texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_tailedPair\_det}.
+The remaining interface mismatch on the mixed-affine side is now also gone for
+the homogeneous-plane subcase itself. The same Lean file now exports
+\texttt{residual\_eq\_zero\_of\_equiv\_const\_x0\_homQuadratics\_plane\_nontrivial}
+and the transport-shaped theorem
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_const\_x0\_homQuadratics\_plane\_nontrivial}.
+So both constant-containing mixed-affine outputs now sit at the same top-level
+surface: the classification step may hand back exact normalized coordinates
+\[
+  \operatorname{mix}(M^\top,e^{-1}\!\cdot u)=(1,x_1,q_2,q_3)
+\]
+either with a nontrivial homogeneous quadratic plane, or with a determinant
+condition on a tailed pair, and the final transport layer can consume either
+form directly without repackaging it into relation vectors first.
 So once four coefficient vectors \(c_0,c_1,c_2,c_3 \in \mathbb{R}^4\) are
 orthonormal and satisfy the explicit relations
 \[
