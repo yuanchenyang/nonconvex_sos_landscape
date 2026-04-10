@@ -1553,6 +1553,25 @@ special slice
 \]
 which is exactly the numerically rank-\(13\) family.
 
+That last special slice is now formalized too at the exact-coordinate level.
+The file adds the direct theorem
+\texttt{residual\_eq\_zero\_of\_const\_x0\_x0sqTail\_m11\_m02\_zero}, together
+with the coarser wrapper
+\texttt{residual\_eq\_zero\_of\_const\_x0\_x0sqTail\_m02\_zero} and their
+equivariant/\(\operatorname{mix}(M^\top,e^{-1}\!\cdot u)\)-transport versions.
+So once exact normalized coordinates
+\((1,x_0,q_2,q_3)\) are available with \(q_2\) a pure \(x_0^2\)-type line and
+\(\operatorname{coeff}_{x_1^2}(q_3)=0\), Lean now performs the remaining
+internal split automatically:
+\(\operatorname{coeff}_{x_0x_1}(q_3)\neq 0\) falls to the translated
+homogeneous-plane theorem, while
+\(\operatorname{coeff}_{x_0x_1}(q_3)=0\) reduces either to the affine-tail
+\(\operatorname{contains\_aff1}\) theorem or to a direct constant relation.
+So the pure-\(x_0^2\) determinant-zero branch is no longer waiting on another
+representative calculation; the remaining gap there is only the upstream
+normalization/extraction statement, together with the still stricter
+\(\operatorname{coeff}_{x_1^2}(q_3)\neq 0\) theorem surface.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data, especially for the constant-containing mixed-affine

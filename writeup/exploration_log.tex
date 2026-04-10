@@ -1514,6 +1514,20 @@ determinant-zero slice is the special low-affine-looking one with both
 \(\operatorname{coeff}_{x_1^2}(q_3)=0\) and
 \(\operatorname{coeff}_{x_0x_1}(q_3)=0\).
 
+The next Lean round removed even that remaining exact-coordinate slice. I added
+\texttt{residual\_eq\_zero\_of\_const\_x0\_x0sqTail\_m11\_m02\_zero} together
+with the coarser wrapper
+\texttt{residual\_eq\_zero\_of\_const\_x0\_x0sqTail\_m02\_zero} and their
+transport versions. So if exact normalized coordinates
+\((1,x_0,q_2,q_3)\) are available with \(q_2\) a pure \(x_0^2\)-type line and
+\(\operatorname{coeff}_{x_1^2}(q_3)=0\), Lean now handles the whole branch
+internally: if \(\operatorname{coeff}_{x_0x_1}(q_3)\neq 0\), it invokes the
+translated homogeneous-plane theorem; if
+\(\operatorname{coeff}_{x_0x_1}(q_3)=0\), it falls either to the affine-tail
+case or to an explicit constant relation. So the pure-\(x_0^2\)
+determinant-zero family is no longer blocked by one more ad hoc representative
+argument; what remains is the upstream extraction/normalization statement.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
