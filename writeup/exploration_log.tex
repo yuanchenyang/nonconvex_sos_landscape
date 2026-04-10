@@ -1188,6 +1188,21 @@ representative-or-orthonormal-relation level; the remaining issue is no longer
 ``find the missing cross theorem,'' but only ``extract exact normalized cross
 data from a general admissible factor.''
 
+The next Lean round removed even that orthonormality bottleneck for the
+determinant-zero cross slice. In \texttt{RepresentativeMixedAffine.lean} the
+new theorems
+\texttt{quartic\_in\_image\_of\_relations\_const\_x0\_x0x1\_x1PlusX0sq\_of\_coeff\_m04\_zero},
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x0x1\_x1PlusX0sq}, and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_x0x1\_x1PlusX0sq}
+lift the same branch to plain exact relation data. The proof keeps the same
+rank-\(14\) shape as the concrete representative, but the kernel direction is
+now built directly from the relation vectors, and the missing
+\(\operatorname{coeff}_{x_2^4}\) depends only on the constant relation column.
+So the usable cross-type theorem layer no longer needs an orthonormal relation
+basis at all. The remaining mixed-affine extraction gap is therefore smaller
+again: it is now genuinely ``produce exact normalized determinant-zero cross
+relations after affine normalization,'' not ``orthonormalize them first.''
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
@@ -1199,8 +1214,8 @@ homogeneous plane when available, so this step no longer has to hand-feed
 \((a,b,c)\) into the mixed-affine wrappers. The determinant-nondegenerate
 sub-branch is now sharper than that wording suggests: there the common-
 translation lemma and its integration are done, so the remaining work is to
-extract exact normalized coordinates of the form \(u=(1,x_1,q_2,q_3)\), or an
-orthonormal relation basis for that same data, together with the same
+extract exact normalized coordinates of the form \(u=(1,x_1,q_2,q_3)\), or
+equivalently exact relation data for that same tuple, together with the same
 determinant condition from the general branch. On the determinant-zero side,
 the remaining work is now only extraction and transport: both the
 \(x_2^2\)-type and the cross-type canonical families are formalized, and the

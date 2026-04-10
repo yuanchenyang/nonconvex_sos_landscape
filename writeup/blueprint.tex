@@ -1099,13 +1099,21 @@ representative in \texttt{RepresentativeMixedAffinePlane.lean} via
 \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x0x1\_x1PlusX0sq\_orthonormal}
 and its equivariant version
 \texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_x0x1\_x1PlusX0sq\_orthonormal}.
-So once affine normalization produces an orthonormal relation basis whose
-polynomial images are \(1\), \(x_1\), \(x_1x_2\), and \(x_2 + a x_1^2\), this
-determinant-zero cross slice closes immediately through the same transport
-interface used elsewhere in the mixed-affine branch. The canonical
-determinant-zero mixed-affine branch is therefore no longer missing any
-representative theorem, and the cross slice is no longer stuck at bare
-representative level either.
+There is now a further exact-relation lift in
+\texttt{RepresentativeMixedAffine.lean}:
+\texttt{quartic\_in\_image\_of\_relations\_const\_x0\_x0x1\_x1PlusX0sq\_of\_coeff\_m04\_zero},
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x0x1\_x1PlusX0sq}, and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_x0x1\_x1PlusX0sq}.
+These remove the orthonormality requirement from the usable theorem layer for
+the cross slice: once affine normalization produces exact relations to
+\(1\), \(x_1\), \(x_1x_2\), and \(x_2 + a x_1^2\), the same image-plus-kernel
+argument closes directly. The key point is that the missing \(x_2^4\) class is
+still supplied by a single explicit kernel direction, and its
+\(\operatorname{coeff}_{x_2^4}\) depends only on the constant relation vector,
+so no full coefficient-space orthonormal basis is needed at that stage. The
+canonical determinant-zero mixed-affine branch is therefore no longer missing
+any representative theorem, and the cross slice is no longer stuck even at the
+orthonormal-relation level.
 The remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
@@ -1115,11 +1123,11 @@ canonical cross-product theorem. In other words, the next bridge no longer has
 to \emph{find} the homogeneous line; it only has to classify how the remaining
 tailed quadratic sits relative to that explicit extracted line, and in the
 nondegenerate determinant sub-branch it only has to extract exact normalized
-coordinates of the form \((1,x_1,q_2,q_3)\) \emph{or equivalently} orthonormal
-relation vectors for that same data, together with the same determinant
-hypothesis after affine normalization. So the remaining gap there is no longer
-the translation algebra or its integration with the mixed-affine plane
-certificate layer; it is the
+coordinates of the form \((1,x_1,q_2,q_3)\), or equivalently exact relation
+data for that same tuple, together with the same determinant hypothesis after
+affine normalization. So the remaining gap there is no longer the translation
+algebra, the cross-slice kernel certificate, or their integration with the
+mixed-affine theorem layer; it is the
 upstream normalization/classification step producing that coordinate picture
 from a general admissible factor. The diagonal
 determinant-zero slices no longer look like separate obstructions; if they need
