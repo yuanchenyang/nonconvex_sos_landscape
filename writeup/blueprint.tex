@@ -849,11 +849,36 @@ with the appropriate sign on \(c - b^2/a\), and reduce it to the already
 formalized rank-$15$ sum-square or split-diagonal planes. So the remaining
 mixed-affine obstacle is now entirely the extraction/classification statement,
 not another missing normal-form transport.
+One more theorem-level reduction is now formalized in the same file:
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_homQuadratics\_plane\_nontrivial}.
+Given explicit relations to \(1\), \(x_1\), and two homogeneous quadratics
+\(q_2,q_3\), it forms the canonical dual annihilator directly from the
+\(2\times 3\) coefficient matrix of \((q_2,q_3)\),
+\[
+  a = \det\!\begin{pmatrix}
+    \operatorname{coeff}_{x_1x_2}(q_2) & \operatorname{coeff}_{x_2^2}(q_2) \\
+    \operatorname{coeff}_{x_1x_2}(q_3) & \operatorname{coeff}_{x_2^2}(q_3)
+  \end{pmatrix},
+  \quad
+  b = \det\!\begin{pmatrix}
+    \operatorname{coeff}_{x_1^2}(q_2) & \operatorname{coeff}_{x_2^2}(q_2) \\
+    \operatorname{coeff}_{x_1^2}(q_3) & \operatorname{coeff}_{x_2^2}(q_3)
+  \end{pmatrix},
+  \quad
+  c = \det\!\begin{pmatrix}
+    \operatorname{coeff}_{x_1^2}(q_2) & \operatorname{coeff}_{x_1x_2}(q_2) \\
+    \operatorname{coeff}_{x_1^2}(q_3) & \operatorname{coeff}_{x_1x_2}(q_3)
+  \end{pmatrix},
+\]
+and then dispatches automatically to the rank-$13$, rank-$14$, or rank-$15$
+mixed-affine plane theorem according to whether \(a\), \(b\), and
+\(c-b^2/a\) vanish or change sign.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
-already-formalized plane types, together with the exact dual relation,
-sign, and determinant data needed to invoke the transport theorems.
+already-formalized plane types and supplies a nontrivial homogeneous quadratic
+plane together with the linear relation needed to invoke this canonical
+cross-product theorem.
 
 \medskip
 \noindent

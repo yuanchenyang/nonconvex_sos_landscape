@@ -920,16 +920,24 @@ first shear a general dual annihilator
 \)
 to kill the middle coefficient, then call the diagonal scaling wrappers. So the
 mixed-affine normal-form algebra is now essentially theorem-complete: the
-remaining gap is the extraction of the dual annihilator and determinant data
-from an arbitrary constant-containing factor.
+remaining gap is no longer the annihilator algebra itself.
+\texttt{RepresentativeMixedAffinePlane.lean} now also proves
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_homQuadratics\_plane\_nontrivial},
+which constructs the canonical annihilator directly from the \(2\times 3\)
+homogeneous coefficient matrix of \((q_2,q_3)\) by coefficient cross-products
+and then dispatches automatically to the cross, discriminant-zero, sum-square,
+split-diagonal, or \(\operatorname{coeff}_{x_2^2}=0\) branch as appropriate.
+So the remaining gap is now upstream extraction: produce from an arbitrary
+constant-containing factor the nontrivial homogeneous quadratic plane and the
+linear relation needed by that theorem.
 
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
-coefficient side: extract the annihilator coefficients
-\((a,b,c)\) for the homogeneous quadratic plane, prove which dual normal-form
-case they satisfy after shear and scale, and feed that data into the existing
-cross-annihilator, discriminant-zero, diagonal, or canonical-plane wrappers.
+coefficient side: extract a nontrivial homogeneous quadratic plane together
+with the linear relation \(x_1\)-direction data. The canonical annihilator
+coefficients are now computed internally from that plane, so this step no
+longer has to hand-feed \((a,b,c)\) into the mixed-affine wrappers.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this

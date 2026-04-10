@@ -776,6 +776,32 @@ private theorem eq_zero_of_sum_sq_eq_zero {c : Fin 4 → ℝ}
       (fun j _ => sq_nonneg (c j))).mp h
   exact sq_eq_zero_iff.mp (hzero i (by simp))
 
+private def homQuadPlaneA (q2 q3 : Poly) : ℝ :=
+  MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+    MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3
+
+private def homQuadPlaneB (q2 q3 : Poly) : ℝ :=
+  MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
+    MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3
+
+private def homQuadPlaneC (q2 q3 : Poly) : ℝ :=
+  MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+    MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3
+
+private theorem homQuadPlane_relation_left (q2 q3 : Poly) :
+    homQuadPlaneA q2 q3 * MvPolynomial.coeff m20 q2 +
+      (-homQuadPlaneB q2 q3) * MvPolynomial.coeff m11 q2 +
+        homQuadPlaneC q2 q3 * MvPolynomial.coeff m02 q2 = 0 := by
+  simp [homQuadPlaneA, homQuadPlaneB, homQuadPlaneC]
+  ring
+
+private theorem homQuadPlane_relation_right (q2 q3 : Poly) :
+    homQuadPlaneA q2 q3 * MvPolynomial.coeff m20 q3 +
+      (-homQuadPlaneB q2 q3) * MvPolynomial.coeff m11 q3 +
+        homQuadPlaneC q2 q3 * MvPolynomial.coeff m02 q3 = 0 := by
+  simp [homQuadPlaneA, homQuadPlaneB, homQuadPlaneC]
+  ring
+
 /-- Sigma of two coefficient-space relation directions with orthogonal
 coefficients. This is the clean quadratic identity needed for the planned
 basis-invariant mixed-affine plane theorems. -/
@@ -4701,5 +4727,116 @@ theorem residual_eq_zero_of_equiv_relations_const_homQuadratics_annihilator_diff
       h0' h2' h3' hq2' hq3' hq2_00' hq2_10' hq2_01' hq3_00' hq3_10' hq3_01'
       ha hrel2' hrel3' hpos' hdet' hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+theorem residual_eq_zero_of_relations_const_x0_homQuadratics_plane_nontrivial
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hgram :
+      (∑ i : Fin 4, (c2 i) ^ 2) * (∑ i : Fin 4, (c3 i) ^ 2) -
+        (∑ i : Fin 4, c2 i * c3 i) ^ 2 ≠ 0)
+    (hplane :
+      homQuadPlaneA q2 q3 ≠ 0 ∨
+        homQuadPlaneB q2 q3 ≠ 0 ∨
+          homQuadPlaneC q2 q3 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let a : ℝ := homQuadPlaneA q2 q3
+  let b : ℝ := homQuadPlaneB q2 q3
+  let c : ℝ := homQuadPlaneC q2 q3
+  have hplane' : a ≠ 0 ∨ b ≠ 0 ∨ c ≠ 0 := by
+    simpa [a, b, c] using hplane
+  have hrel2 :
+      a * MvPolynomial.coeff m20 q2 +
+        (-b) * MvPolynomial.coeff m11 q2 +
+          c * MvPolynomial.coeff m02 q2 = 0 := by
+    simpa [a, b, c] using homQuadPlane_relation_left q2 q3
+  have hrel3 :
+      a * MvPolynomial.coeff m20 q3 +
+        (-b) * MvPolynomial.coeff m11 q3 +
+          c * MvPolynomial.coeff m02 q3 = 0 := by
+    simpa [a, b, c] using homQuadPlane_relation_right q2 q3
+  by_cases ha : a = 0
+  · by_cases hb : b = 0
+    · have hc : c ≠ 0 := by
+        rcases hplane' with hA | hB | hC
+        · exact (hA ha).elim
+        · exact (hB hb).elim
+        · exact hC
+      have hq2_02 : MvPolynomial.coeff m02 q2 = 0 := by
+        have h : c = 0 ∨ MvPolynomial.coeff m02 q2 = 0 := by
+          simpa [ha, hb] using hrel2
+        exact h.resolve_left hc
+      have hq3_02 : MvPolynomial.coeff m02 q3 = 0 := by
+        have h : c = 0 ∨ MvPolynomial.coeff m02 q3 = 0 := by
+          simpa [ha, hb] using hrel3
+        exact h.resolve_left hc
+      have hdet :
+          MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+            MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 ≠ 0 := by
+        simpa [c] using hc
+      exact residual_eq_zero_of_relations_const_homQuadratics_coeff_m02_zero_gram
+        (B := B) (u := u) hu h0 h2 h3 hq2 hq3
+        hq2_00 hq2_10 hq2_01 hq2_02
+        hq3_00 hq3_10 hq3_01 hq3_02
+        hgram hdet hp hsocp
+    · have hdet :
+          MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
+            MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3 ≠ 0 := by
+        simpa [b] using hb
+      exact residual_eq_zero_of_equiv_relations_const_homQuadratics_crossAnnihilator
+        (B := B) (u := u) hu h0 h2 h3 hq2 hq3
+        hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+        (b := -b) (c := c) (neg_ne_zero.mpr hb)
+        (by simpa [ha] using hrel2) (by simpa [ha] using hrel3)
+        hdet hp hsocp
+  · have hdet :
+        MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+          MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 ≠ 0 := by
+      simpa [a] using ha
+    by_cases hdisc : c - b ^ 2 / a = 0
+    · exact residual_eq_zero_of_equiv_relations_const_x0_homQuadratics_annihilator_disc_zero
+        (B := B) (u := u) hu h0 h1 h2 h3 hq2 hq3
+        hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+        hgram (a := a) (b := -b) (c := c) ha
+        hrel2 hrel3 (by simpa using hdisc) hdet hp hsocp
+    · by_cases hpos : 0 < (c - b ^ 2 / a) / a
+      · exact
+          (residual_eq_zero_of_equiv_relations_const_homQuadratics_annihilator_sum
+            (B := B) (u := u) hu h0 h2 h3 hq2 hq3
+            hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+            (a := a) (b := -b) (c := c) ha
+            hrel2 hrel3 (by simpa using hpos) hdet hp hsocp)
+      · have hdivne : (c - b ^ 2 / a) / a ≠ 0 := by
+          exact div_ne_zero hdisc ha
+        have hlt : (c - b ^ 2 / a) / a < 0 := by
+          exact lt_of_le_of_ne (le_of_not_gt hpos) hdivne
+        have hpos' : 0 < (-(c - (-b) ^ 2 / a)) / a := by
+          have hEq : (-(c - (-b) ^ 2 / a)) / a = -((c - b ^ 2 / a) / a) := by
+            ring
+          rw [hEq]
+          linarith
+        exact
+          (residual_eq_zero_of_equiv_relations_const_homQuadratics_annihilator_diff
+            (B := B) (u := u) hu h0 h2 h3 hq2 hq3
+            hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+            (a := a) (b := -b) (c := c) ha
+            hrel2 hrel3 hpos' hdet hp hsocp)
 
 end TernaryQuartic
