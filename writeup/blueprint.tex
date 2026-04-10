@@ -1016,6 +1016,18 @@ So the determinant-zero tailed branch no longer looks like an arbitrary new
 family. Numerically it splits exactly by the homogeneous-line type: the cross
 direction behaves like the known rank-\(14\) mixed-affine obstruction, while
 the \(x_2^2\) and diagonal directions are already surjective.
+There is now also a small formal reduction on the Lean side that removes one
+easy slice of this branch. In
+\texttt{RepresentativeMixedAffinePlane.lean}, the new theorems
+\texttt{relation\_x1\_of\_affineTail},
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_affineTail}, and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_affineTail}
+show that whenever the fourth coordinate is already affine in \(x_1\) with
+nonzero \(x_1\)-coefficient, the branch collapses immediately to the generic
+\(\dim(W \cap \mathrm{Aff}_1)=3\) theorem by reconstructing an explicit
+\(x_1\) relation. So the determinant-zero mixed-affine work now truly starts at
+the residual subcase where the tailed coordinate still carries a nonzero
+\(x_1^2\)-free homogeneous quadratic part.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these

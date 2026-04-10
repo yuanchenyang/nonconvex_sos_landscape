@@ -1052,6 +1052,21 @@ looks much less amorphous than before: numerically the cross direction behaves
 like the known rank-\(14\) mixed-affine obstruction with only the \(x_2^4\)
 class missing, while the \(x_2^2\) and diagonal directions are already
 surjective.
+The next Lean step removed one easy but real part of that determinant-zero
+picture. In \texttt{RepresentativeMixedAffinePlane.lean} I added the coefficient
+identity \texttt{relation\_x1\_of\_affineTail} and the SOCP consequences
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_affineTail} and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_affineTail}. These
+show that if a coordinate relation already has the form
+\[
+  q = a + b x_1 + c x_2
+\]
+with \(b \neq 0\), then \(x_2\) is recoverable by an explicit linear
+combination of the \(1\), \(x_1\), and \(q\) relations, so the whole branch
+falls back to the existing \(\dim(W \cap \mathrm{Aff}_1)=3\) theorem. So the
+determinant-zero mixed-affine branch is no longer blocked on the genuinely
+affine subcase; only the case with a nonzero residual homogeneous quadratic
+part in the tailed coordinate remains.
 
 \section*{Open Subgoals}
 \begin{itemize}
@@ -1069,7 +1084,7 @@ orthonormal relation basis for that same data, together with the same
 determinant condition from the general branch. On the determinant-zero side,
 the new probe suggests that only the cross-type canonical family should still
 need a genuinely nonsurjective theorem; the \(x_2^2\) and diagonal types look
-surjective already.
+surjective already, and the purely affine tail case is now formally removed.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this
