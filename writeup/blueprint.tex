@@ -1114,6 +1114,20 @@ so no full coefficient-space orthonormal basis is needed at that stage. The
 canonical determinant-zero mixed-affine branch is therefore no longer missing
 any representative theorem, and the cross slice is no longer stuck even at the
 orthonormal-relation level.
+There is now one more useful lift in
+\texttt{RepresentativeMixedAffinePlane.lean}:
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_crossTail} and its
+equivariant version
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_crossTail}. These
+start from coefficient constraints rather than already-normalized exact images:
+\(q_2\) is assumed to be a pure cross line, while \(q_3\) is assumed to have
+zero \(x_2^2\)-coefficient and nonzero \(x_1\)- and \(x_1^2\)-coefficients.
+Lean then performs the normalization internally: it rescales \(q_2\) to
+\(x_1x_2\), subtracts the cross part from \(q_3\), rescales the remaining
+tailed coordinate to \(x_2 + a x_1^2\), and dispatches to the exact relation
+theorem above. So even the determinant-zero cross slice no longer needs the
+classification statement to hand back fully normalized coordinates; a
+coefficient-level pure-cross-plus-tail description now suffices.
 The remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these

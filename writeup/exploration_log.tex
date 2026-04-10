@@ -1203,6 +1203,21 @@ basis at all. The remaining mixed-affine extraction gap is therefore smaller
 again: it is now genuinely ``produce exact normalized determinant-zero cross
 relations after affine normalization,'' not ``orthonormalize them first.''
 
+The next Lean round tightened that cross branch once more at the coefficient
+level. In \texttt{RepresentativeMixedAffinePlane.lean} the new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_crossTail} and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_crossTail} start
+from exact relations to \(1\), \(x_1\), a pure cross quadratic \(q_2\), and a
+second quadratic \(q_3\) whose \(x_2^2\)-coefficient vanishes but whose
+\(x_2\)- and \(x_1^2\)-coefficients are both nonzero. The proof then performs
+the remaining normalization internally: it rescales \(q_2\) to \(x_1x_2\),
+subtracts the cross component from \(q_3\), rescales the remainder to
+\(x_2 + a x_1^2\), and invokes the exact determinant-zero cross theorem from
+\texttt{RepresentativeMixedAffine.lean}. So the cross-type determinant-zero
+slice is no longer waiting for the classification step to output fully
+normalized polynomial images; a coefficient-level pure-cross-plus-tail
+description now already closes the SOCP branch.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
