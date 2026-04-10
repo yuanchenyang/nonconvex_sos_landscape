@@ -97,12 +97,17 @@ transformed image-plus-cone decomposition forces zero residual at a SOCP.
   has total degree at most $3$, and then sums these cubic image terms over an
   SOS decomposition using the indexed-family certificate.
 \item \texttt{TernaryQuarticProof/AffineTransform.lean}: a new affine
-  substitution layer is now started and already builds. At this stage it
-  formalizes the polynomial algebra homomorphism induced by an affine change of
-  variables, proves that affine substitutions do not increase total degree, and
-  deduces preservation of the \texttt{IsQuadratic} and \texttt{IsQuartic}
-  bounds. The same file also proves that applying such a homomorphism
-  coordinatewise commutes with $A_u$, $\sigma$, and the residual.
+  substitution layer. It formalizes the polynomial algebra homomorphism
+  induced by an affine change of variables, proves that affine substitutions do
+  not increase total degree, and deduces preservation of the
+  \texttt{IsQuadratic} and \texttt{IsQuartic} bounds. The same file also proves
+  that applying such a homomorphism coordinatewise commutes with $A_u$,
+  $\sigma$, and the residual.
+\item \texttt{TernaryQuarticProof/AffineSocpTransform.lean}: the invertible
+  half of the affine story is now formalized too. The file transports the
+  bilinear form across a polynomial algebra equivalence, proves preservation of
+  positive-definiteness, FOCP, SOCP, admissibility, SOS quarticity, and zero
+  residual, and packages these statements for explicit affine inverses.
 \end{itemize}
 
 These files build with
@@ -336,10 +341,12 @@ problem into two formally separate layers:
 \end{itemize}
 The second layer was already formalized in
 \texttt{TernaryQuarticProof/FactorTransform.lean}. The first layer is now
-partially formalized in \texttt{TernaryQuarticProof/AffineTransform.lean}. This
-shift came from a concrete obstruction: orthogonal mixing acts on coefficient
-vectors in $\mathbb{R}^4$, so it does not by itself force exact coordinates
-$1$, $x_1$, or $x_2$ to appear even when the corresponding affine lines lie in
+itself split into a homomorphism file
+\texttt{TernaryQuarticProof/AffineTransform.lean} and an equivalence-transport
+file \texttt{TernaryQuarticProof/AffineSocpTransform.lean}. This shift came
+from a concrete obstruction: orthogonal mixing acts on coefficient vectors in
+$\mathbb{R}^4$, so it does not by itself force exact coordinates $1$, $x_1$,
+or $x_2$ to appear even when the corresponding affine lines lie in
 $\operatorname{span}(u_1,\dots,u_4)$.
 
 \section*{Additional Recorded Experiments}

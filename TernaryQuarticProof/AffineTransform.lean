@@ -154,4 +154,58 @@ theorem residual_mapVec
     residual (φ p) (mapVec φ u) = φ (residual p u) := by
   simp [residual, sigma_mapVec, sub_eq_add_neg]
 
+theorem affineHom_one_zero :
+    affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) 0 = AlgHom.id ℝ Poly := by
+  apply MvPolynomial.algHom_ext
+  intro i
+  fin_cases i <;> simp [affineHom, affineImage, Matrix.one_apply]
+
+theorem affineHom_affineImage
+    (A A' : Matrix (Fin 2) (Fin 2) ℝ) (b b' : Fin 2 → ℝ) (i : Fin 2) :
+    affineHom A b (affineImage A' b' i) =
+      affineImage (A' * A) (fun j => b' j + Matrix.mulVec A' b j) i := by
+  fin_cases i
+  · change affineHom A b (affineImage A' b' 0) =
+        affineImage (A' * A) (fun j => b' j + Matrix.mulVec A' b j) 0
+    rw [show affineImage A' b' 0 =
+        MvPolynomial.C (b' 0) + MvPolynomial.C (A' 0 0) * MvPolynomial.X 0 +
+          MvPolynomial.C (A' 0 1) * MvPolynomial.X 1 by
+          simp [affineImage, Fin.sum_univ_two, add_assoc]]
+    simp [affineHom, affineImage, Matrix.mul_apply, Matrix.mulVec, Fin.sum_univ_two]
+    ring_nf
+  · change affineHom A b (affineImage A' b' 1) =
+        affineImage (A' * A) (fun j => b' j + Matrix.mulVec A' b j) 1
+    rw [show affineImage A' b' 1 =
+        MvPolynomial.C (b' 1) + MvPolynomial.C (A' 1 0) * MvPolynomial.X 0 +
+          MvPolynomial.C (A' 1 1) * MvPolynomial.X 1 by
+          simp [affineImage, Fin.sum_univ_two, add_assoc]]
+    simp [affineHom, affineImage, Matrix.mul_apply, Matrix.mulVec, Fin.sum_univ_two]
+    ring_nf
+
+theorem affineHom_comp
+    (A A' : Matrix (Fin 2) (Fin 2) ℝ) (b b' : Fin 2 → ℝ) :
+    (affineHom A b).comp (affineHom A' b') =
+      affineHom (A' * A) (fun i => b' i + Matrix.mulVec A' b i) := by
+  apply MvPolynomial.algHom_ext
+  intro i
+  simpa [AlgHom.comp_apply] using affineHom_affineImage A A' b b' i
+
+/-- Affine change of variables with explicit inverse data. -/
+def affineEquiv
+    (A A' : Matrix (Fin 2) (Fin 2) ℝ) (b b' : Fin 2 → ℝ)
+    (hAA' : A * A' = 1) (hA'A : A' * A = 1)
+    (hb : ∀ i, b' i + Matrix.mulVec A' b i = 0)
+    (hb' : ∀ i, b i + Matrix.mulVec A b' i = 0) :
+    Poly ≃ₐ[ℝ] Poly :=
+  AlgEquiv.ofAlgHom (affineHom A b) (affineHom A' b') (by
+    have hzero : (fun i => b' i + Matrix.mulVec A' b i) = 0 := by
+      funext i
+      exact hb i
+    rw [affineHom_comp, hA'A, hzero, affineHom_one_zero])
+    (by
+      have hzero : (fun i => b i + Matrix.mulVec A b' i) = 0 := by
+        funext i
+        exact hb' i
+      rw [affineHom_comp, hAA', hzero, affineHom_one_zero])
+
 end TernaryQuartic

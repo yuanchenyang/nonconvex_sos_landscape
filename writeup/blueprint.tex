@@ -222,13 +222,21 @@ the four coordinates, to one of the already-formalized representatives.
 
 \medskip
 \noindent
-The first half of that affine-normalization layer is now formalized in
-\texttt{TernaryQuarticProof/AffineTransform.lean}: for an affine substitution
-$x \mapsto A x + b$, the induced algebra homomorphism on polynomials preserves
-the quadratic and quartic degree bounds, and it commutes with the maps
-$A_u(\cdot)$, $\sigma$, and the residual after applying the substitution
-coordinatewise. What still remains is the inverse/transport part, turning these
-degree-preserving homomorphisms into actual SOCP-preserving equivalences.
+The affine-normalization layer is now split across
+\texttt{TernaryQuarticProof/AffineTransform.lean} and
+\texttt{TernaryQuarticProof/AffineSocpTransform.lean}. The first file handles
+the raw affine substitution $x \mapsto A x + b$: the induced algebra
+homomorphism preserves the quadratic and quartic degree bounds and commutes
+with the maps $A_u(\cdot)$, $\sigma$, and the residual after applying the
+substitution coordinatewise. The second file upgrades the invertible case to an
+actual transport statement: after moving the bilinear form by the inverse
+equivalence, affine changes of variables preserve positive-definiteness,
+admissibility, SOS quarticity, FOCP, SOCP, and the condition $r(u,p)=0$.
+
+What still remains is the classification lemma producing the specific affine
+and orthogonal normalization data for an arbitrary rank-$4$ factor. Once that
+data exists, the representative theorems can be pulled back through these two
+transport layers.
 
 \section*{Correction To The Previous Case Split}
 The earlier five-case list is not complete. The constant-containing

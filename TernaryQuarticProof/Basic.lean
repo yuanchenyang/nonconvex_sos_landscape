@@ -1,5 +1,6 @@
 import TernaryQuarticProof.Certificate
 import TernaryQuarticProof.AffineTransform
+import TernaryQuarticProof.AffineSocpTransform
 import TernaryQuarticProof.FactorTransform
 import TernaryQuarticProof.QuadraticNormalForm
 import TernaryQuarticProof.RepresentativeLowAffine
