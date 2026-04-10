@@ -1173,10 +1173,20 @@ as \texttt{mixedAffineTailCrossRep a}. The new theorems
 show that this branch is a direct rank-\(14\) image-plus-kernel certificate:
 every quartic with zero \(x_2^4\) coefficient lies in the image, while the
 explicit kernel direction contributes exactly the missing \(x_2^4\) class.
-So the canonical determinant-zero mixed-affine branch is now theorem-complete
-at representative level; the remaining issue is no longer ``find the missing
-cross theorem,'' but only ``extract exact normalized cross data from a general
-admissible factor.''
+The next Lean round then lifted that cross slice through the orthonormal
+relation transport layer in \texttt{RepresentativeMixedAffinePlane.lean}. The
+new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x0x1\_x1PlusX0sq\_orthonormal}
+and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_x0x1\_x1PlusX0sq\_orthonormal}
+show that the cross-type determinant-zero family is no longer trapped at the
+bare representative level: once affine normalization produces an orthonormal
+relation basis with polynomial images \(1\), \(x_1\), \(x_1x_2\), and
+\(x_2 + a x_1^2\), the SOCP conclusion follows directly. So the canonical
+determinant-zero mixed-affine branch is now theorem-complete at the
+representative-or-orthonormal-relation level; the remaining issue is no longer
+``find the missing cross theorem,'' but only ``extract exact normalized cross
+data from a general admissible factor.''
 
 \section*{Open Subgoals}
 \begin{itemize}

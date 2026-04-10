@@ -1094,8 +1094,18 @@ is now also formalized in \texttt{RepresentativeMixedAffine.lean} as
 certificate of exactly the same shape as the already-solved codimension-one
 mixed-affine representative: every quartic with zero \(x_2^4\) coefficient is
 in the image, and the missing \(x_2^4\) class is supplied by a single explicit
-kernel square. So the canonical determinant-zero mixed-affine branch is no
-longer missing any representative theorem at all.
+kernel square. The same slice is now also lifted one step above the rigid
+representative in \texttt{RepresentativeMixedAffinePlane.lean} via
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x0x1\_x1PlusX0sq\_orthonormal}
+and its equivariant version
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_x0x1\_x1PlusX0sq\_orthonormal}.
+So once affine normalization produces an orthonormal relation basis whose
+polynomial images are \(1\), \(x_1\), \(x_1x_2\), and \(x_2 + a x_1^2\), this
+determinant-zero cross slice closes immediately through the same transport
+interface used elsewhere in the mixed-affine branch. The canonical
+determinant-zero mixed-affine branch is therefore no longer missing any
+representative theorem, and the cross slice is no longer stuck at bare
+representative level either.
 The remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these

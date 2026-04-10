@@ -5715,4 +5715,97 @@ theorem residual_eq_zero_of_equiv_relations_const_x0_tailedPair_det
       h00 h11 h22 h33 h01 h02 h03 h12 h13 h23 hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
+theorem residual_eq_zero_of_relations_const_x0_x0x1_x1PlusX0sq_orthonormal
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    (h2 : ∑ i : Fin 4, c2 i • u i = x0 * x1)
+    {a : ℝ}
+    (h3 : ∑ i : Fin 4, c3 i • u i = x1 + a • (x0 ^ 2 : Poly))
+    (ha : a ≠ 0)
+    (h00 : ∑ i : Fin 4, (c0 i) ^ 2 = 1)
+    (h11 : ∑ i : Fin 4, (c1 i) ^ 2 = 1)
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h01 : ∑ i : Fin 4, c0 i * c1 i = 0)
+    (h02 : ∑ i : Fin 4, c0 i * c2 i = 0)
+    (h03 : ∑ i : Fin 4, c0 i * c3 i = 0)
+    (h12 : ∑ i : Fin 4, c1 i * c2 i = 0)
+    (h13 : ∑ i : Fin 4, c1 i * c3 i = 0)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let M : Matrix (Fin 4) (Fin 4) ℝ := relationColsMatrix c0 c1 c2 c3
+  have hMtM : M.transpose * M = 1 := by
+    dsimp [M]
+    exact relationColsMatrix_transpose_mul_self_eq_one c0 c1 c2 c3
+      h00 h11 h22 h33 h01 h02 h03 h12 h13 h23
+  have hMMt : M * M.transpose = 1 := by
+    exact self_mul_transpose_eq_one_of_transpose_mul_self_eq_one M hMtM
+  have huRep :
+      mix M.transpose u = mixedAffineTailCrossRep a := by
+    rw [mix_relationColsMatrix_transpose]
+    simp [h0, h1, h2, h3, mixedAffineTailCrossRep]
+  exact residual_eq_zero_of_socp_of_eq_mix_mapVec
+    (uRep := mixedAffineTailCrossRep a)
+    (hRep := fun {B} [_] {p} hp hsocp => residual_eq_zero_mixedAffineTailCrossRep a ha hp hsocp)
+    (e := AlgEquiv.refl)
+    (heQuad := fun {_} hq => hq)
+    (heQuadSymm := fun {_} hq => hq)
+    (heQuarticSymm := fun {_} hq => hq)
+    (M := M) hMtM hMMt
+    (hB := (Fact.out : B.toQuadraticMap.PosDef))
+    hp huRep hsocp
+
+theorem residual_eq_zero_of_equiv_relations_const_x0_x0x1_x1PlusX0sq_orthonormal
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x0)
+    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = x0 * x1)
+    {a : ℝ}
+    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = x1 + a • (x0 ^ 2 : Poly))
+    (ha : a ≠ 0)
+    (h00 : ∑ i : Fin 4, (c0 i) ^ 2 = 1)
+    (h11 : ∑ i : Fin 4, (c1 i) ^ 2 = 1)
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h01 : ∑ i : Fin 4, c0 i * c1 i = 0)
+    (h02 : ∑ i : Fin 4, c0 i * c2 i = 0)
+    (h03 : ∑ i : Fin 4, c0 i * c3 i = 0)
+    (h12 : ∑ i : Fin 4, c1 i * c2 i = 0)
+    (h13 : ∑ i : Fin 4, c1 i * c3 i = 0)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_const_x0_x0x1_x1PlusX0sq_orthonormal
+      (B := B0) (u := mapVec e.toAlgHom u)
+      h0 h1 h2 h3 ha
+      h00 h11 h22 h33 h01 h02 h03 h12 h13 h23 hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
 end TernaryQuartic
