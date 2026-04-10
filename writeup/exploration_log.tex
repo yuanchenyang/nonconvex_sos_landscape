@@ -1010,7 +1010,11 @@ existing homogeneous-plane theorem
 The same file now also exports the affine-equivalence wrapper
 \texttt{residual\_eq\_zero\_of\_equiv\_const\_x0\_tailedPair\_det}, so this
 determinant-nondegenerate tail certificate is available directly after affine
-normalization.
+normalization. In the next Lean step I also matched it to the standard final
+assembly interface by adding
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_const\_x0\_tailedPair\_det},
+which consumes exactly the same kind of affine-normalization and orthogonal
+factor-mixing data as the existing representative transport layer.
 So the determinant-nondegenerate branch is no longer blocked on translation
 algebra, on identifying the affine correction terms, or on integrating those
 corrections with the plane certificate layer. It is now blocked upstream on

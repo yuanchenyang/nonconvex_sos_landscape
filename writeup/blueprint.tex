@@ -968,7 +968,11 @@ space, and then dispatches to the already-formalized theorem
 \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_homQuadratics\_plane\_nontrivial}.
 The same file also now contains the affine-equivalence wrapper
 \texttt{residual\_eq\_zero\_of\_equiv\_const\_x0\_tailedPair\_det}, so this
-certificate can be applied after a prior affine normalization step.
+certificate can be applied after a prior affine normalization step. It also now
+contains the transport-shaped theorem
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_const\_x0\_tailedPair\_det},
+which packages the same branch in the exact ``affine normalization plus
+orthogonal factor mixing'' form used by \texttt{RepresentativeTransport.lean}.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
