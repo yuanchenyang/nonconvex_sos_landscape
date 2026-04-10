@@ -2,6 +2,7 @@ import Mathlib
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Finsupp.Fin
 import TernaryQuarticProof.AffineSocpTransform
+import TernaryQuarticProof.RepresentativeTransport
 
 set_option autoImplicit false
 set_option warningAsError true
@@ -385,5 +386,91 @@ theorem residual_eq_zero_of_equiv_relations_const_homQuadBasis_det
     exact residual_eq_zero_of_relations_const_homQuadBasis_det
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 hc hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+theorem residual_eq_zero_of_socp_of_eq_mix_mapVec_const_homQuadBasis_det
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuarticSymm : ∀ {p : Poly}, IsQuartic p → IsQuartic (e.symm p))
+    (M : Matrix (Fin 4) (Fin 4) ℝ)
+    (hMtM : M.transpose * M = 1)
+    (hMMt : M * M.transpose = 1)
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    {q1 q2 q3 : Poly}
+    (hq1 : IsQuadratic q1)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    {A : Matrix (Fin 3) (Fin 3) ℝ}
+    (hq1_basis : q1 = ∑ k : Fin 3, A 0 k • homQuadBasis k)
+    (hq2_basis : q2 = ∑ k : Fin 3, A 1 k • homQuadBasis k)
+    (hq3_basis : q3 = ∑ k : Fin 3, A 2 k • homQuadBasis k)
+    (hdet : A.det ≠ 0)
+    (huRep : mix M.transpose (mapVec e.symm.toAlgHom u) = ![(1 : Poly), q1, q2, q3])
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have huRepAdmissible : IsAdmissiblePoint (![(1 : Poly), q1, q2, q3] : RankFourVec) := by
+    intro i
+    fin_cases i
+    · simp [IsQuadratic]
+    · simpa using hq1
+    · simpa using hq2
+    · simpa using hq3
+  have hRep :
+      ∀ {B0 : DotForm} [Fact B0.toQuadraticMap.PosDef] {p0 : Poly},
+        IsSOSQuartic p0 → IsSOCP B0 p0 (![(1 : Poly), q1, q2, q3] : RankFourVec) →
+          residual p0 (![(1 : Poly), q1, q2, q3] : RankFourVec) = 0 := by
+    intro B0 _ p0 hp0 hsocp0
+    exact residual_eq_zero_of_relations_const_homQuadBasis_det
+      (c0 := ![1, 0, 0, 0])
+      (c := fun j =>
+        match j with
+        | 0 => ![0, 1, 0, 0]
+        | 1 => ![0, 0, 1, 0]
+        | 2 => ![0, 0, 0, 1])
+      (B := B0) (u := ![(1 : Poly), q1, q2, q3]) huRepAdmissible
+      (h0 := by simp [Fin.sum_univ_four])
+      (hc := by
+        intro j
+        fin_cases j <;> simp [Fin.sum_univ_four, hq1_basis, hq2_basis, hq3_basis])
+      hdet hp0 hsocp0
+  exact residual_eq_zero_of_socp_of_eq_mix_mapVec
+    (![(1 : Poly), q1, q2, q3])
+    hRep e heQuad heQuadSymm heQuarticSymm M hMtM hMMt hB hp huRep hsocp
+
+theorem residual_eq_zero_of_socp_of_eq_mix_affineEquiv_const_homQuadBasis_det
+    (A A' : Matrix (Fin 2) (Fin 2) ℝ) (b b' : Fin 2 → ℝ)
+    (hAA' : A * A' = 1) (hA'A : A' * A = 1)
+    (hb : ∀ i, b' i + Matrix.mulVec A' b i = 0)
+    (hb' : ∀ i, b i + Matrix.mulVec A b' i = 0)
+    (M : Matrix (Fin 4) (Fin 4) ℝ)
+    (hMtM : M.transpose * M = 1)
+    (hMMt : M * M.transpose = 1)
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    {q1 q2 q3 : Poly}
+    (hq1 : IsQuadratic q1)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    {C : Matrix (Fin 3) (Fin 3) ℝ}
+    (hq1_basis : q1 = ∑ k : Fin 3, C 0 k • homQuadBasis k)
+    (hq2_basis : q2 = ∑ k : Fin 3, C 1 k • homQuadBasis k)
+    (hq3_basis : q3 = ∑ k : Fin 3, C 2 k • homQuadBasis k)
+    (hdet : C.det ≠ 0)
+    (huRep :
+      mix M.transpose
+        (mapVec (affineEquiv A A' b b' hAA' hA'A hb hb').symm.toAlgHom u) =
+          ![(1 : Poly), q1, q2, q3])
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  exact residual_eq_zero_of_socp_of_eq_mix_mapVec_const_homQuadBasis_det
+    (e := affineEquiv A A' b b' hAA' hA'A hb hb')
+    (heQuad := fun {_} hpq => isQuadratic_affineEquiv A A' b b' hAA' hA'A hb hb' hpq)
+    (heQuadSymm := fun {_} hpq => isQuadratic_affineEquiv_symm A A' b b' hAA' hA'A hb hb' hpq)
+    (heQuarticSymm := fun {_} hpq => isQuartic_affineEquiv_symm A A' b b' hAA' hA'A hb hb' hpq)
+    (M := M) hMtM hMMt hB hp hq1 hq2 hq3
+    hq1_basis hq2_basis hq3_basis hdet huRep hsocp
 
 end TernaryQuartic

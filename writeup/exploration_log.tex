@@ -847,7 +847,28 @@ directly.
 The constant \(\dim=1\) branch has been lifted in parallel. The same new
 \(3\times 3\) reconstruction now upgrades
 \((1,x_1^2,x_1x_2,x_2^2)\) from a representative-only surjectivity theorem to
-a basis-invariant homogeneous-basis theorem with affine transport as well.
+a basis-invariant homogeneous-basis theorem with affine transport as well. In
+the same round I added the top transport wrappers
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_mapVec\_const\_homQuadBasis\_det}
+and
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_const\_homQuadBasis\_det},
+so exact normalized coordinates
+\[
+  \operatorname{mix}(M^\top,e^{-1}\!\cdot u)=(1,q_1,q_2,q_3)
+\]
+with a nondegenerate homogeneous coefficient matrix now close that branch
+directly too.
+
+I also matched the generic \(\dim=3\) branch to that same transport endpoint.
+The new theorems
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_mapVec\_contains\_aff1} and
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_contains\_aff1}
+mean that exact normalized coordinates
+\[
+  \operatorname{mix}(M^\top,e^{-1}\!\cdot u)=(1,x_1,x_2,q)
+\]
+now close the whole \(\dim(W \cap \mathbb{R}[x]_{\le 1})=3\) branch without
+returning to relation-level packaging.
 
 The surjective mixed-affine layer is broader now as well. The same file now
 contains a fixed split-diagonal transport lemma for planes of the form

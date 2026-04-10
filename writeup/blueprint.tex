@@ -1071,7 +1071,15 @@ easy slice of this branch. In
 show that whenever the fourth coordinate is already affine in \(x_1\) with
 nonzero \(x_1\)-coefficient, the branch collapses immediately to the generic
 \(\dim(W \cap \mathrm{Aff}_1)=3\) theorem by reconstructing an explicit
-\(x_1\) relation. There is now also a representative-level surjective theorem
+\(x_1\) relation. That generic branch is now also on the same top transport
+surface as the others: \texttt{RepresentativeSpanThree.lean} now proves
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_contains\_aff1},
+so exact normalized coordinates of the form
+\[
+  \operatorname{mix}(M^\top,e^{-1}\!\cdot u)=(1,x_1,x_2,q)
+\]
+are enough to close the whole \(\dim(W \cap \mathrm{Aff}_1)=3\) branch
+directly. There is now also a representative-level surjective theorem
 in \texttt{RepresentativeMixedAffine.lean} for the first genuinely non-affine
 determinant-zero family:
 \[
@@ -1306,6 +1314,19 @@ with each \(q_j\) lying in the homogeneous quadratic span
 \(\operatorname{span}(x_1^2,x_1x_2,x_2^2)\) and with nonzero coefficient
 matrix determinant, this low-affine linear branch can now be consumed directly
 at the same top transport layer as the mixed-affine branches.
+
+The constant \(\dim(W \cap \mathrm{Aff}_1)=1\) branch now sits on that same
+surface too. In \texttt{RepresentativeSurjective.lean}, the new theorems
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_mapVec\_const\_homQuadBasis\_det}
+and
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_const\_homQuadBasis\_det}
+consume exact normalized coordinates
+\[
+  \operatorname{mix}(M^\top,e^{-1}\!\cdot u)=(1,q_1,q_2,q_3)
+\]
+whenever \((q_1,q_2,q_3)\) is a nondegenerate homogeneous quadratic basis.
+So both \(\dim(W \cap \mathrm{Aff}_1)=1\) branches are now available in the
+same transport-shaped form.
 
 \medskip
 \noindent
