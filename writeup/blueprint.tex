@@ -790,6 +790,35 @@ the generic
 \]
 branch.
 
+\medskip
+\noindent
+This low-affine upgrade has now been carried out for the two
+\(\dim=2\) no-constant branches. The file
+\texttt{TernaryQuarticProof/RepresentativeLowAffine.lean} no longer stops at
+the exact representatives
+\[
+  (x_1,x_2,x_1^2,x_2^2)
+  \qquad\text{and}\qquad
+  (x_1,x_2,x_1^2,x_1x_2).
+\]
+It now proves basis-invariant plane theorems from explicit relations to
+\(x_1,x_2\) together with any invertible basis of the canonical quadratic
+planes
+\[
+  \operatorname{span}(x_1^2,x_2^2)
+  \qquad\text{and}\qquad
+  \operatorname{span}(x_1^2,x_1x_2).
+\]
+So the final normalization step no longer needs exact representative
+equalities in those low-affine cases either: it only has to recover the linear
+part and the plane type. The only low-affine branch still waiting for the same
+upgrade is the linear model
+\[
+  (x_1,x_1^2,x_1x_2,x_2^2),
+\]
+which should ultimately be recast as a basis-invariant theorem for one linear
+relation and three independent homogeneous quadratic relations.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data, especially for the constant-containing mixed-affine
