@@ -323,7 +323,8 @@ satisfies
 \]
 So the mixed-affine algebra itself now looks tractable; the old statement that
 the proof was complete up to normalization was too optimistic because the
-classification step still has to produce these representatives.
+classification step still has to produce one of the formalized mixed-affine
+plane types, not just a single concrete representative.
 
 \medskip
 \noindent
@@ -436,14 +437,13 @@ the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
     (1,x_1^2,x_1x_2,x_2^2)
   \]
   is already formalized: its image is all quartics.
-\item Treat the mixed-affine branch
+\item Treat the mixed-affine branch by separating the two nonsurjective models
   \[
     (1,x_1,x_1^2,x_1x_2),\qquad
-    (1,x_1,x_1x_2,x_2^2),\qquad
-    (1,x_1,x_1^2,x_2^2)
+    (1,x_1,x_1x_2,x_2^2),
   \]
-  separately. The representative quotient generators are now explicit:
-  the first model uses the family
+  from the surjective rank-$15$ orbits. The representative quotient generators
+  are now explicit: the first model uses the family
   \[
     w_\ell=(0,0,-x_2\ell,x_1\ell),\qquad \ell=c+d x_2,
   \]
@@ -451,9 +451,17 @@ the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
   \[
     w=(0,0,-x_1x_2,x_1^2),
   \]
-  and the third is now formalized as surjective. What is still missing is the written
-  proof that every constant-containing $\dim = 2$ factor can be normalized into
-  one of these representatives.
+  and the hyperbolic rank-$15$ model
+  \[
+    (1,x_1,x_1^2,x_2^2)
+  \]
+  is formalized as surjective. The definite rank-$15$ orbit
+  \[
+    \operatorname{span}(x_1x_2,\ x_1^2-x_2^2)
+  \]
+  is now formalized as surjective at the plane level as well. What is still
+  missing is the written proof that every constant-containing $\dim = 2$ factor
+  can be normalized into one of these formalized plane types.
 \item A smaller replacement for exact representative transport is now plausible
   in this branch: prove basis-invariant mixed-affine plane theorems. Instead of
   forcing the last two coordinates to be exactly
@@ -513,33 +521,29 @@ the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
   every SOCP. So both nonsurjective mixed-affine representatives are now
   available as basis-invariant plane certificates rather than only as concrete
   coordinate models.
-\item The old stronger-basis attempt has now split into a clean partial
-  theorem and a still-open remainder. The failed direct approach was to handle
-  an arbitrary orthonormal coefficient-space basis of the canonical planes
+\item The old stronger-basis attempt has now split into two clean formalized
+  layers. First, \texttt{RepresentativeMixedAffinePlane.lean} now proves exact
+  surjective plane theorems for any invertible basis of
   \[
-    x_1 \cdot \operatorname{span}(x_1,x_2)
-    \qquad\text{or}\qquad
-    x_2 \cdot \operatorname{span}(x_1,x_2)
+    \operatorname{span}(x_1^2,x_2^2)
+    \qquad\text{and}\qquad
+    \operatorname{span}(x_1x_2,\ x_1^2-x_2^2),
   \]
-  by explicit coefficient bookkeeping for products of general linear forms.
-  That version was reverted. But a cleaner reduction is now formalized in
-  \texttt{RepresentativeMixedAffinePlane.lean}: if the two quadratic relations
-  differ from the monomial pairs
+  together with algebra-equivalence transport wrappers. Second, for the two
+  nonsurjective planes
   \[
-    (x_1x_2,\ x_2^2)
-    \qquad\text{or}\qquad
-    (x_1^2,\ x_1x_2)
+    \operatorname{span}(x_1x_2,\ x_2^2)
+    \qquad\text{and}\qquad
+    \operatorname{span}(x_1^2,\ x_1x_2),
   \]
-  by an orthogonal $2 \times 2$ change of basis, then the file explicitly
-  reconstructs monomial relation vectors and reduces back to the exact
-  rank-$14$ or rank-$13$ plane theorem. Those strengthened plane certificates
-  are now also wrapped through arbitrary polynomial algebra equivalences, so an
-  affine normalization step can feed its relation data directly into the new
-  theorem and pull the zero-residual conclusion back to the original SOCP
-  point. So the remaining gap has tightened again: one no longer needs a full
-  coefficient API for arbitrary linear-form products, but one still needs the
-  normalization/classification step to produce this orthogonal in-plane basis
-  data from a general mixed-affine factor.
+  the file proves orthogonal in-plane basis reductions back to the exact
+  rank-$14$ and rank-$13$ certificates, again wrapped through arbitrary
+  polynomial algebra equivalences. So the remaining gap has tightened again:
+  one no longer needs a full coefficient API for arbitrary linear-form
+  products, but one still needs the normalization/classification step to
+  produce from a general mixed-affine factor either an invertible surjective
+  plane basis or an orthogonal nonsurjective plane basis, together with the
+  corresponding relation vectors.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
 $\sigma(u)=p$.
 \end{enumerate}
@@ -565,17 +569,20 @@ proof-serving finite-support lemma rather than a general coefficient API.
 
 \medskip
 \noindent
-The mixed-affine representative analysis is now complete at the representative
-level: the rank-$13$ and rank-$14$ nonsurjective models are formalized, and the
-surjective rank-$15$ model
+The mixed-affine analysis is now complete at the representative-or-plane level:
+the rank-$13$ and rank-$14$ nonsurjective models are formalized both as concrete
+representatives and as abstract plane certificates, and the surjective rank-$15$
+branch is formalized for both real plane orbits
 \[
-  (1,x_1,x_1^2,x_2^2)
+  \operatorname{span}(x_1^2,x_2^2)
+  \qquad\text{and}\qquad
+  \operatorname{span}(x_1x_2,\ x_1^2-x_2^2).
 \]
-is now formalized too. So the remaining obstacle is no longer a missing
-mixed-affine representative calculation. It is the written and formal
-normalization statement showing that every constant-containing
-$\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
-three representatives.
+So the remaining obstacle is no longer a missing mixed-affine representative
+calculation. It is the written and formal normalization statement showing that
+every constant-containing $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor
+reduces to one of these already-formalized plane types, together with the exact
+relation data needed to invoke the transport theorems.
 
 \medskip
 \noindent
@@ -602,10 +609,12 @@ the generic
 branch.
 
 \section*{Pending Step}
-To finish the theorem, it remains to prove the multivariate admissible
-image-plus-cone decomposition for every SOS quartic. This is currently the main
-mathematical gap. The likely form is a finite-dimensional quadratic-space
-certificate rather than a direct copy of the univariate gcd/peeling argument.
+To finish the theorem, it remains to formalize the remaining normalization and
+classification data, especially for the constant-containing mixed-affine
+$\dim=2$ branch, and then assemble the root declaration in
+\texttt{TernaryQuarticProof.lean}. The admissible image-plus-cone certificate
+and the representative/plane-level no-spurious-SOCP theorems are already in
+place.
 
 \section*{Planned File Map}
 \begin{itemize}

@@ -439,6 +439,15 @@ The first formal Lean infrastructure for that alternative is now added in
   \]
   and its $(x_2^3,x_2^4)$ coefficients match the representative formulas
   $(2bc,c^2)$.
+\item the same file now also formalizes the surjective rank-$15$ plane orbits
+  directly: any invertible basis of
+  \[
+    \operatorname{span}(x_1^2,x_2^2)
+    \qquad\text{or}\qquad
+    \operatorname{span}(x_1x_2,\ x_1^2-x_2^2)
+  \]
+  yields a no-spurious-SOCP theorem, and both statements are wrapped through
+  the affine-equivalence transport layer.
 \item the stronger follow-up abstraction is now split in two. The fully
   arbitrary orthonormal-basis version for the canonical planes
   $x_1 \cdot \operatorname{span}(x_1,x_2)$ and
@@ -577,14 +586,18 @@ theorem.
 
 That second mixed-affine target is now complete as well. So the constant-
 containing mixed-affine branch is no longer blocked on representative algebra:
-all three representative models
+the two nonsurjective representatives
 \[
   (1,x_1,x_1^2,x_1x_2),\qquad
-  (1,x_1,x_1x_2,x_2^2),\qquad
-  (1,x_1,x_1^2,x_2^2)
+  (1,x_1,x_1x_2,x_2^2)
 \]
-are now covered in Lean, with the first two using explicit admissible kernel
-families and the third already surjective.
+are covered in Lean with explicit admissible kernel families, and the surjective
+rank-$15$ branch is covered at the plane level for both real orbits
+\[
+  \operatorname{span}(x_1^2,x_2^2)
+  \qquad\text{and}\qquad
+  \operatorname{span}(x_1x_2,\ x_1^2-x_2^2).
+\]
 
 The low-affine representative analysis is now complete as well in
 \texttt{TernaryQuarticProof/RepresentativeLowAffine.lean}. The coprime model
@@ -641,8 +654,8 @@ normalization.
 \begin{itemize}
 \item Use the new file \texttt{MixedAffineNormalization.lean} to finish the
 constant-containing $\dim = 2$ classification lemma, reducing a general
-annihilator $a x_1^2 + b x_1x_2 + c x_2^2$ to the already-formalized rank-$13$,
-rank-$14$, or rank-$15$ mixed-affine representatives.
+annihilator $a x_1^2 + b x_1x_2 + c x_2^2$ to one of the already-formalized
+rank-$13$, rank-$14$, or rank-$15$ mixed-affine plane types.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing transport
 lemmas.
