@@ -941,7 +941,10 @@ The minimal Lean algebra behind that statement is now formalized in
 exact \(x_2\)-tail coefficient formulas for each, and the nested two-step lemma
 showing that the explicit Cramér-rule choice of \((u,v)\) kills the
 \(\operatorname{coeff}_{x_2}\) term of both quadratics under the
-\(x_1\)-then-\(x_2\) translation.
+\(x_1\)-then-\(x_2\) translation. It also now records the induced
+\(\operatorname{coeff}_{1}\) and \(\operatorname{coeff}_{x_1}\) correction
+terms after that same nested translation, so the affine part that must be
+removed using the existing \(1\) and \(x_1\) relations is explicit in Lean.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
@@ -954,7 +957,8 @@ nondegenerate determinant sub-branch it only has to feed the explicit common
 translation into the existing homogeneous-plane theorem while handling the
 induced affine correction terms. So the remaining gap there is not the
 translation algebra itself but its integration with the mixed-affine plane
-certificate layer.
+certificate layer, especially the coefficient-space nondegeneracy hypotheses
+after those affine corrections are absorbed.
 
 \medskip
 \noindent

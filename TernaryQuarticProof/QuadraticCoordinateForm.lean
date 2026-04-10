@@ -630,6 +630,29 @@ theorem coeff_m02_affineHom_x0Translate
   rw [quadratic_eq_quadForm hq, affineHom_x0Translate_quadForm]
   simp
 
+theorem coeff_m11_affineHom_x0Translate
+    {q : Poly} (hq : IsQuadratic q) (t : ℝ) :
+    MvPolynomial.coeff m11 (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec t) q) =
+      MvPolynomial.coeff m11 q := by
+  rw [quadratic_eq_quadForm hq, affineHom_x0Translate_quadForm]
+  simp
+
+theorem coeff_m00_affineHom_x0Translate
+    {q : Poly} (hq : IsQuadratic q) (t : ℝ) :
+    MvPolynomial.coeff m00 (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec t) q) =
+      MvPolynomial.coeff m00 q +
+        MvPolynomial.coeff m10 q * t +
+          MvPolynomial.coeff m20 q * t ^ 2 := by
+  rw [quadratic_eq_quadForm hq, affineHom_x0Translate_quadForm]
+  simp [mul_comm, add_comm, add_left_comm]
+
+theorem coeff_m10_affineHom_x0Translate
+    {q : Poly} (hq : IsQuadratic q) (t : ℝ) :
+    MvPolynomial.coeff m10 (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec t) q) =
+      MvPolynomial.coeff m10 q + 2 * MvPolynomial.coeff m20 q * t := by
+  rw [quadratic_eq_quadForm hq, affineHom_x0Translate_quadForm]
+  simp [mul_comm, add_comm, add_left_comm]
+
 theorem coeff_m01_affineHom_x1Translate_after_x0Translate
     {q : Poly} (hq : IsQuadratic q) (u v : ℝ) :
     MvPolynomial.coeff m01
@@ -639,6 +662,33 @@ theorem coeff_m01_affineHom_x1Translate_after_x0Translate
   rw [coeff_m01_affineHom_x1Translate
     (isQuadratic_affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec u) hq)]
   rw [coeff_m01_affineHom_x0Translate hq, coeff_m02_affineHom_x0Translate hq]
+
+theorem coeff_m10_affineHom_x1Translate_after_x0Translate
+    {q : Poly} (hq : IsQuadratic q) (u v : ℝ) :
+    MvPolynomial.coeff m10
+        (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x1TranslateVec v)
+          (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec u) q)) =
+      MvPolynomial.coeff m10 q +
+        2 * MvPolynomial.coeff m20 q * u +
+          MvPolynomial.coeff m11 q * v := by
+  rw [coeff_m10_affineHom_x1Translate
+    (isQuadratic_affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec u) hq)]
+  rw [coeff_m10_affineHom_x0Translate hq, coeff_m11_affineHom_x0Translate hq]
+
+theorem coeff_m00_affineHom_x1Translate_after_x0Translate
+    {q : Poly} (hq : IsQuadratic q) (u v : ℝ) :
+    MvPolynomial.coeff m00
+        (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x1TranslateVec v)
+          (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec u) q)) =
+      MvPolynomial.coeff m00 q +
+        MvPolynomial.coeff m10 q * u +
+          MvPolynomial.coeff m20 q * u ^ 2 +
+            (MvPolynomial.coeff m01 q + MvPolynomial.coeff m11 q * u) * v +
+              MvPolynomial.coeff m02 q * v ^ 2 := by
+  rw [coeff_m00_affineHom_x1Translate
+    (isQuadratic_affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec u) hq)]
+  rw [coeff_m00_affineHom_x0Translate hq, coeff_m01_affineHom_x0Translate hq,
+    coeff_m02_affineHom_x0Translate hq]
 
 theorem coeff_m01_affineHom_x1Translate_after_x0Translate_pair_kill
     {q2 q3 : Poly} (hq2 : IsQuadratic q2) (hq3 : IsQuadratic q3)

@@ -997,9 +997,13 @@ That Lean reduction now exists in its minimal algebraic form. In
 \(x_1 \mapsto x_1+t\) translation API, proved the exact transformed
 \(\operatorname{coeff}_{x_2}\) and \(\operatorname{coeff}_{x_2^2}\) formulas,
 and then formalized the nested tail-killing theorem for the Cramér-rule choice
-of \((u,v)\). So the determinant-nondegenerate branch is no longer blocked on
-translation algebra; it is blocked on feeding the translated-and-affine-corrected
-relations into the already-formalized homogeneous-plane theorem.
+of \((u,v)\). The next Lean refinement then added the corresponding transformed
+\(\operatorname{coeff}_{1}\) and \(\operatorname{coeff}_{x_1}\) formulas for the
+nested translation as well. So the determinant-nondegenerate branch is no
+longer blocked on translation algebra or on identifying the affine correction
+terms; it is blocked on feeding the translated-and-affine-corrected relations
+into the already-formalized homogeneous-plane theorem without losing the needed
+coefficient-space nondegeneracy data.
 
 \section*{Open Subgoals}
 \begin{itemize}
