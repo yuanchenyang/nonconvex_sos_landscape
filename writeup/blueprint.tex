@@ -1572,6 +1572,26 @@ representative calculation; the remaining gap there is only the upstream
 normalization/extraction statement, together with the still stricter
 \(\operatorname{coeff}_{x_1^2}(q_3)\neq 0\) theorem surface.
 
+The next Lean step removes even that remaining asymmetry in the theorem
+surface. The file now also proves
+\texttt{residual\_eq\_zero\_of\_const\_x0\_mixedAffineTailHomLine\_x0sqTail\_cases}
+and its equivariant/\(\operatorname{mix}(M^\top,e^{-1}\!\cdot u)\)-transport
+wrappers. So the classification step no longer has to hand back a separately
+chosen coordinate \(q_2\) which is already the pure \(x_0^2\) line. It is now
+enough to produce normalized coordinates \((1,x_0,q_2,q_3)\) for which the
+extracted homogeneous line
+\[
+  H(q_2,q_3)=\texttt{mixedAffineTailHomLine}(q_2,q_3)
+\]
+is pure \(x_0^2\) with nonzero coefficient. Lean then performs an internal
+orthogonal \(2\times 2\) rotation in the last two factor coordinates, sending
+\((q_2,q_3)\) to a pair \((q_H,q_P)\) with \(q_H\) exactly the normalized pure
+\(x_0^2\) line, and dispatches automatically to the already-formalized
+\texttt{x0sqTail\_m02\_nonzero} or \texttt{x0sqTail\_m02\_zero} branch according
+to \(\operatorname{coeff}_{x_1^2}(q_P)\). So the pure-\(x_0^2\) slice is now on
+the same extracted-line transport surface as the cross, \(x_1^2\)-type, and
+diagonal determinant-zero branches.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data, especially for the constant-containing mixed-affine

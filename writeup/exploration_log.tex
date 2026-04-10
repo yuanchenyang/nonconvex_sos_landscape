@@ -1528,6 +1528,24 @@ case or to an explicit constant relation. So the pure-\(x_0^2\)
 determinant-zero family is no longer blocked by one more ad hoc representative
 argument; what remains is the upstream extraction/normalization statement.
 
+The next Lean round lifts that same pure-\(x_0^2\) slice to the extracted-line
+transport surface. I added
+\texttt{residual\_eq\_zero\_of\_const\_x0\_mixedAffineTailHomLine\_x0sqTail\_cases}
+and its equivariant/\(\operatorname{mix}(M^\top,e^{-1}\!\cdot u)\)-transport
+wrappers. So the classification layer no longer has to produce a specially
+chosen coordinate \(q_2\) which is already the pure \(x_0^2\) line. It is now
+enough to produce normalized coordinates \((1,x_0,q_2,q_3)\) such that the
+extracted homogeneous line
+\[
+  H(q_2,q_3)=\texttt{mixedAffineTailHomLine}(q_2,q_3)
+\]
+is pure \(x_0^2\) with nonzero coefficient. Lean then performs an internal
+orthogonal \(2\times 2\) rotation of the last two factor coordinates, turning
+\((q_2,q_3)\) into \((q_H,q_P)\) with \(q_H\) exactly the normalized pure
+\(x_0^2\) line and dispatching automatically to the already-formalized
+\texttt{x0sqTail\_m02\_nonzero} or \texttt{x0sqTail\_m02\_zero} theorem
+according to \(\operatorname{coeff}_{x_1^2}(q_P)\).
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
@@ -1545,9 +1563,9 @@ determinant condition from the general branch. On the determinant-zero side,
 the remaining work is now only extraction and transport through the coarse
 split on the extracted line \(H(q_2,q_3)\): the cross-like
 \(\operatorname{coeff}_{x_1^2} H=0\), \(\operatorname{coeff}_{x_0x_1} H\neq 0\)
-branch and the complementary \(\operatorname{coeff}_{x_1^2} H\neq 0\) branch
-both have internal shear normalization already built into Lean, while the
-remaining pure-\(x_0^2\) branch now looks numerically like a generic rank-\(15\)
+branch, the complementary \(\operatorname{coeff}_{x_1^2} H\neq 0\) branch, and
+the pure-\(x_0^2\) branch now all have internal extracted-line normalization
+built into Lean, while the pure-\(x_0^2\) branch still looks numerically like a generic rank-\(15\)
 family plus a special low-affine rank-\(13\) sub-slice.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
