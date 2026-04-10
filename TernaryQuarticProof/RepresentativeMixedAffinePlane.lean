@@ -109,7 +109,7 @@ private theorem affineX1_eq_of_quadratic_coeffs_zero
         MvPolynomial.coeff m10 q • x0 +
           MvPolynomial.coeff m01 q • x1 := by
             rw [quadForm_eq_explicit, h20, h11, h02]
-            simp [MvPolynomial.smul_eq_C_mul, add_assoc, add_comm]
+            simp [MvPolynomial.smul_eq_C_mul, add_comm]
 
 theorem relation_x1_of_affineTail
     {u : RankFourVec} {c0 c1 c2 : Fin 4 → ℝ} {q : Poly}

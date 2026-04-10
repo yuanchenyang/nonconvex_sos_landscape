@@ -1012,10 +1012,19 @@ while
   D \in \{x_2^2,\ x_1^2+x_2^2,\ x_1^2-x_2^2\}
   \Longrightarrow \operatorname{rank}(A_u)=15.
 \]
-So the determinant-zero tailed branch no longer looks like an arbitrary new
-family. Numerically it splits exactly by the homogeneous-line type: the cross
-direction behaves like the known rank-\(14\) mixed-affine obstruction, while
-the \(x_2^2\) and diagonal directions are already surjective.
+The follow-up slice probe
+\texttt{julia/mixed\_affine\_det\_zero\_slice\_2026\_04\_10.jl} sharpens that
+further. For \(80\) random determinant-zero tailed families with completely
+generic homogeneous line \(D=a x_1^2 + b x_1x_2 + c x_2^2\), every sample had
+\(\operatorname{rank}(A_u)=15\). On the codimension-one slice \(c=0\) with
+\(b \neq 0\), every sample had rank \(14\). On the slices \(b=0\) and
+\(D=(u x_1 + v x_2)^2\), every sample had rank \(15\). So the
+determinant-zero tailed branch no longer looks like an arbitrary new family.
+Numerically it now appears to split by a much smaller invariant: the only
+stable nonsurjective locus is the cross-type slice where the extracted
+homogeneous line has vanishing \(x_2^2\)-coefficient after the canonical basis
+choice, while the generic, \(x_2^2\)-type, and diagonal-type slices are already
+surjective.
 There is now also a small formal reduction on the Lean side that removes one
 easy slice of this branch. In
 \texttt{RepresentativeMixedAffinePlane.lean}, the new theorems
@@ -1025,9 +1034,22 @@ easy slice of this branch. In
 show that whenever the fourth coordinate is already affine in \(x_1\) with
 nonzero \(x_1\)-coefficient, the branch collapses immediately to the generic
 \(\dim(W \cap \mathrm{Aff}_1)=3\) theorem by reconstructing an explicit
-\(x_1\) relation. So the determinant-zero mixed-affine work now truly starts at
-the residual subcase where the tailed coordinate still carries a nonzero
-\(x_1^2\)-free homogeneous quadratic part.
+\(x_1\) relation. There is now also a representative-level surjective theorem
+in \texttt{RepresentativeMixedAffine.lean} for the first genuinely non-affine
+determinant-zero family:
+\[
+  (1,x_1,x_2^2,x_2 + a x_1^2), \qquad a \neq 0.
+\]
+The new definitions and theorems
+\texttt{mixedAffineTailX1SqRep},
+\texttt{quartic\_in\_image\_mixedAffineTailX1SqRep}, and
+\texttt{residual\_eq\_zero\_mixedAffineTailX1SqRep}
+prove directly that every quartic lies in the image there. The proof is by an
+explicit monomial check: every quartic monomial is immediate except
+\(x_1^4\) and \(x_1^3x_2\), and those two come from the tailed coordinate by a
+single correction against the \(x_1\) and \(x_2^2\) coordinates. Combined with
+the affine-tail reduction, this means the entire \(x_2^2\)-type
+determinant-zero family is already formalized at representative level.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
@@ -1044,8 +1066,8 @@ the translation algebra or its integration with the mixed-affine plane
 certificate layer; it is the
 upstream normalization/classification step producing that coordinate picture
 from a general admissible factor, together with the now-sharper determinant-zero
-classification reducing the cross type to a rank-\(14\) theorem and the other
-three types to surjective ones.
+classification reducing the cross type to a rank-\(14\) theorem and leaving the
+diagonal determinant-zero slices as the next surjective transport targets.
 
 \medskip
 \noindent

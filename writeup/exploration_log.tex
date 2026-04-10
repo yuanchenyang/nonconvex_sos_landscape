@@ -1052,6 +1052,24 @@ looks much less amorphous than before: numerically the cross direction behaves
 like the known rank-\(14\) mixed-affine obstruction with only the \(x_2^4\)
 class missing, while the \(x_2^2\) and diagonal directions are already
 surjective.
+I then added the coefficient-only follow-up script
+\texttt{julia/mixed\_affine\_det\_zero\_slice\_2026\_04\_10.jl}. It samples the
+same tailed determinant-zero normal form with a generic homogeneous line
+\[
+  D = a x_1^2 + b x_1x_2 + c x_2^2
+\]
+and records the image ranks on several natural slices. The output is
+\begin{verbatim}
+mixed_affine_det_zero_slice_probe =
+  (samples = 80, generic_ranks = [15], c0_ranks = [14],
+   b0_ranks = [15], disc0_ranks = [15])
+\end{verbatim}
+So the rank-\(14\) behaviour now looks genuinely codimension one on the
+determinant-zero side: generic lines are rank \(15\), the slice \(c=0\) with
+nonzero cross term stays rank \(14\), and the \(b=0\) or discriminant-zero
+slices are already rank \(15\). That makes the earlier canonical picture much
+more believable: after the standard basis choice, only the pure cross-type
+determinant-zero family appears to require a nonsurjective theorem.
 The next Lean step removed one easy but real part of that determinant-zero
 picture. In \texttt{RepresentativeMixedAffinePlane.lean} I added the coefficient
 identity \texttt{relation\_x1\_of\_affineTail} and the SOCP consequences
@@ -1068,6 +1086,22 @@ determinant-zero mixed-affine branch is no longer blocked on the genuinely
 affine subcase; only the case with a nonzero residual homogeneous quadratic
 part in the tailed coordinate remains.
 
+The next Lean step removed one full representative family from that residual
+determinant-zero side. In
+\texttt{RepresentativeMixedAffine.lean} I added the representative
+\[
+  (1,x_1,x_2^2,x_2 + a x_1^2), \qquad a \neq 0,
+\]
+as \texttt{mixedAffineTailX1SqRep a}, together with the direct image theorem
+\texttt{quartic\_in\_image\_mixedAffineTailX1SqRep} and the SOCP consequence
+\texttt{residual\_eq\_zero\_mixedAffineTailX1SqRep}. The proof is a short
+explicit monomial generation argument: every quartic monomial is already
+immediate except \(x_1^4\) and \(x_1^3x_2\), and each of those comes from the
+tailed coordinate after one correction term using the \(x_1\) or \(x_2^2\)
+coordinate. So, combined with the affine-tail theorem for the \(a=0\) case,
+the entire \(x_2^2\)-type determinant-zero tailed family is now formalized at
+representative level.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
@@ -1083,8 +1117,9 @@ extract exact normalized coordinates of the form \(u=(1,x_1,q_2,q_3)\), or an
 orthonormal relation basis for that same data, together with the same
 determinant condition from the general branch. On the determinant-zero side,
 the new probe suggests that only the cross-type canonical family should still
-need a genuinely nonsurjective theorem; the \(x_2^2\) and diagonal types look
-surjective already, and the purely affine tail case is now formally removed.
+need a genuinely nonsurjective theorem; the \(x_2^2\)-type family is now
+formalized at representative level, and the diagonal types remain the next
+surjective transport targets.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this
