@@ -32,6 +32,116 @@ private theorem isQuadratic_C_mul_pow_pow (a : ℝ) (m n : ℕ) (h : m + n ≤ 2
     _ = m + n := by simp [x0, x1, MvPolynomial.totalDegree_X_pow]
     _ ≤ 2 := h
 
+/-- The surjective mixed-affine representative. -/
+def mixedAffineRank15Rep : RankFourVec := ![(1 : Poly), x0, x0 ^ 2, x1 ^ 2]
+
+/-- Every quartic lies in the image for the rank-15 mixed-affine representative. -/
+theorem quartic_in_image_mixedAffineRank15Rep
+    {p : Poly} (hp : IsQuartic p) :
+    InAdmissibleImage mixedAffineRank15Rep p := by
+  classical
+  rw [← MvPolynomial.support_sum_monomial_coeff p]
+  let P : Finset (Fin 2 →₀ ℕ) → Prop := fun S =>
+    (∀ s ∈ S, s ∈ p.support) →
+      InAdmissibleImage mixedAffineRank15Rep
+        (∑ s ∈ S, MvPolynomial.monomial s (MvPolynomial.coeff s p))
+  have hP : P p.support := by
+    refine Finset.induction_on p.support ?_ ?_
+    · intro hsub
+      simpa using inAdmissibleImage_zero mixedAffineRank15Rep
+    · intro s ss hsnot ih hsub
+      rw [Finset.sum_insert hsnot]
+      refine inAdmissibleImage_add mixedAffineRank15Rep ?_ (ih ?_)
+      · let e0 := s 0
+        let e1 := s 1
+        have hsum : s.sum (fun _ e => e) = s 0 + s 1 := by
+          rw [Finsupp.sum_fintype _ _ (fun _ => rfl), Fin.sum_univ_two]
+        have hsdeg : e0 + e1 ≤ 4 := by
+          have hsdeg0 : s.sum (fun _ e => e) ≤ 4 :=
+            (MvPolynomial.le_totalDegree (hsub s (by simp))).trans hp
+          simpa [e0, e1, hsum] using hsdeg0
+        by_cases hsmall : e0 + e1 ≤ 2
+        · refine ⟨![(MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1, 0, 0, 0], ?_, ?_⟩
+          · intro i
+            fin_cases i
+            · exact isQuadratic_C_mul_pow_pow (MvPolynomial.coeff s p) e0 e1 hsmall
+            · simp [IsQuadratic]
+            · simp [IsQuadratic]
+            · simp [IsQuadratic]
+          · rw [monomial_fin2_eq]
+            simp [A, mixedAffineRank15Rep, e0, e1, Fin.sum_univ_four, x0, x1]
+        · by_cases hx2 : 2 ≤ e0
+          · refine ⟨![0, 0,
+                (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 2)) * x1 ^ e1, 0], ?_, ?_⟩
+            · intro i
+              fin_cases i
+              · simp [IsQuadratic]
+              · simp [IsQuadratic]
+              · have hs2 : (e0 - 2) + e1 ≤ 2 := by omega
+                exact isQuadratic_C_mul_pow_pow (MvPolynomial.coeff s p) (e0 - 2) e1 hs2
+              · simp [IsQuadratic]
+            · rw [monomial_fin2_eq]
+              simp [e0, e1]
+              calc
+                A mixedAffineRank15Rep
+                    ![0, 0, (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 2)) * x1 ^ e1, 0]
+                    = x0 ^ 2 * ((MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 2)) * x1 ^ e1) := by
+                        simp [A, mixedAffineRank15Rep, Fin.sum_univ_four, x0, x1]
+                _ = (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1 := by
+                      calc
+                        x0 ^ 2 * ((MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 2)) * x1 ^ e1)
+                            = MvPolynomial.C (MvPolynomial.coeff s p) *
+                                (x0 ^ 2 * x0 ^ (e0 - 2)) * x1 ^ e1 := by
+                                  ring_nf
+                        _ = (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1 := by
+                              rw [← pow_add, Nat.add_sub_of_le hx2]
+          · have hy2 : 2 ≤ e1 := by omega
+            refine ⟨![0, 0, 0,
+                  (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ (e1 - 2)], ?_, ?_⟩
+            · intro i
+              fin_cases i
+              · simp [IsQuadratic]
+              · simp [IsQuadratic]
+              · simp [IsQuadratic]
+              · have hs2 : e0 + (e1 - 2) ≤ 2 := by omega
+                exact isQuadratic_C_mul_pow_pow (MvPolynomial.coeff s p) e0 (e1 - 2) hs2
+            · rw [monomial_fin2_eq]
+              simp [e0, e1]
+              calc
+                A mixedAffineRank15Rep
+                    ![0, 0, 0, (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ (e1 - 2)]
+                    = x1 ^ 2 * ((MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ (e1 - 2)) := by
+                        simp [A, mixedAffineRank15Rep, Fin.sum_univ_four, x0, x1]
+                _ = (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1 := by
+                      calc
+                        x1 ^ 2 * ((MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ (e1 - 2))
+                            = MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0 *
+                                (x1 ^ 2 * x1 ^ (e1 - 2)) := by
+                                  ring_nf
+                        _ = (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1 := by
+                              rw [← pow_add, Nat.add_sub_of_le hy2]
+      · intro t ht
+        exact hsub t (by simp [ht])
+  exact hP (fun s hs => hs)
+
+theorem mixedAffineRank15Rep_admissible : IsAdmissiblePoint mixedAffineRank15Rep := by
+  intro i
+  fin_cases i
+  · simp [mixedAffineRank15Rep, IsQuadratic]
+  · simp [mixedAffineRank15Rep, x0, x1, IsQuadratic]
+  · simp [mixedAffineRank15Rep, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
+  · simp [mixedAffineRank15Rep, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
+
+theorem residual_eq_zero_mixedAffineRank15Rep
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p mixedAffineRank15Rep) :
+    residual p mixedAffineRank15Rep = 0 := by
+  exact residual_eq_zero_of_in_admissible_image
+    (B := B) mixedAffineRank15Rep_admissible hsocp
+    (quartic_in_image_mixedAffineRank15Rep hp.1)
+
 private theorem monomial_image_mixedAffineRank14Rep
     (s : Fin 2 →₀ ℕ) (a : ℝ)
     (hdeg : s.sum (fun _ e => e) ≤ 4)

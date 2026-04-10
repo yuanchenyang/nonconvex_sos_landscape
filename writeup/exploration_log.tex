@@ -79,6 +79,11 @@ transformed image-plus-cone decomposition forces zero residual at a SOCP.
   \[
     (0,0,-x_2(b+c x_2),x_1(b+c x_2)).
   \]
+  The same file now also formalizes the surjective mixed-affine model
+  \[
+    (1, x_1, x_1^2, x_2^2),
+  \]
+  by a direct quartic image-surjectivity argument.
 \item \texttt{TernaryQuarticProof/RepresentativeSpanThree.lean}: the generic
   representative
   \[
@@ -324,7 +329,20 @@ affine changes of variables:
   \]
   the remaining quadratic plane is the kernel of a binary quadratic
   $a x_1^2 + b x_1x_2 + c x_2^2$, and only the annihilators $x_2^2$ and
-  $x_1^2$ give nonsurjective image ranks ($13$ and $14$ respectively).
+  $x_1^2$ give nonsurjective image ranks ($13$ and $14$ respectively). The
+  new annihilator-family sweep in the checked-in Julia script supports the full
+  completion-of-squares reduction:
+  \begin{itemize}
+  \item if $c \neq 0$, shear $x_2 \mapsto x_2 - \frac{b}{2c}x_1$ kills the
+    cross term;
+  \item if the resulting $x_1^2$ coefficient vanishes, the branch is the
+    rank-$13$ model $x_2^2$;
+  \item if that coefficient is nonzero, rescaling gives $x_1^2 \pm x_2^2$,
+    numerically always surjective;
+  \item if $c = 0$ but $b \neq 0$, the model reduces to $x_1x_2$, again
+    numerically surjective;
+  \item if $c = 0$ and $b = 0$, the model is the rank-$14$ case $x_1^2$.
+  \end{itemize}
   So the remaining classification gap is specifically the constant-containing
   $\dim = 2$ branch rather than the whole independent nonsurjective case.
 \end{itemize}
@@ -378,6 +396,22 @@ mixed_affine_parabolic_probe = (u = [1, x1, x1*x2, x1^2 - x2^2],
   rank = 15, err ~ 1e-12)
 mixed_affine_parabolic_probe = (u = [1, x1, x1*x2, x1^2 + x2^2],
   rank = 15, err ~ 1e-11)
+mixed_affine_annihilator_probe = (annihilator = x2^2,
+  rank = 13, missing = [x2^3, x2^4], err ~ 1e-10)
+mixed_affine_annihilator_probe = (annihilator = x1^2,
+  rank = 14, missing = [x1^4], err ~ 1e-12)
+mixed_affine_annihilator_probe = (annihilator = x1*x2,
+  rank = 15, missing = [], err ~ 1e-12)
+mixed_affine_annihilator_probe = (annihilator = x1^2 + x2^2,
+  rank = 15, missing = [], err ~ 1e-11)
+mixed_affine_annihilator_probe = (annihilator = x1^2 - x2^2,
+  rank = 15, missing = [], err ~ 1e-12)
+mixed_affine_annihilator_probe = (annihilator = x1^2 + x1*x2,
+  rank = 15, missing = [], err ~ 1e-10)
+mixed_affine_annihilator_probe = (annihilator = generic (2,3,5),
+  rank = 15, missing = [], err ~ 2e-10)
+mixed_affine_annihilator_probe = (annihilator = generic_disc0 (1,2,1),
+  rank = 15, missing = [], err ~ 1e-12)
 \end{verbatim}
 
 This corrects the earlier assumption that the five listed canonical models
@@ -485,11 +519,10 @@ the whole $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 3$ branch.
 
 \section*{Open Subgoals}
 \begin{itemize}
-\item Complete the affine variable-change transport layer by upgrading the
-degree-preserving affine homomorphisms to actual SOCP-preserving equivalences.
-\item Formalize the normalization/classification step that reduces the
-constant-containing $\dim = 2$ branch to the three mixed-affine
-representatives already formalized.
+\item Formalize the completion-of-squares normalization for the
+constant-containing $\dim = 2$ branch, reducing a general annihilator
+$a x_1^2 + b x_1x_2 + c x_2^2$ to the already-formalized rank-$13$,
+rank-$14$, or rank-$15$ mixed-affine representatives.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

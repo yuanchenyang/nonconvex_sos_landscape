@@ -3,6 +3,7 @@ include("counter_poly.jl")
 using Combinatorics
 using DynamicPolynomials
 using JuMP
+using LinearAlgebra
 using Random
 import MathOptInterface
 
@@ -160,6 +161,33 @@ function mixed_affine_parabolic_probe()
     end
 end
 
+function mixed_affine_annihilator_family(a, b, c)
+    mons = [x[1]^2, x[1] * x[2], x[2]^2]
+    N = nullspace(reshape([float(a), float(b), float(c)], 1, 3))
+    [sum(N[j, i] * mons[j] for j in 1:3) for i in 1:size(N, 2)]
+end
+
+function mixed_affine_annihilator_probe()
+    cases = [
+        ("x2^2", 0.0, 0.0, 1.0),
+        ("x1^2", 1.0, 0.0, 0.0),
+        ("x1*x2", 0.0, 1.0, 0.0),
+        ("x1^2+x2^2", 1.0, 0.0, 1.0),
+        ("x1^2-x2^2", 1.0, 0.0, -1.0),
+        ("x1^2+x1*x2", 1.0, 1.0, 0.0),
+        ("generic", 2.0, 3.0, 5.0),
+        ("generic_disc0", 1.0, 2.0, 1.0),
+    ]
+    for (name, a, b, c) in cases
+        P = mixed_affine_annihilator_family(a, b, c)
+        u = [one(x[1]), x[1], P[1], P[2]]
+        println("mixed_affine_annihilator_probe = (annihilator = ", name,
+            ", coeffs = ", (a, b, c), ", rank = ", image_rank(u),
+            ", missing = ", missing_monomials(u), ", err = ",
+            find_counter(x, u; ntrials=1, verbose=false), ")")
+    end
+end
+
 random_rank4_sweep()
 basis_image_ranks()
 basis_sweep()
@@ -170,3 +198,4 @@ low_affine_probe()
 mixed_affine_probe()
 mixed_affine_kernel_probe()
 mixed_affine_parabolic_probe()
+mixed_affine_annihilator_probe()

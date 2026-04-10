@@ -130,6 +130,20 @@ residual by the already-formalized image case.
 
 \medskip
 \noindent
+\textbf{Formalized surjective mixed-affine representative.} The model
+\[
+  u_{\mathrm{ma},15} = (1, x_1, x_1^2, x_2^2)
+\]
+is now formalized as well in
+\texttt{TernaryQuarticProof/RepresentativeMixedAffine.lean}. Its proof is the
+same style as the other surjective branches: every quartic monomial is hit
+directly, either through the constant coordinate for total degree at most $2$,
+through $x_1^2$ for monomials with $x_1$-degree at least $2$, or through
+$x_2^2$ for the remaining quartic monomials. So every SOCP at this
+representative has zero residual by the abstract image certificate.
+
+\medskip
+\noindent
 \textbf{Formalized codimension-one image reduction.} The mixed-affine
 rank-$14$ representative
 \[
@@ -305,14 +319,25 @@ $\mathbb{R}x_1$, the quadratic $q$ should reduce to one of
 \[
   x_2^2,\qquad x_1^2,\qquad x_1x_2,\qquad x_1^2 \pm x_2^2.
 \]
-The Julia probes show that the last three possibilities are already
-surjective/image-rank-$15$ except for the $x_1^2$ case, which gives image rank
-$14$, while the $x_2^2$ case gives image rank $13$. So the only nonsurjective
+The numerical sweep now recorded in
+\texttt{julia/tq\_r4\_exploration\_2026\_04\_09.jl} matches this exactly:
+\[
+  x_2^2 \leadsto \operatorname{rank} 13,\qquad
+  x_1^2 \leadsto \operatorname{rank} 14,
+\]
+while
+\[
+  x_1x_2,\qquad x_1^2 \pm x_2^2,\qquad x_1^2 + x_1x_2,
+\]
+and the tested generic examples all have image rank $15$, with numerical
+errors again near $10^{-10}$ or smaller. So the only nonsurjective
 mixed-affine representatives appear to be
 \[
   (1,x_1,x_1^2,x_1x_2),\qquad (1,x_1,x_1x_2,x_2^2).
 \]
-Proving this reduction is now the key written sublemma.
+The written reduction is therefore no longer mysterious: it should be the
+binary-quadratic completion-of-squares argument above, implemented inside the
+subgroup of affine changes preserving the line $\mathbb{R}x_1$.
 
 \section*{Current Candidate Blueprint}
 At the level of a paper proof, the present candidate argument is:
@@ -377,7 +402,7 @@ following models:
   \[
     w=(0,0,-x_1x_2,x_1^2),
   \]
-  and the third is already surjective. What is still missing is the written
+  and the third is now formalized as surjective. What is still missing is the written
   proof that every constant-containing $\dim = 2$ factor can be normalized into
   one of these representatives.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
@@ -407,8 +432,12 @@ proof-serving finite-support lemma rather than a general coefficient API.
 \noindent
 The mixed-affine representative analysis is now complete at the representative
 level: the rank-$13$ and rank-$14$ nonsurjective models are formalized, and the
-rank-$15$ model is already surjective. So the remaining obstacle is no longer a
-missing mixed-affine kernel calculation. It is the written and formal
+surjective rank-$15$ model
+\[
+  (1,x_1,x_1^2,x_2^2)
+\]
+is now formalized too. So the remaining obstacle is no longer a missing
+mixed-affine representative calculation. It is the written and formal
 normalization statement showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
 three representatives.
