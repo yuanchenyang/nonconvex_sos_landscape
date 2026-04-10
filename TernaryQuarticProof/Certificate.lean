@@ -139,6 +139,37 @@ theorem isAdmissibleDirection_add {v w : RankFourVec}
   intro i
   exact (MvPolynomial.totalDegree_add _ _).trans <| max_le (hv i) (hw i)
 
+theorem isAdmissibleDirection_smul (t : ℝ) {v : RankFourVec}
+    (hv : IsAdmissibleDirection v) :
+    IsAdmissibleDirection (t • v) := by
+  intro i
+  exact (MvPolynomial.totalDegree_smul_le t (v i)).trans (hv i)
+
+theorem A_smul_right (u v : RankFourVec) (t : ℝ) :
+    A u (t • v) = t • A u v := by
+  calc
+    A u (t • v) = ∑ i : Fin 4, t • (u i * v i) := by
+      unfold A
+      refine Finset.sum_congr rfl ?_
+      intro i hi
+      change u i * (t • v i) = t • (u i * v i)
+      exact mul_smul_comm t (u i) (v i)
+    _ = t • ∑ i : Fin 4, u i * v i := by
+      rw [← Finset.smul_sum]
+    _ = t • A u v := by
+      simp [A]
+
+theorem isQuartic_sigma_of_admissible {u : RankFourVec}
+    (hu : IsAdmissibleDirection u) :
+    IsQuartic (sigma u) := by
+  unfold sigma IsQuartic
+  refine MvPolynomial.totalDegree_finsetSum_le ?_
+  intro i hi
+  have hpow : ((u i) ^ 2).totalDegree ≤ 2 * (u i).totalDegree := by
+    simpa using MvPolynomial.totalDegree_pow (u i) 2
+  have hi2 : (u i).totalDegree ≤ 2 := hu i
+  omega
+
 theorem imageOrthogonalResidual_self {p : Poly} {u : RankFourVec}
     (hfocp : IsFOCP B p u) :
     ImageOrthogonalResidual B p u u := by

@@ -362,6 +362,30 @@ normalization statement showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
 three representatives.
 
+\medskip
+\noindent
+The low-affine representative analysis is now complete too in
+\texttt{TernaryQuarticProof/RepresentativeLowAffine.lean}. The three stable
+models
+\[
+  (x_1,x_2,x_1^2,x_2^2),\qquad
+  (x_1,x_2,x_1^2,x_1x_2),\qquad
+  (x_1,x_1^2,x_1x_2,x_2^2)
+\]
+are all formalized at the representative level. The first two use explicit
+codimension-one or codimension-two image-plus-kernel corrections at the
+constant and quartic-end classes, while the third uses the affine kernel line
+\[
+  w_\ell = (-x_2\ell,0,\ell,0), \qquad \ell = c + d x_2,
+\]
+to match the missing quotient classes of $1$ and $x_2$. So the only remaining
+representative-level model outside the mixed-affine normalization problem is
+the generic
+\[
+  (1,x_1,x_2,h)
+\]
+branch.
+
 \section*{Pending Step}
 To finish the theorem, it remains to prove the multivariate admissible
 image-plus-cone decomposition for every SOS quartic. This is currently the main

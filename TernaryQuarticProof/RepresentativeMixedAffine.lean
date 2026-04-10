@@ -322,7 +322,7 @@ theorem mixedAffineRank14KerBase_admissible : IsAdmissibleDirection mixedAffineR
   · simpa [mixedAffineRank14KerBase, IsQuadratic] using isQuadratic_x0_mul_x1
   · simp [mixedAffineRank14KerBase, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
 
-private theorem A_smul_right (u v : RankFourVec) (t : ℝ) :
+private theorem A_smul_right_local (u v : RankFourVec) (t : ℝ) :
     A u (t • v) = t • A u v := by
   calc
     A u (t • v) = ∑ i : Fin 4, t • (u i * v i) := by
@@ -336,7 +336,7 @@ private theorem A_smul_right (u v : RankFourVec) (t : ℝ) :
     _ = t • A u v := by
       simp [A]
 
-private theorem isAdmissibleDirection_smul (t : ℝ) {v : RankFourVec}
+private theorem isAdmissibleDirection_smul_local (t : ℝ) {v : RankFourVec}
     (hv : IsAdmissibleDirection v) :
     IsAdmissibleDirection (t • v) := by
   intro i
@@ -350,8 +350,8 @@ theorem mixedAffineRank14KerBase_inKer :
 
 theorem mixedAffineRank14Ker_scaled_inKer (t : ℝ) :
     InAdmissibleKer mixedAffineRank14Rep (t • mixedAffineRank14KerBase) := by
-  refine ⟨isAdmissibleDirection_smul t mixedAffineRank14KerBase_admissible, ?_⟩
-  rw [A_smul_right, mixedAffineRank14KerBase_inKer.2]
+  refine ⟨isAdmissibleDirection_smul_local t mixedAffineRank14KerBase_admissible, ?_⟩
+  rw [A_smul_right_local, mixedAffineRank14KerBase_inKer.2]
   simp
 
 private theorem isQuadratic_smul_x0_mul_x1 (t : ℝ) :
@@ -398,7 +398,7 @@ theorem coeff_m40_sigma_mixedAffineRank14KerScaled (t : ℝ) :
   rw [sigma, Fin.sum_univ_four]
   simp [mixedAffineRank14KerBase, hxy, hx0]
 
-private theorem isQuartic_sigma_of_admissible {u : RankFourVec}
+private theorem isQuartic_sigma_of_admissible_local {u : RankFourVec}
     (hu : IsAdmissibleDirection u) :
     IsQuartic (sigma u) := by
   unfold sigma IsQuartic
@@ -441,7 +441,7 @@ theorem residual_eq_zero_mixedAffineRank14Rep
       (p - sigma w).totalDegree ≤ max p.totalDegree (sigma w).totalDegree := by
         exact MvPolynomial.totalDegree_sub _ _
       _ ≤ 4 := by
-        exact max_le hpquartic (isQuartic_sigma_of_admissible hwker.1)
+        exact max_le hpquartic (isQuartic_sigma_of_admissible_local hwker.1)
   have h40_sub : MvPolynomial.coeff m40 (p - sigma w) = 0 := by
     rw [MvPolynomial.coeff_sub, hp40, hw40]
     ring
@@ -1231,6 +1231,15 @@ theorem coeff_m04_sigma_mixedAffineRank13KerLine (b c : ℝ) :
   rw [sigma, Fin.sum_univ_four]
   simp [mixedAffineRank13KerLine, h1, h0]
 
+theorem coeff_m03_sq_of_quadratic_eq (q : Poly) (hq : IsQuadratic q) :
+    MvPolynomial.coeff m03 (q ^ 2) =
+      2 * MvPolynomial.coeff m01 q * MvPolynomial.coeff m02 q :=
+  coeff_m03_sq_of_quadratic q hq
+
+theorem coeff_m04_sq_of_quadratic_eq (q : Poly) (hq : IsQuadratic q) :
+    MvPolynomial.coeff m04 (q ^ 2) = (MvPolynomial.coeff m02 q) ^ 2 :=
+  coeff_m04_sq_of_quadratic q hq
+
 theorem residual_eq_zero_mixedAffineRank13Rep
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {p : Poly}
@@ -1304,7 +1313,7 @@ theorem residual_eq_zero_mixedAffineRank13Rep
       (p - sigma w).totalDegree ≤ max p.totalDegree (sigma w).totalDegree := by
         exact MvPolynomial.totalDegree_sub _ _
       _ ≤ 4 := by
-        exact max_le hpquartic (isQuartic_sigma_of_admissible hwker.1)
+        exact max_le hpquartic (isQuartic_sigma_of_admissible_local hwker.1)
   have h03_sub : MvPolynomial.coeff m03 (p - sigma w) = 0 := by
     rw [MvPolynomial.coeff_sub, hp03, hw03]
     ring

@@ -386,15 +386,36 @@ all three representative models
 are now covered in Lean, with the first two using explicit admissible kernel
 families and the third already surjective.
 
+The low-affine representative analysis is now complete as well in
+\texttt{TernaryQuarticProof/RepresentativeLowAffine.lean}. The coprime model
+\[
+  (x_1,x_2,x_1^2,x_2^2),
+\]
+the common-factor model
+\[
+  (x_1,x_2,x_1^2,x_1x_2),
+\]
+and the linear model
+\[
+  (x_1,x_1^2,x_1x_2,x_2^2)
+\]
+all now have representative-level no-spurious-SOCP theorems in Lean. In the
+linear case, the image misses exactly the classes of $1$ and $x_2$, and the
+kernel line
+\[
+  w_\ell = (-x_2\ell,0,\ell,0), \qquad \ell = c + d x_2,
+\]
+matches those missing classes via
+\[
+  \sigma(w_\ell) \equiv c^2 + 2cd\,x_2 \pmod{\operatorname{im}(A_u)}.
+\]
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Prove the normalization/classification statement for the mixed-affine
 constant-containing $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 2$ branch.
-\item Formalize the remaining representative case lemmas:
+\item Formalize the remaining representative case lemma
   \[
-    (x_1,x_1^2,x_1x_2,x_2^2),\quad
-    (x_1,x_2,x_1^2,x_1x_2),\quad
-    (x_1,x_2,x_1^2,x_2^2),\quad
     (1,x_1,x_2,h).
   \]
 \item Formalize the normalization/classification step that reduces the

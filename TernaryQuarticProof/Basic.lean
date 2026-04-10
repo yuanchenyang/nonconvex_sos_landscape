@@ -1,6 +1,7 @@
 import TernaryQuarticProof.Certificate
 import TernaryQuarticProof.FactorTransform
 import TernaryQuarticProof.QuadraticNormalForm
+import TernaryQuarticProof.RepresentativeLowAffine
 import TernaryQuarticProof.RepresentativeMixedAffine
 import TernaryQuarticProof.RepresentativeSurjective
 
