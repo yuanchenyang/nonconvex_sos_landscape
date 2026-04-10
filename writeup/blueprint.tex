@@ -1335,6 +1335,26 @@ determinant
 \]
 is nonzero. Lean then subtracts the required multiple of the diagonal line
 internally and dispatches to the previous diagonal tail theorem.
+The extracted-line layer has now been upgraded in the same direction. The same
+file now also proves determinant-zero refinements
+\[
+  \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_crossTail\_det},
+\]
+\[
+  \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_x1sqTail\_det},
+\]
+and
+\[
+  \texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_diagX1sqTail\_det},
+\]
+again with equivariant wrappers. In the cross and \(x_2^2\)-type cases, the
+vanishing of the tailed-pair determinant for the extracted line now
+automatically forces the remaining offending tail coefficient to vanish, so the
+classification step no longer has to provide that coefficient cancellation as a
+separate hypothesis. In the diagonal case, the same extracted-line determinant
+zero forces the \(x_1x_2\)-coefficient of the tail to vanish, while the second
+diagonal determinant is passed directly to the already-formalized
+\texttt{diagX1sqTail\_det} theorem.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and

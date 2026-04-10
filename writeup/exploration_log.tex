@@ -1299,6 +1299,33 @@ which guarantees that the corrected tail still has nonzero \(x_1^2\)-part. So
 even the diagonal determinant-zero branch is now one normalization step closer
 to the natural coefficient data expected from the remaining classification.
 
+The next Lean round lifted the same weakening through the extracted-line
+interface. In \texttt{RepresentativeMixedAffinePlane.lean} I added
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_crossTail\_det},
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_x1sqTail\_det},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_diagX1sqTail\_det},
+with the matching equivariant wrappers. These start from the canonical
+extracted homogeneous line \(H(q_2,q_3)\) and a tailed quadratic \(q_3\), but
+they no longer require the classification step to separately prove the residual
+tail-coefficient vanishing in the determinant-zero branch. In the cross case,
+the determinant-zero identity
+\[
+  \operatorname{coeff}_{x_1x_2}(H)\operatorname{coeff}_{x_2^2}(q_3)
+  -
+  \operatorname{coeff}_{x_2^2}(H)\operatorname{coeff}_{x_1x_2}(q_3)=0
+\]
+reduces immediately to \(\operatorname{coeff}_{x_2^2}(q_3)=0\) because
+\(\operatorname{coeff}_{x_2^2}(H)=0\) and
+\(\operatorname{coeff}_{x_1x_2}(H)\neq 0\). The \(x_2^2\)-type case is the
+same with roles of \(x_1x_2\) and \(x_2^2\) reversed. In the diagonal case,
+that same determinant-zero identity now automatically gives
+\(\operatorname{coeff}_{x_1x_2}(q_3)=0\), and the second diagonal determinant
+is passed straight into the already-formalized diagonal det wrapper. So the
+remaining mixed-affine extraction step now only has to identify the coefficient
+type of \(H(q_2,q_3)\) and the relevant determinant data, not the leftover
+tail cancellations themselves.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
