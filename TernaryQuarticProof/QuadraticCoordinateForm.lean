@@ -455,6 +455,56 @@ theorem homogeneousQuadratic_eq_mixedAffineTailHomLine
             rw [coeff_m20_mixedAffineTailHomLine, coeff_m11_mixedAffineTailHomLine,
               coeff_m02_mixedAffineTailHomLine]
 
+/-- Translation fixing `x₁` and sending `x₀` to `x₀ + t`. -/
+def x0TranslateVec (t : ℝ) : Fin 2 → ℝ := ![t, 0]
+
+/-- Inverse translation fixing `x₁` and sending `x₀` to `x₀ - t`. -/
+def x0TranslateInvVec (t : ℝ) : Fin 2 → ℝ := ![-t, 0]
+
+@[simp] theorem affineHom_x0Translate_x0 (t : ℝ) :
+    affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec t) x0 = MvPolynomial.C t + x0 := by
+  simp [x0, affineImage, affineHom_X, x0TranslateVec, Fin.sum_univ_two]
+
+@[simp] theorem affineHom_x0Translate_x1 (t : ℝ) :
+    affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec t) x1 = x1 := by
+  simp [x1, affineImage, affineHom_X, x0TranslateVec, Fin.sum_univ_two]
+
+theorem x0TranslateInv_add_mulVec (t : ℝ) :
+    ∀ i, x0TranslateInvVec t i + Matrix.mulVec (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec t) i = 0 := by
+  intro i
+  rw [Matrix.one_mulVec]
+  fin_cases i <;> simp [x0TranslateVec, x0TranslateInvVec]
+
+theorem x0Translate_add_mulVec_inv (t : ℝ) :
+    ∀ i, x0TranslateVec t i + Matrix.mulVec (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateInvVec t) i = 0 := by
+  intro i
+  rw [Matrix.one_mulVec]
+  fin_cases i <;> simp [x0TranslateVec, x0TranslateInvVec]
+
+/-- Polynomial equivalence induced by the translation `x₀ ↦ x₀ + t`. -/
+def x0TranslateEquiv (t : ℝ) : Poly ≃ₐ[ℝ] Poly :=
+  affineEquiv (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 (x0TranslateVec t) (x0TranslateInvVec t)
+    (by simp) (by simp) (x0TranslateInv_add_mulVec t) (x0Translate_add_mulVec_inv t)
+
+theorem affineHom_x0Translate_quadForm
+    (a00 a10 a01 a20 a11 a02 t : ℝ) :
+    affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec t)
+        (quadForm a00 a10 a01 a20 a11 a02) =
+      quadForm
+        (a00 + a10 * t + a20 * t ^ 2)
+        (a10 + 2 * a20 * t)
+        (a01 + a11 * t)
+        a20
+        a11
+        a02 := by
+  rw [quadForm_eq_explicit, quadForm_eq_explicit]
+  simp [affineHom_x0Translate_x0, affineHom_x0Translate_x1]
+  ring_nf
+  have htwo : (MvPolynomial.C (2 : ℝ) : Poly) = 2 := by
+    change (MvPolynomial.C (2 : ℝ) : Poly) = MvPolynomial.C 2
+    rfl
+  simp [htwo]
+
 /-- Translation fixing `x₀` and sending `x₁` to `x₁ + t`. -/
 def x1TranslateVec (t : ℝ) : Fin 2 → ℝ := ![0, t]
 
@@ -565,6 +615,83 @@ theorem coeff_m10_affineHom_x1Translate
       MvPolynomial.coeff m10 q + MvPolynomial.coeff m11 q * t := by
   rw [quadratic_eq_quadForm hq, affineHom_x1Translate_quadForm]
   simp [mul_comm, add_comm, add_left_comm]
+
+theorem coeff_m01_affineHom_x0Translate
+    {q : Poly} (hq : IsQuadratic q) (t : ℝ) :
+    MvPolynomial.coeff m01 (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec t) q) =
+      MvPolynomial.coeff m01 q + MvPolynomial.coeff m11 q * t := by
+  rw [quadratic_eq_quadForm hq, affineHom_x0Translate_quadForm]
+  simp [mul_comm, add_comm, add_left_comm]
+
+theorem coeff_m02_affineHom_x0Translate
+    {q : Poly} (hq : IsQuadratic q) (t : ℝ) :
+    MvPolynomial.coeff m02 (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec t) q) =
+      MvPolynomial.coeff m02 q := by
+  rw [quadratic_eq_quadForm hq, affineHom_x0Translate_quadForm]
+  simp
+
+theorem coeff_m01_affineHom_x1Translate_after_x0Translate
+    {q : Poly} (hq : IsQuadratic q) (u v : ℝ) :
+    MvPolynomial.coeff m01
+        (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x1TranslateVec v)
+          (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec u) q)) =
+      MvPolynomial.coeff m01 q + MvPolynomial.coeff m11 q * u + 2 * MvPolynomial.coeff m02 q * v := by
+  rw [coeff_m01_affineHom_x1Translate
+    (isQuadratic_affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec u) hq)]
+  rw [coeff_m01_affineHom_x0Translate hq, coeff_m02_affineHom_x0Translate hq]
+
+theorem coeff_m01_affineHom_x1Translate_after_x0Translate_pair_kill
+    {q2 q3 : Poly} (hq2 : IsQuadratic q2) (hq3 : IsQuadratic q3)
+    (hdet :
+      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+        MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 ≠ 0) :
+    let det : ℝ :=
+      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+        MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3
+    let u : ℝ :=
+      (MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m01 q3 -
+        MvPolynomial.coeff m02 q3 * MvPolynomial.coeff m01 q2) / det
+    let v : ℝ :=
+      (MvPolynomial.coeff m11 q3 * MvPolynomial.coeff m01 q2 -
+        MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m01 q3) / (2 * det)
+    MvPolynomial.coeff m01
+        (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x1TranslateVec v)
+          (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec u) q2)) = 0 ∧
+      MvPolynomial.coeff m01
+        (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x1TranslateVec v)
+          (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) (x0TranslateVec u) q3)) = 0 := by
+  dsimp
+  constructor
+  · rw [coeff_m01_affineHom_x1Translate_after_x0Translate hq2]
+    field_simp [hdet, two_ne_zero]
+    ring
+  · rw [coeff_m01_affineHom_x1Translate_after_x0Translate hq3]
+    let det : ℝ :=
+      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+        MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3
+    have hdet0 : det ≠ 0 := by
+      simpa [det] using hdet
+    calc
+      MvPolynomial.coeff m01 q3 +
+          MvPolynomial.coeff m11 q3 *
+            ((MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m01 q3 -
+                MvPolynomial.coeff m02 q3 * MvPolynomial.coeff m01 q2) / det) +
+        2 * MvPolynomial.coeff m02 q3 *
+          ((MvPolynomial.coeff m11 q3 * MvPolynomial.coeff m01 q2 -
+              MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m01 q3) / (2 * det))
+          =
+            MvPolynomial.coeff m01 q3 +
+              ((MvPolynomial.coeff m11 q3 * MvPolynomial.coeff m02 q2 -
+                  MvPolynomial.coeff m02 q3 * MvPolynomial.coeff m11 q2) *
+                MvPolynomial.coeff m01 q3) / det := by
+                  field_simp [hdet0, two_ne_zero]
+                  ring
+      _ = MvPolynomial.coeff m01 q3 + (-det * MvPolynomial.coeff m01 q3) / det := by
+            dsimp [det]
+            ring
+      _ = 0 := by
+            field_simp [hdet0]
+            ring
 
 theorem coeff_m20_affineHom_x1Translate
     {q : Poly} (hq : IsQuadratic q) (t : ℝ) :

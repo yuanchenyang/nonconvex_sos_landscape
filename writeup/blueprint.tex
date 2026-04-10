@@ -935,6 +935,13 @@ there is an explicit common translation killing both \(x_2\)-tails
 simultaneously. Numerically this is now confirmed by
 \texttt{julia/mixed\_affine\_common\_translation\_2026\_04\_10.jl}, which gives
 tail residuals at the \(10^{-14}\) scale on random samples.
+The minimal Lean algebra behind that statement is now formalized in
+\texttt{QuadraticCoordinateForm.lean}: the file now contains the
+\(x_1 \mapsto x_1+t\) and \(x_2 \mapsto x_2+t\) translation equivalences, the
+exact \(x_2\)-tail coefficient formulas for each, and the nested two-step lemma
+showing that the explicit Cramér-rule choice of \((u,v)\) kills the
+\(\operatorname{coeff}_{x_2}\) term of both quadratics under the
+\(x_1\)-then-\(x_2\) translation.
 So the remaining obstacle is now the written and formal extraction statement
 showing that every constant-containing
 $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 2$ factor reduces to one of these
@@ -944,9 +951,10 @@ canonical cross-product theorem. In other words, the next bridge no longer has
 to \emph{find} the homogeneous line; it only has to classify how the remaining
 tailed quadratic sits relative to that explicit extracted line, and in the
 nondegenerate determinant sub-branch it only has to feed the explicit common
-translation into the existing homogeneous-plane theorem. The corresponding Lean
-translation lemma is the next formalization target, not a remaining numerical
-unknown.
+translation into the existing homogeneous-plane theorem while handling the
+induced affine correction terms. So the remaining gap there is not the
+translation algebra itself but its integration with the mixed-affine plane
+certificate layer.
 
 \medskip
 \noindent

@@ -992,6 +992,14 @@ precision on random nondegenerate samples. This sharpens the next Lean target:
 the determinant-nondegenerate mixed-affine sub-branch should be reduced by a
 formal common-translation lemma matching that explicit formula, after which the
 existing homogeneous-plane theorem can take over.
+That Lean reduction now exists in its minimal algebraic form. In
+\texttt{QuadraticCoordinateForm.lean} I added the symmetric
+\(x_1 \mapsto x_1+t\) translation API, proved the exact transformed
+\(\operatorname{coeff}_{x_2}\) and \(\operatorname{coeff}_{x_2^2}\) formulas,
+and then formalized the nested tail-killing theorem for the Cramér-rule choice
+of \((u,v)\). So the determinant-nondegenerate branch is no longer blocked on
+translation algebra; it is blocked on feeding the translated-and-affine-corrected
+relations into the already-formalized homogeneous-plane theorem.
 
 \section*{Open Subgoals}
 \begin{itemize}
