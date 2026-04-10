@@ -38,6 +38,21 @@ theorem inAdmissibleImage_of_relation_mul
   refine ⟨relationDirection c q, relationDirection_admissible c hq, ?_⟩
   rw [A_relationDirection, hc]
 
+/-- Linear combination of two explicit scalar relations. -/
+private theorem relation_linearCombination
+    {u : RankFourVec} {c d : Fin 4 → ℝ} {r s : Poly}
+    (hc : ∑ i : Fin 4, c i • u i = r)
+    (hd : ∑ i : Fin 4, d i • u i = s)
+    (a b : ℝ) :
+    ∑ i : Fin 4, (a * c i + b * d i) • u i = a • r + b • s := by
+  calc
+    ∑ i : Fin 4, (a * c i + b * d i) • u i
+        = ∑ i : Fin 4, (a * c i) • u i + ∑ i : Fin 4, (b * d i) • u i := by
+            simp [Finset.sum_add_distrib, add_smul]
+    _ = a • (∑ i : Fin 4, c i • u i) + b • (∑ i : Fin 4, d i • u i) := by
+          simp [Finset.smul_sum, smul_smul]
+    _ = a • r + b • s := by rw [hc, hd]
+
 /-- Linearity of `A` in the left slot. -/
 private theorem A_add_left_local (u v w : RankFourVec) :
     A (u + v) w = A u w + A v w := by
@@ -67,6 +82,24 @@ private theorem A_relationDirection_pair
       simp [mul_comm]
     _ = (∑ i : Fin 4, c i * d i) • (p * q) := by
       rw [Finset.sum_smul]
+
+private theorem sum_sq_linearCombination
+    (c d : Fin 4 → ℝ) (a b : ℝ) :
+    ∑ i : Fin 4, (a * c i + b * d i) ^ 2 =
+      a ^ 2 * (∑ i : Fin 4, (c i) ^ 2) +
+        (2 * a * b) * (∑ i : Fin 4, c i * d i) +
+          b ^ 2 * (∑ i : Fin 4, (d i) ^ 2) := by
+  rw [Fin.sum_univ_four, Fin.sum_univ_four, Fin.sum_univ_four, Fin.sum_univ_four]
+  ring
+
+private theorem sum_mul_linearCombination
+    (c d : Fin 4 → ℝ) (a b a' b' : ℝ) :
+    ∑ i : Fin 4, (a * c i + b * d i) * (a' * c i + b' * d i) =
+      (a * a') * (∑ i : Fin 4, (c i) ^ 2) +
+        (a * b' + b * a') * (∑ i : Fin 4, c i * d i) +
+          (b * b') * (∑ i : Fin 4, (d i) ^ 2) := by
+  rw [Fin.sum_univ_four, Fin.sum_univ_four, Fin.sum_univ_four, Fin.sum_univ_four]
+  ring
 
 /-- Sigma of two coefficient-space relation directions with orthogonal
 coefficients. This is the clean quadratic identity needed for the planned
@@ -388,6 +421,77 @@ theorem residual_eq_zero_of_relations_const_x0_x0x1_x1sq
     subst hw'
     exact hwker
   · simp [w, sub_eq_add_neg]
+
+/-- Orthogonal change of basis inside `span(x₀x₁, x₁²)` reduces to the exact
+rank-14 mixed-affine plane theorem. -/
+theorem residual_eq_zero_of_relations_const_x0_x1Plane
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {a b c d : ℝ}
+    (h2 : ∑ i : Fin 4, c2 i • u i = a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly))
+    (h3 : ∑ i : Fin 4, c3 i • u i = c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly))
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hcol0 : a ^ 2 + c ^ 2 = 1)
+    (hcol1 : b ^ 2 + d ^ 2 = 1)
+    (hcol01 : a * b + c * d = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let c2' : Fin 4 → ℝ := fun i => a * c2 i + c * c3 i
+  let c3' : Fin 4 → ℝ := fun i => b * c2 i + d * c3 i
+  have h2' : ∑ i : Fin 4, c2' i • u i = x0 * x1 := by
+    calc
+      ∑ i : Fin 4, c2' i • u i
+          = a • (a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly)) +
+              c • (c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly)) := by
+                simp [c2', relation_linearCombination, h2, h3]
+      _ = (a ^ 2 + c ^ 2) • (x0 * x1 : Poly) + (a * b + c * d) • (x1 ^ 2 : Poly) := by
+            rw [add_smul, add_smul]
+            simp [smul_add, smul_smul, pow_two, add_assoc, add_left_comm]
+      _ = x0 * x1 := by simp [hcol0, hcol01]
+  have h3' : ∑ i : Fin 4, c3' i • u i = x1 ^ 2 := by
+    calc
+      ∑ i : Fin 4, c3' i • u i
+          = b • (a • (x0 * x1 : Poly) + b • (x1 ^ 2 : Poly)) +
+              d • (c • (x0 * x1 : Poly) + d • (x1 ^ 2 : Poly)) := by
+                simp [c3', relation_linearCombination, h2, h3]
+      _ = (a * b + c * d) • (x0 * x1 : Poly) + (b ^ 2 + d ^ 2) • (x1 ^ 2 : Poly) := by
+            rw [add_smul, add_smul]
+            simp [smul_add, smul_smul, pow_two, add_assoc, add_left_comm, mul_comm]
+      _ = x1 ^ 2 := by simp [hcol1, hcol01]
+  have h22' : ∑ i : Fin 4, (c2' i) ^ 2 = 1 := by
+    calc
+      ∑ i : Fin 4, (c2' i) ^ 2
+          = a ^ 2 * (∑ i : Fin 4, (c2 i) ^ 2) +
+              (2 * a * c) * (∑ i : Fin 4, c2 i * c3 i) +
+                c ^ 2 * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa [c2'] using sum_sq_linearCombination c2 c3 a c
+      _ = 1 := by rw [h22, h23, h33]; nlinarith [hcol0]
+  have h33' : ∑ i : Fin 4, (c3' i) ^ 2 = 1 := by
+    calc
+      ∑ i : Fin 4, (c3' i) ^ 2
+          = b ^ 2 * (∑ i : Fin 4, (c2 i) ^ 2) +
+              (2 * b * d) * (∑ i : Fin 4, c2 i * c3 i) +
+                d ^ 2 * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa [c3'] using sum_sq_linearCombination c2 c3 b d
+      _ = 1 := by rw [h22, h23, h33]; nlinarith [hcol1]
+  have h23' : ∑ i : Fin 4, c2' i * c3' i = 0 := by
+    calc
+      ∑ i : Fin 4, c2' i * c3' i
+          = (a * b) * (∑ i : Fin 4, (c2 i) ^ 2) +
+              (a * d + c * b) * (∑ i : Fin 4, c2 i * c3 i) +
+                (c * d) * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa [c2', c3'] using sum_mul_linearCombination c2 c3 a c b d
+      _ = 0 := by rw [h22, h23, h33]; nlinarith [hcol01]
+  exact residual_eq_zero_of_relations_const_x0_x0x1_x1sq
+    (B := B) (u := u) hu h0 h1 h2' h3' h22' h33' h23' hp hsocp
 
 /-- Any quartic with zero `x₁³` and `x₁⁴` coefficients lies in the image once
 the factor admits explicit scalar relations for `1`, `x₀²`, and `x₀x₁`. This
@@ -782,5 +886,75 @@ theorem residual_eq_zero_of_relations_const_x0sq_x0x1
     subst hw'
     exact hwker
   · simp [w, sub_eq_add_neg]
+
+/-- Orthogonal change of basis inside `span(x₀², x₀x₁)` reduces to the exact
+rank-13 mixed-affine plane theorem. -/
+theorem residual_eq_zero_of_relations_const_x0Plane
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    {a b c d : ℝ}
+    (h2 : ∑ i : Fin 4, c2 i • u i = a • (x0 ^ 2 : Poly) + b • (x0 * x1 : Poly))
+    (h3 : ∑ i : Fin 4, c3 i • u i = c • (x0 ^ 2 : Poly) + d • (x0 * x1 : Poly))
+    (h22 : ∑ i : Fin 4, (c2 i) ^ 2 = 1)
+    (h33 : ∑ i : Fin 4, (c3 i) ^ 2 = 1)
+    (h23 : ∑ i : Fin 4, c2 i * c3 i = 0)
+    (hcol0 : a ^ 2 + c ^ 2 = 1)
+    (hcol1 : b ^ 2 + d ^ 2 = 1)
+    (hcol01 : a * b + c * d = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let c2' : Fin 4 → ℝ := fun i => a * c2 i + c * c3 i
+  let c3' : Fin 4 → ℝ := fun i => b * c2 i + d * c3 i
+  have h2' : ∑ i : Fin 4, c2' i • u i = x0 ^ 2 := by
+    calc
+      ∑ i : Fin 4, c2' i • u i
+          = a • (a • (x0 ^ 2 : Poly) + b • (x0 * x1 : Poly)) +
+              c • (c • (x0 ^ 2 : Poly) + d • (x0 * x1 : Poly)) := by
+                simp [c2', relation_linearCombination, h2, h3]
+      _ = (a ^ 2 + c ^ 2) • (x0 ^ 2 : Poly) + (a * b + c * d) • (x0 * x1 : Poly) := by
+            rw [add_smul, add_smul]
+            simp [smul_add, smul_smul, pow_two, add_assoc, add_left_comm]
+      _ = x0 ^ 2 := by simp [hcol0, hcol01]
+  have h3' : ∑ i : Fin 4, c3' i • u i = x0 * x1 := by
+    calc
+      ∑ i : Fin 4, c3' i • u i
+          = b • (a • (x0 ^ 2 : Poly) + b • (x0 * x1 : Poly)) +
+              d • (c • (x0 ^ 2 : Poly) + d • (x0 * x1 : Poly)) := by
+                simp [c3', relation_linearCombination, h2, h3]
+      _ = (a * b + c * d) • (x0 ^ 2 : Poly) + (b ^ 2 + d ^ 2) • (x0 * x1 : Poly) := by
+            rw [add_smul, add_smul]
+            simp [smul_add, smul_smul, pow_two, add_assoc, add_left_comm, mul_comm]
+      _ = x0 * x1 := by simp [hcol1, hcol01]
+  have h22' : ∑ i : Fin 4, (c2' i) ^ 2 = 1 := by
+    calc
+      ∑ i : Fin 4, (c2' i) ^ 2
+          = a ^ 2 * (∑ i : Fin 4, (c2 i) ^ 2) +
+              (2 * a * c) * (∑ i : Fin 4, c2 i * c3 i) +
+                c ^ 2 * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa [c2'] using sum_sq_linearCombination c2 c3 a c
+      _ = 1 := by rw [h22, h23, h33]; nlinarith [hcol0]
+  have h33' : ∑ i : Fin 4, (c3' i) ^ 2 = 1 := by
+    calc
+      ∑ i : Fin 4, (c3' i) ^ 2
+          = b ^ 2 * (∑ i : Fin 4, (c2 i) ^ 2) +
+              (2 * b * d) * (∑ i : Fin 4, c2 i * c3 i) +
+                d ^ 2 * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa [c3'] using sum_sq_linearCombination c2 c3 b d
+      _ = 1 := by rw [h22, h23, h33]; nlinarith [hcol1]
+  have h23' : ∑ i : Fin 4, c2' i * c3' i = 0 := by
+    calc
+      ∑ i : Fin 4, c2' i * c3' i
+          = (a * b) * (∑ i : Fin 4, (c2 i) ^ 2) +
+              (a * d + c * b) * (∑ i : Fin 4, c2 i * c3 i) +
+                (c * d) * (∑ i : Fin 4, (c3 i) ^ 2) := by
+                  simpa [c2', c3'] using sum_mul_linearCombination c2 c3 a c b d
+      _ = 0 := by rw [h22, h23, h33]; nlinarith [hcol01]
+  exact residual_eq_zero_of_relations_const_x0sq_x0x1
+    (B := B) (u := u) hu h0 h2' h3' h22' h33' h23' hp hsocp
 
 end TernaryQuartic

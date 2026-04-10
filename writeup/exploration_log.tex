@@ -439,16 +439,18 @@ The first formal Lean infrastructure for that alternative is now added in
   \]
   and its $(x_2^3,x_2^4)$ coefficients match the representative formulas
   $(2bc,c^2)$.
-\item a stronger follow-up abstraction was attempted but not kept: replace the
-  exact monomial relation hypotheses in the mixed-affine plane theorems by an
-  arbitrary orthonormal coefficient-space basis of the canonical planes
+\item the stronger follow-up abstraction is now split in two. The fully
+  arbitrary orthonormal-basis version for the canonical planes
   $x_1 \cdot \operatorname{span}(x_1,x_2)$ and
-  $x_2 \cdot \operatorname{span}(x_1,x_2)$. The mathematics still looks right,
-  but the current Lean attempt devolved into unstable coefficient bookkeeping
-  for products of general linear forms, so that experiment was reverted to keep
-  the branch building. The concrete takeaway is useful anyway: the remaining
-  obstruction is not conceptual uncertainty about the plane-level syzygies, but
-  the lack of a clean coefficient API for those general linear-form products.
+  $x_2 \cdot \operatorname{span}(x_1,x_2)$ still ran into unstable coefficient
+  bookkeeping for products of general linear forms and remains reverted. But a
+  cleaner partial theorem is now formalized: if the quadratic relations differ
+  from the monomial pairs $(x_1x_2,x_2^2)$ or $(x_1^2,x_1x_2)$ by an orthogonal
+  $2 \times 2$ basis change inside that plane, then Lean reconstructs the
+  exact monomial relations and reduces back to the existing rank-$14$ or
+  rank-$13$ mixed-affine theorem. So the obstruction has narrowed from
+  ``arbitrary plane-basis algebra'' to ``produce orthogonal in-plane basis
+  data from a general mixed-affine factor.''
 \end{itemize}
 So the remaining work for the plane strategy is now geometric rather than
 algebraic: identify the right orthonormal relation data canonically from a
