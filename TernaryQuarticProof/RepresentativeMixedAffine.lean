@@ -376,6 +376,10 @@ private theorem coeff_m40_sq_of_quadratic (q : Poly) (hq : IsQuadratic q) :
           rw [hrestsq, hrestmul, hmulrest, hsq]
           ring
 
+theorem coeff_m40_sq_of_quadratic_eq (q : Poly) (hq : IsQuadratic q) :
+    MvPolynomial.coeff m40 (q ^ 2) = (MvPolynomial.coeff m20 q) ^ 2 :=
+  coeff_m40_sq_of_quadratic q hq
+
 theorem quartic_in_image_mixedAffineRank14Rep_of_coeff_m40_zero
     {p : Poly} (hp : IsQuartic p)
     (h40 : MvPolynomial.coeff m40 p = 0) :

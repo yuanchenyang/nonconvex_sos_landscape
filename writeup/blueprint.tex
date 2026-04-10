@@ -487,9 +487,16 @@ the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
     1,\qquad x_1,\qquad x_1x_2,\qquad x_2^2,
   \]
   then every quartic with zero $x_1^4$ coefficient lies in its admissible
-  image. So the missing step is no longer the monomial image algebra itself,
-  but the extraction of the correct canonical relation data from an arbitrary
-  factor.
+  image. The certificate half is now abstracted too: if those same relations
+  are accompanied by an orthonormal coefficient-space pair for the
+  $(x_1x_2,x_2^2)$ directions, then the formalized kernel
+  \[
+    w=\mathrm{rel}_{-c_2}(t x_1x_2)+\mathrm{rel}_{c_3}(t x_1^2)
+  \]
+  matches the missing $x_1^4$ coefficient and forces zero residual for every
+  SOCP. So the missing step is no longer the monomial image or kernel algebra
+  itself, but the extraction of the correct canonical relation data from an
+  arbitrary factor.
 \item Apply the formalized admissible image-plus-cone certificate to conclude
 $\sigma(u)=p$.
 \end{enumerate}

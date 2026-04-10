@@ -417,6 +417,17 @@ The first formal Lean infrastructure for that alternative is now added in
   is now abstracted away from the concrete representative: if a factor admits
   explicit relations for $1$, $x_1$, $x_1x_2$, and $x_2^2$, then every quartic
   with zero $x_1^4$ coefficient lies in its admissible image.
+\item the residual argument for that branch is now abstracted as well: with the
+  same relation data and an orthonormal coefficient-space pair for the
+  $(x_1x_2,x_2^2)$ directions, the kernel
+  \[
+    w=\mathrm{rel}_{-c_2}(t x_1x_2)+\mathrm{rel}_{c_3}(t x_1^2)
+  \]
+  has
+  \[
+    \operatorname{coeff}_{x_1^4}(\sigma(w))=t^2
+  \]
+  and the admissible image-plus-cone certificate gives zero residual.
 \end{itemize}
 So the remaining work for the plane strategy is now geometric rather than
 algebraic: identify the right orthonormal relation data canonically from a
