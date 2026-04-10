@@ -228,10 +228,11 @@ classification by the filtered dimensions
   \qquad W = \operatorname{span}(u_1,\dots,u_4).
 \]
 The newly formalized dependent case handles $\dim W < 4$, and the surjective
-case handles image rank $15$. The generic
-$\dim(W \cap \mathbb{R}[x]_{\le 1}) = 3$ representative is now also solved in
-Lean. The unresolved cases are therefore normalization statements reducing
-independent nonsurjective configurations of image rank $13$ or $14$ to the
+case handles image rank $15$. The whole
+$\dim(W \cap \mathbb{R}[x]_{\le 1}) = 3$ branch is now solved in Lean through
+an abstract ``contains $1,x_1,x_2$'' theorem, not just at one representative.
+The unresolved cases are therefore normalization statements reducing the
+independent $\dim = 2$ configurations of image rank $13$ or $14$ to the
 already-formalized representatives.
 
 Current canonical candidates after orthogonal mixing of the four coordinates and
@@ -241,15 +242,20 @@ affine changes of variables:
   \[
     u \sim (1, x_1, x_2, h), \qquad h \in \mathbb{R}[x_1,x_2]_2^{\mathrm{hom}}.
   \]
-  This branch is now formalized at the representative level. The kernel family
-  is:
+  More strongly, this branch no longer needs exact normalization to that
+  representative. It suffices that $1,x_1,x_2 \in W$. The kernel family is:
   if $h_0 = x_1 a + x_2 b$ with $a,b$ linear, then
   \[
-    w = (-h_0, a, b, 0), \qquad A_u(w)=0,\qquad \sigma(w)=h_0^2 + a^2 + b^2.
+    w^{\mathrm{raw}}
+    =
+    \operatorname{rel}(-c_0,h_0)+\operatorname{rel}(c_1,a)+\operatorname{rel}(c_2,b),
   \]
-  The corrected square has degree at most $3$, so every quadratic square is in
-  $\operatorname{im}(A_u)+\operatorname{cone}(\sigma(\ker A_u))$ after one
-  explicit kernel correction.
+  where $\sum_i c_{0,i}u_i = 1$, $\sum_i c_{1,i}u_i = x_1$, and
+  $\sum_i c_{2,i}u_i = x_2$. After scaling by
+  $\bigl(\sqrt{\sum_i c_{0,i}^2}\bigr)^{-1}$, the corrected square has degree
+  at most $3$, so every quadratic square is in
+  $\operatorname{im}(A_u)+\operatorname{cone}(\sigma(\ker A_u))$ without
+  further normalization data.
 \item $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 2$, common-factor case:
   \[
     u \sim (x_1, x_2, x_1^2, x_1 x_2).
@@ -509,24 +515,32 @@ matches those missing classes via
   \sigma(w_\ell) \equiv c^2 + 2cd\,x_2 \pmod{\operatorname{im}(A_u)}.
 \]
 
-The generic span-three representative is now complete as well in
-\texttt{TernaryQuarticProof/RepresentativeSpanThree.lean}. For
+The span-three file now goes beyond the representative
 \[
-  u = (1,x_1,x_2,h),
+  u = (1,x_1,x_2,h).
 \]
-the formalized kernel direction attached to a quadratic factor
-$q=q_{\le 1}+q_{\mathrm{hom}}$ is
+It proves an abstract theorem: whenever an admissible rank-$4$ factor $u$
+contains $1,x_1,x_2$ in its span, every SOCP at $u$ has zero residual. The raw
+kernel direction attached to a quadratic factor $q=q_{\le 1}+q_{\mathrm{hom}}$
+is built from the coefficient vectors for $1,x_1,x_2$:
 \[
-  w_q = (-q_{\mathrm{hom}},a,b,0), \qquad q_{\mathrm{hom}} = x_1 a + x_2 b.
+  w_q^{\mathrm{raw}}
+  =
+  \operatorname{rel}(-c_0,q_{\mathrm{hom}})
+  + \operatorname{rel}(c_1,a)
+  + \operatorname{rel}(c_2,b),
+  \qquad q_{\mathrm{hom}} = x_1 a + x_2 b.
 \]
-The key proved identity is that
+After scaling by $\bigl(\sqrt{\sum_i c_{0,i}^2}\bigr)^{-1}$, the corrected
+square
 \[
   q^2 - \sigma(w_q)
 \]
 has total degree at most $3$, so it lies in $\operatorname{im}(A_u)$ via the
-coordinates $1,x_1,x_2$. Summing these cubic image terms over an SOS
-decomposition gives a full representative-level no-spurious-SOCP theorem for
-the whole $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 3$ branch.
+same span relations. Summing these cubic image terms over an SOS decomposition
+gives a full no-spurious-SOCP theorem for the whole
+$\dim(W \cap \mathbb{R}[x]_{\le 1}) = 3$ branch without any exact
+normalization.
 
 \section*{Open Subgoals}
 \begin{itemize}
@@ -534,9 +548,9 @@ the whole $\dim(W \cap \mathbb{R}[x]_{\le 1}) = 3$ branch.
 constant-containing $\dim = 2$ branch, reducing a general annihilator
 $a x_1^2 + b x_1x_2 + c x_2^2$ to the already-formalized rank-$13$,
 rank-$14$, or rank-$15$ mixed-affine representatives.
-\item Formalize the low-degree-part orthogonal adaptation that turns a general
-independent admissible factor into the exact normal-form equation required by
-\texttt{RepresentativeTransport.lean}.
+\item Package the remaining normalization/classification data into the exact
+transport statement required by \texttt{RepresentativeTransport.lean} for the
+unresolved $\dim = 2$ cases.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

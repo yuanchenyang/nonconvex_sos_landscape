@@ -188,51 +188,63 @@ representative also has zero residual.
 
 \medskip
 \noindent
-\textbf{Formalized generic span-three representative.} The representative
+\textbf{Formalized span-three branch.} The representative
 \[
   u_{\mathrm{span3}} = (1, x_1, x_2, h),
 \]
-with arbitrary quadratic homogeneous $h$, is now formalized in
-\texttt{TernaryQuarticProof/RepresentativeSpanThree.lean}. Writing any
-quadratic polynomial as
+with arbitrary quadratic homogeneous $h$, is still formalized directly in
+\texttt{TernaryQuarticProof/RepresentativeSpanThree.lean}. But the file now
+proves a stronger abstract theorem: for any admissible rank-$4$ factor $u$, if
+there exist coefficient vectors $c_0,c_1,c_2 \in \mathbb{R}^4$ with
 \[
-  q = q_{\le 1} + q_{\mathrm{hom}},
+  \sum_i c_{0,i}u_i = 1,\qquad
+  \sum_i c_{1,i}u_i = x_1,\qquad
+  \sum_i c_{2,i}u_i = x_2,
 \]
-where $q_{\le 1}$ has degree at most $1$ and $q_{\mathrm{hom}}$ is homogeneous
-of degree $2$, one defines the kernel direction
+then every SOCP at $u$ has zero residual. Thus the whole
+$\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1})=3$ branch is now solved without any
+exact orthogonal normalization to a rigid representative.
+
+Writing a quadratic factor as
 \[
-  w_q = (-q_{\mathrm{hom}}, a, b, 0),
-  \qquad q_{\mathrm{hom}} = x_1 a + x_2 b,
+  q = q_{\le 1} + q_{\mathrm{hom}}, \qquad
+  q_{\mathrm{hom}} = x_1 a + x_2 b,
 \]
-with $a,b$ linear. Then
+with $a,b$ linear, the proof first shows that every cubic lies in
+$\operatorname{im}(A_u)$ from the span relations above. It then builds the raw
+kernel direction
 \[
-  A_{u_{\mathrm{span3}}}(w_q)=0,
-  \qquad
-  \sigma(w_q)=q_{\mathrm{hom}}^2 + a^2 + b^2.
+  w_q^{\mathrm{raw}}
+  =
+  \operatorname{rel}(-c_0,q_{\mathrm{hom}})
+  + \operatorname{rel}(c_1,a)
+  + \operatorname{rel}(c_2,b),
 \]
-The crucial identity is
+which satisfies $A_u(w_q^{\mathrm{raw}})=0$. Its quartic part is
+\[
+  \sigma(w_q^{\mathrm{raw}})_{\deg 4}
+  =
+  \Bigl(\sum_i c_{0,i}^2\Bigr) q_{\mathrm{hom}}^2,
+\]
+so after scaling by
+\[
+  \alpha = \Bigl(\sqrt{\sum_i c_{0,i}^2}\Bigr)^{-1}
+\]
+one gets a kernel vector $w_q=\alpha\, w_q^{\mathrm{raw}}$ for which
 \[
   q^2 - \sigma(w_q)
-  =
-  q_{\le 1}^2 + q_{\le 1}q_{\mathrm{hom}} + q_{\mathrm{hom}}q_{\le 1}
-  - a^2 - b^2,
 \]
-whose total degree is at most $3$. Since every cubic lies in
-$\operatorname{im}(A_{u_{\mathrm{span3}}})$ through the coordinates
-$1,x_1,x_2$, every quadratic square admits an admissible decomposition
-\[
-  q^2 \in \operatorname{im}(A_{u_{\mathrm{span3}}}) +
-  \sigma(\ker A_{u_{\mathrm{span3}}}).
-\]
-Summing these identities over an SOS decomposition of $p$ and using the new
-indexed-family certificate in \texttt{Certificate.lean} yields
-$r(u_{\mathrm{span3}},p)=0$ for every SOCP at this representative.
+has total degree at most $3$. Summing these cubic image terms over an SOS
+decomposition of $p$ and using the indexed-family certificate in
+\texttt{Certificate.lean} yields $r(u,p)=0$ for every SOCP in this branch.
 
 \section*{Normalization Target}
 The main unresolved issue is no longer the representative algebra above. It is
-the classification step that shows every independent nonsurjective rank-$4$
-factor is equivalent, after affine variable changes and orthogonal mixing of
-the four coordinates, to one of the already-formalized representatives.
+the remaining normalization/classification step for the branches not already
+covered by the abstract span-three theorem, namely the independent
+constant-containing $\dim = 2$ configurations that should reduce, after affine
+variable changes and orthogonal mixing of the four coordinates, to one of the
+already-formalized low-affine or mixed-affine representatives.
 
 \medskip
 \noindent
@@ -248,9 +260,9 @@ equivalence, affine changes of variables preserve positive-definiteness,
 admissibility, SOS quarticity, FOCP, SOCP, and the condition $r(u,p)=0$.
 
 What still remains is the classification lemma producing the specific affine
-and orthogonal normalization data for an arbitrary rank-$4$ factor. Once that
-data exists, the representative theorems can be pulled back through these two
-transport layers.
+and orthogonal normalization data for those remaining rank-$4$ factors. Once
+that data exists, the representative theorems can be pulled back through these
+two transport layers.
 
 \medskip
 \noindent
@@ -361,11 +373,14 @@ At the level of a paper proof, the present candidate argument is:
 apply the already-formalized constant-relation lemma.
 \item Otherwise let $W = \operatorname{span}(u_1,u_2,u_3,u_4)$ and classify by
 the dimension of $W \cap \mathbb{R}[x_1,x_2]_{\le 1}$.
-\item Use orthogonal changes in the factor coordinates together with affine
-changes of variables in $(x_1,x_2)$ to reduce the stable branches to the
-following models:
+\item If $\dim(W \cap \mathbb{R}[x_1,x_2]_{\le 1}) = 3$, choose coefficient
+  vectors spanning $1,x_1,x_2$ inside $W$ and apply the abstract theorem
+  \texttt{residual\_eq\_zero\_of\_contains\_aff1}. No exact representative
+  normalization is needed in this branch.
+\item Otherwise use orthogonal changes in the factor coordinates together with
+  affine changes of variables in $(x_1,x_2)$ to reduce the remaining stable
+  branches to the following models:
   \[
-    (1,x_1,x_2,h),\quad
     (x_1,x_2,x_1^2,x_1x_2),\quad
     (x_1,x_2,x_1^2,x_2^2),\quad
     (1,x_1^2,x_1x_2,x_2^2),\quad
@@ -377,10 +392,6 @@ following models:
   \]
   using explicit kernel families:
   \begin{itemize}
-  \item $(1,x_1,x_2,h)$:
-    \[
-      w=(-h_0,a,b,0),\qquad h_0=x_1a+x_2b;
-    \]
   \item $(x_1,x_2,x_1^2,x_1x_2)$:
     \[
       w_c=(-2x_2,x_1,0,1),\qquad
@@ -425,9 +436,9 @@ $\sigma(u)=p$.
 
 \noindent
 The main obstacle to a finished Lean proof is now precise: complete the
-normalization/classification of the mixed-affine constant-containing
-$\dim = 2$ branch, then translate the representative kernel formulas above into
-Lean and assemble the final theorem.
+normalization/classification of the constant-containing $\dim = 2$ branch, then
+assemble the final theorem from the already-formalized representative and
+abstract branch theorems.
 
 \medskip
 \noindent
