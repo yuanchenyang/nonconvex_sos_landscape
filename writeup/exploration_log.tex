@@ -1546,6 +1546,26 @@ orthogonal \(2\times 2\) rotation of the last two factor coordinates, turning
 \texttt{x0sqTail\_m02\_nonzero} or \texttt{x0sqTail\_m02\_zero} theorem
 according to \(\operatorname{coeff}_{x_1^2}(q_P)\).
 
+The next Lean round compresses the determinant-zero extracted-line branch one
+step further. I added
+\texttt{residual\_eq\_zero\_of\_const\_x0\_mixedAffineTailHomLine\_origDetZero\_cases}
+and its equivariant/\(\operatorname{mix}(M^\top,e^{-1}\!\cdot u)\)-transport
+wrappers. So the classification layer no longer has to pre-classify the
+determinant-zero branch into cross, \(x_2^2\)-type, diagonal, or pure
+\(x_0^2\) outputs. It is now enough to produce exact normalized coordinates
+\((1,x_0,q_2,q_3)\) with zero constant/\(x_0\) coefficients, the original
+determinant-zero relation for \((q_2,q_3)\), and a nonzero \(x_1\)-tail in
+\(q_3\). Lean then forms the extracted line
+\[
+  H(q_2,q_3)=\texttt{mixedAffineTailHomLine}(q_2,q_3)
+\]
+internally and performs the whole coarse split itself: if \(H=0\), it closes
+by a direct constant relation; if \(H\) is cross-like, diagonal/\(x_2^2\)-like,
+or pure \(x_0^2\), it dispatches to the already-formalized theorem for that
+case. So the determinant-zero mixed-affine side now really asks only for one
+exact normalized tailed pair, not for a separately normalized extracted-line
+output.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
