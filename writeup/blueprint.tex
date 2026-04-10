@@ -811,13 +811,28 @@ planes
 \]
 So the final normalization step no longer needs exact representative
 equalities in those low-affine cases either: it only has to recover the linear
-part and the plane type. The only low-affine branch still waiting for the same
-upgrade is the linear model
+part and the plane type.
+
+\medskip
+\noindent
+The linear low-affine model has now been pushed one step further as well. The
+same file no longer uses only the rigid representative
 \[
   (x_1,x_1^2,x_1x_2,x_2^2),
 \]
-which should ultimately be recast as a basis-invariant theorem for one linear
-relation and three independent homogeneous quadratic relations.
+but proves the exact-relation theorem for any admissible factor $u$ with
+coefficient vectors satisfying
+\[
+  \sum_i c_{0,i}u_i = x_1,\qquad
+  \sum_i c_{1,i}u_i = x_1^2,\qquad
+  \sum_i c_{2,i}u_i = x_1x_2,\qquad
+  \sum_i c_{3,i}u_i = x_2^2.
+\]
+The image reduction is now abstract at that level, and the kernel-line
+argument has been lifted to the same exact relation data. So the remaining
+upgrade is narrower: turn three independent homogeneous quadratic relations
+into those exact canonical relations by a basis-invariant $3\times 3$
+reconstruction step.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and

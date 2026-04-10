@@ -786,10 +786,16 @@ explicit relations to \(x_1,x_2\) and any invertible basis of
 \(\operatorname{span}(x_1^2,x_1x_2)\), Lean reconstructs the exact canonical
 relations and reuses the representative image-plus-kernel certificates. So the
 final normalization step no longer needs exact low-affine representative
-equalities in those two branches either. The only low-affine branch still
-waiting for the same treatment is the linear model, which should become a
-basis-invariant theorem for one linear relation and three independent
-homogeneous quadratic relations.
+equalities in those two branches either.
+
+The linear low-affine branch has now advanced part of the same way. The file
+\texttt{RepresentativeLowAffine.lean} now proves an exact-relation theorem for
+the model \((x_1,x_1^2,x_1x_2,x_2^2)\): if an admissible factor admits
+relations to \(x_1\), \(x_1^2\), \(x_1x_2\), and \(x_2^2\), then the old
+representative image and kernel-line argument already closes the SOCP branch.
+So the remaining gap there is no longer the kernel algebra. It is the
+basis-invariant \(3\times 3\) homogeneous-quadratic reconstruction that should
+recover those exact canonical relations from an arbitrary independent triple.
 
 The surjective mixed-affine layer is broader now as well. The same file now
 contains a fixed split-diagonal transport lemma for planes of the form
@@ -818,9 +824,9 @@ that branch by a fixed transport step.
 constant-containing $\dim = 2$ classification lemma, reducing a general
 annihilator $a x_1^2 + b x_1x_2 + c x_2^2$ to one of the already-formalized
 rank-$13$, rank-$14$, or rank-$15$ mixed-affine plane types.
-\item Lift the remaining linear low-affine representative proof to a
-basis-invariant theorem for one linear relation and three independent
-homogeneous quadratic relations.
+\item Finish the linear low-affine upgrade by turning the new exact-relation
+theorem into a basis-invariant \(3\times 3\) homogeneous-quadratic theorem for
+one linear relation and three independent homogeneous quadratic relations.
 \item Extract from a general admissible factor the coefficient vectors and
 annihilator data needed to feed that classification into the existing
 transport lemmas; for both rank-$14$ and rank-$13$ nonsurjective branches this

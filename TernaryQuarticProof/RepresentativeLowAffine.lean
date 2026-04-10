@@ -1873,6 +1873,169 @@ private theorem monomial_image_linearAffineRep
                     _ = (MvPolynomial.C a * x0 ^ e0) * x1 ^ e1 := by
                           simp [hxpow, hypow, mul_assoc]
 
+theorem quartic_in_image_of_relations_x0_x0sq_x0x1_x1sq_of_coeff_m00_m01_zero
+    {u : RankFourVec}
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0 ^ 2)
+    (h2 : ∑ i : Fin 4, c2 i • u i = x0 * x1)
+    (h3 : ∑ i : Fin 4, c3 i • u i = x1 ^ 2)
+    {p : Poly} (hp : IsQuartic p)
+    (h00 : MvPolynomial.coeff m00 p = 0)
+    (h01 : MvPolynomial.coeff m01 p = 0) :
+    InAdmissibleImage u p := by
+  classical
+  rw [← MvPolynomial.support_sum_monomial_coeff p]
+  let P : Finset (Fin 2 →₀ ℕ) → Prop := fun S =>
+    (∀ s ∈ S, s ∈ p.support) →
+      InAdmissibleImage u
+        (∑ s ∈ S, MvPolynomial.monomial s (MvPolynomial.coeff s p))
+  have hP : P p.support := by
+    refine Finset.induction_on p.support ?_ ?_
+    · intro hsub
+      simpa using inAdmissibleImage_zero u
+    · intro s ss hsnot ih hsub
+      rw [Finset.sum_insert hsnot]
+      refine inAdmissibleImage_add u ?_ (ih ?_)
+      · let e0 := s 0
+        let e1 := s 1
+        have hsum : s.sum (fun _ e => e) = s 0 + s 1 := by
+          rw [Finsupp.sum_fintype _ _ (fun _ => rfl), Fin.sum_univ_two]
+        have hsdeg : e0 + e1 ≤ 4 := by
+          have hsdeg0 : s.sum (fun _ e => e) ≤ 4 :=
+            (MvPolynomial.le_totalDegree (hsub s (by simp))).trans hp
+          simpa [e0, e1, hsum] using hsdeg0
+        have hscoeff : MvPolynomial.coeff s p ≠ 0 :=
+          MvPolynomial.mem_support_iff.mp (hsub s (by simp))
+        have hsne0 : s ≠ m00 := by
+          intro hs
+          apply hscoeff
+          simpa [hs] using h00
+        have hsne1 : s ≠ m01 := by
+          intro hs
+          apply hscoeff
+          simpa [hs] using h01
+        by_cases hsmall : e0 + e1 ≤ 3
+        · by_cases hx1 : 1 ≤ e0
+          · have himg :=
+              inAdmissibleImage_of_relation_mul_low
+                (u := u) (c := c0) (r := x0)
+                (q := (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 1)) * x1 ^ e1)
+                h0 (isQuadratic_C_mul_pow_pow (MvPolynomial.coeff s p) (e0 - 1) e1 (by omega))
+            rw [monomial_fin2_eq]
+            simp [e0, e1] at himg ⊢
+            have hmul :
+                x0 * ((MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 1)) * x1 ^ e1) =
+                  (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1 := by
+              have hxpow : x0 * x0 ^ (e0 - 1) = x0 ^ e0 := by
+                simpa [Nat.sub_add_cancel hx1] using (pow_succ' x0 (e0 - 1)).symm
+              calc
+                x0 * ((MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 1)) * x1 ^ e1)
+                    = MvPolynomial.C (MvPolynomial.coeff s p) * (x0 * x0 ^ (e0 - 1)) * x1 ^ e1 := by
+                        ring_nf
+                _ = (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1 := by
+                      simp [hxpow, mul_assoc]
+            simpa [e0, e1, hmul] using himg
+          · have hy2 : 2 ≤ e1 := by
+              by_contra hy2
+              have hx0 : e0 = 0 := by omega
+              have hy0 : e1 = 0 ∨ e1 = 1 := by omega
+              rcases hy0 with hy0 | hy1
+              · apply hsne0
+                ext i
+                fin_cases i <;> simp [m00, e0, e1, hx0, hy0]
+              · apply hsne1
+                ext i
+                fin_cases i <;> simp [m01, e0, e1, hx0, hy1]
+            have hs2 : e0 + (e1 - 2) ≤ 2 := by omega
+            have himg :=
+              inAdmissibleImage_of_relation_mul_low
+                (u := u) (c := c3) (r := x1 ^ 2)
+                (q := (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ (e1 - 2))
+                h3 (isQuadratic_C_mul_pow_pow (MvPolynomial.coeff s p) e0 (e1 - 2) hs2)
+            rw [monomial_fin2_eq]
+            simp [e0, e1] at himg ⊢
+            have hmul :
+                x1 ^ 2 * ((MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ (e1 - 2)) =
+                  (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1 := by
+              calc
+                x1 ^ 2 * ((MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ (e1 - 2))
+                    = MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0 * (x1 ^ 2 * x1 ^ (e1 - 2)) := by
+                        ring_nf
+                _ = (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1 := by
+                      rw [← pow_add, Nat.add_sub_of_le hy2]
+            simpa [e0, e1, hmul] using himg
+        · by_cases hx2 : 2 ≤ e0
+          · have hs2 : (e0 - 2) + e1 ≤ 2 := by omega
+            have himg :=
+              inAdmissibleImage_of_relation_mul_low
+                (u := u) (c := c1) (r := x0 ^ 2)
+                (q := (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 2)) * x1 ^ e1)
+                h1 (isQuadratic_C_mul_pow_pow (MvPolynomial.coeff s p) (e0 - 2) e1 hs2)
+            rw [monomial_fin2_eq]
+            simp [e0, e1] at himg ⊢
+            have hmul :
+                x0 ^ 2 * ((MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 2)) * x1 ^ e1) =
+                  (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1 := by
+              calc
+                x0 ^ 2 * ((MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 2)) * x1 ^ e1)
+                    = MvPolynomial.C (MvPolynomial.coeff s p) * (x0 ^ 2 * x0 ^ (e0 - 2)) * x1 ^ e1 := by
+                        ring_nf
+                _ = (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1 := by
+                      rw [← pow_add, Nat.add_sub_of_le hx2]
+            simpa [e0, e1, hmul] using himg
+          · by_cases h0e : e0 = 0
+            · have hy4 : e1 = 4 := by omega
+              have himg :=
+                inAdmissibleImage_of_relation_mul_low
+                  (u := u) (c := c3) (r := x1 ^ 2)
+                  (q := (MvPolynomial.C (MvPolynomial.coeff s p) * x1 ^ 2))
+                  h3 (by
+                    simpa [x0, x1] using
+                      isQuadratic_C_mul_pow_pow (MvPolynomial.coeff s p) 0 2 (by norm_num))
+              rw [monomial_fin2_eq]
+              have hs0' : s 0 = 0 := by simpa [e0] using h0e
+              have hs1' : s 1 = 4 := by simpa [e1] using hy4
+              rw [hs0', hs1']
+              simp at himg ⊢
+              have hmul :
+                  x1 ^ 2 * (MvPolynomial.C (MvPolynomial.coeff s p) * x1 ^ 2) =
+                    MvPolynomial.C (MvPolynomial.coeff s p) * x1 ^ 4 := by
+                calc
+                  x1 ^ 2 * (MvPolynomial.C (MvPolynomial.coeff s p) * x1 ^ 2)
+                      = MvPolynomial.C (MvPolynomial.coeff s p) * (x1 ^ 2 * x1 ^ 2) := by
+                          ring_nf
+                  _ = MvPolynomial.C (MvPolynomial.coeff s p) * x1 ^ 4 := by
+                        rw [← pow_add]
+              simpa [hmul] using himg
+            · have hx1 : 1 ≤ e0 := Nat.succ_le_iff.mpr (Nat.pos_of_ne_zero h0e)
+              have hy1 : 1 ≤ e1 := by omega
+              have hs2 : (e0 - 1) + (e1 - 1) ≤ 2 := by omega
+              have himg :=
+                inAdmissibleImage_of_relation_mul_low
+                  (u := u) (c := c2) (r := x0 * x1)
+                  (q := (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 1)) * x1 ^ (e1 - 1))
+                  h2 (isQuadratic_C_mul_pow_pow (MvPolynomial.coeff s p) (e0 - 1) (e1 - 1) hs2)
+              rw [monomial_fin2_eq]
+              simp [e0, e1] at himg ⊢
+              have hmul :
+                  (x0 * x1) * ((MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 1)) * x1 ^ (e1 - 1)) =
+                    (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1 := by
+                have hxpow : x0 * x0 ^ (e0 - 1) = x0 ^ e0 := by
+                  simpa [Nat.sub_add_cancel hx1] using (pow_succ' x0 (e0 - 1)).symm
+                have hypow : x1 * x1 ^ (e1 - 1) = x1 ^ e1 := by
+                  simpa [Nat.sub_add_cancel hy1] using (pow_succ' x1 (e1 - 1)).symm
+                calc
+                  (x0 * x1) * ((MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ (e0 - 1)) * x1 ^ (e1 - 1))
+                      = MvPolynomial.C (MvPolynomial.coeff s p) * (x0 * x0 ^ (e0 - 1)) * (x1 * x1 ^ (e1 - 1)) := by
+                          ring_nf
+                  _ = (MvPolynomial.C (MvPolynomial.coeff s p) * x0 ^ e0) * x1 ^ e1 := by
+                        simp [hxpow, hypow, mul_assoc]
+              simpa [e0, e1, hmul] using himg
+      · intro t ht
+        exact hsub t (by simp [ht])
+  exact hP (fun s hs => hs)
+
 theorem quartic_in_image_linearAffineRep_of_coeff_m00_m01_zero
     {p : Poly} (hp : IsQuartic p)
     (h00 : MvPolynomial.coeff m00 p = 0)
@@ -2265,6 +2428,107 @@ theorem coeff_m01_sq_of_quadratic_eq (q : Poly) (hq : IsQuadratic q) :
       2 * MvPolynomial.coeff m00 q * MvPolynomial.coeff m01 q :=
   coeff_m01_sq_of_quadratic q hq
 
+private theorem coeff_m01_x1_mul_linearAffineLine (c d : ℝ) :
+    MvPolynomial.coeff m01 (x1 * linearAffineLine c d) = c := by
+  have hrewrite :
+      x1 * linearAffineLine c d = MvPolynomial.C c * x1 + MvPolynomial.C d * x1 ^ 2 := by
+    unfold linearAffineLine
+    ring
+  rw [hrewrite, MvPolynomial.coeff_add]
+  have hcx1 : MvPolynomial.coeff m01 (MvPolynomial.C c * x1 : Poly) = c := by
+    rw [show x1 = MvPolynomial.monomial m01 (1 : ℝ) by
+      simp [x1, m01, MvPolynomial.monomial_eq]]
+    rw [MvPolynomial.coeff_mul_monomial']
+    have hsub : m01 - m01 = m00 := by
+      ext i
+      fin_cases i <;> simp [m00, m01]
+    rw [if_pos le_rfl, hsub]
+    simp [m00]
+  have hdx1 : MvPolynomial.coeff m01 (MvPolynomial.C d * x1 ^ 2 : Poly) = 0 := by
+    rw [show (x1 ^ 2 : Poly) = MvPolynomial.monomial m02 (1 : ℝ) by
+      simp [x1, m02, MvPolynomial.monomial_eq]]
+    rw [MvPolynomial.coeff_mul_monomial']
+    have hnot : ¬ m02 ≤ m01 := by
+      intro h
+      have := h 1
+      simp [m01, m02] at this
+    rw [if_neg hnot]
+  simp [hcx1, hdx1]
+
+private def relationLinearAffineKerLine
+    (c0 c2 : Fin 4 → ℝ) (c d : ℝ) : RankFourVec :=
+  relationDirection (-c0) (x1 * linearAffineLine c d) +
+    relationDirection c2 (linearAffineLine c d)
+
+private theorem relationLinearAffineKerLine_admissible
+    (c0 c2 : Fin 4 → ℝ) (c d : ℝ) :
+    IsAdmissibleDirection (relationLinearAffineKerLine c0 c2 c d) := by
+  refine isAdmissibleDirection_add
+    (relationDirection_admissible (-c0) (isQuadratic_x1_mul_linearAffineLine c d))
+    (relationDirection_admissible c2 (isQuadratic_linearAffineLine c d))
+
+private theorem relationLinearAffineKerLine_inKer
+    {u : RankFourVec} {c0 c2 : Fin 4 → ℝ} {c d : ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    (h2 : ∑ i : Fin 4, c2 i • u i = x0 * x1) :
+    InAdmissibleKer u (relationLinearAffineKerLine c0 c2 c d) := by
+  refine ⟨relationLinearAffineKerLine_admissible c0 c2 c d, ?_⟩
+  rw [relationLinearAffineKerLine, A_add_right_local, A_relationDirection, A_relationDirection]
+  simp [Pi.neg_apply, h0, h2]
+  ring_nf
+
+private theorem coeff_m00_relationLinearAffineKerLine
+    (c0 c2 : Fin 4 → ℝ) (c d : ℝ) :
+    MvPolynomial.coeff m00 (sigma (relationLinearAffineKerLine c0 c2 c d)) =
+      (∑ i : Fin 4, (c2 i) ^ 2) * c ^ 2 := by
+  have hcoord0 : ∀ i : Fin 4,
+      MvPolynomial.coeff m00 (relationLinearAffineKerLine c0 c2 c d i) = c2 i * c := by
+    intro i
+    rw [relationLinearAffineKerLine, Pi.add_apply, relationDirection, relationDirection,
+      Pi.neg_apply, MvPolynomial.coeff_add, MvPolynomial.coeff_smul, MvPolynomial.coeff_smul,
+      coeff_m00_x1_mul_linearAffineLine_zero, coeff_m00_linearAffineLine]
+    simp [smul_eq_mul]
+  have hcoord : ∀ i : Fin 4,
+      MvPolynomial.coeff m00 ((relationLinearAffineKerLine c0 c2 c d i) ^ 2) =
+        (c2 i * c) ^ 2 := by
+    intro i
+    rw [coeff_m00_sq, hcoord0]
+  rw [sigma, Fin.sum_univ_four]
+  repeat' rw [MvPolynomial.coeff_add]
+  rw [hcoord 0, hcoord 1, hcoord 2, hcoord 3]
+  simp [Fin.sum_univ_four]
+  ring
+
+private theorem coeff_m01_relationLinearAffineKerLine
+    (c0 c2 : Fin 4 → ℝ) (c d : ℝ) :
+    MvPolynomial.coeff m01 (sigma (relationLinearAffineKerLine c0 c2 c d)) =
+      2 * c * ((d * ∑ i : Fin 4, (c2 i) ^ 2) - c * ∑ i : Fin 4, c0 i * c2 i) := by
+  have hcoord0 : ∀ i : Fin 4,
+      MvPolynomial.coeff m00 (relationLinearAffineKerLine c0 c2 c d i) = c2 i * c := by
+    intro i
+    rw [relationLinearAffineKerLine, Pi.add_apply, relationDirection, relationDirection,
+      Pi.neg_apply, MvPolynomial.coeff_add, MvPolynomial.coeff_smul, MvPolynomial.coeff_smul,
+      coeff_m00_x1_mul_linearAffineLine_zero, coeff_m00_linearAffineLine]
+    simp [smul_eq_mul]
+  have hcoord1 : ∀ i : Fin 4,
+      MvPolynomial.coeff m01 (relationLinearAffineKerLine c0 c2 c d i) = c2 i * d - c0 i * c := by
+    intro i
+    rw [relationLinearAffineKerLine, Pi.add_apply, relationDirection, relationDirection,
+      Pi.neg_apply, MvPolynomial.coeff_add, MvPolynomial.coeff_smul, MvPolynomial.coeff_smul,
+      coeff_m01_x1_mul_linearAffineLine, coeff_m01_linearAffineLine]
+    simp [smul_eq_mul, sub_eq_add_neg, add_comm, mul_comm]
+  have hcoord : ∀ i : Fin 4,
+      MvPolynomial.coeff m01 ((relationLinearAffineKerLine c0 c2 c d i) ^ 2) =
+        2 * (c2 i * c) * (c2 i * d - c0 i * c) := by
+    intro i
+    rw [coeff_m01_sq_of_quadratic_eq _ ((relationLinearAffineKerLine_admissible c0 c2 c d) i),
+      hcoord0, hcoord1]
+  rw [sigma, Fin.sum_univ_four]
+  repeat' rw [MvPolynomial.coeff_add]
+  rw [hcoord 0, hcoord 1, hcoord 2, hcoord 3]
+  simp [Fin.sum_univ_four]
+  ring
+
 theorem coeff_m00_sigma_linearAffineKerLine (c d : ℝ) :
     MvPolynomial.coeff m00 (sigma (linearAffineKerLine c d)) = c ^ 2 := by
   have hx :
@@ -2379,5 +2643,157 @@ theorem residual_eq_zero_linearAffineRep
     subst hw'
     exact hwker
   · simp [w, sub_eq_add_neg]
+
+theorem residual_eq_zero_of_relations_x0_x0sq_x0x1_x1sq
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0 ^ 2)
+    (h2 : ∑ i : Fin 4, c2 i • u i = x0 * x1)
+    (h3 : ∑ i : Fin 4, c3 i • u i = x1 ^ 2)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  rcases hp with ⟨hpquartic, k, qs, hqdeg, hpq⟩
+  let s0 : ℝ := ∑ i : Fin k, (MvPolynomial.coeff m00 (qs i)) ^ 2
+  let s1 : ℝ := ∑ i : Fin k, MvPolynomial.coeff m00 (qs i) * MvPolynomial.coeff m01 (qs i)
+  let alpha : ℝ := ∑ i : Fin 4, (c2 i) ^ 2
+  let beta : ℝ := ∑ i : Fin 4, c0 i * c2 i
+  let c : ℝ := Real.sqrt (s0 / alpha)
+  let d : ℝ := if hc : c = 0 then 0 else s1 / (c * alpha) + c * beta / alpha
+  let w : RankFourVec := relationLinearAffineKerLine c0 c2 c d
+  have hs0_nonneg : 0 ≤ s0 := by
+    dsimp [s0]
+    positivity
+  have hc2_ne : c2 ≠ 0 := by
+    intro hc2
+    have : (0 : Poly) = x0 * x1 := by
+      simpa [hc2] using h2
+    have hcoeff := congrArg (MvPolynomial.coeff m11) this
+    simp [coeff_m11_x0_mul_x1] at hcoeff
+  have halpha_pos : 0 < alpha := sum_sq_pos_of_ne_zero c2 hc2_ne
+  have halpha_nonneg : 0 ≤ alpha := le_of_lt halpha_pos
+  have hsdiv_nonneg : 0 ≤ s0 / alpha := by
+    exact div_nonneg hs0_nonneg halpha_nonneg
+  have hp00 : MvPolynomial.coeff m00 p = s0 := by
+    rw [hpq, MvPolynomial.coeff_sum]
+    refine Finset.sum_congr rfl ?_
+    intro i hi
+    exact coeff_m00_sq (qs i)
+  have hp01 : MvPolynomial.coeff m01 p = 2 * s1 := by
+    calc
+      MvPolynomial.coeff m01 p = ∑ i : Fin k, MvPolynomial.coeff m01 ((qs i) ^ 2) := by
+        rw [hpq, MvPolynomial.coeff_sum]
+      _ = ∑ i : Fin k, 2 * MvPolynomial.coeff m00 (qs i) * MvPolynomial.coeff m01 (qs i) := by
+          refine Finset.sum_congr rfl ?_
+          intro i hi
+          exact coeff_m01_sq_of_quadratic_eq (qs i) (hqdeg i)
+      _ = 2 * s1 := by
+          dsimp [s1]
+          rw [Finset.mul_sum]
+          refine Finset.sum_congr rfl ?_
+          intro i hi
+          ring
+  have hc_sq : c ^ 2 = s0 / alpha := by
+    dsimp [c]
+    rw [Real.sq_sqrt hsdiv_nonneg]
+  have hs1_zero_of_c_zero (hc0 : c = 0) : s1 = 0 := by
+    have hs0_zero : s0 = 0 := by
+      have : s0 / alpha = 0 := by simpa [hc0] using hc_sq.symm
+      by_contra hs0_ne
+      have hs0_pos : 0 < s0 := lt_of_le_of_ne hs0_nonneg (Ne.symm hs0_ne)
+      have hsdiv_pos : 0 < s0 / alpha := div_pos hs0_pos halpha_pos
+      linarith
+    have htermzero :=
+      (Finset.sum_eq_zero_iff_of_nonneg
+        (fun i _ => sq_nonneg (MvPolynomial.coeff m00 (qs i)))).mp hs0_zero
+    dsimp [s1]
+    refine Finset.sum_eq_zero ?_
+    intro i hi
+    have hi0 : MvPolynomial.coeff m00 (qs i) = 0 := by
+      exact sq_eq_zero_iff.mp (htermzero i (by simp))
+    simp [hi0]
+  have hwker : InAdmissibleKer u w := by
+    dsimp [w]
+    exact relationLinearAffineKerLine_inKer h0 h2
+  have hw00 : MvPolynomial.coeff m00 (sigma w) = s0 := by
+    change MvPolynomial.coeff m00 (sigma (relationLinearAffineKerLine c0 c2 c d)) = s0
+    calc
+      MvPolynomial.coeff m00 (sigma (relationLinearAffineKerLine c0 c2 c d)) = alpha * c ^ 2 := by
+        exact coeff_m00_relationLinearAffineKerLine c0 c2 c d
+      _ = alpha * (s0 / alpha) := by rw [hc_sq]
+      _ = s0 := by
+            field_simp [alpha, halpha_pos.ne']
+  have hw01 : MvPolynomial.coeff m01 (sigma w) = 2 * s1 := by
+    change MvPolynomial.coeff m01 (sigma (relationLinearAffineKerLine c0 c2 c d)) = 2 * s1
+    rw [coeff_m01_relationLinearAffineKerLine]
+    by_cases hc0 : c = 0
+    · have hs1zero : s1 = 0 := hs1_zero_of_c_zero hc0
+      simp [d, hc0, hs1zero]
+    · have halpha_ne : alpha ≠ 0 := halpha_pos.ne'
+      simp [d, hc0]
+      field_simp [hc0, halpha_ne]
+      ring
+  have hquartic_sub : IsQuartic (p - sigma w) := by
+    calc
+      (p - sigma w).totalDegree ≤ max p.totalDegree (sigma w).totalDegree := by
+        exact MvPolynomial.totalDegree_sub _ _
+      _ ≤ 4 := by
+        exact max_le hpquartic (isQuartic_sigma_of_admissible hwker.1)
+  have h00_sub : MvPolynomial.coeff m00 (p - sigma w) = 0 := by
+    rw [MvPolynomial.coeff_sub, hp00, hw00]
+    ring
+  have h01_sub : MvPolynomial.coeff m01 (p - sigma w) = 0 := by
+    rw [MvPolynomial.coeff_sub, hp01, hw01]
+    ring
+  have himg : InAdmissibleImage u (p - sigma w) :=
+    quartic_in_image_of_relations_x0_x0sq_x0x1_x1sq_of_coeff_m00_m01_zero
+      h0 h1 h2 h3 hquartic_sub h00_sub h01_sub
+  refine admissible_image_plus_cone_residual_eq_zero (B := B)
+    (u := u) (uImg := u)
+    hu hsocp
+    (imageOrthogonalResidual_self (B := B) hsocp.1) ?_
+  refine ⟨p - sigma w, {w}, himg, ?_, ?_⟩
+  · intro w' hw'
+    have hw' : w' = w := by simpa using hw'
+    subst hw'
+    exact hwker
+  · simp [w, sub_eq_add_neg]
+
+theorem residual_eq_zero_of_equiv_relations_x0_x0sq_x0x1_x1sq
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x0 ^ 2)
+    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = x0 * x1)
+    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = x1 ^ 2) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_x0sq_x0x1_x1sq
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
 end TernaryQuartic
