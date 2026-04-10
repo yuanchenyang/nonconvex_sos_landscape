@@ -16,6 +16,16 @@ remaining gap is the normalization/classification step that reduces an
 arbitrary admissible rank-$4$ factor to those representatives, followed by the
 final theorem assembly in \texttt{TernaryQuarticProof.lean}.
 
+\medskip
+\noindent
+One additional obstruction is now explicit. Orthogonal mixing acts on the
+\emph{coefficient-space} preimages of the four coordinates, not directly on the
+affine-linear polynomial space. So even when
+$W \cap \mathbb{R}[x_1,x_2]_{\le 1}$ contains the lines of $1$, $x_1$, or
+$x_2$, orthogonal mixing alone need not place those exact polynomials among the
+coordinates. This is why an affine variable-change transport layer is needed in
+addition to factor-coordinate mixing.
+
 \section*{Formalized Step}
 Let $r(u,p) = \sigma(u) - p$. The following statement is already formalized in
 \texttt{TernaryQuarticProof/Certificate.lean}.
@@ -209,6 +219,16 @@ The main unresolved issue is no longer the representative algebra above. It is
 the classification step that shows every independent nonsurjective rank-$4$
 factor is equivalent, after affine variable changes and orthogonal mixing of
 the four coordinates, to one of the already-formalized representatives.
+
+\medskip
+\noindent
+The first half of that affine-normalization layer is now formalized in
+\texttt{TernaryQuarticProof/AffineTransform.lean}: for an affine substitution
+$x \mapsto A x + b$, the induced algebra homomorphism on polynomials preserves
+the quadratic and quartic degree bounds, and it commutes with the maps
+$A_u(\cdot)$, $\sigma$, and the residual after applying the substitution
+coordinatewise. What still remains is the inverse/transport part, turning these
+degree-preserving homomorphisms into actual SOCP-preserving equivalences.
 
 \section*{Correction To The Previous Case Split}
 The earlier five-case list is not complete. The constant-containing
