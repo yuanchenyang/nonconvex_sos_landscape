@@ -1868,13 +1868,18 @@ classification data for the branches not yet reduced to a one-line interface:
 most notably the remaining low-affine extraction/classification interface,
 which now looks numerically like a split between the common-factor plane and a
 generic rank-\(14\) homogeneous plane. The latest retained Lean step toward that
-classifier is a coefficient-space helper layer in
-\texttt{RepresentativeLowAffine.lean}: the new cross-product scalars
-\texttt{lowHomQuadPlaneA/B/C} and their two relation lemmas formalize the
-canonical annihilator line of a homogeneous quadratic plane directly in Lean.
-The unsuccessful larger dispatcher attempt was backed out rather than left as a
-non-terminating proof script. The remaining task is to build the actual generic
-rank-\(14\) theorem on top of that helper layer, and then
+classifier is no longer just the coefficient-space helper layer in
+\texttt{RepresentativeLowAffine.lean}. On top of the cross-product scalars
+\texttt{lowHomQuadPlaneA/B/C} and their relation lemmas, the file now proves a
+first usable normalization chart:
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_crossDet\_zero}
+and its transport wrappers reduce any homogeneous low-affine plane whose
+\((m_{11},m_{02})\)-minor vanishes but whose \((m_{20},m_{02})\)-minor is
+nonzero to the already-formalized \(\operatorname{span}(x_0^2,x_1^2)\) plane
+after an internal \(x_1\)-shear. The unsuccessful larger dispatcher attempt was
+still backed out rather than left as a non-terminating proof script. The
+remaining task is to cover the other homogeneous low-affine charts on top of
+that helper layer, and then
 then assemble the root declaration in
 \texttt{TernaryQuarticProof.lean}. The admissible image-plus-cone certificate
 and the representative/plane-level no-spurious-SOCP theorems are already in

@@ -1831,9 +1831,18 @@ satisfy on both quadratics in the plane. Those are the cross-product scalars of
 the \(2 \times 3\) homogeneous coefficient matrix, and they encode the
 canonical annihilator line of the plane. The larger dispatcher theorem itself
 was backed out after repeated heartbeat blowups, so the repository stays
-build-clean; the next step is to rebuild the generic rank-\(14\) theorem on top
-of these helpers in smaller pieces. No new Julia experiments were needed for
-this round.
+build-clean.
+
+I then rebuilt a first stable piece of that missing classifier on top of the
+helper layer instead of retrying the whole dispatcher. The file now proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_crossDet\_zero},
+together with the matching equivariant and \texttt{linearPair} wrappers. This
+covers the homogeneous low-affine chart where the
+\((m_{11},m_{02})\)-minor vanishes and the \((m_{20},m_{02})\)-minor is
+nonzero: Lean performs the needed \(x_1\)-shear internally, kills the cross
+coefficients on both quadratics, and reduces the branch to the already solved
+\(\operatorname{span}(x_0^2,x_1^2)\) plane. No new Julia experiments were
+needed for this round.
 
 \section*{Open Subgoals}
 \begin{itemize}
