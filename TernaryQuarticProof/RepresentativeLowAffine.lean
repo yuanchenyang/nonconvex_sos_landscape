@@ -1,5 +1,6 @@
 import TernaryQuarticProof.QuadraticNormalForm
 import TernaryQuarticProof.AffineSocpTransform
+import TernaryQuarticProof.MixedAffineNormalization
 import TernaryQuarticProof.RepresentativeTransport
 import TernaryQuarticProof.RepresentativeMixedAffine
 import TernaryQuarticProof.RepresentativeSurjective
@@ -19,6 +20,14 @@ def coprimeAffineRep : RankFourVec := ![x0, x1, x0 ^ 2, x1 ^ 2]
 private theorem monomial_fin2_eq (s : Fin 2 →₀ ℕ) (a : ℝ) :
     MvPolynomial.monomial s a = (MvPolynomial.C a * x0 ^ s 0) * x1 ^ s 1 := by
   simp [x0, x1, MvPolynomial.monomial_eq, mul_assoc]
+
+private theorem relation_map
+    (φ : Poly →ₐ[ℝ] Poly)
+    {u : RankFourVec} {c : Fin 4 → ℝ} {r : Poly}
+    (hc : ∑ i : Fin 4, c i • u i = r) :
+    ∑ i : Fin 4, c i • mapVec φ u i = φ r := by
+  have hmap := congrArg φ hc
+  simpa [mapVec, Fin.sum_univ_four] using hmap
 
 private theorem isQuadratic_C_mul_pow_pow (a : ℝ) (m n : ℕ) (h : m + n ≤ 2) :
     IsQuadratic ((MvPolynomial.C a * x0 ^ m) * x1 ^ n) := by
@@ -625,6 +634,62 @@ theorem residual_eq_zero_of_equiv_relations_x0_x1_x0sq_x1sqPlane
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
+theorem residual_eq_zero_of_relations_linearPair_x0sq_x1sqPlane
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    {a b c d : ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = linearForm a b)
+    (h1 : ∑ i : Fin 4, c1 i • u i = linearForm c d)
+    (hdetLin : a * d - b * c ≠ 0)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    {r s t w : ℝ}
+    (hq2 : linearPairEquiv a b c d hdetLin q2 = r • (x0 ^ 2 : Poly) + s • (x1 ^ 2 : Poly))
+    (hq3 : linearPairEquiv a b c d hdetLin q3 = t • (x0 ^ 2 : Poly) + w • (x1 ^ 2 : Poly))
+    (hdetPlane : r * w - s * t ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let e : Poly ≃ₐ[ℝ] Poly := linearPairEquiv a b c d hdetLin
+  have heQuad : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv
+      (linearPairMatrix a b c d) (linearPairInvMatrix a b c d) 0 0
+      (linearPair_mul_inv a b c d hdetLin) (linearPair_inv_mul a b c d hdetLin)
+      (by intro i; simp) (by intro i; simp) hq
+  have heQuadSymm : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e.symm q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv_symm
+      (linearPairMatrix a b c d) (linearPairInvMatrix a b c d) 0 0
+      (linearPair_mul_inv a b c d hdetLin) (linearPair_inv_mul a b c d hdetLin)
+      (by intro i; simp) (by intro i; simp) hq
+  have heQuartic : ∀ {q : Poly}, IsQuartic q → IsQuartic (e q) := by
+    intro q hq
+    exact isQuartic_affineEquiv
+      (linearPairMatrix a b c d) (linearPairInvMatrix a b c d) 0 0
+      (linearPair_mul_inv a b c d hdetLin) (linearPair_inv_mul a b c d hdetLin)
+      (by intro i; simp) (by intro i; simp) hq
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  have h0' : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0 := by
+    simpa [e, linearPairEquiv] using
+      (relation_map e.toAlgHom h0).trans (affineHom_linearPair_left a b c d hdetLin)
+  have h1' : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x1 := by
+    simpa [e, linearPairEquiv] using
+      (relation_map e.toAlgHom h1).trans (affineHom_linearPair_right a b c d hdetLin)
+  have h2' : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = r • (x0 ^ 2 : Poly) + s • (x1 ^ 2 : Poly) := by
+    simpa [e] using (relation_map e.toAlgHom h2).trans hq2
+  have h3' : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = t • (x0 ^ 2 : Poly) + w • (x1 ^ 2 : Poly) := by
+    simpa [e] using (relation_map e.toAlgHom h3).trans hq3
+  exact residual_eq_zero_of_equiv_relations_x0_x1_x0sq_x1sqPlane
+    (e := e) (heQuad := fun {_} hq => heQuad hq) (heQuadSymm := fun {_} hq => heQuadSymm hq)
+    (heQuartic := fun {_} hq => heQuartic hq)
+    hB hp hu hsocp h0' h1' h2' h3' hdetPlane
+
 theorem quartic_in_image_of_relations_x0_x1_x0x1_diffsq_of_coeff_m00_zero
     {u : RankFourVec}
     {c0 c1 c2 c3 : Fin 4 → ℝ}
@@ -1031,6 +1096,70 @@ theorem residual_eq_zero_of_equiv_relations_x0_x1_x0x1_diffsqPlane
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
+theorem residual_eq_zero_of_relations_linearPair_x0x1_diffsqPlane
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    {a b c d : ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = linearForm a b)
+    (h1 : ∑ i : Fin 4, c1 i • u i = linearForm c d)
+    (hdetLin : a * d - b * c ≠ 0)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    {r s t w : ℝ}
+    (hq2 :
+      linearPairEquiv a b c d hdetLin q2 =
+        r • (x0 * x1 : Poly) + s • (x0 ^ 2 - x1 ^ 2))
+    (hq3 :
+      linearPairEquiv a b c d hdetLin q3 =
+        t • (x0 * x1 : Poly) + w • (x0 ^ 2 - x1 ^ 2))
+    (hdetPlane : r * w - s * t ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let e : Poly ≃ₐ[ℝ] Poly := linearPairEquiv a b c d hdetLin
+  have heQuad : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv
+      (linearPairMatrix a b c d) (linearPairInvMatrix a b c d) 0 0
+      (linearPair_mul_inv a b c d hdetLin) (linearPair_inv_mul a b c d hdetLin)
+      (by intro i; simp) (by intro i; simp) hq
+  have heQuadSymm : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e.symm q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv_symm
+      (linearPairMatrix a b c d) (linearPairInvMatrix a b c d) 0 0
+      (linearPair_mul_inv a b c d hdetLin) (linearPair_inv_mul a b c d hdetLin)
+      (by intro i; simp) (by intro i; simp) hq
+  have heQuartic : ∀ {q : Poly}, IsQuartic q → IsQuartic (e q) := by
+    intro q hq
+    exact isQuartic_affineEquiv
+      (linearPairMatrix a b c d) (linearPairInvMatrix a b c d) 0 0
+      (linearPair_mul_inv a b c d hdetLin) (linearPair_inv_mul a b c d hdetLin)
+      (by intro i; simp) (by intro i; simp) hq
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  have h0' : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0 := by
+    simpa [e, linearPairEquiv] using
+      (relation_map e.toAlgHom h0).trans (affineHom_linearPair_left a b c d hdetLin)
+  have h1' : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x1 := by
+    simpa [e, linearPairEquiv] using
+      (relation_map e.toAlgHom h1).trans (affineHom_linearPair_right a b c d hdetLin)
+  have h2' :
+      ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i =
+        r • (x0 * x1 : Poly) + s • (x0 ^ 2 - x1 ^ 2) := by
+    simpa [e] using (relation_map e.toAlgHom h2).trans hq2
+  have h3' :
+      ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i =
+        t • (x0 * x1 : Poly) + w • (x0 ^ 2 - x1 ^ 2) := by
+    simpa [e] using (relation_map e.toAlgHom h3).trans hq3
+  exact residual_eq_zero_of_equiv_relations_x0_x1_x0x1_diffsqPlane
+    (e := e) (heQuad := fun {_} hq => heQuad hq) (heQuadSymm := fun {_} hq => heQuadSymm hq)
+    (heQuartic := fun {_} hq => heQuartic hq)
+    hB hp hu hsocp h0' h1' h2' h3' hdetPlane
+
 /-- Linear change of variables sending `(x₀,x₁)` to `(x₀+x₁,x₀-x₁)`. -/
 private def lowAffineSplitDiagMatrix : Matrix (Fin 2) (Fin 2) ℝ :=
   !![1, 1; 1, -1]
@@ -1231,6 +1360,70 @@ theorem residual_eq_zero_of_equiv_relations_x0_x1_x0x1_sumsqPlane
     exact residual_eq_zero_of_relations_x0_x1_x0x1_sumsqPlane
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+theorem residual_eq_zero_of_relations_linearPair_x0x1_sumsqPlane
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    {a b c d : ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = linearForm a b)
+    (h1 : ∑ i : Fin 4, c1 i • u i = linearForm c d)
+    (hdetLin : a * d - b * c ≠ 0)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    {r s t w : ℝ}
+    (hq2 :
+      linearPairEquiv a b c d hdetLin q2 =
+        r • (x0 * x1 : Poly) + s • (x0 ^ 2 + x1 ^ 2))
+    (hq3 :
+      linearPairEquiv a b c d hdetLin q3 =
+        t • (x0 * x1 : Poly) + w • (x0 ^ 2 + x1 ^ 2))
+    (hdetPlane : r * w - s * t ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let e : Poly ≃ₐ[ℝ] Poly := linearPairEquiv a b c d hdetLin
+  have heQuad : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv
+      (linearPairMatrix a b c d) (linearPairInvMatrix a b c d) 0 0
+      (linearPair_mul_inv a b c d hdetLin) (linearPair_inv_mul a b c d hdetLin)
+      (by intro i; simp) (by intro i; simp) hq
+  have heQuadSymm : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e.symm q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv_symm
+      (linearPairMatrix a b c d) (linearPairInvMatrix a b c d) 0 0
+      (linearPair_mul_inv a b c d hdetLin) (linearPair_inv_mul a b c d hdetLin)
+      (by intro i; simp) (by intro i; simp) hq
+  have heQuartic : ∀ {q : Poly}, IsQuartic q → IsQuartic (e q) := by
+    intro q hq
+    exact isQuartic_affineEquiv
+      (linearPairMatrix a b c d) (linearPairInvMatrix a b c d) 0 0
+      (linearPair_mul_inv a b c d hdetLin) (linearPair_inv_mul a b c d hdetLin)
+      (by intro i; simp) (by intro i; simp) hq
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  have h0' : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0 := by
+    simpa [e, linearPairEquiv] using
+      (relation_map e.toAlgHom h0).trans (affineHom_linearPair_left a b c d hdetLin)
+  have h1' : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x1 := by
+    simpa [e, linearPairEquiv] using
+      (relation_map e.toAlgHom h1).trans (affineHom_linearPair_right a b c d hdetLin)
+  have h2' :
+      ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i =
+        r • (x0 * x1 : Poly) + s • (x0 ^ 2 + x1 ^ 2) := by
+    simpa [e] using (relation_map e.toAlgHom h2).trans hq2
+  have h3' :
+      ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i =
+        t • (x0 * x1 : Poly) + w • (x0 ^ 2 + x1 ^ 2) := by
+    simpa [e] using (relation_map e.toAlgHom h3).trans hq3
+  exact residual_eq_zero_of_equiv_relations_x0_x1_x0x1_sumsqPlane
+    (e := e) (heQuad := fun {_} hq => heQuad hq) (heQuadSymm := fun {_} hq => heQuadSymm hq)
+    (heQuartic := fun {_} hq => heQuartic hq)
+    hB hp hu hsocp h0' h1' h2' h3' hdetPlane
 
 /-- The rank-4 common-factor low-affine representative. -/
 def commonFactorAffineRep : RankFourVec := ![x0, x1, x0 ^ 2, x0 * x1]
@@ -3457,6 +3650,60 @@ theorem residual_eq_zero_of_equiv_relations_x0_homQuadBasis_det
     exact residual_eq_zero_of_relations_x0_homQuadBasis_det
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 hc hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+theorem residual_eq_zero_of_relations_linearForm_homQuadBasis_det
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 : Fin 4 → ℝ} {a b : ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = linearForm a b)
+    (hs : a ^ 2 + b ^ 2 ≠ 0)
+    {c : Fin 3 → Fin 4 → ℝ} {q : Fin 3 → Poly} {A : Matrix (Fin 3) (Fin 3) ℝ}
+    (hc : ∀ j : Fin 3, ∑ i : Fin 4, c j i • u i = q j)
+    (hq :
+      ∀ j : Fin 3,
+        affineLineEquiv 0 a b hs (q j) = ∑ k : Fin 3, A j k • homQuadBasis k)
+    (hdet : A.det ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let e : Poly ≃ₐ[ℝ] Poly := affineLineEquiv 0 a b hs
+  have heQuad : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e q) := by
+    intro q hq'
+    exact isQuadratic_affineEquiv
+      (affineLineMatrix a b) (affineLineInvMatrix a b)
+      (affineLineVec 0 a b) (affineLineInvVec 0)
+      (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+      (affineLineInv_add_mulVec 0 a b hs) (affineLine_add_mulVec_inv 0 a b hs) hq'
+  have heQuadSymm : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e.symm q) := by
+    intro q hq'
+    exact isQuadratic_affineEquiv_symm
+      (affineLineMatrix a b) (affineLineInvMatrix a b)
+      (affineLineVec 0 a b) (affineLineInvVec 0)
+      (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+      (affineLineInv_add_mulVec 0 a b hs) (affineLine_add_mulVec_inv 0 a b hs) hq'
+  have heQuartic : ∀ {q : Poly}, IsQuartic q → IsQuartic (e q) := by
+    intro q hq'
+    exact isQuartic_affineEquiv
+      (affineLineMatrix a b) (affineLineInvMatrix a b)
+      (affineLineVec 0 a b) (affineLineInvVec 0)
+      (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+      (affineLineInv_add_mulVec 0 a b hs) (affineLine_add_mulVec_inv 0 a b hs) hq'
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  have h0' : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0 := by
+    simpa [e, affineLineEquiv, linearForm] using
+      (relation_map e.toAlgHom h0).trans (affineHom_affineLinePoly 0 a b hs)
+  have hc' :
+      ∀ j : Fin 3,
+        ∑ i : Fin 4, c j i • mapVec e.toAlgHom u i = ∑ k : Fin 3, A j k • homQuadBasis k := by
+    intro j
+    simpa [e] using (relation_map e.toAlgHom (hc j)).trans (hq j)
+  exact residual_eq_zero_of_equiv_relations_x0_homQuadBasis_det
+    (e := e) (heQuad := fun {_} hq' => heQuad hq') (heQuadSymm := fun {_} hq' => heQuadSymm hq')
+    (heQuartic := fun {_} hq' => heQuartic hq')
+    hB hp hu hsocp h0' hc' hdet
 
 theorem residual_eq_zero_of_socp_of_eq_mix_mapVec_x0_homQuadBasis_det
     (e : Poly ≃ₐ[ℝ] Poly)
