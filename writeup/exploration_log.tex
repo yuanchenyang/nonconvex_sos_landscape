@@ -1877,6 +1877,31 @@ and reduce to the already solved
 \(\operatorname{span}(x_0x_1,x_0^2+x_1^2)\) plane. No new Julia experiments
 were needed for this round either.
 
+I then added the missing outer diagonal chart wrappers on top of that scale-only
+surface instead of trying to jump straight to the root theorem. The file now
+proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_diagSumChart}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_diagDiffChart}.
+These start from the raw cross-product scalars
+\texttt{lowHomQuadPlaneA/B/C}, perform the internal \(x_1\)-shear killing the
+cross term in the dual annihilator, and then dispatch to the already-built
+diagonal scale theorems according to the sign of the post-shear scalar
+\[
+  \texttt{lowHomQuadPlaneC} - \texttt{lowHomQuadPlaneB}^2 /
+  \texttt{lowHomQuadPlaneA}.
+\]
+
+On top of those new chart theorems, the same file now proves the coarse
+homogeneous low-affine dispatcher
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_plane\_nontrivial},
+together with the matching equivariant and \texttt{linearPair} wrappers. So the
+low-affine homogeneous side is no longer an external classification problem at
+the theorem surface: if the normalized homogeneous quadratic plane is nontrivial,
+Lean now internally distinguishes the cross chart, the two common-factor
+charts, and the two diagonal rank-\(14\) charts. No new Julia experiments were
+needed for this round.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
@@ -1886,9 +1911,9 @@ extraction, and the rank-one affine-image branches no longer need externally
 supplied homogeneous bases either. What remains is the upstream classification
 step that identifies the relevant affine or linear basis and the appropriate
 rank-one or rank-two coefficient-map image. On the low-affine homogeneous side,
-the remaining step is now sharper: add the outer shear-based wrappers feeding
-the new diagonal scale-only theorems, and then identify which of the resulting
-charts a general admissible homogeneous plane belongs to.
+the remaining task is now only to feed the new
+\texttt{...\_homQuadratics\_plane\_nontrivial} interface from the global
+classifier, not to add more internal low-affine chart theorems.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

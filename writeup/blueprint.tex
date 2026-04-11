@@ -1865,13 +1865,11 @@ applies the existing constant or linear representative theorem.
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data for the branches not yet reduced to a one-line interface:
-most notably the remaining low-affine extraction/classification interface,
-which now looks numerically like a split between the common-factor plane and a
-generic rank-\(14\) homogeneous plane. The latest retained Lean step toward that
-classifier is no longer just the coefficient-space helper layer in
-\texttt{RepresentativeLowAffine.lean}. On top of the cross-product scalars
-\texttt{lowHomQuadPlaneA/B/C} and their relation lemmas, the file now proves a
-first two usable normalization charts:
+most notably the final extraction/classification interface itself. The
+low-affine homogeneous side is no longer blocked at the chart level. On top of
+the cross-product scalars \texttt{lowHomQuadPlaneA/B/C} and their relation
+lemmas, \texttt{RepresentativeLowAffine.lean} first proves the normalization
+charts
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_crossDet\_zero}
 and
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_commonFactorChart},
@@ -1883,8 +1881,8 @@ after an internal \(x_1\)-shear. The second covers the repeated-line chart
 where the same shear kills the \(x_0^2\) coefficients and lands in the already
 formalized \(\operatorname{span}(x_0x_1,x_1^2)\) plane. The unsuccessful larger
 dispatcher attempt was still backed out rather than left as a non-terminating
-proof script. In addition, the file now contains the scale-only inner theorem
-surface for the remaining diagonal branch:
+proof script. The file then adds the scale-only inner theorem surface for the
+remaining diagonal branch:
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_diag\_sum\_zero}
 and
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_diag\_diff\_zero},
@@ -1892,9 +1890,20 @@ again with equivariant and \texttt{linearPair} wrappers. These reduce the
 post-shear diagonal relation directly to the already formalized
 \(\operatorname{span}(x_0x_1,x_0^2-x_1^2)\) and
 \(\operatorname{span}(x_0x_1,x_0^2+x_1^2)\) planes after an internal
-\(x_1\)-scaling. The remaining task is to add the outer shear-based chart
-wrappers feeding those inner theorems, and then
-then assemble the root declaration in
+\(x_1\)-scaling. On top of those, the file now proves the outer diagonal chart
+wrappers
+\texttt{...diagSumChart} and \texttt{...diagDiffChart}, then packages the whole
+homogeneous low-affine branch into the single theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_plane\_nontrivial},
+again with equivariant and \texttt{linearPair} wrappers. So the low-affine
+homogeneous classifier is now internal to Lean: once one has exact relations to
+a linear pair and to a nontrivial homogeneous quadratic plane, Lean dispatches
+automatically to the common-factor or generic rank-\(14\) branch.
+
+The remaining task is therefore no longer to add more low-affine chart
+theorems. It is to extract, from an arbitrary admissible rank-\(4\) factor, the
+appropriate affine or linear basis and the matching mixed-affine, low-affine,
+or rank-one relation package, and then assemble the root declaration in
 \texttt{TernaryQuarticProof.lean}. The admissible image-plus-cone certificate
 and the representative/plane-level no-spurious-SOCP theorems are already in
 place.
