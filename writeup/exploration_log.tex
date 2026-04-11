@@ -1948,6 +1948,18 @@ So the final extraction step is no longer purely external: two global outputs
 are now packaged directly in terms of the kernel of the homogeneous coefficient
 map. No new Julia experiments were needed for this round either.
 
+I then added the next no-constant extraction lemma in the same file instead of
+jumping prematurely to a larger residual theorem. The new theorem
+\texttt{exists\_exactAffine\_affinePair\_of\_dimTwo\_noConst} proves that if the
+exact affine kernel has dimension \(2\) and contains no exact constant
+relation, then the projection to the linear coefficients
+\((\operatorname{coeff}_{x_0}, \operatorname{coeff}_{x_1})\) is automatically an
+isomorphism. Lean therefore reconstructs exact relations to a normalized affine
+pair \(x_0 + r_0\), \(x_1 + r_1\) internally. So the remaining no-constant
+\(\dim=2\) gap is no longer the affine-pair extraction itself; it is the next
+quadratic-package theorem above that pair. No new Julia experiments were needed
+for this round either.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

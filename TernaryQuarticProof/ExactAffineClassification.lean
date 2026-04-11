@@ -99,6 +99,19 @@ homogeneous coefficient map. -/
 def exactAffineSubmodule (u : RankFourVec) : Submodule ℝ (Fin 4 → ℝ) :=
   LinearMap.ker (homCoeffMap u)
 
+/-- Linear coefficients of a scalar relation. -/
+def linearCoeffMap (u : RankFourVec) :
+    (Fin 4 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ) where
+  toFun c := ![
+    MvPolynomial.coeff m10 (relationPoly u c),
+    MvPolynomial.coeff m01 (relationPoly u c)]
+  map_add' c d := by
+    ext j
+    fin_cases j <;> simp [relationPoly_add, MvPolynomial.coeff_add]
+  map_smul' a c := by
+    ext j
+    fin_cases j <;> simp [relationPoly_smul, MvPolynomial.coeff_smul]
+
 private theorem relationPoly_eq_affine_of_mem_exactAffineSubmodule
     {u : RankFourVec} (hu : IsAdmissiblePoint u) {c : Fin 4 → ℝ}
     (hc : c ∈ exactAffineSubmodule u) :
@@ -183,6 +196,64 @@ private theorem exactAffineCoeffMap_injective
     exact hrelInj <| by simpa using hlinzero
   apply Subtype.ext
   exact sub_eq_zero.mp hsubzero
+
+private theorem exactAffineLinearCoeffMap_injective_of_noConst
+    {u : RankFourVec} (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hnoConst : ¬ ∃ c ∈ exactAffineSubmodule u, relationPoly u c = (1 : Poly)) :
+    Function.Injective
+      ((linearCoeffMap u).comp (exactAffineSubmodule u).subtype) := by
+  intro x y hxy
+  let z : exactAffineSubmodule u := ⟨(x : Fin 4 → ℝ) - (y : Fin 4 → ℝ),
+    Submodule.sub_mem _ x.2 y.2⟩
+  have hzlin :
+      ((linearCoeffMap u).comp (exactAffineSubmodule u).subtype) z = 0 := by
+    have hsub :
+        ((linearCoeffMap u).comp (exactAffineSubmodule u).subtype) x -
+            ((linearCoeffMap u).comp (exactAffineSubmodule u).subtype) y = 0 := by
+      exact sub_eq_zero.mpr hxy
+    simpa [z, LinearMap.comp_apply, LinearMap.sub_apply] using hsub
+  have hzAff :
+      relationPoly u (z : Fin 4 → ℝ) =
+        MvPolynomial.coeff m00 (relationPoly u (z : Fin 4 → ℝ)) • (1 : Poly) := by
+    have hAff := relationPoly_eq_affine_of_mem_exactAffineSubmodule hu z.2
+    have hz10 := congrArg (fun v : Fin 2 → ℝ => v 0) hzlin
+    have hz01 := congrArg (fun v : Fin 2 → ℝ => v 1) hzlin
+    rw [hAff]
+    simp [linearCoeffMap] at hz10 hz01
+    simp [hz10, hz01]
+  let a : ℝ := MvPolynomial.coeff m00 (relationPoly u (z : Fin 4 → ℝ))
+  by_cases ha : a = 0
+  · have hzzero : relationPoly u (z : Fin 4 → ℝ) = 0 := by
+      simpa [a, ha] using hzAff
+    have hrelInj : Function.Injective (relationPolyLin u) := LinearMap.ker_eq_bot.mp hrelker
+    have hzvec :
+        ((z : exactAffineSubmodule u) : Fin 4 → ℝ) = 0 := by
+      apply hrelInj
+      simpa [relationPolyLin, relationPoly] using hzzero
+    have hsub :
+        ((x : exactAffineSubmodule u) : Fin 4 → ℝ) -
+            ((y : exactAffineSubmodule u) : Fin 4 → ℝ) = 0 := by
+      simpa [z] using hzvec
+    apply Subtype.ext
+    exact sub_eq_zero.mp hsub
+  · have hzAff' : relationPoly u (z : Fin 4 → ℝ) = a • (1 : Poly) := by
+      simpa [a] using hzAff
+    have hzone :
+      relationPoly u ((a⁻¹) • (z : Fin 4 → ℝ)) = (1 : Poly) := by
+      calc
+        relationPoly u ((a⁻¹) • (z : Fin 4 → ℝ)) = a⁻¹ • relationPoly u (z : Fin 4 → ℝ) := by
+          simp [relationPoly_smul]
+        _ = a⁻¹ • (a • (1 : Poly)) := by
+          rw [hzAff']
+        _ = (a⁻¹ * a) • (1 : Poly) := by rw [smul_smul]
+        _ = (1 : ℝ) • (1 : Poly) := by
+          congr 1
+          field_simp [ha]
+        _ = (1 : Poly) := by simp
+    have hzmem : (a⁻¹) • (z : Fin 4 → ℝ) ∈ exactAffineSubmodule u := by
+      exact Submodule.smul_mem _ _ z.2
+    exact False.elim <| hnoConst ⟨(a⁻¹) • (z : Fin 4 → ℝ), hzmem, hzone⟩
 
 private theorem relationPoly_eq_one_of_exactAffineCoeff_e0
     {u : RankFourVec} (hu : IsAdmissiblePoint u) {c : exactAffineSubmodule u}
@@ -347,5 +418,58 @@ theorem residual_eq_zero_of_exactAffineDimTwo_contains_one
   exact residual_eq_zero_of_relations_const_affineLine
     (B := B) (u := u) (c0 := c0) (c1 := c1)
     hu (by simpa [relationPoly] using h0) (by simpa [relationPoly] using h1) hs hp hsocp
+
+/-- If the exact affine relation space has dimension two and contains no exact
+constant relation, then it canonically supplies an affine pair with linear
+coefficients `(1,0)` and `(0,1)`. -/
+theorem exists_exactAffine_affinePair_of_dimTwo_noConst
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 2)
+    (hnoConst : ¬ ∃ c ∈ exactAffineSubmodule u, relationPoly u c = (1 : Poly)) :
+    ∃ c0 c1 : Fin 4 → ℝ, ∃ r0 r1 : ℝ,
+      c0 ∈ exactAffineSubmodule u ∧
+      c1 ∈ exactAffineSubmodule u ∧
+      relationPoly u c0 = affineLinePoly r0 1 0 ∧
+      relationPoly u c1 = affineLinePoly r1 0 1 := by
+  let linExact : exactAffineSubmodule u →ₗ[ℝ] (Fin 2 → ℝ) :=
+    (linearCoeffMap u).comp (exactAffineSubmodule u).subtype
+  have hLinInj : Function.Injective linExact :=
+    exactAffineLinearCoeffMap_injective_of_noConst hu hrelker hnoConst
+  have hfin :
+      Module.finrank ℝ (exactAffineSubmodule u) =
+        Module.finrank ℝ (Fin 2 → ℝ) := by
+    rw [hdim, Module.finrank_fintype_fun_eq_card]
+    decide
+  have hLinSurj : Function.Surjective linExact :=
+    (LinearMap.injective_iff_surjective_of_finrank_eq_finrank hfin).mp hLinInj
+  obtain ⟨c0, hc0⟩ := hLinSurj ![1, 0]
+  obtain ⟨c1, hc1⟩ := hLinSurj ![0, 1]
+  let r0 : ℝ := MvPolynomial.coeff m00 (relationPoly u (c0 : Fin 4 → ℝ))
+  let r1 : ℝ := MvPolynomial.coeff m00 (relationPoly u (c1 : Fin 4 → ℝ))
+  refine ⟨c0, c1, r0, r1, c0.2, c1.2, ?_, ?_⟩
+  · have hAff :
+        relationPoly u (c0 : Fin 4 → ℝ) =
+          MvPolynomial.coeff m00 (relationPoly u (c0 : Fin 4 → ℝ)) • (1 : Poly) +
+            MvPolynomial.coeff m10 (relationPoly u (c0 : Fin 4 → ℝ)) • x0 +
+              MvPolynomial.coeff m01 (relationPoly u (c0 : Fin 4 → ℝ)) • x1 := by
+      exact relationPoly_eq_affine_of_mem_exactAffineSubmodule hu c0.2
+    have hc10 := congrArg (fun z : Fin 2 → ℝ => z 0) hc0
+    have hc11 := congrArg (fun z : Fin 2 → ℝ => z 1) hc0
+    rw [hAff]
+    simp [linExact, linearCoeffMap] at hc10 hc11
+    simp [affineLinePoly, r0, hc10, hc11, MvPolynomial.smul_eq_C_mul]
+  · have hAff :
+        relationPoly u (c1 : Fin 4 → ℝ) =
+          MvPolynomial.coeff m00 (relationPoly u (c1 : Fin 4 → ℝ)) • (1 : Poly) +
+            MvPolynomial.coeff m10 (relationPoly u (c1 : Fin 4 → ℝ)) • x0 +
+              MvPolynomial.coeff m01 (relationPoly u (c1 : Fin 4 → ℝ)) • x1 := by
+      exact relationPoly_eq_affine_of_mem_exactAffineSubmodule hu c1.2
+    have hc10 := congrArg (fun z : Fin 2 → ℝ => z 0) hc1
+    have hc11 := congrArg (fun z : Fin 2 → ℝ => z 1) hc1
+    rw [hAff]
+    simp [linExact, linearCoeffMap] at hc10 hc11
+    simp [affineLinePoly, r1, hc10, hc11, MvPolynomial.smul_eq_C_mul]
 
 end TernaryQuartic

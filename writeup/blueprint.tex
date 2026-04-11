@@ -1950,6 +1950,18 @@ coarse mixed-affine theorem
 classification branches are now expressed directly in the kernel-of-homogeneous
 map language rather than by hand-picked representative coordinates.
 
+The next extraction step is now also internalized there for the no-constant
+\(\dim = 2\) branch, even though the full SOCP theorem for that branch is not
+yet assembled. The new theorem
+\texttt{exists\_exactAffine\_affinePair\_of\_dimTwo\_noConst} proves that if the
+exact affine kernel has dimension \(2\) and contains no exact constant
+relation, then its linear-coefficient projection is automatically an
+isomorphism onto \(\mathbf{R}^2\). Lean therefore reconstructs exact relations
+to the normalized affine pair \(x_0 + r_0\) and \(x_1 + r_1\) internally. So
+the remaining gap in that branch is no longer affine-pair extraction; it is the
+next low-affine or translated-homogeneous quadratic package sitting above that
+pair.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.
