@@ -1659,6 +1659,27 @@ closes by a direct constant relation. So the mixed-affine constant-containing
 \(\dim=2\) branch now asks only for the exact normalized coordinate picture
 itself.
 
+The next Lean round strengthens the determinant-nondegenerate sub-branch again.
+The file now proves
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_tailedPair\_det\_general}
+and its equivariant wrapper. This removes the last orthogonality hypothesis
+from that branch: once affine normalization yields exact relation data
+\[
+  \sum_i c_{0,i} u_i = 1,\qquad
+  \sum_i c_{1,i} u_i = x_0,\qquad
+  \sum_i c_{2,i} u_i = q_2,\qquad
+  \sum_i c_{3,i} u_i = q_3,
+\]
+with \(q_2,q_3\) quadratic and
+\(
+\operatorname{coeff}_{x_0x_1}(q_2)\operatorname{coeff}_{x_1^2}(q_3) -
+\operatorname{coeff}_{x_1^2}(q_2)\operatorname{coeff}_{x_0x_1}(q_3)\neq 0,
+\)
+Lean now performs the common translation, affine-tail correction, and the
+corrected-pair Gram nondegeneracy argument internally. So the determinant-
+nondegenerate mixed-affine branch no longer needs an orthonormal coefficient
+basis or an exact \((1,x_0,q_2,q_3)\) coordinate realization.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data, especially for the constant-containing mixed-affine

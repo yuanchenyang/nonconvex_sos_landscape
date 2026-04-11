@@ -1605,6 +1605,25 @@ relation. So the constant-containing mixed-affine branch now really only asks
 for exact normalized coordinates of the form \((1,x_0,q_2,q_3)\) with
 \(\operatorname{coeff}_{1}(q_i)=\operatorname{coeff}_{x_0}(q_i)=0\).
 
+The next Lean round removed one more artificial hypothesis from the
+determinant-nondegenerate sub-branch. I added
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_tailedPair\_det\_general}
+and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_const\_x0\_tailedPair\_det\_general}.
+These replay the old exact-coordinate tailed-pair proof directly from exact
+relation data, not from an orthonormal factor basis. The key new ingredient is
+an internal Gram-degeneracy contradiction for the corrected relation pair:
+if the corrected coefficient vectors had zero Gram determinant, the equality
+case of Cauchy--Schwarz would force a nontrivial linear relation between them,
+but the nonzero
+\(
+\operatorname{coeff}_{x_0x_1}/\operatorname{coeff}_{x_1^2}
+\)
+minor of the corrected quadratics rules that out. So the determinant-
+nondegenerate mixed-affine branch now accepts the exact relation data that
+classification naturally produces, without any separate orthonormalization
+step.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
@@ -1615,10 +1634,10 @@ The canonical annihilator coefficients are now computed internally from the
 homogeneous plane when available, so this step no longer has to hand-feed
 \((a,b,c)\) into the mixed-affine wrappers. The determinant-nondegenerate
 sub-branch is now sharper than that wording suggests: there the common-
-translation lemma and its integration are done, so the remaining work is to
-extract exact normalized coordinates of the form \(u=(1,x_1,q_2,q_3)\), or
-equivalently exact relation data for that same tuple, together with the same
-determinant condition from the general branch. On the determinant-zero side,
+translation lemma and its integration are done, and the usable theorem no
+longer needs an orthonormalized factor basis. So the remaining work there is
+just to extract exact relation data for \(1,x_0,q_2,q_3\) together with the
+same determinant condition from the general branch. On the determinant-zero side,
 the remaining work is now only extraction and transport through the coarse
 split on the extracted line \(H(q_2,q_3)\): the cross-like
 \(\operatorname{coeff}_{x_1^2} H=0\), \(\operatorname{coeff}_{x_0x_1} H\neq 0\)
