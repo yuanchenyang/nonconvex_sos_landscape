@@ -1652,6 +1652,47 @@ The pure-\(x_0^2\) determinant-zero branch is therefore now missing only its
 residual affine/dependent relation-level subcase, namely the case where the
 corrected tail has both \(x_0x_1\)- and \(x_1^2\)-coefficients zero.
 
+The next Lean round removed even that residual gap in the form actually needed
+by the extracted-line branch. I added
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x0sqTail\_m11\_m02\_zero\_of\_m01\_nonzero}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x0sqTail\_m02\_zero\_of\_m01\_nonzero}.
+Because the determinant-zero extracted-line dispatcher always keeps a nonzero
+\(x_1\)-tail in the second quadratic, the affine/dependent special slice falls
+directly to the relation-level affine-tail theorem, so no extra constant-
+relation construction is needed at that interface.
+
+I then lifted the whole pure-\(x_0^2\) extracted-line branch itself to
+relation level by adding
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_x0sqTail\_cases}
+and its equivariant wrapper. This means the classification layer no longer has
+to produce exact coordinates even for that slice; exact relation data for
+\((1,x_0,q_2,q_3)\) together with the extracted-line coefficient conditions now
+suffice.
+
+The next compression packages the whole determinant-zero tailed mixed-affine
+branch at relation level with a single natural independence hypothesis. I
+added
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_origDetZero\_cases\_gram},
+plus its equivariant wrapper. The new hypothesis is the nonzero Gram
+determinant of the two quadratic relation vectors \(c_2,c_3\). That is exactly
+what makes the vanishing extracted-line case honest: if the extracted-line
+relation vector collapsed as well, Cauchy--Schwarz would force zero Gram,
+contradicting the hypothesis. So Lean can now handle the entire determinant-
+zero mixed-affine split internally from relation data.
+
+The same round then packaged the whole constant-containing mixed-affine coarse
+surface at relation level too. I added
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_pair\_coeff\_m00\_m10\_zero\_gram}
+and its equivariant wrapper. So the theorem-level target for that branch is no
+longer an exact normalized coordinate picture \((1,x_0,q_2,q_3)\). It is now
+enough to extract exact relation data to \(1,x_0,q_2,q_3\), with \(q_2,q_3\)
+quadratic and zero constant/\(x_0\) coefficients, together with nonzero Gram
+determinant of the last two relation vectors. From there Lean performs the
+determinant split, tail swap, extracted-line normalization, homogeneous-plane
+fallback, and dependent constant-relation closure internally. No new Julia
+experiments were needed for these rounds.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
@@ -1663,21 +1704,17 @@ homogeneous plane when available, so this step no longer has to hand-feed
 \((a,b,c)\) into the mixed-affine wrappers. The determinant-nondegenerate
 sub-branch is now sharper than that wording suggests: there the common-
 translation lemma and its integration are done, and the usable theorem no
-longer needs an orthonormalized factor basis. So the remaining work there is
-just to extract exact relation data for \(1,x_0,q_2,q_3\) together with the
-same determinant condition from the general branch. On the determinant-zero side,
-the remaining work is now only extraction and transport through the coarse
-split on the extracted line \(H(q_2,q_3)\): the cross-like
-\(\operatorname{coeff}_{x_1^2} H=0\), \(\operatorname{coeff}_{x_0x_1} H\neq 0\)
-branch, the complementary \(\operatorname{coeff}_{x_1^2} H\neq 0\) branch, and
-the pure-\(x_0^2\) branch now all have internal extracted-line normalization
-built into Lean, while the pure-\(x_0^2\) branch still looks numerically like a generic rank-\(15\)
-family plus a special low-affine rank-\(13\) sub-slice.
-\item Extract from a general admissible factor the coefficient vectors and
-annihilator data needed to feed that classification into the existing
+longer needs an orthonormalized factor basis. The determinant-zero mixed-
+affine side is sharper too: it no longer needs extracted-line subtype data at
+the theorem surface, only exact relation data plus nonzero Gram determinant for
+the two tailed relation vectors. So the remaining work there is now genuinely
+the upstream extraction/classification theorem from a general admissible rank-4
+factor into that relation package.
+\item Extract from a general admissible factor the relation vectors and
+coefficient data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this
-now only needs determinant data inside the canonical homogeneous plane or
-triple type.
+now only needs zero-tail coefficient normalization plus determinant or Gram
+data inside the canonical homogeneous plane or triple type.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

@@ -1711,10 +1711,53 @@ missing lift there is the residual affine/dependent subcase
 which is exactly the branch where the old exact proof closed by constructing a
 constant relation.
 
+The next Lean round closes that remaining relation-level gap under the
+ambient tail hypothesis that actually arises in the determinant-zero extracted
+line branch. The file now proves
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x0sqTail\_m11\_m02\_zero\_of\_m01\_nonzero}
+and the coarser wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x0sqTail\_m02\_zero\_of\_m01\_nonzero}.
+These use the fact that in the extracted-line setting the corrected tail still
+has nonzero \(x_1\)-coefficient, so the final affine/dependent slice falls
+directly to the already-formalized relation-level affine-tail theorem rather
+than needing a separate constant-relation witness.
+
+The same round also lifts the whole pure-\(x_0^2\) extracted-line branch to
+relation level:
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_x0sqTail\_cases}
+and its equivariant wrapper. So the classification layer no longer has to hand
+back exact coordinates even for that slice; exact relation data for
+\((1,x_0,q_2,q_3)\) together with the extracted-line coefficient conditions are
+already enough.
+
+The next compression packages the entire determinant-zero tailed mixed-affine
+branch at relation level, with one natural independence hypothesis on the two
+tailed relation vectors. The file now proves
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_mixedAffineTailHomLine\_origDetZero\_cases\_gram},
+which takes exact relation data for \(1,x_0,q_2,q_3\), the determinant-zero
+condition on \((q_2,q_3)\), a nonzero \(x_1\)-tail in \(q_3\), and nonzero
+Gram determinant of the relation pair \((c_2,c_3)\). Lean then performs the
+entire coarse split internally: the cross-like, diagonal/\(x_1^2\)-like, and
+pure-\(x_0^2\) extracted-line cases dispatch to their existing relation-level
+theorems, while the vanishing extracted-line case closes by a constant relation
+whose nontriviality is forced by the Gram hypothesis.
+
+Finally, the file now proves the coarse mixed-affine relation theorem
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_pair\_coeff\_m00\_m10\_zero\_gram}
+and its equivariant wrapper. So for the constant-containing mixed-affine
+\(\dim=2\) branch, the theorem-level target is no longer an exact normalized
+coordinate picture \((1,x_0,q_2,q_3)\). It is enough to extract exact relation
+data to \(1,x_0,q_2,q_3\), with \(q_2,q_3\) quadratic and zero constant and
+\(x_0\) coefficients, together with nonzero Gram determinant of the two
+quadratic relation vectors. From there Lean performs the determinant split,
+tail swap, extracted-line normalization, homogeneous-plane fallback, and
+dependent constant-relation closure internally.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
-classification data, especially for the constant-containing mixed-affine
-$\dim=2$ branch, and then assemble the root declaration in
+classification data, especially the extraction of exact relation data and Gram
+nondegeneracy for the constant-containing mixed-affine $\dim=2$ branch, and
+then assemble the root declaration in
 \texttt{TernaryQuarticProof.lean}. The admissible image-plus-cone certificate
 and the representative/plane-level no-spurious-SOCP theorems are already in
 place.
