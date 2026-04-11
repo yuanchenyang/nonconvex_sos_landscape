@@ -1637,6 +1637,28 @@ to the pure-\(x_0^2\) theorem. So the remaining classification burden is now
 only to extract the normalized tailed pair itself, not to refine the
 determinant-zero branch into separate extracted-line outputs.
 
+The next Lean round compresses the constant-containing mixed-affine branch
+itself one level further. The file now proves
+\texttt{residual\_eq\_zero\_of\_const\_x0\_pair\_coeff\_m00\_m10\_zero} and
+its equivariant/\(\operatorname{mix}(M^\top,e^{-1}\!\cdot u)\)-transport
+wrappers. So once exact normalized coordinates
+\[
+  (1,x_0,q_2,q_3)
+\]
+are available with \(q_2,q_3\) quadratic and
+\(\operatorname{coeff}_{1}(q_i)=\operatorname{coeff}_{x_0}(q_i)=0\), the
+classification step no longer has to provide any further determinant,
+tail-placement, or extracted-line subtype data. Lean now performs the whole
+internal split itself: if the original determinant is nonzero, it dispatches
+to the tailed-pair theorem; if the determinant is zero and one quadratic has a
+nonzero \(x_1\)-tail, it dispatches to the coarse determinant-zero wrapper
+after swapping the last two factor coordinates if needed; if both \(x_1\)-tail
+coefficients vanish but the homogeneous plane is nontrivial, it dispatches to
+the homogeneous-plane theorem; and if that plane collapses to a line, it
+closes by a direct constant relation. So the mixed-affine constant-containing
+\(\dim=2\) branch now asks only for the exact normalized coordinate picture
+itself.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data, especially for the constant-containing mixed-affine

@@ -1587,6 +1587,24 @@ case. So the determinant-zero mixed-affine side now really asks only for one
 exact normalized tailed pair, not for a separately normalized extracted-line
 output.
 
+The next Lean round compresses the branch again, now at the level of the whole
+constant-containing mixed-affine exact coordinate picture. I added
+\texttt{residual\_eq\_zero\_of\_const\_x0\_pair\_coeff\_m00\_m10\_zero} and
+its equivariant/\(\operatorname{mix}(M^\top,e^{-1}\!\cdot u)\)-transport
+wrappers. So once exact normalized coordinates
+\((1,x_0,q_2,q_3)\) are available with \(q_2,q_3\) quadratic and with zero
+constant and \(x_0\) coefficients, the classification layer no longer has to
+hand back determinant data, extracted-line data, or a preferred choice of
+which tail carries the nonzero \(x_1\)-coefficient. Lean now performs the
+entire internal split on its own: determinant-nondegenerate pairs fall to the
+tailed-pair theorem; determinant-zero pairs with a nonzero \(x_1\)-tail in one
+coordinate fall to the coarse determinant-zero theorem after swapping if
+needed; purely homogeneous nontrivial pairs fall to the homogeneous-plane
+theorem; and the homogeneous dependent case closes by a direct constant
+relation. So the constant-containing mixed-affine branch now really only asks
+for exact normalized coordinates of the form \((1,x_0,q_2,q_3)\) with
+\(\operatorname{coeff}_{1}(q_i)=\operatorname{coeff}_{x_0}(q_i)=0\).
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
