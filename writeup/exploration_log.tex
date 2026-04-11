@@ -2592,6 +2592,17 @@ elsewhere in the low-affine plane layer, and finishes through the already
 proved translated repeated-line theorem. So that slice now sits one level
 closer to the eventual classifier surface.
 
+I then did the same on the diagonal side. In
+\texttt{RepresentativeAffineRankOne.lean}, the new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0x1\_x0sq\_x1sqPlane}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX0x1\_x0sq\_x1sqPlane},
+together with their equivariant wrappers, lift the constant-cross and
+linear-cross affine-rank-one endpoints from exact \((x_0^2,x_1^2)\) relations
+to arbitrary determinant-nondegenerate bases of
+\(\operatorname{span}(x_0^2,x_1^2)\). So the classifier no longer needs to
+hand those cross slices a pre-normalized diagonal basis either.
+
 I then pushed one retained exact-affine \(\dim=1\) classifier case into Lean.
 In \texttt{ExactAffineClassification.lean}, the new theorem
 \texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeZero} closes the
@@ -2624,9 +2635,30 @@ case is no longer blocked at a raw kernel-dimension statement; the remaining
 work is the classifier that routes one tailed quadratic over a homogeneous
 plane into the already solved affine-rank-one endpoint surfaces.
 
-I also recorded the corresponding numerical probe in the new Julia file
-\texttt{julia/affine\_dim\_one\_mixed\_tails\_2026\_04\_11.jl}. Its retained
-output is:
+I also recorded the new rank-\(1\) numerical split in
+\texttt{julia/affine\_dim\_one\_tail\_rank\_one\_2026\_04\_11.jl}. Its retained
+output is
+\[
+  \texttt{affine\_dim\_one\_tail\_rank\_one\_probe}
+  =
+  (\texttt{samples}=20,\ 
+   \texttt{mixed\_tail\_ranks}=[1],\ 
+   \texttt{mixed\_exact\_affine\_dims}=[1],\ 
+   \texttt{mixed\_image\_ranks}=[15],\ 
+   \texttt{mixed\_missing}=[\varnothing],\ 
+   \texttt{const\_image\_ranks}=[15],\ 
+   \texttt{const\_missing}=[\varnothing],\ 
+   \texttt{linear\_image\_ranks}=[14],\ 
+   \texttt{linear\_missing}=[\{(0,0)\}]).
+\]
+So the generic rank-\(1\) tail family looks surjective in the mixed and
+constant directions, while the pure \(x_1\)-tail direction still shows the
+same codimension-one missing constant monomial pattern as the retained
+normalized affine-rank-one linear endpoint.
+
+For the tail-rank \(2\) side, I had already recorded the corresponding probe in
+the Julia file \texttt{julia/affine\_dim\_one\_mixed\_tails\_2026\_04\_11.jl}.
+Its retained output is:
 \[
   \texttt{affine\_dim\_one\_mixed\_tail\_probe} =
   (\texttt{samples}=20,\ 
@@ -2635,11 +2667,12 @@ output is:
    \texttt{image\_ranks}=[15],\ 
    \texttt{missing}=[\varnothing]).
 \]
-So the generic mixed-tail exact-affine \(\dim=1\) surface still looks
-uniformly surjective numerically, and the remaining work is now a cleaner
-formal classifier problem: both the tail-rank \(1\) and tail-rank \(2\) cases
-already have extractor theorems, and it remains to route those outputs into the
-correct already-solved theorem surfaces.
+So the exact-affine \(\dim=1\) picture is now sharper on both numerical and
+formal sides: both the tail-rank \(1\) and tail-rank \(2\) cases already have
+extractor theorems, and numerically the only stable rank-\(1\) obstruction
+still visible is the pure \(x_1\)-tail direction. The remaining work is the
+formal classifier that routes those outputs into the correct already-solved
+theorem surfaces.
 
 \section*{Open Subgoals}
 \begin{itemize}

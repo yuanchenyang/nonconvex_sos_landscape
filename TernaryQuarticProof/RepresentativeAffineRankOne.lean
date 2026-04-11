@@ -1048,6 +1048,123 @@ theorem residual_eq_zero_of_equiv_relations_x0_onePlusAX0x1_x0sq_x1sq
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
+theorem residual_eq_zero_of_relations_x0_onePlusAX0x1_x0sq_x1sqPlane
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    {a r s t w : ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • u i = (1 : Poly) + a • (x0 * x1 : Poly))
+    (h2 : ∑ i : Fin 4, c2 i • u i = r • (x0 ^ 2 : Poly) + s • (x1 ^ 2 : Poly))
+    (h3 : ∑ i : Fin 4, c3 i • u i = t • (x0 ^ 2 : Poly) + w • (x1 ^ 2 : Poly))
+    (hdet : r * w - s * t ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let det : ℝ := r * w - s * t
+  have hdet0 : det ≠ 0 := by
+    simpa [det] using hdet
+  let c2' : Fin 4 → ℝ := fun i => (w / det) * c2 i + (-s / det) * c3 i
+  let c3' : Fin 4 → ℝ := fun i => (-t / det) * c2 i + (r / det) * c3 i
+  have hcoeff20 : (w / det) * r + (-s / det) * t = 1 := by
+    field_simp [det, hdet0]
+    ring
+  have hcoeff21 : (w / det) * s + (-s / det) * w = 0 := by
+    field_simp [det, hdet0]
+    ring
+  have hcoeff30 : (-t / det) * r + (r / det) * t = 0 := by
+    field_simp [det, hdet0]
+    ring
+  have hcoeff31 : (-t / det) * s + (r / det) * w = 1 := by
+    field_simp [det, hdet0]
+    ring
+  have h2' : ∑ i : Fin 4, c2' i • u i = x0 ^ 2 := by
+    change relationPoly u c2' = x0 ^ 2
+    calc
+      relationPoly u c2'
+          = relationPoly u ((w / det) • c2) + relationPoly u ((-s / det) • c3) := by
+              rw [show c2' = (w / det) • c2 + (-s / det) • c3 by
+                funext i
+                simp [c2']
+              , relationPoly_add]
+      _ = (w / det) • relationPoly u c2 + (-s / det) • relationPoly u c3 := by
+            rw [relationPoly_smul, relationPoly_smul]
+      _ = (w / det) • (r • (x0 ^ 2 : Poly) + s • (x1 ^ 2 : Poly)) +
+            (-s / det) • (t • (x0 ^ 2 : Poly) + w • (x1 ^ 2 : Poly)) := by
+              rw [show relationPoly u c2 = ∑ i : Fin 4, c2 i • u i by rfl,
+                show relationPoly u c3 = ∑ i : Fin 4, c3 i • u i by rfl,
+                h2, h3]
+      _ = ((w / det) * r + (-s / det) * t) • (x0 ^ 2 : Poly) +
+            ((w / det) * s + (-s / det) * w) • (x1 ^ 2 : Poly) := by
+              simp [smul_add, smul_smul, add_smul, add_assoc, add_left_comm, mul_comm]
+      _ = x0 ^ 2 := by
+            rw [hcoeff20, hcoeff21]
+            simp
+  have h3' : ∑ i : Fin 4, c3' i • u i = x1 ^ 2 := by
+    change relationPoly u c3' = x1 ^ 2
+    calc
+      relationPoly u c3'
+          = relationPoly u ((-t / det) • c2) + relationPoly u ((r / det) • c3) := by
+              rw [show c3' = (-t / det) • c2 + (r / det) • c3 by
+                funext i
+                simp [c3']
+              , relationPoly_add]
+      _ = (-t / det) • relationPoly u c2 + (r / det) • relationPoly u c3 := by
+            rw [relationPoly_smul, relationPoly_smul]
+      _ = (-t / det) • (r • (x0 ^ 2 : Poly) + s • (x1 ^ 2 : Poly)) +
+            (r / det) • (t • (x0 ^ 2 : Poly) + w • (x1 ^ 2 : Poly)) := by
+              rw [show relationPoly u c2 = ∑ i : Fin 4, c2 i • u i by rfl,
+                show relationPoly u c3 = ∑ i : Fin 4, c3 i • u i by rfl,
+                h2, h3]
+      _ = ((-t / det) * r + (r / det) * t) • (x0 ^ 2 : Poly) +
+            ((-t / det) * s + (r / det) * w) • (x1 ^ 2 : Poly) := by
+              simp [smul_add, smul_smul, add_smul, add_assoc, add_left_comm, add_comm, mul_comm]
+      _ = x1 ^ 2 := by
+            rw [hcoeff30, hcoeff31]
+            simp
+  exact residual_eq_zero_of_relations_x0_onePlusAX0x1_x0sq_x1sq
+    (B := B) (u := u) hu h0 h1 h2' h3' hp hsocp
+
+theorem residual_eq_zero_of_equiv_relations_x0_onePlusAX0x1_x0sq_x1sqPlane
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    {a r s t w : ℝ}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = (1 : Poly) + a • (x0 * x1 : Poly))
+    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = r • (x0 ^ 2 : Poly) + s • (x1 ^ 2 : Poly))
+    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = t • (x0 ^ 2 : Poly) + w • (x1 ^ 2 : Poly))
+    (hdet : r * w - s * t ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := fun {_} hpq => heQuad hpq)
+      (heQuartic := fun {_} hpq => heQuartic hpq)
+      hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_onePlusAX0x1_x0sq_x1sqPlane
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 hdet hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
 /-- Linearity of `A` in the right slot. -/
 private theorem A_add_right_local (u v w : RankFourVec) :
     A u (v + w) = A u v + A u w := by
@@ -1378,6 +1495,123 @@ theorem residual_eq_zero_of_equiv_relations_x0_x1PlusAX0x1_x0sq_x1sq
       residual (e p) (mapVec e.toAlgHom u) = 0 := by
     exact residual_eq_zero_of_relations_x0_x1PlusAX0x1_x0sq_x1sq
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+theorem residual_eq_zero_of_relations_x0_x1PlusAX0x1_x0sq_x1sqPlane
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    {a r s t w : ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • u i = x1 + a • (x0 * x1 : Poly))
+    (h2 : ∑ i : Fin 4, c2 i • u i = r • (x0 ^ 2 : Poly) + s • (x1 ^ 2 : Poly))
+    (h3 : ∑ i : Fin 4, c3 i • u i = t • (x0 ^ 2 : Poly) + w • (x1 ^ 2 : Poly))
+    (hdet : r * w - s * t ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let det : ℝ := r * w - s * t
+  have hdet0 : det ≠ 0 := by
+    simpa [det] using hdet
+  let c2' : Fin 4 → ℝ := fun i => (w / det) * c2 i + (-s / det) * c3 i
+  let c3' : Fin 4 → ℝ := fun i => (-t / det) * c2 i + (r / det) * c3 i
+  have hcoeff20 : (w / det) * r + (-s / det) * t = 1 := by
+    field_simp [det, hdet0]
+    ring
+  have hcoeff21 : (w / det) * s + (-s / det) * w = 0 := by
+    field_simp [det, hdet0]
+    ring
+  have hcoeff30 : (-t / det) * r + (r / det) * t = 0 := by
+    field_simp [det, hdet0]
+    ring
+  have hcoeff31 : (-t / det) * s + (r / det) * w = 1 := by
+    field_simp [det, hdet0]
+    ring
+  have h2' : ∑ i : Fin 4, c2' i • u i = x0 ^ 2 := by
+    change relationPoly u c2' = x0 ^ 2
+    calc
+      relationPoly u c2'
+          = relationPoly u ((w / det) • c2) + relationPoly u ((-s / det) • c3) := by
+              rw [show c2' = (w / det) • c2 + (-s / det) • c3 by
+                funext i
+                simp [c2']
+              , relationPoly_add]
+      _ = (w / det) • relationPoly u c2 + (-s / det) • relationPoly u c3 := by
+            rw [relationPoly_smul, relationPoly_smul]
+      _ = (w / det) • (r • (x0 ^ 2 : Poly) + s • (x1 ^ 2 : Poly)) +
+            (-s / det) • (t • (x0 ^ 2 : Poly) + w • (x1 ^ 2 : Poly)) := by
+              rw [show relationPoly u c2 = ∑ i : Fin 4, c2 i • u i by rfl,
+                show relationPoly u c3 = ∑ i : Fin 4, c3 i • u i by rfl,
+                h2, h3]
+      _ = ((w / det) * r + (-s / det) * t) • (x0 ^ 2 : Poly) +
+            ((w / det) * s + (-s / det) * w) • (x1 ^ 2 : Poly) := by
+              simp [smul_add, smul_smul, add_smul, add_assoc, add_left_comm, mul_comm]
+      _ = x0 ^ 2 := by
+            rw [hcoeff20, hcoeff21]
+            simp
+  have h3' : ∑ i : Fin 4, c3' i • u i = x1 ^ 2 := by
+    change relationPoly u c3' = x1 ^ 2
+    calc
+      relationPoly u c3'
+          = relationPoly u ((-t / det) • c2) + relationPoly u ((r / det) • c3) := by
+              rw [show c3' = (-t / det) • c2 + (r / det) • c3 by
+                funext i
+                simp [c3']
+              , relationPoly_add]
+      _ = (-t / det) • relationPoly u c2 + (r / det) • relationPoly u c3 := by
+            rw [relationPoly_smul, relationPoly_smul]
+      _ = (-t / det) • (r • (x0 ^ 2 : Poly) + s • (x1 ^ 2 : Poly)) +
+            (r / det) • (t • (x0 ^ 2 : Poly) + w • (x1 ^ 2 : Poly)) := by
+              rw [show relationPoly u c2 = ∑ i : Fin 4, c2 i • u i by rfl,
+                show relationPoly u c3 = ∑ i : Fin 4, c3 i • u i by rfl,
+                h2, h3]
+      _ = ((-t / det) * r + (r / det) * t) • (x0 ^ 2 : Poly) +
+            ((-t / det) * s + (r / det) * w) • (x1 ^ 2 : Poly) := by
+              simp [smul_add, smul_smul, add_smul, add_assoc, add_left_comm, add_comm, mul_comm]
+      _ = x1 ^ 2 := by
+            rw [hcoeff30, hcoeff31]
+            simp
+  exact residual_eq_zero_of_relations_x0_x1PlusAX0x1_x0sq_x1sq
+    (B := B) (u := u) hu h0 h1 h2' h3' hp hsocp
+
+theorem residual_eq_zero_of_equiv_relations_x0_x1PlusAX0x1_x0sq_x1sqPlane
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    {a r s t w : ℝ}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x1 + a • (x0 * x1 : Poly))
+    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = r • (x0 ^ 2 : Poly) + s • (x1 ^ 2 : Poly))
+    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = t • (x0 ^ 2 : Poly) + w • (x1 ^ 2 : Poly))
+    (hdet : r * w - s * t ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := fun {_} hpq => heQuad hpq)
+      (heQuartic := fun {_} hpq => heQuartic hpq)
+      hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_x1PlusAX0x1_x0sq_x1sqPlane
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
 private def affineDimOneX0sqTailKer

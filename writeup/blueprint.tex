@@ -2122,6 +2122,15 @@ repeated-line endpoint. So the remaining exact-affine \(\dim=1\) classifier no
 longer has to hand back a pre-normalized \((x_0^2,x_0x_1)\) pair in that
 slice.
 
+The same file now also exports the diagonal-plane analogues
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0x1\_x0sq\_x1sqPlane}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX0x1\_x0sq\_x1sqPlane},
+again with matching equivariant wrappers. So in the constant-cross and
+linear-cross affine-rank-one slices, the classifier no longer needs exact
+\((x_0^2,x_1^2)\) relations either; determinant-nondegenerate plane data in
+\(\operatorname{span}(x_0^2,x_1^2)\) is now enough.
+
 The remaining exact-affine \(\dim=1\) gap is therefore no longer a missing
 constant-tail endpoint; it is the classifier that packages a general
 rank-\(2\) affine-image tailed branch into one of the already solved
@@ -2170,6 +2179,21 @@ inside the \(x_0\)-kernel such that \(q_{\mathrm{tail}}\) has nonzero
 and are linearly independent. That means the rank-\(1\) tail case is no longer
 an unstructured kernel problem; it has been reduced to classifying one tailed
 quadratic relative to a \(2\)-dimensional homogeneous plane.
+
+The new script
+\texttt{julia/affine\_dim\_one\_tail\_rank\_one\_2026\_04\_11.jl} records
+\texttt{affine\_dim\_one\_tail\_rank\_one\_probe}. In the retained samples it
+returns
+\[
+  \texttt{mixed\_image\_ranks}=[15],\qquad
+  \texttt{const\_image\_ranks}=[15],\qquad
+  \texttt{linear\_image\_ranks}=[14],\qquad
+  \texttt{linear\_missing}=[\{(0,0)\}].
+\]
+So numerically the generic rank-\(1\) tail family already looks surjective in
+the mixed and constant directions, while the pure \(x_1\)-tail direction still
+shows the codimension-one missing constant monomial pattern already visible in
+the normalized affine-rank-one endpoint theorems.
 
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
