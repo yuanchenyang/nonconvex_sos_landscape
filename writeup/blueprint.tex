@@ -2188,7 +2188,15 @@ So in the opposite tail-rank \(2\) extreme, Lean can already normalize the
   1,\qquad x_1,\qquad 0,
 \]
 leaving a single nonzero pure homogeneous quadratic relation as the remaining
-classifier datum. On the numerical side, the new script
+classifier datum. The new strengthening
+\texttt{exists\_x0\_tail\_const\_x1\_hom\_independent\_of\_exactAffineDimOne\_rangeTwo}
+pushes that one step further: Lean now also proves that neither the normalized
+constant relation minus \(1\) nor the normalized \(x_1\)-tail relation minus
+\(x_1\) can collapse onto that homogeneous line, since either collapse would
+manufacture an exact \(1\) or exact \(x_1\) relation and contradict
+\(\dim(\mathrm{ExactAff})=1\). So the tail-rank \(2\) branch is no longer just
+a raw extractor; it already arrives with the two key independence facts needed
+for the remaining classifier. On the numerical side, the new script
 \texttt{julia/affine\_dim\_one\_mixed\_tails\_2026\_04\_11.jl} records
 \texttt{affine\_dim\_one\_mixed\_tail\_probe}, and in all \(20\) retained
 random tail-rank \(2\) samples it returns

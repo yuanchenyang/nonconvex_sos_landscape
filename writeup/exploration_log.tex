@@ -2635,6 +2635,18 @@ that once the tail map has full rank \(2\), Lean can normalize the
 \(x_0\)-kernel to exact relations with tails \(1\), \(x_1\), and \(0\), plus a
 single nonzero pure homogeneous quadratic relation.
 
+I then strengthened that extractor in
+\texttt{ExactAffineClassification.lean} to
+\texttt{exists\_x0\_tail\_const\_x1\_hom\_independent\_of\_exactAffineDimOne\_rangeTwo}.
+This packages the first two contradictions that the later classifier would
+otherwise have to rediscover. Lean now proves that the normalized constant
+relation minus \(1\) and the normalized \(x_1\)-tail relation minus \(x_1\)
+are each linearly independent from the unique pure homogeneous line. If either
+pair collapsed, one would recover an exact \(1\) or exact \(x_1\) relation,
+contradicting \(\dim(\mathrm{ExactAff})=1\). So the tail-rank \(2\) output is
+now a cleaner classifier-ready package rather than only a basis-normalization
+statement.
+
 I then added the matching rank-\(1\) extractor
 \texttt{exists\_x0\_tail\_nonzero\_homPair\_of\_finrank\_range\_one}. This
 packages the remaining intermediate exact-affine \(\dim=1\) case much more
