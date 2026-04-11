@@ -4414,6 +4414,60 @@ private theorem gram_det_zero_imp_linearRelation
       have hw0 : w i = 0 := eq_zero_of_sum_sq_eq_zero (c := w) hw i
       simpa [w, sc, cd] using hw0
 
+private theorem gram_det_eq_sum_sq_minors
+    (c d : Fin 4 → ℝ) :
+    (∑ i : Fin 4, (c i) ^ 2) * (∑ i : Fin 4, (d i) ^ 2) -
+        (∑ i : Fin 4, c i * d i) ^ 2 =
+      (c 0 * d 1 - c 1 * d 0) ^ 2 +
+        (c 0 * d 2 - c 2 * d 0) ^ 2 +
+          (c 0 * d 3 - c 3 * d 0) ^ 2 +
+            (c 1 * d 2 - c 2 * d 1) ^ 2 +
+              (c 1 * d 3 - c 3 * d 1) ^ 2 +
+                (c 2 * d 3 - c 3 * d 2) ^ 2 := by
+  rw [Fin.sum_univ_four, Fin.sum_univ_four, Fin.sum_univ_four]
+  ring
+
+private theorem gram_det_zero_of_linearRelation
+    (c d : Fin 4 → ℝ) {a b : ℝ}
+    (hab : a ≠ 0 ∨ b ≠ 0)
+    (hlin : ∀ i : Fin 4, a * c i + b * d i = 0) :
+    (∑ i : Fin 4, (c i) ^ 2) * (∑ i : Fin 4, (d i) ^ 2) -
+        (∑ i : Fin 4, c i * d i) ^ 2 = 0 := by
+  rw [gram_det_eq_sum_sq_minors]
+  rcases hab with ha | hb
+  · have hc : ∀ i : Fin 4, c i = (-(b / a)) * d i := by
+      intro i
+      have hi := hlin i
+      have hmul : a * (c i - (-(b / a)) * d i) = 0 := by
+        field_simp [ha]
+        linarith
+      have hzero : c i - (-(b / a)) * d i = 0 := by
+        exact (mul_eq_zero.mp hmul).resolve_left ha
+      linarith
+    have h01 : c 0 * d 1 - c 1 * d 0 = 0 := by simp [hc 0, hc 1]; ring
+    have h02 : c 0 * d 2 - c 2 * d 0 = 0 := by simp [hc 0, hc 2]; ring
+    have h03 : c 0 * d 3 - c 3 * d 0 = 0 := by simp [hc 0, hc 3]; ring
+    have h12 : c 1 * d 2 - c 2 * d 1 = 0 := by simp [hc 1, hc 2]; ring
+    have h13 : c 1 * d 3 - c 3 * d 1 = 0 := by simp [hc 1, hc 3]; ring
+    have h23 : c 2 * d 3 - c 3 * d 2 = 0 := by simp [hc 2, hc 3]; ring
+    simp [h01, h02, h03, h12, h13, h23]
+  · have hd : ∀ i : Fin 4, d i = (-(a / b)) * c i := by
+      intro i
+      have hi := hlin i
+      have hmul : b * (d i - (-(a / b)) * c i) = 0 := by
+        field_simp [hb]
+        linarith
+      have hzero : d i - (-(a / b)) * c i = 0 := by
+        exact (mul_eq_zero.mp hmul).resolve_left hb
+      linarith
+    have h01 : c 0 * d 1 - c 1 * d 0 = 0 := by simp [hd 0, hd 1]; ring
+    have h02 : c 0 * d 2 - c 2 * d 0 = 0 := by simp [hd 0, hd 2]; ring
+    have h03 : c 0 * d 3 - c 3 * d 0 = 0 := by simp [hd 0, hd 3]; ring
+    have h12 : c 1 * d 2 - c 2 * d 1 = 0 := by simp [hd 1, hd 2]; ring
+    have h13 : c 1 * d 3 - c 3 * d 1 = 0 := by simp [hd 1, hd 3]; ring
+    have h23 : c 2 * d 3 - c 3 * d 2 = 0 := by simp [hd 2, hd 3]; ring
+    simp [h01, h02, h03, h12, h13, h23]
+
 private def homQuadPlaneA (q2 q3 : Poly) : ℝ :=
   MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
     MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3
@@ -10742,6 +10796,512 @@ theorem residual_eq_zero_of_equiv_relations_const_x0_tailedPair_det_general
       h0 h1 h2 h3 hq2 hq3 hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
+private theorem homQuadPlane_nontrivial_linearIndependent
+    {q2 q3 : Poly}
+    (hplane :
+      homQuadPlaneA q2 q3 ≠ 0 ∨
+        homQuadPlaneB q2 q3 ≠ 0 ∨
+          homQuadPlaneC q2 q3 ≠ 0)
+    {a b : ℝ}
+    (hrel : a • q2 + b • q3 = 0) :
+    a = 0 ∧ b = 0 := by
+  have hm20 :
+      a * MvPolynomial.coeff m20 q2 + b * MvPolynomial.coeff m20 q3 = 0 := by
+    simpa [MvPolynomial.coeff_add, MvPolynomial.coeff_smul] using
+      congrArg (MvPolynomial.coeff m20) hrel
+  have hm11 :
+      a * MvPolynomial.coeff m11 q2 + b * MvPolynomial.coeff m11 q3 = 0 := by
+    simpa [MvPolynomial.coeff_add, MvPolynomial.coeff_smul] using
+      congrArg (MvPolynomial.coeff m11) hrel
+  have hm02 :
+      a * MvPolynomial.coeff m02 q2 + b * MvPolynomial.coeff m02 q3 = 0 := by
+    simpa [MvPolynomial.coeff_add, MvPolynomial.coeff_smul] using
+      congrArg (MvPolynomial.coeff m02) hrel
+  rcases hplane with hA | hBC
+  · have hdeta :
+        a *
+          (MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+            MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3) = 0 := by
+      calc
+        a *
+            (MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+              MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3)
+            =
+          MvPolynomial.coeff m02 q3 *
+              (a * MvPolynomial.coeff m11 q2 + b * MvPolynomial.coeff m11 q3) -
+            MvPolynomial.coeff m11 q3 *
+              (a * MvPolynomial.coeff m02 q2 + b * MvPolynomial.coeff m02 q3) := by
+                ring
+        _ = 0 := by rw [hm11, hm02]; ring
+    have hdetb :
+        b *
+          (MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+            MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3) = 0 := by
+      calc
+        b *
+            (MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+              MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3)
+            =
+          MvPolynomial.coeff m11 q2 *
+              (a * MvPolynomial.coeff m02 q2 + b * MvPolynomial.coeff m02 q3) -
+            MvPolynomial.coeff m02 q2 *
+              (a * MvPolynomial.coeff m11 q2 + b * MvPolynomial.coeff m11 q3) := by
+                ring
+        _ = 0 := by rw [hm11, hm02]; ring
+    have ha0 : a = 0 := (mul_eq_zero.mp hdeta).resolve_right hA
+    have hb0 : b = 0 := (mul_eq_zero.mp hdetb).resolve_right hA
+    exact ⟨ha0, hb0⟩
+  · rcases hBC with hB | hC
+    · have hdeta :
+          a *
+            (MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
+              MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3) = 0 := by
+        calc
+          a *
+              (MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
+                MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3)
+              =
+            MvPolynomial.coeff m02 q3 *
+                (a * MvPolynomial.coeff m20 q2 + b * MvPolynomial.coeff m20 q3) -
+              MvPolynomial.coeff m20 q3 *
+                (a * MvPolynomial.coeff m02 q2 + b * MvPolynomial.coeff m02 q3) := by
+                  ring
+          _ = 0 := by rw [hm20, hm02]; ring
+      have hdetb :
+          b *
+            (MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
+              MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3) = 0 := by
+        calc
+          b *
+              (MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
+                MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3)
+              =
+            MvPolynomial.coeff m20 q2 *
+                (a * MvPolynomial.coeff m02 q2 + b * MvPolynomial.coeff m02 q3) -
+              MvPolynomial.coeff m02 q2 *
+                (a * MvPolynomial.coeff m20 q2 + b * MvPolynomial.coeff m20 q3) := by
+                  ring
+          _ = 0 := by rw [hm20, hm02]; ring
+      have ha0 : a = 0 := (mul_eq_zero.mp hdeta).resolve_right hB
+      have hb0 : b = 0 := (mul_eq_zero.mp hdetb).resolve_right hB
+      exact ⟨ha0, hb0⟩
+    · have hdeta :
+          a *
+            (MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+              MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3) = 0 := by
+        calc
+          a *
+              (MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+                MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3)
+              =
+            MvPolynomial.coeff m11 q3 *
+                (a * MvPolynomial.coeff m20 q2 + b * MvPolynomial.coeff m20 q3) -
+              MvPolynomial.coeff m20 q3 *
+                (a * MvPolynomial.coeff m11 q2 + b * MvPolynomial.coeff m11 q3) := by
+                  ring
+          _ = 0 := by rw [hm20, hm11]; ring
+      have hdetb :
+          b *
+            (MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+              MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3) = 0 := by
+        calc
+          b *
+              (MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+                MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3)
+              =
+            MvPolynomial.coeff m20 q2 *
+                (a * MvPolynomial.coeff m11 q2 + b * MvPolynomial.coeff m11 q3) -
+              MvPolynomial.coeff m11 q2 *
+                (a * MvPolynomial.coeff m20 q2 + b * MvPolynomial.coeff m20 q3) := by
+                  ring
+          _ = 0 := by rw [hm20, hm11]; ring
+      have ha0 : a = 0 := (mul_eq_zero.mp hdeta).resolve_right hC
+      have hb0 : b = 0 := (mul_eq_zero.mp hdetb).resolve_right hC
+      exact ⟨ha0, hb0⟩
+
+private theorem gram_ne_zero_of_relations_const_x0_homQuadratics_plane_nontrivial
+    {u : RankFourVec} {c2 c3 : Fin 4 → ℝ} {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hplane :
+      homQuadPlaneA q2 q3 ≠ 0 ∨
+        homQuadPlaneB q2 q3 ≠ 0 ∨
+          homQuadPlaneC q2 q3 ≠ 0) :
+    (∑ i : Fin 4, (c2 i) ^ 2) * (∑ i : Fin 4, (c3 i) ^ 2) -
+      (∑ i : Fin 4, c2 i * c3 i) ^ 2 ≠ 0 := by
+  intro hgram0
+  rcases gram_det_zero_imp_linearRelation c2 c3 hgram0 with ⟨a, b, hab, hlin⟩
+  have hrel0 : ∑ i : Fin 4, (a * c2 i + b * c3 i) • u i = 0 := by
+    rw [Fin.sum_univ_four]
+    simp [hlin]
+  have hpoly : a • q2 + b • q3 = 0 := by
+    calc
+      a • q2 + b • q3
+          = ∑ i : Fin 4, (a * c2 i + b * c3 i) • u i := by
+              symm
+              exact relation_linearCombination h2 h3 a b
+      _ = 0 := hrel0
+  rcases homQuadPlane_nontrivial_linearIndependent hplane hpoly with ⟨ha0, hb0⟩
+  rcases hab with ha | hb
+  · exact ha ha0
+  · exact hb hb0
+
+theorem residual_eq_zero_of_relations_const_x0_homQuadratics_plane_nontrivial_noGram
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hplane :
+      homQuadPlaneA q2 q3 ≠ 0 ∨
+        homQuadPlaneB q2 q3 ≠ 0 ∨
+          homQuadPlaneC q2 q3 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  exact residual_eq_zero_of_relations_const_x0_homQuadratics_plane_nontrivial
+    (B := B) (u := u) hu
+    h0 h1 h2 h3 hq2 hq3 hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+    (gram_ne_zero_of_relations_const_x0_homQuadratics_plane_nontrivial h2 h3 hplane)
+    hplane hp hsocp
+
+theorem residual_eq_zero_of_relations_const_x0_homQuadratics_dependent_gram
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c2 c3 : Fin 4 → ℝ} {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hA0 : homQuadPlaneA q2 q3 = 0)
+    (hB0 : homQuadPlaneB q2 q3 = 0)
+    (hC0 : homQuadPlaneC q2 q3 = 0)
+    (hgram :
+      (∑ i : Fin 4, (c2 i) ^ 2) * (∑ i : Fin 4, (c3 i) ^ 2) -
+        (∑ i : Fin 4, c2 i * c3 i) ^ 2 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  by_cases hq2zero : q2 = 0
+  · have hrel : ∑ i : Fin 4, c2 i • u i = 0 := by simpa [hq2zero] using h2
+    have hc : c2 ≠ 0 := by
+      intro hc0
+      have hgram0 := gram_det_zero_of_linearRelation c2 c3 (a := 1) (b := 0)
+        (Or.inl one_ne_zero) (by
+          intro i
+          have hci := congrArg (fun z : Fin 4 → ℝ => z i) hc0
+          simpa using hci)
+      exact hgram hgram0
+    exact residual_eq_zero_of_constant_relation (B := B) (u := u) hu hrel hc hp hsocp
+  · by_cases h20 : MvPolynomial.coeff m20 q2 ≠ 0
+    · let c : Fin 4 → ℝ := fun i =>
+        MvPolynomial.coeff m20 q3 * c2 i + (-MvPolynomial.coeff m20 q2) * c3 i
+      have hBswap :
+          MvPolynomial.coeff m20 q3 * MvPolynomial.coeff m02 q2 -
+            MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 = 0 := by
+        dsimp [homQuadPlaneB] at hB0
+        linarith
+      have hCswap :
+          MvPolynomial.coeff m20 q3 * MvPolynomial.coeff m11 q2 -
+            MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 = 0 := by
+        dsimp [homQuadPlaneC] at hC0
+        linarith
+      have hrel : ∑ i : Fin 4, c i • u i = 0 := by
+        calc
+          ∑ i : Fin 4, c i • u i
+              = ∑ i : Fin 4,
+                  (MvPolynomial.coeff m20 q3 * c2 i + (-MvPolynomial.coeff m20 q2) * c3 i) • u i := by
+                    simp [c]
+          _ = MvPolynomial.coeff m20 q3 • q2 +
+                  (-MvPolynomial.coeff m20 q2) • q3 := by
+                exact relation_linearCombination h2 h3 _ _
+          _ = 0 := by
+            have hcombq :
+                IsQuadratic
+                  (MvPolynomial.coeff m20 q3 • q2 +
+                    (-MvPolynomial.coeff m20 q2) • q3) := by
+              exact isQuadratic_linearCombination_local hq2 hq3 _ _
+            have hcomb00 :
+                MvPolynomial.coeff m00
+                  (MvPolynomial.coeff m20 q3 • q2 +
+                    (-MvPolynomial.coeff m20 q2) • q3) = 0 := by
+              simp [hq2_00, hq3_00]
+            have hcomb10 :
+                MvPolynomial.coeff m10
+                  (MvPolynomial.coeff m20 q3 • q2 +
+                    (-MvPolynomial.coeff m20 q2) • q3) = 0 := by
+              simp [hq2_10, hq3_10]
+            have hcomb01 :
+                MvPolynomial.coeff m01
+                  (MvPolynomial.coeff m20 q3 • q2 +
+                    (-MvPolynomial.coeff m20 q2) • q3) = 0 := by
+              simp [hq2_01, hq3_01]
+            have hcomb20 :
+                MvPolynomial.coeff m20
+                  (MvPolynomial.coeff m20 q3 • q2 +
+                    (-MvPolynomial.coeff m20 q2) • q3) = 0 := by
+              simp
+              ring
+            have hcomb11 :
+                MvPolynomial.coeff m11
+                  (MvPolynomial.coeff m20 q3 • q2 +
+                    (-MvPolynomial.coeff m20 q2) • q3) = 0 := by
+              simpa [sub_eq_add_neg] using hCswap
+            have hcomb02 :
+                MvPolynomial.coeff m02
+                  (MvPolynomial.coeff m20 q3 • q2 +
+                    (-MvPolynomial.coeff m20 q2) • q3) = 0 := by
+              simpa [sub_eq_add_neg] using hBswap
+            rw [quadratic_eq_quadForm hcombq, hcomb00, hcomb10, hcomb01,
+              hcomb20, hcomb11, hcomb02]
+            simp [quadForm]
+      have hc : c ≠ 0 := by
+        intro hc0
+        have hgram0 := gram_det_zero_of_linearRelation c2 c3
+          (a := MvPolynomial.coeff m20 q3) (b := -MvPolynomial.coeff m20 q2)
+          (Or.inr (neg_ne_zero.mpr h20)) (by
+            intro i
+            have hci := congrArg (fun z : Fin 4 → ℝ => z i) hc0
+            simpa [c] using hci)
+        exact hgram hgram0
+      exact residual_eq_zero_of_constant_relation (B := B) (u := u) hu hrel hc hp hsocp
+    · by_cases h11 : MvPolynomial.coeff m11 q2 ≠ 0
+      · let c : Fin 4 → ℝ := fun i =>
+          MvPolynomial.coeff m11 q3 * c2 i + (-MvPolynomial.coeff m11 q2) * c3 i
+        have hAswap :
+            MvPolynomial.coeff m11 q3 * MvPolynomial.coeff m02 q2 -
+              MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 = 0 := by
+          dsimp [homQuadPlaneA] at hA0
+          linarith
+        have hCswap :
+            MvPolynomial.coeff m11 q3 * MvPolynomial.coeff m20 q2 -
+              MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 = 0 := by
+          dsimp [homQuadPlaneC] at hC0
+          linarith
+        have hrel : ∑ i : Fin 4, c i • u i = 0 := by
+          calc
+            ∑ i : Fin 4, c i • u i
+                = ∑ i : Fin 4,
+                    (MvPolynomial.coeff m11 q3 * c2 i + (-MvPolynomial.coeff m11 q2) * c3 i) • u i := by
+                      simp [c]
+            _ = MvPolynomial.coeff m11 q3 • q2 +
+                    (-MvPolynomial.coeff m11 q2) • q3 := by
+                  exact relation_linearCombination h2 h3 _ _
+            _ = 0 := by
+              have hcombq :
+                  IsQuadratic
+                    (MvPolynomial.coeff m11 q3 • q2 +
+                      (-MvPolynomial.coeff m11 q2) • q3) := by
+                exact isQuadratic_linearCombination_local hq2 hq3 _ _
+              have hcomb00 :
+                  MvPolynomial.coeff m00
+                    (MvPolynomial.coeff m11 q3 • q2 +
+                      (-MvPolynomial.coeff m11 q2) • q3) = 0 := by
+                simp [hq2_00, hq3_00]
+              have hcomb10 :
+                  MvPolynomial.coeff m10
+                    (MvPolynomial.coeff m11 q3 • q2 +
+                      (-MvPolynomial.coeff m11 q2) • q3) = 0 := by
+                simp [hq2_10, hq3_10]
+              have hcomb01 :
+                  MvPolynomial.coeff m01
+                    (MvPolynomial.coeff m11 q3 • q2 +
+                      (-MvPolynomial.coeff m11 q2) • q3) = 0 := by
+                simp [hq2_01, hq3_01]
+              have hcomb20 :
+                  MvPolynomial.coeff m20
+                    (MvPolynomial.coeff m11 q3 • q2 +
+                      (-MvPolynomial.coeff m11 q2) • q3) = 0 := by
+                simpa [sub_eq_add_neg] using hCswap
+              have hcomb11 :
+                  MvPolynomial.coeff m11
+                    (MvPolynomial.coeff m11 q3 • q2 +
+                      (-MvPolynomial.coeff m11 q2) • q3) = 0 := by
+                simp
+                ring
+              have hcomb02 :
+                  MvPolynomial.coeff m02
+                    (MvPolynomial.coeff m11 q3 • q2 +
+                      (-MvPolynomial.coeff m11 q2) • q3) = 0 := by
+                simpa [sub_eq_add_neg] using hAswap
+              rw [quadratic_eq_quadForm hcombq, hcomb00, hcomb10, hcomb01,
+                hcomb20, hcomb11, hcomb02]
+              simp [quadForm]
+        have hc : c ≠ 0 := by
+          intro hc0
+          have hgram0 := gram_det_zero_of_linearRelation c2 c3
+            (a := MvPolynomial.coeff m11 q3) (b := -MvPolynomial.coeff m11 q2)
+            (Or.inr (neg_ne_zero.mpr h11)) (by
+              intro i
+              have hci := congrArg (fun z : Fin 4 → ℝ => z i) hc0
+              simpa [c] using hci)
+          exact hgram hgram0
+        exact residual_eq_zero_of_constant_relation (B := B) (u := u) hu hrel hc hp hsocp
+      · have h20z : MvPolynomial.coeff m20 q2 = 0 := by
+          by_contra h20z
+          exact h20 h20z
+        have h11z : MvPolynomial.coeff m11 q2 = 0 := by
+          by_contra h11z
+          exact h11 h11z
+        have h02 : MvPolynomial.coeff m02 q2 ≠ 0 := by
+          intro h02z
+          have hq2zero' : q2 = 0 := by
+            rw [quadratic_eq_quadForm hq2, quadForm_eq_explicit]
+            simp [hq2_00, hq2_10, hq2_01, h20z, h11z, h02z]
+          exact hq2zero hq2zero'
+        have h20q3z : MvPolynomial.coeff m20 q3 = 0 := by
+          have hB0' : MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
+              MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3 = 0 := by
+            simpa [homQuadPlaneB] using hB0
+          rw [h20z] at hB0'
+          have : -(MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3) = 0 := by
+            simpa using hB0'
+          have : MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3 = 0 := by
+            linarith
+          by_cases h20q3 : MvPolynomial.coeff m20 q3 = 0
+          · exact h20q3
+          · exfalso
+            rcases mul_eq_zero.mp this with h02z | h20q3z
+            · exact h02 h02z
+            · exact h20q3 h20q3z
+        have h11q3z : MvPolynomial.coeff m11 q3 = 0 := by
+          have hA0' : MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+              MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 = 0 := by
+            simpa [homQuadPlaneA] using hA0
+          rw [h11z] at hA0'
+          have : -(MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3) = 0 := by
+            simpa using hA0'
+          have : MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 = 0 := by
+            linarith
+          by_cases h11q3 : MvPolynomial.coeff m11 q3 = 0
+          · exact h11q3
+          · exfalso
+            rcases mul_eq_zero.mp this with h02z | h11q3z
+            · exact h02 h02z
+            · exact h11q3 h11q3z
+        let c : Fin 4 → ℝ := fun i =>
+          MvPolynomial.coeff m02 q3 * c2 i + (-MvPolynomial.coeff m02 q2) * c3 i
+        have hrel : ∑ i : Fin 4, c i • u i = 0 := by
+          calc
+            ∑ i : Fin 4, c i • u i
+                = ∑ i : Fin 4,
+                    (MvPolynomial.coeff m02 q3 * c2 i + (-MvPolynomial.coeff m02 q2) * c3 i) • u i := by
+                      simp [c]
+            _ = MvPolynomial.coeff m02 q3 • q2 +
+                    (-MvPolynomial.coeff m02 q2) • q3 := by
+                  exact relation_linearCombination h2 h3 _ _
+            _ = 0 := by
+              have hcombq :
+                  IsQuadratic
+                    (MvPolynomial.coeff m02 q3 • q2 +
+                      (-MvPolynomial.coeff m02 q2) • q3) := by
+                exact isQuadratic_linearCombination_local hq2 hq3 _ _
+              have hcomb00 :
+                  MvPolynomial.coeff m00
+                    (MvPolynomial.coeff m02 q3 • q2 +
+                      (-MvPolynomial.coeff m02 q2) • q3) = 0 := by
+                simp [hq2_00, hq3_00]
+              have hcomb10 :
+                  MvPolynomial.coeff m10
+                    (MvPolynomial.coeff m02 q3 • q2 +
+                      (-MvPolynomial.coeff m02 q2) • q3) = 0 := by
+                simp [hq2_10, hq3_10]
+              have hcomb01 :
+                  MvPolynomial.coeff m01
+                    (MvPolynomial.coeff m02 q3 • q2 +
+                      (-MvPolynomial.coeff m02 q2) • q3) = 0 := by
+                simp [hq2_01, hq3_01]
+              have hcomb20 :
+                  MvPolynomial.coeff m20
+                    (MvPolynomial.coeff m02 q3 • q2 +
+                      (-MvPolynomial.coeff m02 q2) • q3) = 0 := by
+                simp [h20z, h20q3z]
+              have hcomb11 :
+                  MvPolynomial.coeff m11
+                    (MvPolynomial.coeff m02 q3 • q2 +
+                      (-MvPolynomial.coeff m02 q2) • q3) = 0 := by
+                simp [h11z, h11q3z]
+              have hcomb02 :
+                  MvPolynomial.coeff m02
+                    (MvPolynomial.coeff m02 q3 • q2 +
+                      (-MvPolynomial.coeff m02 q2) • q3) = 0 := by
+                simp
+                ring
+              rw [quadratic_eq_quadForm hcombq, hcomb00, hcomb10, hcomb01,
+                hcomb20, hcomb11, hcomb02]
+              simp [quadForm]
+        have hc : c ≠ 0 := by
+          intro hc0
+          have hgram0 := gram_det_zero_of_linearRelation c2 c3
+            (a := MvPolynomial.coeff m02 q3) (b := -MvPolynomial.coeff m02 q2)
+            (Or.inr (neg_ne_zero.mpr h02)) (by
+              intro i
+              have hci := congrArg (fun z : Fin 4 → ℝ => z i) hc0
+              simpa [c] using hci)
+          exact hgram hgram0
+        exact residual_eq_zero_of_constant_relation (B := B) (u := u) hu hrel hc hp hsocp
+
+theorem residual_eq_zero_of_relations_const_x0_homQuadratics_cases
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hgram :
+      (∑ i : Fin 4, (c2 i) ^ 2) * (∑ i : Fin 4, (c3 i) ^ 2) -
+        (∑ i : Fin 4, c2 i * c3 i) ^ 2 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  by_cases hplane :
+      homQuadPlaneA q2 q3 ≠ 0 ∨
+        homQuadPlaneB q2 q3 ≠ 0 ∨
+          homQuadPlaneC q2 q3 ≠ 0
+  · exact residual_eq_zero_of_relations_const_x0_homQuadratics_plane_nontrivial_noGram
+      (B := B) (u := u) hu
+      h0 h1 h2 h3 hq2 hq3 hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+      hplane hp hsocp
+  · push Not at hplane
+    rcases hplane with ⟨hA0, hB0, hC0⟩
+    exact residual_eq_zero_of_relations_const_x0_homQuadratics_dependent_gram
+      (B := B) (u := u) hu
+      h2 h3 hq2 hq3 hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+      hA0 hB0 hC0 hgram hp hsocp
+
 private def relationColsMatrix
     (c0 c1 c2 c3 : Fin 4 → ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
   fun i j =>
@@ -11493,277 +12053,15 @@ theorem residual_eq_zero_of_const_x0_pair_coeff_m00_m10_zero
         have hq3_01z : MvPolynomial.coeff m01 q3 = 0 := by
           by_contra hq3_01z
           exact hq3_01 hq3_01z
-        by_cases hplane :
-            homQuadPlaneA q2 q3 ≠ 0 ∨
-              homQuadPlaneB q2 q3 ≠ 0 ∨
-                homQuadPlaneC q2 q3 ≠ 0
-        · exact residual_eq_zero_of_relations_const_x0_homQuadratics_plane_nontrivial
-            (c0 := stdRel0) (c1 := stdRel1) (c2 := stdRel2) (c3 := stdRel3)
-            (B := B) (u := u) hu
-            (h0 := by simpa [stdRel0, Fin.sum_univ_four] using h0)
-            (h1 := by simpa [stdRel1, Fin.sum_univ_four] using h1)
-            (h2 := by simpa [stdRel2, Fin.sum_univ_four] using h2)
-            (h3 := by simpa [stdRel3, Fin.sum_univ_four] using h3)
-            hq2 hq3 hq2_00 hq2_10 hq2_01z hq3_00 hq3_10 hq3_01z
-            (hgram := stdRel23_gram_ne_zero) hplane hp hsocp
-        · push Not at hplane
-          rcases hplane with ⟨hA0, hB0, hC0⟩
-          by_cases hq2zero : q2 = 0
-          · have hrel : ∑ i : Fin 4, stdRel2 i • u i = 0 := by
-              simpa [stdRel2, Fin.sum_univ_four, hq2zero] using h2
-            have hstdRel2 : stdRel2 ≠ 0 := by
-              intro hzero
-              have h2c := congrArg (fun z : Fin 4 → ℝ => z 2) hzero
-              norm_num [stdRel2] at h2c
-            exact residual_eq_zero_of_constant_relation
-              (B := B) (u := u) hu hrel hstdRel2 hp hsocp
-          · by_cases h20 : MvPolynomial.coeff m20 q2 ≠ 0
-            · let c : Fin 4 → ℝ
-                | 0 => 0
-                | 1 => 0
-                | 2 => MvPolynomial.coeff m20 q3
-                | 3 => -MvPolynomial.coeff m20 q2
-              have hBswap :
-                  MvPolynomial.coeff m20 q3 * MvPolynomial.coeff m02 q2 -
-                    MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 = 0 := by
-                dsimp [homQuadPlaneB] at hB0
-                linarith
-              have hCswap :
-                  MvPolynomial.coeff m20 q3 * MvPolynomial.coeff m11 q2 -
-                    MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 = 0 := by
-                dsimp [homQuadPlaneC] at hC0
-                linarith
-              have hrel : ∑ i : Fin 4, c i • u i = 0 := by
-                calc
-                  ∑ i : Fin 4, c i • u i
-                      = MvPolynomial.coeff m20 q3 • q2 +
-                          (-MvPolynomial.coeff m20 q2) • q3 := by
-                            simp [c, Fin.sum_univ_four, h2, h3]
-                  _ = 0 := by
-                    have hcombq :
-                        IsQuadratic
-                          (MvPolynomial.coeff m20 q3 • q2 +
-                            (-MvPolynomial.coeff m20 q2) • q3) := by
-                      exact isQuadratic_linearCombination_local hq2 hq3 _ _
-                    have hcomb00 :
-                        MvPolynomial.coeff m00
-                          (MvPolynomial.coeff m20 q3 • q2 +
-                            (-MvPolynomial.coeff m20 q2) • q3) = 0 := by
-                      simp [hq2_00, hq3_00]
-                    have hcomb10 :
-                        MvPolynomial.coeff m10
-                          (MvPolynomial.coeff m20 q3 • q2 +
-                            (-MvPolynomial.coeff m20 q2) • q3) = 0 := by
-                      simp [hq2_10, hq3_10]
-                    have hcomb01 :
-                        MvPolynomial.coeff m01
-                          (MvPolynomial.coeff m20 q3 • q2 +
-                            (-MvPolynomial.coeff m20 q2) • q3) = 0 := by
-                      simp [hq2_01z, hq3_01z]
-                    have hcomb20 :
-                        MvPolynomial.coeff m20
-                          (MvPolynomial.coeff m20 q3 • q2 +
-                            (-MvPolynomial.coeff m20 q2) • q3) = 0 := by
-                      simp
-                      ring
-                    have hcomb11 :
-                        MvPolynomial.coeff m11
-                          (MvPolynomial.coeff m20 q3 • q2 +
-                            (-MvPolynomial.coeff m20 q2) • q3) = 0 := by
-                      simpa [sub_eq_add_neg] using hCswap
-                    have hcomb02 :
-                        MvPolynomial.coeff m02
-                          (MvPolynomial.coeff m20 q3 • q2 +
-                            (-MvPolynomial.coeff m20 q2) • q3) = 0 := by
-                      simpa [sub_eq_add_neg] using hBswap
-                    rw [quadratic_eq_quadForm hcombq, hcomb00, hcomb10, hcomb01,
-                      hcomb20, hcomb11, hcomb02]
-                    simp [quadForm]
-              have hc : c ≠ 0 := by
-                intro hzero
-                have h3c := congrArg (fun z : Fin 4 → ℝ => z 3) hzero
-                have h20z' : -MvPolynomial.coeff m20 q2 = 0 := by
-                  simpa [c] using h3c
-                have h20z : MvPolynomial.coeff m20 q2 = 0 := by
-                  linarith
-                exact h20 h20z
-              exact residual_eq_zero_of_constant_relation
-                (B := B) (u := u) hu hrel hc hp hsocp
-            · by_cases h11 : MvPolynomial.coeff m11 q2 ≠ 0
-              · let c : Fin 4 → ℝ
-                  | 0 => 0
-                  | 1 => 0
-                  | 2 => MvPolynomial.coeff m11 q3
-                  | 3 => -MvPolynomial.coeff m11 q2
-                have hAswap :
-                    MvPolynomial.coeff m11 q3 * MvPolynomial.coeff m02 q2 -
-                      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 = 0 := by
-                  dsimp [homQuadPlaneA] at hA0
-                  linarith
-                have hCswap :
-                    MvPolynomial.coeff m11 q3 * MvPolynomial.coeff m20 q2 -
-                      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 = 0 := by
-                  dsimp [homQuadPlaneC] at hC0
-                  linarith
-                have hrel : ∑ i : Fin 4, c i • u i = 0 := by
-                  calc
-                    ∑ i : Fin 4, c i • u i
-                        = MvPolynomial.coeff m11 q3 • q2 +
-                            (-MvPolynomial.coeff m11 q2) • q3 := by
-                              simp [c, Fin.sum_univ_four, h2, h3]
-                    _ = 0 := by
-                      have hcombq :
-                          IsQuadratic
-                            (MvPolynomial.coeff m11 q3 • q2 +
-                              (-MvPolynomial.coeff m11 q2) • q3) := by
-                        exact isQuadratic_linearCombination_local hq2 hq3 _ _
-                      have hcomb00 :
-                          MvPolynomial.coeff m00
-                            (MvPolynomial.coeff m11 q3 • q2 +
-                              (-MvPolynomial.coeff m11 q2) • q3) = 0 := by
-                        simp [hq2_00, hq3_00]
-                      have hcomb10 :
-                          MvPolynomial.coeff m10
-                            (MvPolynomial.coeff m11 q3 • q2 +
-                              (-MvPolynomial.coeff m11 q2) • q3) = 0 := by
-                        simp [hq2_10, hq3_10]
-                      have hcomb01 :
-                          MvPolynomial.coeff m01
-                            (MvPolynomial.coeff m11 q3 • q2 +
-                              (-MvPolynomial.coeff m11 q2) • q3) = 0 := by
-                        simp [hq2_01z, hq3_01z]
-                      have hcomb20 :
-                          MvPolynomial.coeff m20
-                            (MvPolynomial.coeff m11 q3 • q2 +
-                              (-MvPolynomial.coeff m11 q2) • q3) = 0 := by
-                        simpa [sub_eq_add_neg] using hCswap
-                      have hcomb11 :
-                          MvPolynomial.coeff m11
-                            (MvPolynomial.coeff m11 q3 • q2 +
-                              (-MvPolynomial.coeff m11 q2) • q3) = 0 := by
-                        simp
-                        ring
-                      have hcomb02 :
-                          MvPolynomial.coeff m02
-                            (MvPolynomial.coeff m11 q3 • q2 +
-                              (-MvPolynomial.coeff m11 q2) • q3) = 0 := by
-                        simpa [sub_eq_add_neg] using hAswap
-                      rw [quadratic_eq_quadForm hcombq, hcomb00, hcomb10, hcomb01,
-                        hcomb20, hcomb11, hcomb02]
-                      simp [quadForm]
-                have hc : c ≠ 0 := by
-                  intro hzero
-                  have h3c := congrArg (fun z : Fin 4 → ℝ => z 3) hzero
-                  have h11z' : -MvPolynomial.coeff m11 q2 = 0 := by
-                    simpa [c] using h3c
-                  have h11z'' : MvPolynomial.coeff m11 q2 = 0 := by
-                    linarith
-                  exact h11 h11z''
-                exact residual_eq_zero_of_constant_relation
-                  (B := B) (u := u) hu hrel hc hp hsocp
-              · have h20z : MvPolynomial.coeff m20 q2 = 0 := by
-                  by_contra h20z
-                  exact h20 h20z
-                have h11z : MvPolynomial.coeff m11 q2 = 0 := by
-                  by_contra h11z
-                  exact h11 h11z
-                have h02 : MvPolynomial.coeff m02 q2 ≠ 0 := by
-                  intro h02z
-                  have hq2zero' : q2 = 0 := by
-                    rw [quadratic_eq_quadForm hq2, quadForm_eq_explicit]
-                    simp [hq2_00, hq2_10, hq2_01z, h20z, h11z, h02z]
-                  exact hq2zero hq2zero'
-                have h20q3z : MvPolynomial.coeff m20 q3 = 0 := by
-                  have hB0' : MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
-                      MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3 = 0 := by
-                    simpa [homQuadPlaneB] using hB0
-                  rw [h20z] at hB0'
-                  have : -(MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3) = 0 := by
-                    simpa using hB0'
-                  have : MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3 = 0 := by
-                    linarith
-                  by_cases h20q3 : MvPolynomial.coeff m20 q3 = 0
-                  · exact h20q3
-                  · exfalso
-                    rcases mul_eq_zero.mp this with h02z | h20q3z
-                    · exact h02 h02z
-                    · exact h20q3 h20q3z
-                have h11q3z : MvPolynomial.coeff m11 q3 = 0 := by
-                  have hA0' : MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
-                      MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 = 0 := by
-                    simpa [homQuadPlaneA] using hA0
-                  rw [h11z] at hA0'
-                  have : -(MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3) = 0 := by
-                    simpa using hA0'
-                  have : MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 = 0 := by
-                    linarith
-                  by_cases h11q3 : MvPolynomial.coeff m11 q3 = 0
-                  · exact h11q3
-                  · exfalso
-                    rcases mul_eq_zero.mp this with h02z | h11q3z
-                    · exact h02 h02z
-                    · exact h11q3 h11q3z
-                let c : Fin 4 → ℝ
-                    | 0 => 0
-                    | 1 => 0
-                    | 2 => MvPolynomial.coeff m02 q3
-                    | 3 => -MvPolynomial.coeff m02 q2
-                have hrel : ∑ i : Fin 4, c i • u i = 0 := by
-                  calc
-                    ∑ i : Fin 4, c i • u i
-                        = MvPolynomial.coeff m02 q3 • q2 +
-                            (-MvPolynomial.coeff m02 q2) • q3 := by
-                              simp [c, Fin.sum_univ_four, h2, h3]
-                    _ = 0 := by
-                      have hcombq :
-                          IsQuadratic
-                            (MvPolynomial.coeff m02 q3 • q2 +
-                              (-MvPolynomial.coeff m02 q2) • q3) := by
-                        exact isQuadratic_linearCombination_local hq2 hq3 _ _
-                      have hcomb00 :
-                          MvPolynomial.coeff m00
-                            (MvPolynomial.coeff m02 q3 • q2 +
-                              (-MvPolynomial.coeff m02 q2) • q3) = 0 := by
-                        simp [hq2_00, hq3_00]
-                      have hcomb10 :
-                          MvPolynomial.coeff m10
-                            (MvPolynomial.coeff m02 q3 • q2 +
-                              (-MvPolynomial.coeff m02 q2) • q3) = 0 := by
-                        simp [hq2_10, hq3_10]
-                      have hcomb01 :
-                          MvPolynomial.coeff m01
-                            (MvPolynomial.coeff m02 q3 • q2 +
-                              (-MvPolynomial.coeff m02 q2) • q3) = 0 := by
-                        simp [hq2_01z, hq3_01z]
-                      have hcomb20 :
-                          MvPolynomial.coeff m20
-                            (MvPolynomial.coeff m02 q3 • q2 +
-                              (-MvPolynomial.coeff m02 q2) • q3) = 0 := by
-                        simp [h20z, h20q3z]
-                      have hcomb11 :
-                          MvPolynomial.coeff m11
-                            (MvPolynomial.coeff m02 q3 • q2 +
-                              (-MvPolynomial.coeff m02 q2) • q3) = 0 := by
-                        simp [h11z, h11q3z]
-                      have hcomb02 :
-                          MvPolynomial.coeff m02
-                            (MvPolynomial.coeff m02 q3 • q2 +
-                              (-MvPolynomial.coeff m02 q2) • q3) = 0 := by
-                        simp
-                        ring
-                      rw [quadratic_eq_quadForm hcombq, hcomb00, hcomb10, hcomb01,
-                        hcomb20, hcomb11, hcomb02]
-                      simp [quadForm]
-                have hc : c ≠ 0 := by
-                  intro hzero
-                  have h3c := congrArg (fun z : Fin 4 → ℝ => z 3) hzero
-                  have h02z' : -MvPolynomial.coeff m02 q2 = 0 := by
-                    simpa [c] using h3c
-                  have h02z'' : MvPolynomial.coeff m02 q2 = 0 := by
-                    linarith
-                  exact h02 h02z''
-                exact residual_eq_zero_of_constant_relation
-                  (B := B) (u := u) hu hrel hc hp hsocp
+        exact residual_eq_zero_of_relations_const_x0_homQuadratics_cases
+          (c0 := stdRel0) (c1 := stdRel1) (c2 := stdRel2) (c3 := stdRel3)
+          (B := B) (u := u) hu
+          (h0 := by simpa [stdRel0, Fin.sum_univ_four] using h0)
+          (h1 := by simpa [stdRel1, Fin.sum_univ_four] using h1)
+          (h2 := by simpa [stdRel2, Fin.sum_univ_four] using h2)
+          (h3 := by simpa [stdRel3, Fin.sum_univ_four] using h3)
+          hq2 hq3 hq2_00 hq2_10 hq2_01z hq3_00 hq3_10 hq3_01z
+          stdRel23_gram_ne_zero hp hsocp
 
 theorem residual_eq_zero_of_equiv_const_x0_pair_coeff_m00_m10_zero
     (e : Poly ≃ₐ[ℝ] Poly)

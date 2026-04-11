@@ -1680,6 +1680,20 @@ corrected-pair Gram nondegeneracy argument internally. So the determinant-
 nondegenerate mixed-affine branch no longer needs an orthonormal coefficient
 basis or an exact \((1,x_0,q_2,q_3)\) coordinate realization.
 
+The next Lean round packages the remaining purely homogeneous
+\((1,x_0,q_2,q_3)\) sub-branch at relation level. The file now proves
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_homQuadratics\_cases},
+together with the supporting lemmas that (i) a nontrivial homogeneous plane
+forces Gram nondegeneracy of the relation pair, and (ii) the complementary
+dependent homogeneous-line case closes by an explicit constant relation.
+As a result, the exact-coordinate theorem
+\texttt{residual\_eq\_zero\_of\_const\_x0\_pair\_coeff\_m00\_m10\_zero} no
+longer carries a long inlined proof for the ``both \(x_1\)-tails vanish''
+branch; it now delegates that whole homogeneous subcase to the new
+relation-level theorem. This does not yet finish the global classification,
+but it reduces the remaining gap to the genuinely tailed normalization and
+transport data.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data, especially for the constant-containing mixed-affine

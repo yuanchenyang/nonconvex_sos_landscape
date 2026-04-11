@@ -1624,6 +1624,19 @@ nondegenerate mixed-affine branch now accepts the exact relation data that
 classification naturally produces, without any separate orthonormalization
 step.
 
+The next Lean round stabilized and packaged the remaining purely homogeneous
+sub-branch of the constant-containing mixed-affine exact dispatcher. I added
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_homQuadratics\_cases},
+along with the supporting linear-algebra lemmas showing that a nontrivial
+homogeneous quadratic plane forces nonzero Gram determinant for the relation
+pair, while the complementary dependent homogeneous-line case yields an
+explicit constant relation and hence closes directly. I then rewired
+\texttt{residual\_eq\_zero\_of\_const\_x0\_pair\_coeff\_m00\_m10\_zero} to use
+that packaged theorem instead of carrying a long inlined proof of the
+``both \(x_1\)-tails vanish'' case. No new Julia experiments were needed for
+this round; the change is purely formal consolidation of the homogeneous
+mixed-affine branch.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
