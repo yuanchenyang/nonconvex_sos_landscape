@@ -678,4 +678,122 @@ theorem residual_eq_zero_of_relations_affinePair_translatedKernel_constZero
     (B := B) (u := u) hu h0 h1 h2 h3 hq2 hq3
     hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01 hind hp hsocp
 
+/-- If the translated zero-linear-tail kernel above an affine pair contains a
+relation with nonzero constant term, then it has a normalized pair of
+relations consisting of one relation with constant term `1` and one nonzero
+relation with constant term `0`. -/
+theorem exists_translatedKernel_constSplit_of_affinePair
+    {u : RankFourVec}
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    {c0 c1 : Fin 4 → ℝ}
+    {r0 r1 : ℝ}
+    (h0 : relationPoly u c0 = affineLinePoly r0 1 0)
+    (h1 : relationPoly u c1 = affineLinePoly r1 0 1)
+    (hnonzero :
+      ∃ c,
+        c ∈ LinearMap.ker
+          (linearCoeffMap
+            (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u)) ∧
+        MvPolynomial.coeff m00
+          (relationPoly
+            (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) c) ≠ 0) :
+    ∃ d0 d1 : Fin 4 → ℝ,
+      d0 ∈ LinearMap.ker
+        (linearCoeffMap
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u)) ∧
+      d1 ∈ LinearMap.ker
+        (linearCoeffMap
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u)) ∧
+      MvPolynomial.coeff m00
+        (relationPoly
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) d0) = 1 ∧
+      MvPolynomial.coeff m00
+        (relationPoly
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) d1) = 0 ∧
+      relationPoly
+        (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) d1 ≠ 0 := by
+  let b : Fin 2 → ℝ := ![-r0, -r1]
+  let b' : Fin 2 → ℝ := ![r0, r1]
+  let e : Poly ≃ₐ[ℝ] Poly :=
+    affineEquiv (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 b b'
+      (by simp) (by simp)
+      (by
+        intro i
+        fin_cases i <;> simp [b, b'])
+      (by
+        intro i
+        fin_cases i <;> simp [b, b'])
+  let u' : RankFourVec := mapVec e.toAlgHom u
+  let K : Submodule ℝ (Fin 4 → ℝ) := LinearMap.ker (linearCoeffMap u')
+  let constK : K →ₗ[ℝ] ℝ := {
+    toFun x := MvPolynomial.coeff m00 (relationPoly u' (x : Fin 4 → ℝ))
+    map_add' x y := by
+      change MvPolynomial.coeff m00
+          (relationPoly u' ((x : Fin 4 → ℝ) + (y : Fin 4 → ℝ))) =
+        MvPolynomial.coeff m00 (relationPoly u' (x : Fin 4 → ℝ)) +
+          MvPolynomial.coeff m00 (relationPoly u' (y : Fin 4 → ℝ))
+      rw [relationPoly_add, MvPolynomial.coeff_add]
+    map_smul' a x := by
+      change MvPolynomial.coeff m00
+          (relationPoly u' (a • (x : Fin 4 → ℝ))) =
+        a * MvPolynomial.coeff m00 (relationPoly u' (x : Fin 4 → ℝ))
+      rw [relationPoly_smul, MvPolynomial.coeff_smul]
+      simp }
+  obtain ⟨c, hcK, hc00⟩ := hnonzero
+  let cK : K := ⟨c, by simpa [K, u', e, b] using hcK⟩
+  have hcK_ne : constK cK ≠ 0 := by
+    simpa [constK, cK, u', e, b] using hc00
+  have hKdim : Module.finrank ℝ K = 2 := by
+    simpa [K, u', e, b] using translatedLinearCoeffKernel_finrank_two_of_affinePair h0 h1
+  have hconstSurj : Function.Surjective constK := by
+    intro t
+    refine ⟨(t / constK cK) • cK, ?_⟩
+    rw [LinearMap.map_smul]
+    have hmul : (t / constK cK) * constK cK = t := by
+      field_simp [hcK_ne]
+    simpa using hmul
+  have hrangeTop : LinearMap.range constK = ⊤ := LinearMap.range_eq_top.mpr hconstSurj
+  have hrangeDim : Module.finrank ℝ (LinearMap.range constK) = 1 := by
+    rw [hrangeTop, finrank_top]
+    simp
+  have hsum := LinearMap.finrank_range_add_finrank_ker constK
+  have hsum' : 1 + Module.finrank ℝ (LinearMap.ker constK) = 2 := by
+    simpa [hKdim, hrangeDim] using hsum
+  have hK0dim : Module.finrank ℝ (LinearMap.ker constK) = 1 := by
+    omega
+  let basisK0 : Module.Basis (Fin 1) ℝ (LinearMap.ker constK) :=
+    Module.finBasisOfFinrankEq ℝ (LinearMap.ker constK) hK0dim
+  let d0K : K := (constK cK)⁻¹ • cK
+  let d1K0 : LinearMap.ker constK := basisK0 0
+  let d1K : K := d1K0.1
+  have hd0K : constK d0K = 1 := by
+    rw [LinearMap.map_smul]
+    have hmul : ((constK cK)⁻¹ : ℝ) * constK cK = 1 := by
+      field_simp [hcK_ne]
+    simpa using hmul
+  have hd1K : constK d1K = 0 := d1K0.2
+  have hd1K0_ne : d1K0 ≠ 0 := basisK0.ne_zero 0
+  have hd1K_ne : d1K ≠ 0 := by
+    intro hd1zero
+    apply hd1K0_ne
+    exact Subtype.ext hd1zero
+  have hd0const : MvPolynomial.coeff m00 (relationPoly u' (d0K : Fin 4 → ℝ)) = 1 := by
+    simpa [constK] using hd0K
+  have hd1const : MvPolynomial.coeff m00 (relationPoly u' (d1K : Fin 4 → ℝ)) = 0 := by
+    simpa [constK] using hd1K
+  have hd1poly_ne : relationPoly u' (d1K : Fin 4 → ℝ) ≠ 0 := by
+    intro hd1poly
+    have hd1poly0 : relationPoly u ((d1K : K) : Fin 4 → ℝ) = 0 := by
+      apply e.injective
+      simpa [u', e, relationPoly_map] using hd1poly
+    have hrelInj : Function.Injective (relationPolyLin u) := LinearMap.ker_eq_bot.mp hrelker
+    have hd1vec : (((d1K : K) : Fin 4 → ℝ)) = 0 := by
+      apply hrelInj
+      simpa [relationPolyLin, relationPoly] using hd1poly0
+    exact hd1K_ne (Subtype.ext hd1vec)
+  refine ⟨d0K, d1K, d0K.2, d1K.2, ?_, ?_, ?_⟩
+  · simpa [u', e, b] using hd0const
+  · simpa [u', e, b] using hd1const
+  · simpa [u', e, b] using hd1poly_ne
+
 end TernaryQuartic

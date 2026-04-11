@@ -2001,6 +2001,17 @@ branch through the previously formalized theorem
 So the no-constant \(\dim=2\) classifier gap is now cut exactly in half: only
 the complementary nonzero-constant split on the translated kernel remains.
 
+That complementary half is now packaged more explicitly too. The new theorem
+\texttt{exists\_translatedKernel\_constSplit\_of\_affinePair} in the same file
+starts from an exact affine pair and the hypothesis that the translated
+zero-linear-tail kernel contains some relation with nonzero constant term.
+Lean then normalizes that functional internally: it produces one translated
+kernel relation with constant coefficient \(1\) and a second nonzero translated
+kernel relation with constant coefficient \(0\). So the remaining no-constant
+\(\dim=2\) branch is no longer waiting on a vague existential split. It is now
+reduced to the constant-perturbed low-affine closure problem for an explicit
+normalized pair \((1+H_1, H_2)\) with zero linear tails.
+
 The latest normalized probe suggests that this remaining half is narrower than
 it first appeared. The script
 \texttt{julia/low\_affine\_const\_perturbation\_2026\_04\_10.jl} samples the

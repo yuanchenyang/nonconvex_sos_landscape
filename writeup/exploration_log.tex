@@ -1999,6 +1999,16 @@ So the no-constant \(\dim=2\) classifier gap is now split cleanly: the
 constant-zero half is done, and only the complementary nonzero-constant half
 remains. No new Julia experiments were needed for this round either.
 
+I then formalized the linear-algebra core of that remaining half. The new
+theorem \texttt{exists\_translatedKernel\_constSplit\_of\_affinePair} in
+\texttt{ExactAffineClassification.lean} assumes the same exact affine pair and
+the existence of some translated zero-linear-tail relation with nonzero
+constant term. Lean then constructs a normalized pair inside that translated
+kernel: one relation has constant coefficient \(1\), and a second nonzero
+relation has constant coefficient \(0\). So the unresolved no-constant
+\(\dim=2\) branch is now reduced to a concrete constant-perturbed low-affine
+input \((1+H_1, H_2)\), not an abstract functional split.
+
 I then probed that complementary nonzero-constant half directly in normalized
 coordinates rather than guessing its theorem shape. The new script
 \texttt{julia/low\_affine\_const\_perturbation\_2026\_04\_10.jl} tests models
