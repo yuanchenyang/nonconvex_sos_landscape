@@ -2254,6 +2254,24 @@ So future classifier steps no longer need to inline the common translation just
 to enter that chart; they can hand the branch directly to the same
 \texttt{equiv}/\texttt{affinePair} interface used elsewhere.
 
+The coprime constant-perturbed cross chart is now formalized in the same way.
+\texttt{RepresentativeLowAffine.lean} now proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlus\_homQuadratics\_crossDet\_zero},
+its \texttt{equiv} wrapper, and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlus\_homQuadratics\_crossDet\_zero}.
+So when the translated-kernel constant-split pair has vanishing
+\texttt{lowHomQuadPlaneA} but nonzero \texttt{lowHomQuadPlaneB}, Lean now
+performs the internal \(x_1\)-shear, kills the mixed term, reconstructs a
+constant-perturbed diagonal pair, and dispatches directly to the already
+formalized \texttt{...onePlusAX0sq\_x1sqPlane} endpoint.
+
+On top of that, \texttt{ExactAffineClassification.lean} now proves
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constSplit\_crossDet\_zero}.
+So the exact-affine \(\dim = 2\), no-constant, independent translated-kernel
+branch is no longer open on the coprime cross chart either. The remaining open
+independent low-affine work is therefore the complementary diagonal/split
+constant-perturbed outputs, together with the final global assembly.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

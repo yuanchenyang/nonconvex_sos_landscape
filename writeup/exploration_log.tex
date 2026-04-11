@@ -2256,6 +2256,27 @@ normalized \((x_0,x_1)\)-theorem. It now sits on the same
 \texttt{equiv}/\texttt{affinePair} interface as the other low-affine theorem
 surfaces. No new Julia experiment was needed for this round.
 
+I then added the analogous coprime cross-chart theorem surface.
+\texttt{RepresentativeLowAffine.lean} now proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlus\_homQuadratics\_crossDet\_zero},
+its \texttt{equiv} wrapper, and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlus\_homQuadratics\_crossDet\_zero}.
+The proof reuses the existing homogeneous \(x_1\)-shear algebra: when the
+translated homogeneous pair has \(\texttt{lowHomQuadPlaneA}=0\) and
+\(\texttt{lowHomQuadPlaneB}\neq 0\), Lean shears internally, proves that the
+mixed term disappears, reconstructs a constant-perturbed diagonal pair, and
+dispatches to \texttt{...onePlusAX0sq\_x1sqPlane}. No new Julia experiment was
+needed for this round either.
+
+I then lifted that coprime cross-chart theorem into
+\texttt{ExactAffineClassification.lean} as
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constSplit\_crossDet\_zero}.
+So the exact-affine \(\dim = 2\), no-constant, independent translated-kernel
+branch is no longer open on the coprime cross chart either. The still-open
+independent translated-kernel work is now narrower again: it remains in the
+complementary constant-perturbed diagonal/split outputs, plus the final global
+assembly.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
