@@ -2727,6 +2727,22 @@ wrappers. So the remaining exact-affine \(\dim=1\) classifier no longer needs
 to hand that constant repeated-line slice an exact \((x_0x_1,x_1^2)\) basis
 either.
 
+I then added a direct exact-normalized mixed-tail endpoint in the same file:
+\texttt{quartic\_in\_image\_of\_relations\_x0\_onePlusAX0sq\_x1PlusBX0x1\_x1sq}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0sq\_x1PlusBX0x1\_x1sq}.
+This closes exact relations to
+\[
+  x_0,\qquad 1 + a x_0^2,\qquad x_1 + b x_0x_1,\qquad x_1^2
+\]
+with \(a \ne 0\) by a direct monomial image argument. Lean first reconstructs
+\(1\), \(x_1\), \(x_0^2\), and \(x_0x_1\), then produces
+\(x_0^2x_1\), \(x_0^3x_1\), and \(x_0^4\) using quadratic multipliers against
+the \(x_0\)- and \(1+a x_0^2\)-relations. No new Julia experiment was needed
+for this round. The practical effect is that one more tailed exact-affine
+\(\dim=1\) output now closes directly at representative level instead of
+needing an extra plane reduction.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine

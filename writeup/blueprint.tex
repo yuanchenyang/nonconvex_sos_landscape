@@ -2136,6 +2136,22 @@ with \(a \ne 0\) and \(rw-st \ne 0\), reconstructs exact \(x_0x_1\) and
 exact-affine \(\dim=1\) classifier no longer has to hand the common-factor
 constant slice an exact repeated-line basis either.
 
+There is now also a direct exact-normalized mixed-tail endpoint in the same
+file:
+\texttt{quartic\_in\_image\_of\_relations\_x0\_onePlusAX0sq\_x1PlusBX0x1\_x1sq}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0sq\_x1PlusBX0x1\_x1sq}.
+From exact relations to
+\[
+  x_0,\qquad 1 + a x_0^2,\qquad x_1 + b x_0x_1,\qquad x_1^2
+\]
+with \(a \ne 0\), Lean now proves image surjectivity directly. The proof first
+reconstructs \(1\), \(x_1\), \(x_0^2\), and \(x_0x_1\), then manufactures the
+remaining monomials \(x_0^2x_1\), \(x_0^3x_1\), and \(x_0^4\) by multiplying
+the \(x_0\)- and \(1+a x_0^2\)-relations by quadratic cofactors. So if the
+exact-affine \(\dim=1\) classifier normalizes a branch to this mixed surface,
+it no longer needs any further in-plane reconstruction before closing.
+
 The same file now also exports the diagonal-plane analogues
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0x1\_x0sq\_x1sqPlane}
 and
