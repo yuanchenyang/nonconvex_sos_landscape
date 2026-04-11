@@ -1900,6 +1900,15 @@ homogeneous classifier is now internal to Lean: once one has exact relations to
 a linear pair and to a nontrivial homogeneous quadratic plane, Lean dispatches
 automatically to the common-factor or generic rank-\(14\) branch.
 
+That branch now also reaches the same top transport surface as the other main
+branches. In the same file, the new theorems
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_mapVec\_x0\_x1\_homQuadratics\_plane\_nontrivial}
+and
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_x0\_x1\_homQuadratics\_plane\_nontrivial}
+show that after affine normalization and orthogonal factor mixing, an exact
+coordinate picture \((x_0,x_1,q_2,q_3)\) with a nontrivial homogeneous plane is
+already enough to close the SOCP branch directly.
+
 The remaining task is therefore no longer to add more low-affine chart
 theorems. It is to extract, from an arbitrary admissible rank-\(4\) factor, the
 appropriate affine or linear basis and the matching mixed-affine, low-affine,

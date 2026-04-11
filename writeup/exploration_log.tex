@@ -1902,6 +1902,17 @@ Lean now internally distinguishes the cross chart, the two common-factor
 charts, and the two diagonal rank-\(14\) charts. No new Julia experiments were
 needed for this round.
 
+I then pushed that same low-affine homogeneous theorem all the way up to the
+transport interface. The file now also proves
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_mapVec\_x0\_x1\_homQuadratics\_plane\_nontrivial}
+and
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_x0\_x1\_homQuadratics\_plane\_nontrivial}.
+So the low-affine homogeneous branch now matches the mixed-affine and rank-one
+branches at the theorem surface: after affine normalization and orthogonal
+mixing, an exact coordinate picture \((x_0,x_1,q_2,q_3)\) with nontrivial
+homogeneous plane data is enough to close the SOCP point directly. Again, no
+new Julia experiments were needed for this round.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
