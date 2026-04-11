@@ -2246,6 +2246,16 @@ constant-split pair lands in the repeated-line/common-factor chart. That means
 the still-open independent translated-kernel work is no longer the whole
 constant-perturbed low-affine layer; it is only the complementary charts.
 
+I then cleaned that same chart up to the standard transport surface in
+\texttt{RepresentativeLowAffine.lean}. The file now also proves
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlus\_homQuadratics\_commonFactorChart}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlus\_homQuadratics\_commonFactorChart}.
+So the repeated-line/common-factor constant-perturbed chart is no longer only a
+normalized \((x_0,x_1)\)-theorem. It now sits on the same
+\texttt{equiv}/\texttt{affinePair} interface as the other low-affine theorem
+surfaces. No new Julia experiment was needed for this round.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

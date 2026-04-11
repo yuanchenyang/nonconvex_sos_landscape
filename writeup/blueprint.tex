@@ -2245,6 +2245,15 @@ in that chart, Lean closes the branch automatically. The remaining open work is
 therefore the complementary independent translated-kernel outputs, together
 with the final assembly in \texttt{TernaryQuarticProof.lean}.
 
+That chart theorem now also sits on the same transport surface as the rest of
+the low-affine layer. \texttt{RepresentativeLowAffine.lean} now proves
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlus\_homQuadratics\_commonFactorChart}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlus\_homQuadratics\_commonFactorChart}.
+So future classifier steps no longer need to inline the common translation just
+to enter that chart; they can hand the branch directly to the same
+\texttt{equiv}/\texttt{affinePair} interface used elsewhere.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.
