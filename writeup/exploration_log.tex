@@ -2206,6 +2206,19 @@ quadratic and then subtracts off the cross term in the first, reducing to
 \((1+\alpha x_0^2,\ x_0x_1)\). So the classifier will only need determinant-nondegenerate
 common-factor plane data, not already-normalized scalar representatives.
 
+I then filled the last orientation gap in that same common-factor plane layer.
+In \texttt{RepresentativeLowAffine.lean}, the new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusBX0x1\_x1sqPlane}
+proves the swapped determinant-nondegenerate model
+\[
+  (x_0,\ x_1,\ 1 + a x_0x_1 + b x_1^2,\ c x_0x_1 + d x_1^2)
+\]
+directly by transporting it through the fixed coordinate swap. I also added the
+missing equivariant wrapper
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlusAX0sq\_x0x1Plane},
+so both common-factor plane orientations now sit on the same transport-ready
+surface. No new Julia experiments were needed for this round.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
