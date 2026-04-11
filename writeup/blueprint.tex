@@ -1937,10 +1937,27 @@ For every tested nonzero \(\lambda \in
 \{-3,-2,-1,-\tfrac12,\tfrac12,1,2,3\}\), the first has image rank \(13\)
 with missing pure \(x_1\)-powers
 \((0,0),(0,1),(0,2),(0,3),(0,4)\), while the second has image rank \(14\) with
-only the constant monomial missing. So the remaining classifier still cannot
-identify the exact-affine \(\dim=1\) branch with the pure affine-rank-one
-surface; it now has one closed cross-tail endpoint and two remaining genuine
-tailed charts.
+only the constant monomial missing.
+
+The second of those is now formalized too. The theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX0sq\_x0x1\_x1sq}
+in \texttt{RepresentativeAffineRankOne.lean} closes
+\[
+  (x_0,\ x_1 + a x_0^2,\ x_0x_1,\ x_1^2),\qquad a \ne 0,
+\]
+again by an explicit image-plus-kernel certificate. The image part first
+recovers \(x_1\) from \(x_1 + a x_0^2\) using the exact \(x_0\) relation, then
+reaches all nonconstant monomials; the kernel part uses the exact
+\(x_0x_1\)-relation to build the missing constant-matching admissible
+direction.
+
+So the remaining classifier still cannot identify the exact-affine \(\dim=1\)
+branch with the pure affine-rank-one surface, but the list is shorter: the
+cross-tail endpoint and the \(x_0^2\)-tail/common-factor endpoint are now
+closed, and the visibly remaining genuine tailed chart is
+\[
+  (x_0,\ x_1+\lambda x_1^2,\ x_0^2,\ x_0x_1).
+\]
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and

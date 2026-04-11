@@ -2405,9 +2405,28 @@ For every tested nonzero \(\lambda\), the first has exact-affine dimension
 \(1\), image rank \(13\), and missing set
 \((0,0),(0,1),(0,2),(0,3),(0,4)\), while the second has exact-affine
 dimension \(1\), image rank \(14\), and only the constant monomial missing.
-So the surviving \(\dim=1\) work is now sharper: the cross slice is closed in
-Lean, but there are still at least two genuine tailed \(\dim=1\) charts beyond
-the pure affine-rank-one surface.
+
+I then formalized that second slice too in
+\texttt{RepresentativeAffineRankOne.lean}. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX0sq\_x0x1\_x1sq}
+proves zero residual from exact relations to
+\[
+  (x_0,\ x_1 + a x_0^2,\ x_0x_1,\ x_1^2),\qquad a \ne 0.
+\]
+The proof is simpler than the cross slice: Lean first recovers \(x_1\) in the
+admissible image by subtracting the exact \(x_0^2\)-image from
+\(x_1 + a x_0^2\), then reaches every nonconstant quartic monomial using the
+exact relations to \(x_0\), \(x_0x_1\), and \(x_1^2\). The missing constant is
+handled by the admissible kernel direction built from the exact \(x_0\) and
+\(x_0x_1\) relations.
+
+So the surviving \(\dim=1\) work is now sharper again: the cross slice and the
+\(x_0^2\)-tail/common-factor slice are both closed in Lean, and the visibly
+remaining genuine tailed \(\dim=1\) chart beyond the pure affine-rank-one
+surface is the repeated-line slice
+\[
+  (x_0,\ x_1+\lambda x_1^2,\ x_0^2,\ x_0x_1).
+\]
 
 \section*{Open Subgoals}
 \begin{itemize}
