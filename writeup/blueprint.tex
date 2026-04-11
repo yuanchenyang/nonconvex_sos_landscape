@@ -2220,6 +2220,31 @@ and the missing equivariant wrapper
 So the repeated-line/common-factor output no longer has an orientation mismatch
 between its \((x_0^2,x_0x_1)\) and \((x_0x_1,x_1^2)\) plane presentations.
 
+The same low-affine file now also contains the constant-perturbed common-factor
+chart theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlus\_homQuadratics\_commonFactorChart}.
+It assumes exact relations to \(x_0\), \(x_1\), a quadratic \(q_2\) with
+constant coefficient \(1\) and zero linear terms, and a quadratic \(q_3\) with
+zero constant and linear terms, together with the same cross-product chart data
+\(\texttt{lowHomQuadPlaneA} \neq 0\) and
+\(\texttt{lowHomQuadPlaneC} - \texttt{lowHomQuadPlaneB}^2 /
+\texttt{lowHomQuadPlaneA} = 0\). Lean then performs the internal \(x_1\)-shear,
+proves that both transformed quadratics have zero \(x_0^2\) coefficient, and
+dispatches directly to the already formalized
+\texttt{...onePlusBX0x1\_x1sqPlane} surface. So the classifier no longer needs
+to pre-normalize the repeated-line/common-factor output all the way down to a
+scalar representative even in the constant-perturbed branch.
+
+On top of that, \texttt{ExactAffineClassification.lean} now proves
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constSplit\_commonFactorChart}.
+So the exact-affine \(\dim = 2\), no-constant, independent translated-kernel
+branch is no longer open on the repeated-line/common-factor chart. Once the
+global classifier extracts an affine pair, performs the common translation, and
+produces a constant-split translated-kernel basis whose homogeneous part lands
+in that chart, Lean closes the branch automatically. The remaining open work is
+therefore the complementary independent translated-kernel outputs, together
+with the final assembly in \texttt{TernaryQuarticProof.lean}.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

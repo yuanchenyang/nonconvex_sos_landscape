@@ -2219,6 +2219,33 @@ missing equivariant wrapper
 so both common-factor plane orientations now sit on the same transport-ready
 surface. No new Julia experiments were needed for this round.
 
+I then lifted the same repeated-line/common-factor idea one step upward inside
+\texttt{RepresentativeLowAffine.lean}. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlus\_homQuadratics\_commonFactorChart}
+starts from exact relations to \(x_0\), \(x_1\), a quadratic \(q_2\) with
+constant coefficient \(1\) and zero linear terms, and a quadratic \(q_3\) with
+zero constant and linear terms, under the same cross-product chart conditions
+\[
+  \texttt{lowHomQuadPlaneA}(q_2,q_3) \neq 0,\qquad
+  \texttt{lowHomQuadPlaneC}(q_2,q_3) -
+    \texttt{lowHomQuadPlaneB}(q_2,q_3)^2 /
+    \texttt{lowHomQuadPlaneA}(q_2,q_3) = 0.
+\]
+Lean then performs the internal \(x_1\)-shear, proves that both transformed
+quadratics have zero \(x_0^2\) coefficient, reconstructs the first as
+\(1 + \beta x_0x_1 + \gamma x_1^2\), and dispatches to the already solved
+\texttt{...onePlusBX0x1\_x1sqPlane} theorem. No new Julia experiment was needed
+for this round either.
+
+I then lifted that chart theorem into
+\texttt{ExactAffineClassification.lean} as
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constSplit\_commonFactorChart}.
+So the exact-affine \(\dim = 2\), no-constant branch now closes automatically
+on the independent translated-kernel subcase whenever the normalized
+constant-split pair lands in the repeated-line/common-factor chart. That means
+the still-open independent translated-kernel work is no longer the whole
+constant-perturbed low-affine layer; it is only the complementary charts.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
