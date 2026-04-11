@@ -1748,40 +1748,42 @@ exact \(x_0\) or \((x_0,x_1)\) coordinates either. It can stay at the level of
 arbitrary linear bases and transformed homogeneous quadratic relations. No new
 Julia experiments were needed for this round.
 
-The next Lean round removed the analogous external homogeneous-basis burden
-from the pure-constant \(\dim=1\) branch. I added the new file
+The next Lean rounds removed the analogous external homogeneous-basis burden
+from both rank-one affine-image branches. I added the new file
 \texttt{RepresentativeAffineRankOne.lean}, imported it through
 \texttt{Basic.lean}, and proved
-\texttt{residual\_eq\_zero\_of\_relations\_const\_affineRankOne}. This theorem
-only asks for a relation to \(1\) together with the rank-one statement that
-the affine coefficient map
+\texttt{residual\_eq\_zero\_of\_relations\_const\_affineRankOne} and then
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_affineRankOne}. These theorems
+ask for a relation to \(1\) or \(x_0\) together with the rank-one statement
+that the affine coefficient map
 \[
   c \longmapsto
   \bigl(\operatorname{coeff}_1,\operatorname{coeff}_{x_0},
     \operatorname{coeff}_{x_1}\bigr)\Bigl(\sum_i c_i u_i\Bigr)
 \]
-has image exactly the constant line. Lean then splits internally:
+has image exactly the corresponding constant or \(x_0\) line. Lean then splits
+internally:
 \begin{itemize}
 \item if the scalar relation map has nontrivial kernel, it closes by the
 existing constant-relation certificate;
 \item otherwise it extracts a basis of the affine-kernel in \(\mathbf{R}^4\),
 proves the induced three quadratic relations are homogeneous and linearly
 independent, reconstructs exact \((x_0^2,x_0x_1,x_1^2)\) relations, and
-applies the constant representative theorem.
+applies the constant or linear representative theorem.
 \end{itemize}
-So the pure-constant branch is no longer waiting on an externally supplied
+So neither rank-one affine-image branch is waiting on an externally supplied
 homogeneous quadratic basis either. No new Julia experiments were needed for
-this round.
+these rounds.
 
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
 linear-basis data needed by the low-affine theorems. The constant-containing
 \(\dim=2\) mixed-affine branch no longer needs external quadratic-pair
-extraction, and the pure-constant \(\dim=1\) branch no longer needs an
-externally supplied homogeneous basis either. What remains is the upstream
-classification step that identifies the relevant affine or linear basis and the
-appropriate rank-one or rank-two coefficient-map image.
+extraction, and the rank-one affine-image branches no longer need externally
+supplied homogeneous bases either. What remains is the upstream classification
+step that identifies the relevant affine or linear basis and the appropriate
+rank-one or rank-two coefficient-map image.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}
