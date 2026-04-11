@@ -1802,6 +1802,18 @@ classifier, but it makes the likely final theorem surface much narrower: a
 generic low-affine homogeneous plane theorem plus the already-formalized
 common-factor exception should be enough.
 
+I then tightened the low-affine common-factor interface in Lean without adding
+new numerics. In \texttt{RepresentativeLowAffine.lean} I added the swapped
+common-factor plane theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_x0x1\_x1sqPlane} and its
+arbitrary-linear-basis wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_linearPair\_x0x1\_x1sqPlane}. So
+the repeated-line low-affine branch no longer depends on an external variable
+swap before entering the theorem layer: both
+\(\operatorname{span}(x_0^2,x_0x_1)\) and
+\(\operatorname{span}(x_0x_1,x_1^2)\) are now directly available at the same
+\texttt{linearPair} surface.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

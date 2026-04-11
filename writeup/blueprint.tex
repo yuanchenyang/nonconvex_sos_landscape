@@ -1816,6 +1816,7 @@ The same normalization pattern is now available on the low-affine side as
 well. In \texttt{RepresentativeLowAffine.lean} the new theorems
 \texttt{residual\_eq\_zero\_of\_relations\_linearForm\_homQuadBasis\_det},
 \texttt{residual\_eq\_zero\_of\_relations\_linearPair\_x0sq\_x0x1Plane},
+\texttt{residual\_eq\_zero\_of\_relations\_linearPair\_x0x1\_x1sqPlane},
 \texttt{residual\_eq\_zero\_of\_relations\_linearPair\_x0sq\_x1sqPlane},
 \texttt{residual\_eq\_zero\_of\_relations\_linearPair\_x0x1\_diffsqPlane}, and
 \texttt{residual\_eq\_zero\_of\_relations\_linearPair\_x0x1\_sumsqPlane}
@@ -1824,6 +1825,13 @@ linear forms and arbitrary independent linear pairs. So the remaining
 classification does not need to normalize low-affine branches to exact
 \((x_0)\) or \((x_0,x_1)\) coordinates either; it only has to extract the
 corresponding linear basis and transformed homogeneous quadratic data.
+
+This low-affine plane layer is now also symmetric in the common-factor slice:
+the span \(\operatorname{span}(x_0x_1,x_1^2)\) is formalized directly, not
+only via an external variable swap back to
+\(\operatorname{span}(x_0^2,x_0x_1)\). So the remaining classifier no longer
+needs to decide in advance which coordinate ordering presents the repeated-line
+plane.
 
 The next round removes the same external homogeneous-basis burden from the
 rank-one affine-image branches. In
