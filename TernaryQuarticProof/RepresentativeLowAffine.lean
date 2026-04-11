@@ -863,6 +863,405 @@ theorem residual_eq_zero_of_relations_affinePair_onePlusX0sq_x1sq
     (heQuartic := fun {_} hq => heQuartic hq)
     hB hp hu hsocp h0' h1' h2' h3'
 
+theorem quartic_in_image_of_relations_x0_x1_onePlusX0x1_diffsq
+    {u : RankFourVec}
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • u i = x1)
+    (h2 : ∑ i : Fin 4, c2 i • u i = (1 : Poly) + x0 * x1)
+    (h3 : ∑ i : Fin 4, c3 i • u i = x0 ^ 2 - x1 ^ 2)
+    {p : Poly} (hp : IsQuartic p) :
+    InAdmissibleImage u p := by
+  classical
+  let monomialImage : ∀ (s : Fin 2 →₀ ℕ) (a : ℝ),
+      s.sum (fun _ e => e) ≤ 4 →
+      InAdmissibleImage u (MvPolynomial.monomial s a) := by
+    intro s a hdeg
+    let e0 := s 0
+    let e1 := s 1
+    have hsum : s.sum (fun _ e => e) = s 0 + s 1 := by
+      rw [Finsupp.sum_fintype _ _ (fun _ => rfl), Fin.sum_univ_two]
+    have hs0 : s 0 + s 1 ≤ 4 := by
+      simpa [hsum] using hdeg
+    have hs : e0 + e1 ≤ 4 := by
+      simpa [e0, e1] using hs0
+    by_cases hsmall : e0 + e1 ≤ 3
+    · by_cases hx1 : 1 ≤ e0
+      · have hxpow : x0 * x0 ^ (e0 - 1) = x0 ^ e0 := by
+          simpa [Nat.sub_add_cancel hx1] using (pow_succ' x0 (e0 - 1)).symm
+        have hmul :
+            x0 * ((MvPolynomial.C a * x0 ^ (e0 - 1)) * x1 ^ e1)
+              = (MvPolynomial.C a * x0 ^ e0) * x1 ^ e1 := by
+          calc
+            x0 * ((MvPolynomial.C a * x0 ^ (e0 - 1)) * x1 ^ e1)
+                = MvPolynomial.C a * (x0 * x0 ^ (e0 - 1)) * x1 ^ e1 := by
+                    ring_nf
+            _ = (MvPolynomial.C a * x0 ^ e0) * x1 ^ e1 := by
+                  simp [hxpow, mul_assoc]
+        simpa [monomial_fin2_eq, e0, e1, hmul] using
+          (inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c0) (r := x0)
+            (q := (MvPolynomial.C a * x0 ^ (e0 - 1)) * x1 ^ e1)
+            h0 (isQuadratic_C_mul_pow_pow a (e0 - 1) e1 (by omega)))
+      · by_cases hy1 : 1 ≤ e1
+        · have hypow : x1 * x1 ^ (e1 - 1) = x1 ^ e1 := by
+            simpa [Nat.sub_add_cancel hy1] using (pow_succ' x1 (e1 - 1)).symm
+          have hmul :
+              x1 * ((MvPolynomial.C a * x0 ^ e0) * x1 ^ (e1 - 1))
+                = (MvPolynomial.C a * x0 ^ e0) * x1 ^ e1 := by
+            calc
+              x1 * ((MvPolynomial.C a * x0 ^ e0) * x1 ^ (e1 - 1))
+                  = MvPolynomial.C a * x0 ^ e0 * (x1 * x1 ^ (e1 - 1)) := by
+                      ring_nf
+              _ = (MvPolynomial.C a * x0 ^ e0) * x1 ^ e1 := by
+                    simp [hypow, mul_assoc]
+          simpa [monomial_fin2_eq, e0, e1, hmul] using
+            (inAdmissibleImage_of_relation_mul_low
+              (u := u) (c := c1) (r := x1)
+              (q := (MvPolynomial.C a * x0 ^ e0) * x1 ^ (e1 - 1))
+              h1 (isQuadratic_C_mul_pow_pow a e0 (e1 - 1) (by omega)))
+        · have hx0 : e0 = 0 := by omega
+          have hy0 : e1 = 0 := by omega
+          rw [monomial_fin2_eq]
+          simp [e0, e1, hx0, hy0]
+          have himg2 :
+              InAdmissibleImage u
+                (((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 0) * x1 ^ 0)) := by
+            exact inAdmissibleImage_of_relation_mul_low
+              (u := u) (c := c2) (r := (1 : Poly) + x0 * x1)
+              (q := (MvPolynomial.C a * x0 ^ 0) * x1 ^ 0)
+              h2 (isQuadratic_C_mul_pow_pow a 0 0 (by omega))
+          have himg0 :
+              InAdmissibleImage u
+                (x0 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1)) := by
+            exact inAdmissibleImage_of_relation_mul_low
+              (u := u) (c := c0) (r := x0)
+              (q := (MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1)
+              h0 (isQuadratic_C_mul_pow_pow (-a) 0 1 (by omega))
+          have hEq :
+              ((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 0) * x1 ^ 0) +
+                  x0 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1) =
+                (MvPolynomial.C a : Poly) := by
+            simp
+            ring
+          rw [← hEq]
+          exact inAdmissibleImage_add u himg2 himg0
+    · have hfour : e0 + e1 = 4 := by omega
+      have he0le : e0 ≤ 4 := by omega
+      interval_cases hcase : e0
+      · have he1 : e1 = 4 := by omega
+        rw [monomial_fin2_eq]
+        simp [e0, e1, hcase, he1]
+        have himg0 :
+            InAdmissibleImage u
+              (x0 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1)) := by
+          exact inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c0) (r := x0)
+            (q := (MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1)
+            h0 (isQuadratic_C_mul_pow_pow (-a) 0 1 (by omega))
+        have himg2 :
+            InAdmissibleImage u
+              (((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 1) * x1 ^ 1)) := by
+          exact inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c2) (r := (1 : Poly) + x0 * x1)
+            (q := (MvPolynomial.C a * x0 ^ 1) * x1 ^ 1)
+            h2 (isQuadratic_C_mul_pow_pow a 1 1 (by omega))
+        have himg3 :
+            InAdmissibleImage u
+              ((x0 ^ 2 - x1 ^ 2) * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 2)) := by
+          exact inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c3) (r := x0 ^ 2 - x1 ^ 2)
+            (q := (MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 2)
+            h3 (isQuadratic_C_mul_pow_pow (-a) 0 2 (by omega))
+        have hEq :
+            x0 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1) +
+                (((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 1) * x1 ^ 1) +
+                  (x0 ^ 2 - x1 ^ 2) * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 2)) =
+              (MvPolynomial.C a * x0 ^ 0 * x1 ^ 4 : Poly) := by
+          simp [pow_succ]
+          ring
+        have hEq' :
+            x0 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1) +
+                (((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 1) * x1 ^ 1) +
+                  (x0 ^ 2 - x1 ^ 2) * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 2)) =
+              (MvPolynomial.C a * x1 ^ 4 : Poly) := by
+          simpa using hEq
+        rw [← hEq']
+        exact inAdmissibleImage_add u himg0 (inAdmissibleImage_add u himg2 himg3)
+      · have he1 : e1 = 3 := by omega
+        rw [monomial_fin2_eq]
+        simp [e0, e1, hcase, he1]
+        have himg1 :
+            InAdmissibleImage u
+              (x1 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1)) := by
+          exact inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c1) (r := x1)
+            (q := (MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1)
+            h1 (isQuadratic_C_mul_pow_pow (-a) 0 1 (by omega))
+        have himg2 :
+            InAdmissibleImage u
+              (((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 0) * x1 ^ 2)) := by
+          exact inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c2) (r := (1 : Poly) + x0 * x1)
+            (q := (MvPolynomial.C a * x0 ^ 0) * x1 ^ 2)
+            h2 (isQuadratic_C_mul_pow_pow a 0 2 (by omega))
+        have hEq :
+            x1 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1) +
+                ((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 0) * x1 ^ 2) =
+              (MvPolynomial.C a * x0 ^ 1 * x1 ^ 3 : Poly) := by
+          simp [pow_succ]
+          ring
+        have hEq' :
+            x1 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1) +
+                ((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 0) * x1 ^ 2) =
+              (MvPolynomial.C a * x0 * x1 ^ 3 : Poly) := by
+          simpa using hEq
+        rw [← hEq']
+        exact inAdmissibleImage_add u himg1 himg2
+      · have he1 : e1 = 2 := by omega
+        rw [monomial_fin2_eq]
+        simp [e0, e1, hcase, he1]
+        have himg0 :
+            InAdmissibleImage u
+              (x0 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1)) := by
+          exact inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c0) (r := x0)
+            (q := (MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1)
+            h0 (isQuadratic_C_mul_pow_pow (-a) 0 1 (by omega))
+        have himg2 :
+            InAdmissibleImage u
+              (((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 1) * x1 ^ 1)) := by
+          exact inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c2) (r := (1 : Poly) + x0 * x1)
+            (q := (MvPolynomial.C a * x0 ^ 1) * x1 ^ 1)
+            h2 (isQuadratic_C_mul_pow_pow a 1 1 (by omega))
+        have hEq :
+            x0 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1) +
+                ((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 1) * x1 ^ 1) =
+              (MvPolynomial.C a * x0 ^ 2 * x1 ^ 2 : Poly) := by
+          simp [pow_succ]
+          ring
+        rw [← hEq]
+        exact inAdmissibleImage_add u himg0 himg2
+      · have he1 : e1 = 1 := by omega
+        rw [monomial_fin2_eq]
+        simp [e0, e1, hcase, he1]
+        have himg0 :
+            InAdmissibleImage u
+              (x0 * ((MvPolynomial.C (-a) * x0 ^ 1) * x1 ^ 0)) := by
+          exact inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c0) (r := x0)
+            (q := (MvPolynomial.C (-a) * x0 ^ 1) * x1 ^ 0)
+            h0 (isQuadratic_C_mul_pow_pow (-a) 1 0 (by omega))
+        have himg2 :
+            InAdmissibleImage u
+              (((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 2) * x1 ^ 0)) := by
+          exact inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c2) (r := (1 : Poly) + x0 * x1)
+            (q := (MvPolynomial.C a * x0 ^ 2) * x1 ^ 0)
+            h2 (isQuadratic_C_mul_pow_pow a 2 0 (by omega))
+        have hEq :
+            x0 * ((MvPolynomial.C (-a) * x0 ^ 1) * x1 ^ 0) +
+                ((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 2) * x1 ^ 0) =
+              (MvPolynomial.C a * x0 ^ 3 * x1 : Poly) := by
+          simp [pow_succ]
+          ring
+        rw [← hEq]
+        exact inAdmissibleImage_add u himg0 himg2
+      · have he1 : e1 = 0 := by omega
+        rw [monomial_fin2_eq]
+        simp [e0, e1, hcase, he1]
+        have himg0 :
+            InAdmissibleImage u
+              (x0 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1)) := by
+          exact inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c0) (r := x0)
+            (q := (MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1)
+            h0 (isQuadratic_C_mul_pow_pow (-a) 0 1 (by omega))
+        have himg2 :
+            InAdmissibleImage u
+              (((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 1) * x1 ^ 1)) := by
+          exact inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c2) (r := (1 : Poly) + x0 * x1)
+            (q := (MvPolynomial.C a * x0 ^ 1) * x1 ^ 1)
+            h2 (isQuadratic_C_mul_pow_pow a 1 1 (by omega))
+        have himg3 :
+            InAdmissibleImage u
+              ((x0 ^ 2 - x1 ^ 2) * ((MvPolynomial.C a * x0 ^ 2) * x1 ^ 0)) := by
+          exact inAdmissibleImage_of_relation_mul_low
+            (u := u) (c := c3) (r := x0 ^ 2 - x1 ^ 2)
+            (q := (MvPolynomial.C a * x0 ^ 2) * x1 ^ 0)
+            h3 (isQuadratic_C_mul_pow_pow a 2 0 (by omega))
+        have hEq :
+            x0 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1) +
+                (((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 1) * x1 ^ 1) +
+                  (x0 ^ 2 - x1 ^ 2) * ((MvPolynomial.C a * x0 ^ 2) * x1 ^ 0)) =
+              (MvPolynomial.C a * x0 ^ 4 * x1 ^ 0 : Poly) := by
+          simp [pow_succ]
+          ring
+        have hEq' :
+            x0 * ((MvPolynomial.C (-a) * x0 ^ 0) * x1 ^ 1) +
+                (((1 : Poly) + x0 * x1) * ((MvPolynomial.C a * x0 ^ 1) * x1 ^ 1) +
+                  (x0 ^ 2 - x1 ^ 2) * ((MvPolynomial.C a * x0 ^ 2) * x1 ^ 0)) =
+              (MvPolynomial.C a * x0 ^ 4 : Poly) := by
+          simpa using hEq
+        rw [← hEq']
+        exact inAdmissibleImage_add u himg0 (inAdmissibleImage_add u himg2 himg3)
+  rw [← MvPolynomial.support_sum_monomial_coeff p]
+  let P : Finset (Fin 2 →₀ ℕ) → Prop := fun S =>
+    (∀ s ∈ S, s ∈ p.support) →
+      InAdmissibleImage u
+        (∑ s ∈ S, MvPolynomial.monomial s (MvPolynomial.coeff s p))
+  have hP : P p.support := by
+    refine Finset.induction_on p.support ?_ ?_
+    · intro hsub
+      simpa using inAdmissibleImage_zero u
+    · intro s ss hsnot ih hsub
+      rw [Finset.sum_insert hsnot]
+      refine inAdmissibleImage_add u ?_ (ih ?_)
+      · have hsdeg : s.sum (fun _ e => e) ≤ 4 :=
+          (MvPolynomial.le_totalDegree (hsub s (by simp))).trans hp
+        exact monomialImage s (MvPolynomial.coeff s p) hsdeg
+      · intro t ht
+        exact hsub t (by simp [ht])
+  exact hP (fun s hs => hs)
+
+theorem residual_eq_zero_of_relations_x0_x1_onePlusX0x1_diffsq
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • u i = x1)
+    (h2 : ∑ i : Fin 4, c2 i • u i = (1 : Poly) + x0 * x1)
+    (h3 : ∑ i : Fin 4, c3 i • u i = x0 ^ 2 - x1 ^ 2)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  exact residual_eq_zero_of_in_admissible_image
+    (B := B) hu hsocp
+    (quartic_in_image_of_relations_x0_x1_onePlusX0x1_diffsq h0 h1 h2 h3 hp.1)
+
+theorem residual_eq_zero_of_equiv_relations_x0_x1_onePlusX0x1_diffsq
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x1)
+    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = (1 : Poly) + x0 * x1)
+    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = x0 ^ 2 - x1 ^ 2) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_x1_onePlusX0x1_diffsq
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+theorem residual_eq_zero_of_relations_affinePair_onePlusX0x1_diffsq
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    {r0 r1 : ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = affineLinePoly r0 1 0)
+    (h1 : ∑ i : Fin 4, c1 i • u i = affineLinePoly r1 0 1)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1] q2 = (1 : Poly) + x0 * x1)
+    (hq3 : affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1] q3 = x0 ^ 2 - x1 ^ 2)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let b : Fin 2 → ℝ := ![-r0, -r1]
+  let b' : Fin 2 → ℝ := ![r0, r1]
+  let e : Poly ≃ₐ[ℝ] Poly :=
+    affineEquiv (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 b b'
+      (by simp) (by simp)
+      (by
+        intro i
+        fin_cases i <;> simp [b, b'])
+      (by
+        intro i
+        fin_cases i <;> simp [b, b'])
+  have heQuad : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv
+      (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 b b'
+      (by simp) (by simp)
+      (by
+        intro i
+        fin_cases i <;> simp [b, b'])
+      (by
+        intro i
+        fin_cases i <;> simp [b, b']) hq
+  have heQuadSymm : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e.symm q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv_symm
+      (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 b b'
+      (by simp) (by simp)
+      (by
+        intro i
+        fin_cases i <;> simp [b, b'])
+      (by
+        intro i
+        fin_cases i <;> simp [b, b']) hq
+  have heQuartic : ∀ {q : Poly}, IsQuartic q → IsQuartic (e q) := by
+    intro q hq
+    exact isQuartic_affineEquiv
+      (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 b b'
+      (by simp) (by simp)
+      (by
+        intro i
+        fin_cases i <;> simp [b, b'])
+      (by
+        intro i
+        fin_cases i <;> simp [b, b']) hq
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  have h0trans : e (affineLinePoly r0 1 0) = x0 := by
+    simp [e, b, b', affineLinePoly, affineEquiv, affineHom, affineImage, x0, x1,
+      Fin.sum_univ_two]
+  have h1trans : e (affineLinePoly r1 0 1) = x1 := by
+    simp [e, b, b', affineLinePoly, affineEquiv, affineHom, affineImage, x0, x1,
+      Fin.sum_univ_two]
+  have h0' :
+      ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0 := by
+    simpa [e] using (relation_map e.toAlgHom h0).trans h0trans
+  have h1' :
+      ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x1 := by
+    simpa [e] using (relation_map e.toAlgHom h1).trans h1trans
+  have h2' :
+      ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = (1 : Poly) + x0 * x1 := by
+    simpa [e, b] using (relation_map e.toAlgHom h2).trans hq2
+  have h3' :
+      ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = x0 ^ 2 - x1 ^ 2 := by
+    simpa [e, b] using (relation_map e.toAlgHom h3).trans hq3
+  exact residual_eq_zero_of_equiv_relations_x0_x1_onePlusX0x1_diffsq
+    (e := e) (heQuad := fun {_} hq => heQuad hq) (heQuadSymm := fun {_} hq => heQuadSymm hq)
+    (heQuartic := fun {_} hq => heQuartic hq)
+    hB hp hu hsocp h0' h1' h2' h3'
+
 theorem residual_eq_zero_of_relations_x0_x1_x0sq_x1sqPlane
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}

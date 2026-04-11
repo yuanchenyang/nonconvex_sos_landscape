@@ -2046,6 +2046,24 @@ So once classifier code identifies the coprime constant-perturbed case above an
 exact affine pair \(x_0+r_0,\ x_1+r_1\), Lean now performs the common
 translation internally instead of requiring hand-normalized coordinates.
 
+The same file now also formalizes the split constant-perturbed slice. The new
+theorems
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x1\_onePlusX0x1\_diffsq},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusX0x1\_diffsq},
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlusX0x1\_diffsq},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlusX0x1\_diffsq}
+show that the model
+\[
+  (x_0,\ x_1,\ 1 + x_0x_1,\ x_0^2 - x_1^2)
+\]
+is quartic-surjective and already sits on the same affine-pair transport
+surface. So in the nonzero-constant exact-affine \(\dim=2\) branch, both the
+coprime and split rank-\(15\) deformations are now available directly in Lean;
+the remaining constant-perturbed low-affine work is concentrated in the
+repeated-line/common-factor slice and the final classifier that routes into
+these theorem surfaces.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

@@ -2039,6 +2039,24 @@ and
 later classifier code will not need to normalize that case all the way down to
 literal \((x_0, x_1, 1 + x_0^2, x_1^2)\) coordinates by hand.
 
+I then formalized the split constant-perturbed slice in the same file. The new
+theorems
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x1\_onePlusX0x1\_diffsq},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusX0x1\_diffsq},
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlusX0x1\_diffsq},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlusX0x1\_diffsq}
+show that
+\[
+  (x_0,\ x_1,\ 1 + x_0x_1,\ x_0^2 - x_1^2)
+\]
+is quartic-surjective and transports across the same affine-pair surface. No
+new Julia experiments were needed for this round. This narrows the remaining
+nonzero-constant exact-affine \(\dim=2\) work again: the rank-\(15\) coprime
+and split deformations are now theorem-level endpoints, so the only visible
+special low-rank constant-perturbed slice is the repeated-line/common-factor
+case.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
