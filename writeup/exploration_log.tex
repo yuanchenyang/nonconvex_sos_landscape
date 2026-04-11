@@ -2297,18 +2297,40 @@ remaining independent translated-kernel low-affine work is concentrated in the
 opposite-sign trace-free branch, i.e.\ the \texttt{diagSumChart} output. No
 new Julia experiment was needed for this round.
 
+I then stopped treating the independent constant-perturbed low-affine branch as
+a bag of chart wrappers and packaged it into a single theorem surface in
+\texttt{RepresentativeLowAffine.lean}. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlus\_homQuadratics\_independent}
+starts from exact relations to \(x_0\), \(x_1\), \(q_2\), \(q_3\), the usual
+constant/linear coefficient conditions, and linear independence of
+\((q_2-1,q_3)\). Lean now performs the whole internal branch split itself:
+repeated-line \((x_0^2,x_0x_1)\), coprime cross chart, common-factor chart,
+and the two diagonal charts. I also added the affine-pair transport wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlus\_homQuadratics\_independent}.
+No new Julia experiment was needed for this round.
+
+With that in place, I added the matching exact-affine wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constSplit\_independent}
+and then the global theorem
+\texttt{residual\_eq\_zero\_of\_exactAffineDimTwo\_noConst} in
+\texttt{ExactAffineClassification.lean}. So the exact-affine \(\dim = 2\),
+no-constant branch is no longer open at all: Lean now extracts the affine pair,
+splits the translated zero-linear-tail kernel into the all-zero-constant or
+constant-split cases, and closes both branches internally. After this round,
+the main global blocker is no longer the exact-affine \(\dim = 2\) analysis. It
+is the remaining affine-rank-one extraction/classification layer above the
+already-formalized rank-one endpoint theorems, followed by the final assembly
+in \texttt{TernaryQuarticProof.lean}.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
 linear-basis data needed by the low-affine theorems. The constant-containing
 \(\dim=2\) mixed-affine branch no longer needs external quadratic-pair
-extraction, and the rank-one affine-image branches no longer need externally
-supplied homogeneous bases either. What remains is the upstream classification
-step that identifies the relevant affine or linear basis and the appropriate
-rank-one or rank-two coefficient-map image. On the low-affine homogeneous side,
-the remaining task is now only to feed the new
-\texttt{...\_homQuadratics\_plane\_nontrivial} interface from the global
-classifier, not to add more internal low-affine chart theorems.
+extraction, and the exact-affine \(\dim=2\) low-affine branch is now closed.
+What remains is the upstream classification step that identifies the remaining
+rank-one affine-image branch and supplies the appropriate one-dimensional image
+data for the already-formalized rank-one endpoint theorems.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

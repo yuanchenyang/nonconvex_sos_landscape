@@ -2300,6 +2300,43 @@ remaining independent low-affine work is therefore the opposite-sign
 trace-free branch, namely the \texttt{diagSumChart} output, together with the
 final global assembly.
 
+That last low-affine split is now internal too. In
+\texttt{RepresentativeLowAffine.lean} the new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlus\_homQuadratics\_independent}
+packages the whole constant-perturbed independent low-affine branch: from
+exact relations to \(x_0\), \(x_1\), \(q_2\), \(q_3\), the coefficient
+conditions
+\[
+  \operatorname{coeff}_1(q_2)=1,\quad
+  \operatorname{coeff}_{x_0}(q_2)=\operatorname{coeff}_{x_1}(q_2)=0,\quad
+  \operatorname{coeff}_1(q_3)=\operatorname{coeff}_{x_0}(q_3)=
+  \operatorname{coeff}_{x_1}(q_3)=0,
+\]
+and linear independence of \((q_2-1,q_3)\), Lean now performs the full inner
+case split automatically. It dispatches to the repeated-line
+\(\operatorname{span}(x_0^2,x_0x_1)\) plane when
+\(\texttt{lowHomQuadPlaneA}=\texttt{lowHomQuadPlaneB}=0\), to the coprime
+cross chart when \(\texttt{lowHomQuadPlaneA}=0\) but
+\(\texttt{lowHomQuadPlaneB}\neq 0\), and to the common-factor, diagonal-sum,
+or diagonal-difference charts when \(\texttt{lowHomQuadPlaneA}\neq 0\).
+The matching affine-pair wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlus\_homQuadratics\_independent}
+puts that result on the same transport surface as the rest of the low-affine
+theory.
+
+On top of that, \texttt{ExactAffineClassification.lean} now proves
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constSplit\_independent}
+and the global classifier theorem
+\texttt{residual\_eq\_zero\_of\_exactAffineDimTwo\_noConst}. So the whole
+exact-affine \(\dim=2\), no-constant branch is now closed in Lean: once the
+exact affine kernel has dimension \(2\) and contains no exact constant
+relation, Lean reconstructs an exact affine pair, analyzes the translated
+zero-linear-tail kernel, and dispatches internally to either the homogeneous
+low-affine branch or the constant-perturbed low-affine branch. The remaining
+global work is no longer in the exact-affine \(\dim=2\) classifier. It is the
+affine-rank-one extraction/classification layer and then the final assembly in
+\texttt{TernaryQuarticProof.lean}.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.
