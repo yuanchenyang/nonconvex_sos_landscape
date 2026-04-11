@@ -1972,6 +1972,19 @@ no-constant \(\dim=2\) gap is now only the extraction of the right quadratic
 pair above the affine pair, not the affine-pair normalization itself. No new
 Julia experiments were needed for this round either.
 
+I then tightened the linear-algebra side of that same no-constant branch in
+\texttt{ExactAffineClassification.lean}. The new theorems
+\texttt{translatedLinearCoeffMap\_surjective\_of\_affinePair} and
+\texttt{translatedLinearCoeffKernel\_finrank\_two\_of\_affinePair} prove that
+once an affine pair \(x_0 + r_0\), \(x_1 + r_1\) is known, the common
+translation by \((-r_0,-r_1)\) automatically produces a surjective linear
+coefficient map onto the normalized linear basis \((x_0,x_1)\), and hence a
+two-dimensional kernel of translated zero-linear-tail relations. So the
+remaining no-constant \(\dim=2\) gap is now even sharper: the open work is not
+to recover that kernel, but to analyze the constant-term functional on it and
+separate the mixed-affine and low-affine outcomes. No new Julia experiments
+were needed for this round either.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

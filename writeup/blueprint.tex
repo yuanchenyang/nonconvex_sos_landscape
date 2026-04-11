@@ -1975,6 +1975,20 @@ has to extract the right quadratic pair above the internally reconstructed
 affine pair, not reprove the translation step or the low-affine homogeneous
 reduction.
 
+The linear-algebra side of that same branch is now tighter too. In
+\texttt{ExactAffineClassification.lean}, the theorems
+\texttt{translatedLinearCoeffMap\_surjective\_of\_affinePair} and
+\texttt{translatedLinearCoeffKernel\_finrank\_two\_of\_affinePair} show that
+once Lean has reconstructed an affine pair \(x_0 + r_0\), \(x_1 + r_1\), the
+common translation by \((-r_0,-r_1)\) automatically yields a surjective linear
+coefficient map onto \((x_0,x_1)\), and hence a two-dimensional kernel of
+relations with zero translated \(x_0\)- and \(x_1\)-coefficients. So the
+remaining no-constant \(\dim=2\) extraction problem is now more precise: it is
+no longer to find the translated zero-linear-tail space, but to understand the
+constant-term functional on that already-formalized \(2\)-dimensional kernel
+and route the resulting cases to the mixed-affine or low-affine theorem
+surfaces.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

@@ -25,6 +25,21 @@ private theorem relationPoly_smul
     relationPoly u (a • c) = a • relationPoly u c := by
   simp [relationPoly, Fin.sum_univ_four, smul_smul]
 
+private theorem relationPoly_map
+    (φ : Poly →ₐ[ℝ] Poly) (u : RankFourVec) (c : Fin 4 → ℝ) :
+    relationPoly (mapVec φ u) c = φ (relationPoly u c) := by
+  simp [relationPoly, mapVec, Fin.sum_univ_four]
+
+private theorem affineHom_translate_affineLine_left
+    (r0 r1 : ℝ) :
+    affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1] (affineLinePoly r0 1 0) = x0 := by
+  simp [affineLinePoly, affineHom, affineImage, x0, x1, Fin.sum_univ_two]
+
+private theorem affineHom_translate_affineLine_right
+    (r0 r1 : ℝ) :
+    affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1] (affineLinePoly r1 0 1) = x1 := by
+  simp [affineLinePoly, affineHom, affineImage, x0, x1, Fin.sum_univ_two]
+
 /-- Linear map version of `relationPoly`. -/
 def relationPolyLin (u : RankFourVec) : (Fin 4 → ℝ) →ₗ[ℝ] Poly where
   toFun := relationPoly u
@@ -471,5 +486,83 @@ theorem exists_exactAffine_affinePair_of_dimTwo_noConst
     rw [hAff]
     simp [linExact, linearCoeffMap] at hc10 hc11
     simp [affineLinePoly, r1, hc10, hc11, MvPolynomial.smul_eq_C_mul]
+
+/-- After translating an affine pair `x₀ + r₀`, `x₁ + r₁` to `(x₀,x₁)`, the
+resulting linear coefficient map is surjective. -/
+theorem translatedLinearCoeffMap_surjective_of_affinePair
+    {u : RankFourVec}
+    {c0 c1 : Fin 4 → ℝ}
+    {r0 r1 : ℝ}
+    (h0 : relationPoly u c0 = affineLinePoly r0 1 0)
+    (h1 : relationPoly u c1 = affineLinePoly r1 0 1) :
+    Function.Surjective
+      (linearCoeffMap
+        (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u)) := by
+  intro v
+  let c : Fin 4 → ℝ := fun i => v 0 * c0 i + v 1 * c1 i
+  refine ⟨c, ?_⟩
+  have hc :
+      c = v 0 • c0 + v 1 • c1 := by
+    funext i
+    simp [c]
+  have h0' :
+      relationPoly
+        (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) c0 = x0 := by
+    rw [relationPoly_map]
+    rw [h0]
+    exact affineHom_translate_affineLine_left r0 r1
+  have h1' :
+      relationPoly
+        (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) c1 = x1 := by
+    rw [relationPoly_map]
+    rw [h1]
+    exact affineHom_translate_affineLine_right r0 r1
+  have hrel :
+      relationPoly
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) c =
+        v 0 • x0 + v 1 • x1 := by
+    rw [hc, relationPoly_add, relationPoly_smul, relationPoly_smul, h0', h1']
+  ext j
+  fin_cases j
+  · have hm10 := congrArg (MvPolynomial.coeff m10) hrel
+    simpa [linearCoeffMap, x0, x1, MvPolynomial.coeff_add, MvPolynomial.coeff_smul] using hm10
+  · have hm01 := congrArg (MvPolynomial.coeff m01) hrel
+    simpa [linearCoeffMap, x0, x1, MvPolynomial.coeff_add, MvPolynomial.coeff_smul] using hm01
+
+/-- The translated linear coefficient map above an affine pair has a
+two-dimensional kernel. -/
+theorem translatedLinearCoeffKernel_finrank_two_of_affinePair
+    {u : RankFourVec}
+    {c0 c1 : Fin 4 → ℝ}
+    {r0 r1 : ℝ}
+    (h0 : relationPoly u c0 = affineLinePoly r0 1 0)
+    (h1 : relationPoly u c1 = affineLinePoly r1 0 1) :
+    Module.finrank ℝ
+      (LinearMap.ker
+        (linearCoeffMap
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u))) = 2 := by
+  let f :=
+    linearCoeffMap
+      (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u)
+  have hsurj : Function.Surjective f :=
+    translatedLinearCoeffMap_surjective_of_affinePair h0 h1
+  have hrange : LinearMap.range f = ⊤ := LinearMap.range_eq_top.mpr hsurj
+  have hdom : Module.finrank ℝ (Fin 4 → ℝ) = 4 := by
+    calc
+      Module.finrank ℝ (Fin 4 → ℝ) = Fintype.card (Fin 4) :=
+        Module.finrank_fintype_fun_eq_card (R := ℝ) (η := Fin 4)
+      _ = 4 := by decide
+  have hrangeFin : Module.finrank ℝ (LinearMap.range f) = 2 := by
+    rw [hrange, finrank_top]
+    calc
+      Module.finrank ℝ (Fin 2 → ℝ) = Fintype.card (Fin 2) :=
+        Module.finrank_fintype_fun_eq_card (R := ℝ) (η := Fin 2)
+      _ = 2 := by decide
+  have hsum := LinearMap.finrank_range_add_finrank_ker f
+  have hsum' : 2 + Module.finrank ℝ (LinearMap.ker f) = 4 := by
+    simpa [hrangeFin, hdom] using hsum
+  have hker : Module.finrank ℝ (LinearMap.ker f) = 2 := by
+    omega
+  exact hker
 
 end TernaryQuartic
