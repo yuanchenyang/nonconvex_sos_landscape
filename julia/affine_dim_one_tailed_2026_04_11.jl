@@ -126,4 +126,47 @@ function affine_dim_one_tailed_probe()
     result
 end
 
+function affine_dim_one_constant_probe()
+    vals = [-2.0, -1.0, 1.0, 2.0]
+    x0 = quad_coeffs(a10 = 1.0)
+    x0sq = quad_coeffs(a20 = 1.0)
+    x0x1 = quad_coeffs(a11 = 1.0)
+    x1sq = quad_coeffs(a02 = 1.0)
+
+    const_x0sq_diag = NamedTuple[]
+    const_cross = NamedTuple[]
+    const_x1sq_common = NamedTuple[]
+
+    for a in vals, b in vals
+        u = [x0, quad_coeffs(a00 = 1.0, a20 = a, a02 = b), x0x1, x1sq]
+        push!(const_x0sq_diag, (; a, b, exact_affine_dim = exact_affine_dim(u), image_rank_missing(u)...))
+    end
+    for a in vals
+        u_cross = [x0, quad_coeffs(a00 = 1.0, a11 = a), x0sq, x1sq]
+        push!(const_cross, (; a, exact_affine_dim = exact_affine_dim(u_cross), image_rank_missing(u_cross)...))
+        u_x1sq_common = [x0, quad_coeffs(a00 = 1.0, a02 = a), x0sq, x0x1]
+        push!(const_x1sq_common, (; a, exact_affine_dim = exact_affine_dim(u_x1sq_common), image_rank_missing(u_x1sq_common)...))
+    end
+
+    result = (
+        vals = vals,
+        const_x0sq_diag = const_x0sq_diag,
+        const_cross = const_cross,
+        const_x1sq_common = const_x1sq_common,
+        const_x0sq_diag_ranks = sort(unique(x.rank for x in const_x0sq_diag)),
+        const_x0sq_diag_missing = sort(unique(x.missing for x in const_x0sq_diag)),
+        const_x0sq_diag_exact_affine_dims = sort(unique(x.exact_affine_dim for x in const_x0sq_diag)),
+        const_cross_ranks = sort(unique(x.rank for x in const_cross)),
+        const_cross_missing = sort(unique(x.missing for x in const_cross)),
+        const_cross_exact_affine_dims = sort(unique(x.exact_affine_dim for x in const_cross)),
+        const_x1sq_common_ranks = sort(unique(x.rank for x in const_x1sq_common)),
+        const_x1sq_common_missing = sort(unique(x.missing for x in const_x1sq_common)),
+        const_x1sq_common_exact_affine_dims =
+            sort(unique(x.exact_affine_dim for x in const_x1sq_common)),
+    )
+    println("affine_dim_one_constant_probe = ", result)
+    result
+end
+
 affine_dim_one_tailed_probe()
+affine_dim_one_constant_probe()

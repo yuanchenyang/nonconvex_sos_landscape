@@ -2450,6 +2450,76 @@ for these three tailed branches. It can instead target exact normalized
 coordinates after affine normalization, in the same style as the mixed-affine
 and low-affine transport layers.
 
+I then added the first retained extraction lemma for that remaining branch in
+\texttt{ExactAffineClassification.lean}:
+\texttt{exists\_exactAffine\_affineLine\_of\_dimOne\_noConst}. This is a small
+but real classifier-facing gain. Under exact-affine dimension \(1\), injectivity
+of the scalar relation map, and absence of an exact constant relation, Lean now
+extracts a nonconstant exact affine line
+\[
+  r + a x_0 + b x_1,\qquad a^2+b^2 \ne 0,
+\]
+by contradiction: if the linear part vanished, the unique exact-affine
+direction would scale to an exact constant relation. No new Julia evidence was
+needed for this round.
+
+I then pushed that same branch one layer deeper without touching the remaining
+tailed endpoint algebra. The same file now proves
+\texttt{exists\_relations\_x0\_homQuadBasis\_of\_exactAffineDimOne}: once an
+exact-affine-\(\dim=1\) point has been normalized so that one exact relation is
+\(x_0\), Lean constructs three more exact relations
+\[
+  \alpha_{20} + \beta_{20}x_1 + x_0^2,\qquad
+  \alpha_{11} + \beta_{11}x_1 + x_0x_1,\qquad
+  \alpha_{02} + \beta_{02}x_1 + x_1^2.
+\]
+So the classifier no longer has to re-extract the homogeneous quadratic basis
+inside the rank-\(4\) span; it only has to analyze the six residual scalar tail
+coefficients.
+
+I also packaged the easy subcase sitting above that structure. The theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_affineRankOne\_of\_finrank\_range\_one}
+shows that if the affine coefficient image is already one-dimensional after
+normalizing the exact affine line to \(x_0\), then Lean closes the branch
+immediately through the existing affine-rank-one theorem. So the surviving
+exact-affine-\(\dim=1\) gap is now narrower again: the genuinely remaining work
+is the affine-image rank-\(2\) tailed classifier, not the pure affine-rank-one
+surface.
+
+I then corrected one missing affine-\(\dim=1\) endpoint and recorded the
+matching numerical split. In
+\texttt{RepresentativeAffineRankOne.lean}, the new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0sqBX1sq\_x0x1\_x1sq}
+shows that exact relations
+\[
+  x_0,\qquad 1 + a x_0^2 + b x_1^2,\qquad x_0x_1,\qquad x_1^2,
+  \qquad a \ne 0,
+\]
+already force zero residual. So the constant \(x_0^2/x_1^2\) affine-\(\dim=1\)
+family is no longer just a numerical guess.
+
+I also extended the Julia file
+\texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl} with the new output
+\texttt{affine\_dim\_one\_constant\_probe}. The retained summary is:
+\[
+  \texttt{const\_x0sq\_diag\_ranks}=[15],\qquad
+  \texttt{const\_cross\_ranks}=[15],\qquad
+  \texttt{const\_x1sq\_common\_ranks}=[13].
+\]
+So the pure constant-tailed affine-\(\dim=1\) models now split numerically into
+three stable types:
+\begin{itemize}
+\item \((x_0,\ 1 + a x_0^2 + b x_1^2,\ x_0x_1,\ x_1^2)\) is always rank \(15\)
+with no missing quartic monomials in the tested scalar sweep;
+\item \((x_0,\ 1 + a x_0x_1,\ x_0^2,\ x_1^2)\) also stays rank \(15\);
+\item \((x_0,\ 1 + a x_1^2,\ x_0^2,\ x_0x_1)\) stays rank \(13\), with the full
+\(x_1\)-axis monomial strip \((0,0),(0,1),(0,2),(0,3),(0,4)\) missing.
+\end{itemize}
+So the affine-\(\dim=1\) classifier is now visibly narrower: the mixed
+\(x_0^2/x_1^2\) constant-tail family moved into the proved column, while the
+repeated-line \(1 + a x_1^2\) slice remains the obvious nonsurjective constant
+endpoint.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
