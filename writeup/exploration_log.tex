@@ -2057,6 +2057,25 @@ and split deformations are now theorem-level endpoints, so the only visible
 special low-rank constant-perturbed slice is the repeated-line/common-factor
 case.
 
+I then formalized that repeated-line/common-factor slice in the same file. The
+new theorems
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x1\_onePlusX0sq\_x0x1\_of\_coeff\_m04\_zero},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusX0sq\_x0x1},
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlusX0sq\_x0x1},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlusX0sq\_x0x1}
+show that
+\[
+  (x_0,\ x_1,\ 1 + x_0^2,\ x_0x_1)
+\]
+has the expected theorem-level rank-\(14\) structure: Lean proves quartic image
+surjectivity modulo the single missing \(x_1^4\) class, then removes that class
+with the already formalized common-factor quartic kernel. No new Julia probe was
+needed for this round either. This means the nonzero-constant exact-affine
+\(\dim=2\) branch is no longer waiting on another representative theorem; the
+remaining work is the classifier that routes the translated-kernel output into
+the coprime, split, or repeated-line surface.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

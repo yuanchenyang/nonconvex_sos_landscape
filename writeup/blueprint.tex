@@ -2064,6 +2064,23 @@ the remaining constant-perturbed low-affine work is concentrated in the
 repeated-line/common-factor slice and the final classifier that routes into
 these theorem surfaces.
 
+That repeated-line slice is now formalized too. The same file proves
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x1\_onePlusX0sq\_x0x1\_of\_coeff\_m04\_zero},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusX0sq\_x0x1},
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlusX0sq\_x0x1},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlusX0sq\_x0x1}.
+These show that the model
+\[
+  (x_0,\ x_1,\ 1 + x_0^2,\ x_0x_1)
+\]
+has exactly the expected rank-\(14\) behavior at theorem level: every quartic
+with zero \(x_1^4\) coefficient lies in the admissible image, and the missing
+\(x_1^4\) class is removed by the existing common-factor quartic kernel. So the
+nonzero-constant exact-affine \(\dim=2\) branch is no longer missing a low-rank
+endpoint; what remains is the classifier that decides which translated-kernel
+output lands in the coprime, split, or repeated-line theorem surface.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.
