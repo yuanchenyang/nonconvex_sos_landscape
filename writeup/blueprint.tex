@@ -2130,6 +2130,24 @@ so the exact-affine classifier can branch directly on
 open work again: the no-constant exact-affine \(\dim=2\) branch is now reduced
 to its genuinely independent constant-perturbed half.
 
+The exact coprime constant-perturbed endpoint has also been widened from the
+single normalized model \(1 + x_0^2\) to the full nonzero scalar family
+\[
+  (x_0,\ x_1,\ 1 + \alpha x_0^2,\ x_1^2), \qquad \alpha \neq 0.
+\]
+In \texttt{RepresentativeLowAffine.lean}, the new theorems
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x1\_onePlusAX0sq\_x1sq},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusAX0sq\_x1sq},
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlusAX0sq\_x1sq},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlusAX0sq\_x1sq}
+show that the coefficient of the square line does not need to be normalized to
+\(1\) before entering the exact theorem surface. The old
+\texttt{onePlusX0sq\_x1sq} theorems now sit as the \(\alpha = 1\) wrappers.
+This should be the right endpoint for the still-open independent translated
+kernel branch, where the classifier is expected to produce a constant relation
+of the form \(1 + \alpha x_0^2\) rather than literally \(1 + x_0^2\).
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

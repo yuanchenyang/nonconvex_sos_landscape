@@ -2124,6 +2124,23 @@ reuses the existing dependent theorem. I lifted that immediately into
 So the classifier can now branch directly on linear independence of the
 homogeneous pair. No new Julia experiment was needed for this round.
 
+I then widened the exact coprime constant-perturbed endpoint from the
+normalized model \(1 + x_0^2\) to the whole nonzero scalar family
+\[
+  (x_0,\ x_1,\ 1 + \alpha x_0^2,\ x_1^2), \qquad \alpha \neq 0.
+\]
+In \texttt{RepresentativeLowAffine.lean}, the new theorems
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x1\_onePlusAX0sq\_x1sq},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusAX0sq\_x1sq},
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlusAX0sq\_x1sq},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlusAX0sq\_x1sq}
+show that Lean no longer needs the square-line coefficient normalized to
+\(1\) before entering that exact theorem surface. The earlier
+\texttt{onePlusX0sq\_x1sq} theorems are now just the \(\alpha = 1\) wrappers.
+No new Julia probe was needed for this round; this was a formalization-only
+generalization aimed at the still-open independent translated-kernel branch.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
