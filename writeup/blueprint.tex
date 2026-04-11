@@ -2077,6 +2077,37 @@ endpoints are now in the proved column:
   (x_0,\ 1 + a x_0x_1,\ x_0^2,\ x_1^2),\qquad
   (x_0,\ 1 + a x_1^2,\ x_0^2,\ x_0x_1).
 \]
+
+The same repeated-line constant endpoint is now stable under an additional
+linear \(x_1\)-tail. In \texttt{RepresentativeAffineRankOne.lean} the new
+theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1PlusAX1sq\_x0sq\_x0x1}
+proves zero residual from exact relations to
+\[
+  (x_0,\ 1 + b x_1 + a x_1^2,\ x_0^2,\ x_0x_1),
+  \qquad a \ne 0.
+\]
+The proof performs the internal translation \(x_1 \mapsto x_1 - b/(2a)\):
+after translation the mixed constant-linear relation becomes either a pure
+\(x_1^2\) relation or a \((1 + a' x_1^2)\) relation, while the translated
+\(x_0x_1\) relation is repaired by subtracting the induced \(x_0\) term using
+the exact \(x_0\) relation. So this mixed repeated-line slice now reduces
+completely to the already solved pure repeated-line endpoints.
+
+The Julia file \texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl} now
+also records
+\[
+  \texttt{affine\_dim\_one\_constant\_linear\_probe},
+\]
+and for all tested nonzero \(a,b \in \{-2,-1,1,2\}\) it returns
+\[
+  \texttt{const\_linear\_x1sq\_common\_ranks}=[13],\qquad
+  \texttt{const\_linear\_x1sq\_common\_missing}
+    =[ \{(0,0),(0,1),(0,2),(0,3),(0,4)\} ].
+\]
+So numerically this new mixed repeated-line family behaves exactly like the
+pure \(1 + a x_1^2\) slice, which matches the translation-based Lean proof.
+
 The remaining exact-affine \(\dim=1\) gap is therefore no longer a missing
 constant-tail endpoint; it is the classifier that packages a general
 rank-\(2\) affine-image tailed branch into one of the already solved

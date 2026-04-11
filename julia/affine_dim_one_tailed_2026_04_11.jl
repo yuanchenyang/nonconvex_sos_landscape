@@ -168,5 +168,34 @@ function affine_dim_one_constant_probe()
     result
 end
 
+function affine_dim_one_constant_linear_probe()
+    vals = [-2.0, -1.0, 1.0, 2.0]
+    x0 = quad_coeffs(a10 = 1.0)
+    x0sq = quad_coeffs(a20 = 1.0)
+    x0x1 = quad_coeffs(a11 = 1.0)
+
+    const_linear_x1sq_common = NamedTuple[]
+
+    for a in vals, b in vals
+        u = [x0, quad_coeffs(a00 = 1.0, a01 = b, a02 = a), x0sq, x0x1]
+        push!(const_linear_x1sq_common,
+            (; a, b, exact_affine_dim = exact_affine_dim(u), image_rank_missing(u)...))
+    end
+
+    result = (
+        vals = vals,
+        const_linear_x1sq_common = const_linear_x1sq_common,
+        const_linear_x1sq_common_ranks =
+            sort(unique(x.rank for x in const_linear_x1sq_common)),
+        const_linear_x1sq_common_missing =
+            sort(unique(x.missing for x in const_linear_x1sq_common)),
+        const_linear_x1sq_common_exact_affine_dims =
+            sort(unique(x.exact_affine_dim for x in const_linear_x1sq_common)),
+    )
+    println("affine_dim_one_constant_linear_probe = ", result)
+    result
+end
+
 affine_dim_one_tailed_probe()
 affine_dim_one_constant_probe()
+affine_dim_one_constant_linear_probe()

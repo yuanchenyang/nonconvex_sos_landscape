@@ -2549,6 +2549,34 @@ endpoint theorem. The remaining work is now purely classifier-level: package a
 general exact-affine \(\dim=1\), affine-image-rank-\(2\) branch into one of the
 already solved constant-tail or \(x_1\)-tail surfaces.
 
+I then stabilized the same repeated-line constant branch under an additional
+linear \(x_1\)-tail instead of opening a new classifier abstraction too early.
+The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1PlusAX1sq\_x0sq\_x0x1},
+again in \texttt{RepresentativeAffineRankOne.lean}, closes
+\[
+  (x_0,\ 1 + b x_1 + a x_1^2,\ x_0^2,\ x_0x_1),\qquad a \ne 0.
+\]
+Lean performs the internal translation \(x_1 \mapsto x_1 - b/(2a)\), so the
+second relation becomes either a pure \(x_1^2\) relation or a
+\((1 + a' x_1^2)\) relation, and the translated \(x_0x_1\) relation is then
+repaired by subtracting the induced \(x_0\) term. That reduces the whole mixed
+constant-linear repeated-line slice to the already solved pure repeated-line
+endpoint.
+
+I also extended the Julia script
+\texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl} with the retained
+probe \texttt{affine\_dim\_one\_constant\_linear\_probe}. For all tested
+nonzero \(a,b \in \{-2,-1,1,2\}\) it reports
+\[
+  \texttt{const\_linear\_x1sq\_common\_ranks}=[13],\qquad
+  \texttt{const\_linear\_x1sq\_common\_missing}
+    =[ \{(0,0),(0,1),(0,2),(0,3),(0,4)\} ],\qquad
+  \texttt{const\_linear\_x1sq\_common\_exact\_affine\_dims}=[1].
+\]
+So numerically the mixed repeated-line family behaves exactly like the pure
+\(1 + a x_1^2\) slice, which matches the translation proof.
+
 I then pushed one retained exact-affine \(\dim=1\) classifier case into Lean.
 In \texttt{ExactAffineClassification.lean}, the new theorem
 \texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeZero} closes the
