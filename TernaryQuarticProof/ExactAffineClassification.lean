@@ -2249,6 +2249,105 @@ theorem x0CoeffKernel_finrank_three_of_relation_x0
     simpa using hsum'
   exact Nat.add_left_cancel hsum''
 
+/-- If the residual tail map on the `x₀`-kernel has rank one, then the kernel
+contains one relation with nonzero `(1,x₁)` tail together with two linearly
+independent pure homogeneous relations. -/
+theorem exists_x0_tail_nonzero_homPair_of_finrank_range_one
+    {u : RankFourVec}
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange1 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 1) :
+    ∃ d0 d1 d2 : Fin 4 → ℝ,
+      d0 ∈ LinearMap.ker (x0CoeffMap u) ∧
+      d1 ∈ LinearMap.ker (x0CoeffMap u) ∧
+      d2 ∈ LinearMap.ker (x0CoeffMap u) ∧
+      (MvPolynomial.coeff m00 (relationPoly u d0)) ^ 2 +
+          (MvPolynomial.coeff m01 (relationPoly u d0)) ^ 2 ≠ 0 ∧
+      MvPolynomial.coeff m00 (relationPoly u d1) = 0 ∧
+      MvPolynomial.coeff m01 (relationPoly u d1) = 0 ∧
+      MvPolynomial.coeff m00 (relationPoly u d2) = 0 ∧
+      MvPolynomial.coeff m01 (relationPoly u d2) = 0 ∧
+      LinearIndependent ℝ ![relationPoly u d1, relationPoly u d2] := by
+  let K : Submodule ℝ (Fin 4 → ℝ) := LinearMap.ker (x0CoeffMap u)
+  let tail : K →ₗ[ℝ] (Fin 2 → ℝ) := x0TailCoeffMap u
+  have hKdim : Module.finrank ℝ K = 3 := by
+    simpa [K] using x0CoeffKernel_finrank_three_of_relation_x0 h0
+  have hrangeFin : Module.finrank ℝ (LinearMap.range tail) = 1 := by
+    simpa [tail] using hrange1
+  have hkerdim : Module.finrank ℝ (LinearMap.ker tail) = 2 := by
+    have hsum := LinearMap.finrank_range_add_finrank_ker tail
+    rw [hKdim, hrangeFin] at hsum
+    omega
+  have hrange_ne_bot : LinearMap.range tail ≠ ⊥ := by
+    intro hrangeBot
+    rw [hrangeBot, finrank_bot] at hrangeFin
+    norm_num at hrangeFin
+  rcases (Submodule.ne_bot_iff _).mp hrange_ne_bot with ⟨y0, hy0mem, hy0ne⟩
+  obtain ⟨d0K, hd0K⟩ := hy0mem
+  let basisK : Module.Basis (Fin 2) ℝ (LinearMap.ker tail) :=
+    Module.finBasisOfFinrankEq ℝ (LinearMap.ker tail) hkerdim
+  let d1K0 : LinearMap.ker tail := basisK 0
+  let d2K0 : LinearMap.ker tail := basisK 1
+  let d1K : K := d1K0.1
+  let d2K : K := d2K0.1
+  have hd1K0' : tail d1K = 0 := d1K0.2
+  have hd2K0' : tail d2K = 0 := d2K0.2
+  have h00_d1 : MvPolynomial.coeff m00 (relationPoly u (d1K : Fin 4 → ℝ)) = 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 0) hd1K0'
+    simpa [tail, x0TailCoeffMap] using h
+  have h01_d1 : MvPolynomial.coeff m01 (relationPoly u (d1K : Fin 4 → ℝ)) = 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 1) hd1K0'
+    simpa [tail, x0TailCoeffMap] using h
+  have h00_d2 : MvPolynomial.coeff m00 (relationPoly u (d2K : Fin 4 → ℝ)) = 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 0) hd2K0'
+    simpa [tail, x0TailCoeffMap] using h
+  have h01_d2 : MvPolynomial.coeff m01 (relationPoly u (d2K : Fin 4 → ℝ)) = 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 1) hd2K0'
+    simpa [tail, x0TailCoeffMap] using h
+  have hd0_00 :
+      MvPolynomial.coeff m00 (relationPoly u (d0K : Fin 4 → ℝ)) = y0 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 0) hd0K
+    simpa [tail, x0TailCoeffMap] using h
+  have hd0_01 :
+      MvPolynomial.coeff m01 (relationPoly u (d0K : Fin 4 → ℝ)) = y0 1 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 1) hd0K
+    simpa [tail, x0TailCoeffMap] using h
+  have htail0_ne :
+      (MvPolynomial.coeff m00 (relationPoly u (d0K : Fin 4 → ℝ))) ^ 2 +
+          (MvPolynomial.coeff m01 (relationPoly u (d0K : Fin 4 → ℝ))) ^ 2 ≠ 0 := by
+    intro hsq
+    have hcoord00 : MvPolynomial.coeff m00 (relationPoly u (d0K : Fin 4 → ℝ)) = 0 := by
+      nlinarith
+    have hcoord01 : MvPolynomial.coeff m01 (relationPoly u (d0K : Fin 4 → ℝ)) = 0 := by
+      nlinarith
+    have hy00 : y0 0 = 0 := by
+      linarith [hd0_00, hcoord00]
+    have hy01 : y0 1 = 0 := by
+      linarith [hd0_01, hcoord01]
+    apply hy0ne
+    ext j
+    fin_cases j
+    · exact hy00
+    · exact hy01
+  let relTail : (LinearMap.ker tail) →ₗ[ℝ] Poly :=
+    (relationPolyLin u).comp
+      ((Submodule.subtype K).comp (Submodule.subtype (LinearMap.ker tail)))
+  have hrelTailInj : Function.Injective relTail := by
+    intro x y hxy
+    apply Subtype.ext
+    apply Subtype.ext
+    apply (LinearMap.ker_eq_bot.mp hrelker)
+    simpa [relTail, relationPolyLin, relationPoly] using hxy
+  have hrelTailBot : LinearMap.ker relTail = ⊥ := LinearMap.ker_eq_bot.mpr hrelTailInj
+  have hLI : LinearIndependent ℝ (fun i : Fin 2 => relTail (basisK i)) := by
+    exact basisK.linearIndependent.map' relTail hrelTailBot
+  refine ⟨(d0K : Fin 4 → ℝ), (d1K : Fin 4 → ℝ), (d2K : Fin 4 → ℝ),
+    d0K.2, d1K.2, d2K.2, htail0_ne, h00_d1, h01_d1, h00_d2, h01_d2, ?_⟩
+  convert hLI using 1
+  ext i
+  fin_cases i <;> rfl
+
 /-- In the exact-affine `dim = 1` branch, if the residual tail map on the
 `x₀`-kernel has full rank `2`, then there are exact relations carrying the
 normalized tails `1`, `x₁`, and one further pure homogeneous relation. -/

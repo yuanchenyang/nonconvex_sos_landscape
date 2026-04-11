@@ -2159,10 +2159,22 @@ random tail-rank \(2\) samples it returns
   \texttt{image\_ranks}=[15],\qquad
   \texttt{missing}=[\varnothing].
 \]
+The file now also proves
+\texttt{exists\_x0\_tail\_nonzero\_homPair\_of\_finrank\_range\_one}. So in the
+intermediate tail-rank \(1\) case, Lean extracts exact relations
+\[
+  q_{\mathrm{tail}},\qquad q_1,\qquad q_2
+\]
+inside the \(x_0\)-kernel such that \(q_{\mathrm{tail}}\) has nonzero
+\((1,x_1)\)-tail, while \(q_1\) and \(q_2\) are pure homogeneous quadratics
+and are linearly independent. That means the rank-\(1\) tail case is no longer
+an unstructured kernel problem; it has been reduced to classifying one tailed
+quadratic relative to a \(2\)-dimensional homogeneous plane.
+
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
-proved, and the genuinely open classifier work is the formal routing of the
-tail-rank \(1\) and tail-rank \(2\) outputs into the already solved endpoint or
-generic-surjective surfaces.
+proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
+theorems, and the genuinely open classifier work is the formal routing of
+those outputs into the already solved endpoint or generic-surjective surfaces.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and

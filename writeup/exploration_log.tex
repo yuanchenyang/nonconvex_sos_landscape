@@ -2613,6 +2613,17 @@ that once the tail map has full rank \(2\), Lean can normalize the
 \(x_0\)-kernel to exact relations with tails \(1\), \(x_1\), and \(0\), plus a
 single nonzero pure homogeneous quadratic relation.
 
+I then added the matching rank-\(1\) extractor
+\texttt{exists\_x0\_tail\_nonzero\_homPair\_of\_finrank\_range\_one}. This
+packages the remaining intermediate exact-affine \(\dim=1\) case much more
+cleanly: once the \((1,x_1)\)-tail map on the \(x_0\)-kernel has rank \(1\),
+Lean now extracts one exact relation with nonzero tail and two further exact
+relations whose constant and \(x_1\) coefficients both vanish, and proves those
+two homogeneous quadratics are linearly independent. So the rank-\(1\) tail
+case is no longer blocked at a raw kernel-dimension statement; the remaining
+work is the classifier that routes one tailed quadratic over a homogeneous
+plane into the already solved affine-rank-one endpoint surfaces.
+
 I also recorded the corresponding numerical probe in the new Julia file
 \texttt{julia/affine\_dim\_one\_mixed\_tails\_2026\_04\_11.jl}. Its retained
 output is:
@@ -2625,9 +2636,10 @@ output is:
    \texttt{missing}=[\varnothing]).
 \]
 So the generic mixed-tail exact-affine \(\dim=1\) surface still looks
-uniformly surjective numerically, and the remaining work is the formal
-classifier that routes the tail-rank \(1\) and \(2\) outputs into the correct
-already-solved theorem surfaces.
+uniformly surjective numerically, and the remaining work is now a cleaner
+formal classifier problem: both the tail-rank \(1\) and tail-rank \(2\) cases
+already have extractor theorems, and it remains to route those outputs into the
+correct already-solved theorem surfaces.
 
 \section*{Open Subgoals}
 \begin{itemize}
