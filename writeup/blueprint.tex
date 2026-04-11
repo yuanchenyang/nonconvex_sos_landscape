@@ -2122,6 +2122,20 @@ repeated-line endpoint. So the remaining exact-affine \(\dim=1\) classifier no
 longer has to hand back a pre-normalized \((x_0^2,x_0x_1)\) pair in that
 slice.
 
+The same repeated-line reduction is now available for the mixed
+constant-diagonal surface as well. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0sqBX1sq\_x0x1\_x1sqPlane},
+again with its equivariant wrapper, starts from exact relations to
+\[
+  x_0,\qquad 1 + a x_0^2 + b x_1^2,\qquad
+  r x_0x_1 + s x_1^2,\qquad t x_0x_1 + w x_1^2
+\]
+with \(a \ne 0\) and \(rw-st \ne 0\), reconstructs exact \(x_0x_1\) and
+\(x_1^2\) internally, and then dispatches to the already formalized endpoint
+\((x_0,\ 1 + a x_0^2 + b x_1^2,\ x_0x_1,\ x_1^2)\). So the
+exact-affine \(\dim=1\) classifier no longer has to hand the common-factor
+constant slice an exact repeated-line basis either.
+
 The same file now also exports the diagonal-plane analogues
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0x1\_x0sq\_x1sqPlane}
 and

@@ -2685,6 +2685,21 @@ still visible is the pure \(x_1\)-tail direction. The remaining work is the
 formal classifier that routes those outputs into the correct already-solved
 theorem surfaces.
 
+I then added one more affine-rank-one plane wrapper in
+\texttt{RepresentativeAffineRankOne.lean}:
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0sqBX1sq\_x0x1\_x1sqPlane},
+with the matching equivariant version. This lifts the mixed constant repeated-line
+endpoint
+\[
+  (x_0,\ 1 + a x_0^2 + b x_1^2,\ x_0x_1,\ x_1^2)
+\]
+from an exact repeated-line basis to arbitrary determinant-nondegenerate plane
+data in \(\operatorname{span}(x_0x_1,x_1^2)\). The proof is the same internal
+\(2\times 2\) Cramer's-rule reconstruction already used for the other plane
+wrappers. So the remaining exact-affine \(\dim=1\) classifier no longer needs
+to hand that constant repeated-line slice an exact \((x_0x_1,x_1^2)\) basis
+either.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
