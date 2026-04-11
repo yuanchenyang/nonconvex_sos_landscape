@@ -2094,6 +2094,22 @@ naturally lands in the \((x_0x_1, x_1^2)\) orientation after shear, so the
 remaining no-constant exact-affine \(\dim=2\) gap is now even more clearly a
 classifier/transport problem rather than a missing endpoint theorem.
 
+I then formalized the dependent half of the translated-kernel constant-split
+branch. In \texttt{TernaryQuarticProof/RepresentativeLowAffine.lean}, the new
+theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlus\_homQuadratics\_dependent}
+shows that if the normalized constant-perturbed pair has the form
+\((1 + H,\ tH)\) with zero linear coefficients and nonzero second relation,
+then Lean can recover an exact constant relation from those two quadratics and
+close through \(\operatorname{span}(1,x_0,x_1)\). I then lifted that directly
+into the classifier file as
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constSplit\_dependent}
+in \texttt{ExactAffineClassification.lean}. So the no-constant exact-affine
+\(\dim=2\) branch is no longer open on the whole nonzero-constant side: the
+translated-kernel constant-split case now only remains unresolved when its
+homogeneous quadratic part is genuinely independent. No new Julia experiments
+were needed for this round.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

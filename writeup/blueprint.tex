@@ -2097,6 +2097,23 @@ homogeneous common-factor chart, so the remaining gap is no longer a missing
 endpoint theorem but the final classifier that routes the exact-affine
 translated-kernel data into these surfaces.
 
+That classifier now has one more formalized output. In
+\texttt{TernaryQuarticProof/RepresentativeLowAffine.lean} the theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlus\_homQuadratics\_dependent}
+handles the dependent constant-perturbed low-affine input directly: if
+\[
+  q_2 = 1 + H,\qquad q_3 = tH,\qquad q_3 \neq 0,
+\]
+with both relations carrying zero linear part, Lean combines \(q_2\) and \(q_3\)
+to recover an exact constant relation and closes via the existing
+\(\operatorname{span}(1,x_0,x_1)\) theorem. On top of that,
+\texttt{TernaryQuarticProof/ExactAffineClassification.lean} now contains
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constSplit\_dependent},
+which transports the translated-kernel constant-split data from the no-constant
+exact-affine \(\dim=2\) branch into that dependent theorem. So the remaining
+no-constant exact-affine \(\dim=2\) gap is no longer the whole nonzero-constant
+half; it is the complementary independent constant-perturbed branch.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

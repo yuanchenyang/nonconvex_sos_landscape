@@ -796,4 +796,157 @@ theorem exists_translatedKernel_constSplit_of_affinePair
   · simpa [u', e, b] using hd1const
   · simpa [u', e, b] using hd1poly_ne
 
+/-- If the translated zero-linear-tail kernel above an affine pair contains a
+normalized constant/nonconstant pair whose quadratic parts are dependent, then
+the translated branch already contains `1,x₀,x₁`, so the residual vanishes. -/
+theorem residual_eq_zero_of_relations_affinePair_translatedKernel_constSplit_dependent
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 : Fin 4 → ℝ}
+    {r0 r1 : ℝ}
+    (h0 : relationPoly u c0 = affineLinePoly r0 1 0)
+    (h1 : relationPoly u c1 = affineLinePoly r1 0 1)
+    {d0 d1 : Fin 4 → ℝ}
+    (hd0K :
+      d0 ∈ LinearMap.ker
+        (linearCoeffMap
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u)))
+    (hd1K :
+      d1 ∈ LinearMap.ker
+        (linearCoeffMap
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u)))
+    (hd0const :
+      MvPolynomial.coeff m00
+        (relationPoly
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) d0) = 1)
+    (hd1const :
+      MvPolynomial.coeff m00
+        (relationPoly
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) d1) = 0)
+    (hd1poly_ne :
+      relationPoly
+        (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) d1 ≠ 0)
+    (hA0 :
+      lowHomQuadPlaneA
+        (relationPoly
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) d0)
+        (relationPoly
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) d1) = 0)
+    (hB0 :
+      lowHomQuadPlaneB
+        (relationPoly
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) d0)
+        (relationPoly
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) d1) = 0)
+    (hC0 :
+      lowHomQuadPlaneC
+        (relationPoly
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) d0)
+        (relationPoly
+          (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) d1) = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let b : Fin 2 → ℝ := ![-r0, -r1]
+  let b' : Fin 2 → ℝ := ![r0, r1]
+  let e : Poly ≃ₐ[ℝ] Poly :=
+    affineEquiv (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 b b'
+      (by simp) (by simp)
+      (by
+        intro i
+        fin_cases i <;> simp [b, b'])
+      (by
+        intro i
+        fin_cases i <;> simp [b, b'])
+  let u' : RankFourVec := mapVec e.toAlgHom u
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  let B0 : DotForm := dotTransport e B
+  have hB0pos : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0pos⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := by
+        intro q hq
+        exact isQuadratic_affineEquiv
+          (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 b b'
+          (by simp) (by simp)
+          (by intro i; fin_cases i <;> simp [b, b'])
+          (by intro i; fin_cases i <;> simp [b, b']) hq)
+      (heQuartic := by
+        intro q hq
+        exact isQuartic_affineEquiv
+          (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 b b'
+          (by simp) (by simp)
+          (by intro i; fin_cases i <;> simp [b, b'])
+          (by intro i; fin_cases i <;> simp [b, b']) hq)
+      hp
+  have hu0 : IsAdmissiblePoint u' := by
+    exact isAdmissiblePoint_mapVec_of_equiv
+      (e := e)
+      (he := by
+        intro q hq
+        exact isQuadratic_affineEquiv
+          (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 b b'
+          (by simp) (by simp)
+          (by intro i; fin_cases i <;> simp [b, b'])
+          (by intro i; fin_cases i <;> simp [b, b']) hq)
+      hu
+  have hsocp0 : IsSOCP B0 (e p) u' := by
+    dsimp [B0, u']
+    exact isSOCP_mapVec_of_equiv
+      (e := e)
+      (heSymm := by
+        intro q hq
+        exact isQuadratic_affineEquiv_symm
+          (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 b b'
+          (by simp) (by simp)
+          (by intro i; fin_cases i <;> simp [b, b'])
+          (by intro i; fin_cases i <;> simp [b, b']) hq)
+      hsocp
+  have h0' : relationPoly u' c0 = x0 := by
+    rw [relationPoly_map]
+    rw [h0]
+    exact affineHom_translate_affineLine_left r0 r1
+  have h1' : relationPoly u' c1 = x1 := by
+    rw [relationPoly_map]
+    rw [h1]
+    exact affineHom_translate_affineLine_right r0 r1
+  have hq2 : IsQuadratic (relationPoly u' d0) := isQuadratic_relationPoly hu0 d0
+  have hq3 : IsQuadratic (relationPoly u' d1) := isQuadratic_relationPoly hu0 d1
+  have hq2_10 :
+      MvPolynomial.coeff m10 (relationPoly u' d0) = 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 0) hd0K
+    simpa [u', e, b, linearCoeffMap, relationPoly_map] using h
+  have hq2_01 :
+      MvPolynomial.coeff m01 (relationPoly u' d0) = 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 1) hd0K
+    simpa [u', e, b, linearCoeffMap, relationPoly_map] using h
+  have hq3_10 :
+      MvPolynomial.coeff m10 (relationPoly u' d1) = 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 0) hd1K
+    simpa [u', e, b, linearCoeffMap, relationPoly_map] using h
+  have hq3_01 :
+      MvPolynomial.coeff m01 (relationPoly u' d1) = 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 1) hd1K
+    simpa [u', e, b, linearCoeffMap, relationPoly_map] using h
+  have hres0 :
+      residual (e p) u' = 0 := by
+    exact residual_eq_zero_of_relations_x0_x1_onePlus_homQuadratics_dependent
+      (B := B0) (u := u') hu0
+      (by simpa [relationPoly] using h0')
+      (by simpa [relationPoly] using h1')
+      (by
+        change relationPoly u' d0 = relationPoly u' d0
+        rfl)
+      (by
+        change relationPoly u' d1 = relationPoly u' d1
+        rfl)
+      hq2 hq3 hd0const hq2_10 hq2_01 hd1const hq3_10 hq3_01
+      hA0 hB0 hC0 hd1poly_ne hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
 end TernaryQuartic
