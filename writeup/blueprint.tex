@@ -1883,8 +1883,17 @@ after an internal \(x_1\)-shear. The second covers the repeated-line chart
 where the same shear kills the \(x_0^2\) coefficients and lands in the already
 formalized \(\operatorname{span}(x_0x_1,x_1^2)\) plane. The unsuccessful larger
 dispatcher attempt was still backed out rather than left as a non-terminating
-proof script. The remaining task is to cover the last homogeneous low-affine
-charts on top of that helper layer, and then
+proof script. In addition, the file now contains the scale-only inner theorem
+surface for the remaining diagonal branch:
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_diag\_sum\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_diag\_diff\_zero},
+again with equivariant and \texttt{linearPair} wrappers. These reduce the
+post-shear diagonal relation directly to the already formalized
+\(\operatorname{span}(x_0x_1,x_0^2-x_1^2)\) and
+\(\operatorname{span}(x_0x_1,x_0^2+x_1^2)\) planes after an internal
+\(x_1\)-scaling. The remaining task is to add the outer shear-based chart
+wrappers feeding those inner theorems, and then
 then assemble the root declaration in
 \texttt{TernaryQuarticProof.lean}. The admissible image-plus-cone certificate
 and the representative/plane-level no-spurious-SOCP theorems are already in

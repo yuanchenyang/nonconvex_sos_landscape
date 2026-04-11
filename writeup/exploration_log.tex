@@ -1860,6 +1860,23 @@ formalized common-factor plane
 \(\operatorname{span}(x_0x_1,x_1^2)\). No new Julia experiments were needed for
 this round either.
 
+I then filled in the scale-only theorem surface for the last diagonal
+low-affine homogeneous branch before reintroducing another outer chart wrapper.
+The file now proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_diag\_sum\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_diag\_diff\_zero},
+together with the equivariant and \texttt{linearPair} wrappers for each. These
+assume the quadratics already satisfy a diagonal relation
+\[
+  a\,\operatorname{coeff}_{x_0^2}(q)+d\,\operatorname{coeff}_{x_1^2}(q)=0
+\]
+with the relevant sign on \(d/a\), then perform the internal \(x_1\)-scaling
+and reduce to the already solved
+\(\operatorname{span}(x_0x_1,x_0^2-x_1^2)\) or
+\(\operatorname{span}(x_0x_1,x_0^2+x_1^2)\) plane. No new Julia experiments
+were needed for this round either.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
@@ -1869,8 +1886,9 @@ extraction, and the rank-one affine-image branches no longer need externally
 supplied homogeneous bases either. What remains is the upstream classification
 step that identifies the relevant affine or linear basis and the appropriate
 rank-one or rank-two coefficient-map image. On the low-affine homogeneous side,
-the new numerical evidence suggests that this rank-two step may only need to
-separate the common-factor plane from the generic rank-\(14\) plane.
+the remaining step is now sharper: add the outer shear-based wrappers feeding
+the new diagonal scale-only theorems, and then identify which of the resulting
+charts a general admissible homogeneous plane belongs to.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}
