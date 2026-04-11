@@ -2148,6 +2148,21 @@ This should be the right endpoint for the still-open independent translated
 kernel branch, where the classifier is expected to produce a constant relation
 of the form \(1 + \alpha x_0^2\) rather than literally \(1 + x_0^2\).
 
+The accompanying numerical probe
+\texttt{julia/low\_affine\_const\_perturbation\_2026\_04\_10.jl} sharpens that
+picture further:
+\[
+\texttt{low\_affine\_const\_perturbation\_probe}
+= (\texttt{samples} = 20,\ \texttt{generic\_ranks} = [15],\ \dots).
+\]
+Its control cases show that the coprime, diagonal, and split constant-perturbed
+surfaces are all rank \(15\), while the only stable nonsurjective control is
+the common-factor slice \((x_0,\ x_1,\ 1 + x_0^2,\ x_0x_1)\), which has rank
+\(14\). So the remaining independent translated-kernel classifier now looks
+more asymmetric than before: generically it should land in a surjective
+constant-perturbed surface, and only the repeated-line/common-factor output
+appears to need the codimension-one theorem layer.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

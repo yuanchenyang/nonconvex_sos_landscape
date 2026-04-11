@@ -2141,6 +2141,20 @@ show that Lean no longer needs the square-line coefficient normalized to
 No new Julia probe was needed for this round; this was a formalization-only
 generalization aimed at the still-open independent translated-kernel branch.
 
+I then ran the previously prepared script
+\texttt{julia/low\_affine\_const\_perturbation\_2026\_04\_10.jl} and recorded:
+\[
+\texttt{low\_affine\_const\_perturbation\_probe}
+= (\texttt{samples} = 20,\ \texttt{generic\_ranks} = [15],\
+\texttt{controls} = (\texttt{coprime\_const} = 15,\ \texttt{common\_factor\_const} = 14,\ \texttt{diagonal\_const} = 15,\ \texttt{split\_const} = 15)).
+\]
+So the generic constant-perturbed low-affine plane is numerically surjective,
+and the only stable nonsurjective control among those canonical slices is the
+common-factor model \((x_0,\ x_1,\ 1 + x_0^2,\ x_0x_1)\). This makes the
+remaining independent translated-kernel branch look less like a missing family
+of rank-\(14\) endpoints and more like a classifier problem whose exceptional
+output is specifically the repeated-line/common-factor surface.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
