@@ -1749,6 +1749,15 @@ exact \(x_0\) or \((x_0,x_1)\) coordinates either. It can stay at the level of
 arbitrary linear bases and transformed homogeneous quadratic relations. No new
 Julia experiments were needed for this round.
 
+I then pushed the linear \(\dim=1\) low-affine branch up to the same transport
+surface. The new theorems
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_mapVec\_linearForm\_homQuadBasis\_det}
+and
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_linearForm\_homQuadBasis\_det}
+mean that the remaining classifier no longer has to first turn an arbitrary
+nonzero affine line into exact \(x_0\) coordinates before invoking the linear
+low-affine certificate. No new Julia experiments were needed for this round.
+
 The next Lean rounds removed the analogous external homogeneous-basis burden
 from both rank-one affine-image branches. I added the new file
 \texttt{RepresentativeAffineRankOne.lean}, imported it through

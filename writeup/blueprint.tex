@@ -1825,6 +1825,10 @@ linear forms and arbitrary independent linear pairs. So the remaining
 classification does not need to normalize low-affine branches to exact
 \((x_0)\) or \((x_0,x_1)\) coordinates either; it only has to extract the
 corresponding linear basis and transformed homogeneous quadratic data.
+Moreover the linear \(\dim=1\) branch now also has the top transport wrapper
+\texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_affineEquiv\_linearForm\_homQuadBasis\_det},
+so it lands on the same \(\operatorname{mix}\)-plus-affine-equivariant surface
+as the already-normalized \(x_0\)-based branch.
 
 This low-affine plane layer is now also symmetric in the common-factor slice:
 the span \(\operatorname{span}(x_0x_1,x_1^2)\) is formalized directly, not

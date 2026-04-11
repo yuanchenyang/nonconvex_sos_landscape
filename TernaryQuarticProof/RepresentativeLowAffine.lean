@@ -41,6 +41,17 @@ private theorem isQuadratic_C_mul_pow_pow (a : ℝ) (m n : ℕ) (h : m + n ≤ 2
     _ = m + n := by simp [x0, x1, MvPolynomial.totalDegree_X_pow]
     _ ≤ 2 := h
 
+private theorem isQuadratic_linearCombination_local
+    {p q : Poly} (hp : IsQuadratic p) (hq : IsQuadratic q) (a b : ℝ) :
+    IsQuadratic (a • p + b • q) := by
+  calc
+    (a • p + b • q).totalDegree ≤ max (a • p).totalDegree (b • q).totalDegree := by
+      exact MvPolynomial.totalDegree_add _ _
+    _ ≤ 2 := by
+      exact max_le
+        ((MvPolynomial.totalDegree_smul_le a p).trans hp)
+        ((MvPolynomial.totalDegree_smul_le b q).trans hq)
+
 theorem inAdmissibleImage_of_relation_mul_low
     {u : RankFourVec} {c : Fin 4 → ℝ} {r q : Poly}
     (hc : ∑ i : Fin 4, c i • u i = r)
@@ -3962,6 +3973,109 @@ theorem residual_eq_zero_of_relations_linearForm_homQuadBasis_det
     (e := e) (heQuad := fun {_} hq' => heQuad hq') (heQuadSymm := fun {_} hq' => heQuadSymm hq')
     (heQuartic := fun {_} hq' => heQuartic hq')
     hB hp hu hsocp h0' hc' hdet
+
+theorem residual_eq_zero_of_socp_of_eq_mix_mapVec_linearForm_homQuadBasis_det
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuarticSymm : ∀ {p : Poly}, IsQuartic p → IsQuartic (e.symm p))
+    (M : Matrix (Fin 4) (Fin 4) ℝ)
+    (hMtM : M.transpose * M = 1)
+    (hMMt : M * M.transpose = 1)
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    {a b : ℝ}
+    (hs : a ^ 2 + b ^ 2 ≠ 0)
+    {q1 q2 q3 : Poly}
+    (hq1 : IsQuadratic q1)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    {C : Matrix (Fin 3) (Fin 3) ℝ}
+    (hq1_basis : affineLineEquiv 0 a b hs q1 = ∑ k : Fin 3, C 0 k • homQuadBasis k)
+    (hq2_basis : affineLineEquiv 0 a b hs q2 = ∑ k : Fin 3, C 1 k • homQuadBasis k)
+    (hq3_basis : affineLineEquiv 0 a b hs q3 = ∑ k : Fin 3, C 2 k • homQuadBasis k)
+    (hdet : C.det ≠ 0)
+    (huRep : mix M.transpose (mapVec e.symm.toAlgHom u) = ![linearForm a b, q1, q2, q3])
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have huRepAdmissible : IsAdmissiblePoint (![linearForm a b, q1, q2, q3] : RankFourVec) := by
+    intro i
+    fin_cases i
+    · have hx0a : IsQuadratic ((a : ℝ) • x0 : Poly) := by
+          exact (MvPolynomial.totalDegree_smul_le a x0).trans (by simp [x0])
+      have hx1b : IsQuadratic ((b : ℝ) • x1 : Poly) := by
+          exact (MvPolynomial.totalDegree_smul_le b x1).trans (by simp [x1])
+      simpa [linearForm, affineLinePoly, MvPolynomial.smul_eq_C_mul, add_assoc] using
+        (isQuadratic_linearCombination_local hx0a hx1b 1 1)
+    · simpa using hq1
+    · simpa using hq2
+    · simpa using hq3
+  have hRep :
+      ∀ {B0 : DotForm} [Fact B0.toQuadraticMap.PosDef] {p0 : Poly},
+        IsSOSQuartic p0 → IsSOCP B0 p0 (![linearForm a b, q1, q2, q3] : RankFourVec) →
+          residual p0 (![linearForm a b, q1, q2, q3] : RankFourVec) = 0 := by
+    intro B0 _ p0 hp0 hsocp0
+    exact residual_eq_zero_of_relations_linearForm_homQuadBasis_det
+      (c0 := ![1, 0, 0, 0])
+      (c := fun j =>
+        match j with
+        | 0 => ![0, 1, 0, 0]
+        | 1 => ![0, 0, 1, 0]
+        | 2 => ![0, 0, 0, 1])
+      (q := ![q1, q2, q3])
+      (B := B0) (u := ![linearForm a b, q1, q2, q3]) huRepAdmissible
+      (h0 := by simp [Fin.sum_univ_four, linearForm])
+      (hs := hs)
+      (hc := by
+        intro j
+        fin_cases j <;> simp [Fin.sum_univ_four])
+      (hq := by
+        intro j
+        fin_cases j
+        · simpa [Fin.sum_univ_four] using hq1_basis
+        · simpa [Fin.sum_univ_four] using hq2_basis
+        · simpa [Fin.sum_univ_four] using hq3_basis)
+      hdet hp0 hsocp0
+  exact residual_eq_zero_of_socp_of_eq_mix_mapVec
+    (![linearForm a b, q1, q2, q3])
+    hRep e heQuad heQuadSymm heQuarticSymm M hMtM hMMt hB hp huRep hsocp
+
+theorem residual_eq_zero_of_socp_of_eq_mix_affineEquiv_linearForm_homQuadBasis_det
+    (A A' : Matrix (Fin 2) (Fin 2) ℝ) (b b' : Fin 2 → ℝ)
+    (hAA' : A * A' = 1) (hA'A : A' * A = 1)
+    (hb : ∀ i, b' i + Matrix.mulVec A' b i = 0)
+    (hb' : ∀ i, b i + Matrix.mulVec A b' i = 0)
+    (M : Matrix (Fin 4) (Fin 4) ℝ)
+    (hMtM : M.transpose * M = 1)
+    (hMMt : M * M.transpose = 1)
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    {a c : ℝ}
+    (hs : a ^ 2 + c ^ 2 ≠ 0)
+    {q1 q2 q3 : Poly}
+    (hq1 : IsQuadratic q1)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    {C : Matrix (Fin 3) (Fin 3) ℝ}
+    (hq1_basis : affineLineEquiv 0 a c hs q1 = ∑ k : Fin 3, C 0 k • homQuadBasis k)
+    (hq2_basis : affineLineEquiv 0 a c hs q2 = ∑ k : Fin 3, C 1 k • homQuadBasis k)
+    (hq3_basis : affineLineEquiv 0 a c hs q3 = ∑ k : Fin 3, C 2 k • homQuadBasis k)
+    (hdet : C.det ≠ 0)
+    (huRep :
+      mix M.transpose
+        (mapVec (affineEquiv A A' b b' hAA' hA'A hb hb').symm.toAlgHom u) =
+          ![linearForm a c, q1, q2, q3])
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  exact residual_eq_zero_of_socp_of_eq_mix_mapVec_linearForm_homQuadBasis_det
+    (e := affineEquiv A A' b b' hAA' hA'A hb hb')
+    (heQuad := fun {_} hpq => isQuadratic_affineEquiv A A' b b' hAA' hA'A hb hb' hpq)
+    (heQuadSymm := fun {_} hpq => isQuadratic_affineEquiv_symm A A' b b' hAA' hA'A hb hb' hpq)
+    (heQuarticSymm := fun {_} hpq => isQuartic_affineEquiv_symm A A' b b' hAA' hA'A hb hb' hpq)
+    (M := M) hMtM hMMt hB hp hs hq1 hq2 hq3
+    hq1_basis hq2_basis hq3_basis hdet huRep hsocp
 
 theorem residual_eq_zero_of_socp_of_eq_mix_mapVec_x0_homQuadBasis_det
     (e : Poly ≃ₐ[ℝ] Poly)
