@@ -2081,6 +2081,22 @@ nonzero-constant exact-affine \(\dim=2\) branch is no longer missing a low-rank
 endpoint; what remains is the classifier that decides which translated-kernel
 output lands in the coprime, split, or repeated-line theorem surface.
 
+The same file now also formalizes the symmetric repeated-line target
+\[
+  (x_0,\ x_1,\ 1 + x_0x_1,\ x_1^2).
+\]
+The new theorems
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x1\_onePlusX0x1\_x1sq\_of\_coeff\_m40\_zero},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusX0x1\_x1sq},
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlusX0x1\_x1sq},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlusX0x1\_x1sq}
+put the repeated-line/common-factor branch on both canonical constant-perturbed
+orientations. That now matches the output shape of the already formalized
+homogeneous common-factor chart, so the remaining gap is no longer a missing
+endpoint theorem but the final classifier that routes the exact-affine
+translated-kernel data into these surfaces.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

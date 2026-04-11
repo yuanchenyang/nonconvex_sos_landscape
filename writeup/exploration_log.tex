@@ -2076,6 +2076,24 @@ needed for this round either. This means the nonzero-constant exact-affine
 remaining work is the classifier that routes the translated-kernel output into
 the coprime, split, or repeated-line surface.
 
+I then added the symmetric repeated-line/common-factor orientation in the same
+file. The new theorems
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x1\_onePlusX0x1\_x1sq\_of\_coeff\_m40\_zero},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusX0x1\_x1sq},
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlusX0x1\_x1sq},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlusX0x1\_x1sq}
+show that
+\[
+  (x_0,\ x_1,\ 1 + x_0x_1,\ x_1^2)
+\]
+has the symmetric rank-\(14\) structure, with only the \(x_0^4\) class missing
+before the internal quartic-kernel correction. No new Julia probe was needed.
+This is useful because the already-formalized homogeneous common-factor chart
+naturally lands in the \((x_0x_1, x_1^2)\) orientation after shear, so the
+remaining no-constant exact-affine \(\dim=2\) gap is now even more clearly a
+classifier/transport problem rather than a missing endpoint theorem.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
