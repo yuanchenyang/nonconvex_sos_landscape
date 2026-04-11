@@ -1748,18 +1748,40 @@ exact \(x_0\) or \((x_0,x_1)\) coordinates either. It can stay at the level of
 arbitrary linear bases and transformed homogeneous quadratic relations. No new
 Julia experiments were needed for this round.
 
+The next Lean round removed the analogous external homogeneous-basis burden
+from the pure-constant \(\dim=1\) branch. I added the new file
+\texttt{RepresentativeAffineRankOne.lean}, imported it through
+\texttt{Basic.lean}, and proved
+\texttt{residual\_eq\_zero\_of\_relations\_const\_affineRankOne}. This theorem
+only asks for a relation to \(1\) together with the rank-one statement that
+the affine coefficient map
+\[
+  c \longmapsto
+  \bigl(\operatorname{coeff}_1,\operatorname{coeff}_{x_0},
+    \operatorname{coeff}_{x_1}\bigr)\Bigl(\sum_i c_i u_i\Bigr)
+\]
+has image exactly the constant line. Lean then splits internally:
+\begin{itemize}
+\item if the scalar relation map has nontrivial kernel, it closes by the
+existing constant-relation certificate;
+\item otherwise it extracts a basis of the affine-kernel in \(\mathbf{R}^4\),
+proves the induced three quadratic relations are homogeneous and linearly
+independent, reconstructs exact \((x_0^2,x_0x_1,x_1^2)\) relations, and
+applies the constant representative theorem.
+\end{itemize}
+So the pure-constant branch is no longer waiting on an externally supplied
+homogeneous quadratic basis either. No new Julia experiments were needed for
+this round.
+
 \section*{Open Subgoals}
 \begin{itemize}
-\item Finish the pure-constant \(\dim = 1\) branch at the same abstraction
-level: from one relation to \(1\), extract the homogeneous quadratic kernel
-data needed to feed the existing
-\texttt{const\_homQuadBasis\_det} theorem, or close the dependent homogeneous
-case directly by a constant relation.
 \item Extract from a general admissible factor the remaining affine- or
 linear-basis data needed by the low-affine theorems. The constant-containing
 \(\dim=2\) mixed-affine branch no longer needs external quadratic-pair
-extraction; it is enough there to produce \(1\) together with one nonconstant
-affine line.
+extraction, and the pure-constant \(\dim=1\) branch no longer needs an
+externally supplied homogeneous basis either. What remains is the upstream
+classification step that identifies the relevant affine or linear basis and the
+appropriate rank-one or rank-two coefficient-map image.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

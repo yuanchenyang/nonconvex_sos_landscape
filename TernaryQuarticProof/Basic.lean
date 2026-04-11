@@ -4,6 +4,7 @@ import TernaryQuarticProof.AffineSocpTransform
 import TernaryQuarticProof.FactorTransform
 import TernaryQuarticProof.QuadraticNormalForm
 import TernaryQuarticProof.RepresentativeLowAffine
+import TernaryQuarticProof.RepresentativeAffineRankOne
 import TernaryQuarticProof.RepresentativeMixedAffine
 import TernaryQuarticProof.MixedAffineNormalization
 import TernaryQuarticProof.QuadraticCoordinateForm
