@@ -2272,6 +2272,34 @@ branch is no longer open on the coprime cross chart either. The remaining open
 independent low-affine work is therefore the complementary diagonal/split
 constant-perturbed outputs, together with the final global assembly.
 
+One more of those complementary outputs is now discharged. First,
+\texttt{RepresentativeLowAffine.lean} adds
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusX0x1\_sumsqPlane},
+which transports the constant-perturbed \((x_0x_1,\ x_0^2+x_1^2)\)-plane
+through the fixed split-diagonal change of variables to the already solved
+\texttt{...onePlusAX0sq\_x1sqPlane} surface. On top of that, the same file now
+proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlus\_homQuadratics\_diagDiffChart},
+so when the translated homogeneous pair satisfies
+\[
+  \texttt{lowHomQuadPlaneA} \neq 0,\qquad
+  0 <
+    -(\texttt{lowHomQuadPlaneC} -
+      \texttt{lowHomQuadPlaneB}^2/\texttt{lowHomQuadPlaneA}) /
+      \texttt{lowHomQuadPlaneA},
+\]
+Lean performs the internal \(x_1\)-shear and \(x_1\)-scaling, reconstructs a
+constant-perturbed \((x_0x_1,\ x_0^2+x_1^2)\)-plane, and closes the branch.
+
+That chart theorem is now lifted into
+\texttt{ExactAffineClassification.lean} as
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constSplit\_diagDiffChart}.
+So the exact-affine \(\dim = 2\), no-constant, independent translated-kernel
+branch is no longer open on the diagonal-difference/sumsq side either. The
+remaining independent low-affine work is therefore the opposite-sign
+trace-free branch, namely the \texttt{diagSumChart} output, together with the
+final global assembly.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.
