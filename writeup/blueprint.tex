@@ -2196,7 +2196,17 @@ constant relation minus \(1\) nor the normalized \(x_1\)-tail relation minus
 manufacture an exact \(1\) or exact \(x_1\) relation and contradict
 \(\dim(\mathrm{ExactAff})=1\). So the tail-rank \(2\) branch is no longer just
 a raw extractor; it already arrives with the two key independence facts needed
-for the remaining classifier. On the numerical side, the new script
+for the remaining classifier. The next retained strengthening
+\texttt{exists\_x0\_tail\_const\_x1\_hom\_basis\_of\_exactAffineDimOne\_rangeTwo}
+packages the whole homogeneous side: Lean now proves that
+\[
+  q_0-1,\qquad q_1-x_1,\qquad q_2
+\]
+are linearly independent, since any nontrivial dependence would manufacture an
+exact affine relation of the form \(r+b x_1\), impossible when the exact-affine
+space is one-dimensional and already contains \(x_0\). So the tail-rank \(2\)
+output is now not only normalized but also a genuine three-dimensional
+homogeneous basis on the quadratic side. On the numerical side, the new script
 \texttt{julia/affine\_dim\_one\_mixed\_tails\_2026\_04\_11.jl} records
 \texttt{affine\_dim\_one\_mixed\_tail\_probe}, and in all \(20\) retained
 random tail-rank \(2\) samples it returns

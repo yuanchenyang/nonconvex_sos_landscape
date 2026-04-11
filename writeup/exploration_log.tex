@@ -2647,6 +2647,21 @@ contradicting \(\dim(\mathrm{ExactAff})=1\). So the tail-rank \(2\) output is
 now a cleaner classifier-ready package rather than only a basis-normalization
 statement.
 
+I then strengthened the same extractor once more, to
+\texttt{exists\_x0\_tail\_const\_x1\_hom\_basis\_of\_exactAffineDimOne\_rangeTwo}.
+This closes the remaining linear-algebra ambiguity on the homogeneous side:
+Lean now proves that the three homogeneous quadratics
+\[
+  q_0-1,\qquad q_1-x_1,\qquad q_2
+\]
+are linearly independent. The proof is the expected exact-affine contradiction:
+any nontrivial linear relation among those three would produce an exact affine
+relation \(r+b x_1\), but in a one-dimensional exact-affine space already
+containing \(x_0\), every exact affine relation must be a scalar multiple of
+\(x_0\), forcing \(r=b=0\) and then the last coefficient to vanish too. So the
+tail-rank \(2\) output is now a full homogeneous-basis package rather than only
+two pairwise independence statements.
+
 I then added the matching rank-\(1\) extractor
 \texttt{exists\_x0\_tail\_nonzero\_homPair\_of\_finrank\_range\_one}. This
 packages the remaining intermediate exact-affine \(\dim=1\) case much more
