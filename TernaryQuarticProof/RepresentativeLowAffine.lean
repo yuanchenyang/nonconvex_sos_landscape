@@ -2796,17 +2796,169 @@ theorem residual_eq_zero_of_relations_linearPair_x0x1_x1sqPlane
     (heQuartic := fun {_} hq => heQuartic hq)
     hB hp hu hsocp h0' h1' h2' h3' hdetPlane
 
-private def lowHomQuadPlaneA (q2 q3 : Poly) : ℝ :=
+def lowHomQuadPlaneA (q2 q3 : Poly) : ℝ :=
   MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
     MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3
 
-private def lowHomQuadPlaneB (q2 q3 : Poly) : ℝ :=
+def lowHomQuadPlaneB (q2 q3 : Poly) : ℝ :=
   MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
     MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3
 
-private def lowHomQuadPlaneC (q2 q3 : Poly) : ℝ :=
+def lowHomQuadPlaneC (q2 q3 : Poly) : ℝ :=
   MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
     MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3
+
+/-- A pair of homogeneous quadratics spans a genuine low-affine plane as soon as
+it is linearly independent. -/
+theorem lowHomQuadPlane_nontrivial_of_independent_pair
+    {q2 q3 : Poly}
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hind : LinearIndependent ℝ ![q2, q3]) :
+    lowHomQuadPlaneA q2 q3 ≠ 0 ∨
+      lowHomQuadPlaneB q2 q3 ≠ 0 ∨ lowHomQuadPlaneC q2 q3 ≠ 0 := by
+  by_contra hplane
+  push Not at hplane
+  rcases hplane with ⟨hA0, hB0, hC0⟩
+  have hq2_ne : q2 ≠ 0 := by
+    exact hind.ne_zero 0
+  by_cases h20 : MvPolynomial.coeff m20 q2 = 0
+  · by_cases h11 : MvPolynomial.coeff m11 q2 = 0
+    · have h02 : MvPolynomial.coeff m02 q2 ≠ 0 := by
+        intro h02'
+        have hq2_zero : q2 = 0 := by
+          rw [homogeneousQuadratic_eq hq2 hq2_00 hq2_10 hq2_01]
+          simp [h20, h11, h02']
+        exact hq2_ne hq2_zero
+      let t : ℝ := MvPolynomial.coeff m02 q3 / MvPolynomial.coeff m02 q2
+      have h20q3 : MvPolynomial.coeff m20 q3 = 0 := by
+        have hrel : MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
+            MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3 = 0 := by
+          simpa [lowHomQuadPlaneB] using hB0
+        rw [h20] at hrel
+        have : MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3 = 0 := by
+          linarith
+        exact (mul_eq_zero.mp this).resolve_left h02
+      have h11q3 : MvPolynomial.coeff m11 q3 = 0 := by
+        have hrel : MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+            MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 = 0 := by
+          simpa [lowHomQuadPlaneA] using hA0
+        rw [h11] at hrel
+        have : MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 = 0 := by
+          linarith
+        exact (mul_eq_zero.mp this).resolve_left h02
+      have h02q3 : MvPolynomial.coeff m02 q3 = t * MvPolynomial.coeff m02 q2 := by
+        unfold t
+        field_simp [h02]
+      have hq3_eq : q3 = t • q2 := by
+        rw [homogeneousQuadratic_eq hq3 hq3_00 hq3_10 hq3_01]
+        rw [homogeneousQuadratic_eq hq2 hq2_00 hq2_10 hq2_01]
+        rw [h20q3, h11q3, h02q3, h20, h11]
+        simp [smul_smul]
+      have hbad : (-t) • q2 + (1 : ℝ) • q3 = 0 := by
+        simp [hq3_eq]
+      have hpair := LinearIndependent.eq_zero_of_pair hind hbad
+      have hone : (1 : ℝ) = 0 := hpair.2
+      norm_num at hone
+    · let t : ℝ := MvPolynomial.coeff m11 q3 / MvPolynomial.coeff m11 q2
+      have h20q3 : MvPolynomial.coeff m20 q3 = 0 := by
+        have hrel : MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+            MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 = 0 := by
+          simpa [lowHomQuadPlaneC] using hC0
+        rw [h20] at hrel
+        have : MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 = 0 := by
+          linarith
+        exact (mul_eq_zero.mp this).resolve_left h11
+      have h02q3 :
+          MvPolynomial.coeff m02 q3 = t * MvPolynomial.coeff m02 q2 := by
+        have hrel : MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+            MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 = 0 := by
+          simpa [lowHomQuadPlaneA] using hA0
+        have hdiv :
+            MvPolynomial.coeff m02 q3 =
+              (MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3) /
+                MvPolynomial.coeff m11 q2 := by
+          apply (eq_div_iff h11).2
+          linarith
+        calc
+          MvPolynomial.coeff m02 q3 =
+              (MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3) /
+                MvPolynomial.coeff m11 q2 := hdiv
+          _ = (MvPolynomial.coeff m11 q3 / MvPolynomial.coeff m11 q2) *
+                MvPolynomial.coeff m02 q2 := by
+                field_simp [h11]
+          _ = t * MvPolynomial.coeff m02 q2 := by rfl
+      have h11q3 : MvPolynomial.coeff m11 q3 = t * MvPolynomial.coeff m11 q2 := by
+        unfold t
+        field_simp [h11]
+      have hq3_eq : q3 = t • q2 := by
+        rw [homogeneousQuadratic_eq hq3 hq3_00 hq3_10 hq3_01]
+        rw [homogeneousQuadratic_eq hq2 hq2_00 hq2_10 hq2_01]
+        rw [h20q3, h02q3, h11q3, h20]
+        simp [smul_add, smul_smul]
+      have hbad : (-t) • q2 + (1 : ℝ) • q3 = 0 := by
+        simp [hq3_eq]
+      have hpair := LinearIndependent.eq_zero_of_pair hind hbad
+      have hone : (1 : ℝ) = 0 := hpair.2
+      norm_num at hone
+  · let t : ℝ := MvPolynomial.coeff m20 q3 / MvPolynomial.coeff m20 q2
+    have h11 :
+        MvPolynomial.coeff m11 q3 = t * MvPolynomial.coeff m11 q2 := by
+      have hrel : MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+          MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 = 0 := by
+        simpa [lowHomQuadPlaneC] using hC0
+      have hdiv :
+          MvPolynomial.coeff m11 q3 =
+            (MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3) /
+              MvPolynomial.coeff m20 q2 := by
+        apply (eq_div_iff h20).2
+        linarith
+      calc
+        MvPolynomial.coeff m11 q3 =
+            (MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3) /
+              MvPolynomial.coeff m20 q2 := hdiv
+        _ = (MvPolynomial.coeff m20 q3 / MvPolynomial.coeff m20 q2) *
+              MvPolynomial.coeff m11 q2 := by
+              field_simp [h20]
+        _ = t * MvPolynomial.coeff m11 q2 := by rfl
+    have h02 :
+        MvPolynomial.coeff m02 q3 = t * MvPolynomial.coeff m02 q2 := by
+      have hrel : MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
+          MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3 = 0 := by
+        simpa [lowHomQuadPlaneB] using hB0
+      have hdiv :
+          MvPolynomial.coeff m02 q3 =
+            (MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3) /
+              MvPolynomial.coeff m20 q2 := by
+        apply (eq_div_iff h20).2
+        linarith
+      calc
+        MvPolynomial.coeff m02 q3 =
+            (MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3) /
+              MvPolynomial.coeff m20 q2 := hdiv
+        _ = (MvPolynomial.coeff m20 q3 / MvPolynomial.coeff m20 q2) *
+              MvPolynomial.coeff m02 q2 := by
+              field_simp [h20]
+        _ = t * MvPolynomial.coeff m02 q2 := by rfl
+    have h20q3 : MvPolynomial.coeff m20 q3 = t * MvPolynomial.coeff m20 q2 := by
+      unfold t
+      field_simp [h20]
+    have hq3_eq : q3 = t • q2 := by
+      rw [homogeneousQuadratic_eq hq3 hq3_00 hq3_10 hq3_01]
+      rw [homogeneousQuadratic_eq hq2 hq2_00 hq2_10 hq2_01]
+      rw [h20q3, h11, h02]
+      simp [smul_add, smul_smul]
+    have hbad : (-t) • q2 + (1 : ℝ) • q3 = 0 := by
+      simp [hq3_eq]
+    have hpair := LinearIndependent.eq_zero_of_pair hind hbad
+    have hone : (1 : ℝ) = 0 := hpair.2
+    norm_num at hone
 
 private theorem lowHomQuadPlane_relation_left (q2 q3 : Poly) :
     lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 q2 +
@@ -4404,6 +4556,36 @@ theorem residual_eq_zero_of_relations_x0_x1_homQuadratics_plane_nontrivial
           (B := B) (u := u) hu h0 h1 h2 h3
           hq2 hq3 hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
           hA hpos hp hsocp
+
+theorem residual_eq_zero_of_relations_x0_x1_homQuadratics_independent
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • u i = x1)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hind : LinearIndependent ℝ ![q2, q3])
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  exact residual_eq_zero_of_relations_x0_x1_homQuadratics_plane_nontrivial
+    (B := B) (u := u) hu h0 h1 h2 h3 hq2 hq3
+    hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+    (lowHomQuadPlane_nontrivial_of_independent_pair
+      hq2 hq3 hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01 hind)
+    hp hsocp
 
 theorem residual_eq_zero_of_equiv_relations_x0_x1_homQuadratics_plane_nontrivial
     (e : Poly ≃ₐ[ℝ] Poly)

@@ -1900,6 +1900,15 @@ homogeneous classifier is now internal to Lean: once one has exact relations to
 a linear pair and to a nontrivial homogeneous quadratic plane, Lean dispatches
 automatically to the common-factor or generic rank-\(14\) branch.
 
+The low-affine plane surface is now slightly cleaner as well. The same file now
+proves that any linearly independent pair of homogeneous quadratics already has
+nontrivial plane data, via the public criterion
+\texttt{lowHomQuadPlane\_nontrivial\_of\_independent\_pair}, and packages that
+into the direct wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_independent}.
+So later classifier code no longer needs to carry a local proof that one of the
+three cross-product minors \texttt{lowHomQuadPlaneA/B/C} is nonzero.
+
 That branch now also reaches the same top transport surface as the other main
 branches. In the same file, the new theorems
 \texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_mapVec\_x0\_x1\_homQuadratics\_plane\_nontrivial}

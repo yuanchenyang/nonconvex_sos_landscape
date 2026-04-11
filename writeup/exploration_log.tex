@@ -1902,6 +1902,17 @@ Lean now internally distinguishes the cross chart, the two common-factor
 charts, and the two diagonal rank-\(14\) charts. No new Julia experiments were
 needed for this round.
 
+I then cleaned the same theorem surface one step further. The raw coefficient
+minors \texttt{lowHomQuadPlaneA/B/C} are now public, and
+\texttt{RepresentativeLowAffine.lean} proves the reusable criterion
+\texttt{lowHomQuadPlane\_nontrivial\_of\_independent\_pair}: for homogeneous
+quadratics, linear independence already forces one of those three minors to be
+nonzero. On top of that, the new wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_homQuadratics\_independent}
+lets later classifier code feed the low-affine branch with linear independence
+instead of carrying its own separate nontrivial-plane proof. No new Julia
+experiments were needed for this round either.
+
 I then pushed that same low-affine homogeneous theorem all the way up to the
 transport interface. The file now also proves
 \texttt{residual\_eq\_zero\_of\_socp\_of\_eq\_mix\_mapVec\_x0\_x1\_homQuadratics\_plane\_nontrivial}
