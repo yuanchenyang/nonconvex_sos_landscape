@@ -1999,6 +1999,22 @@ So the no-constant \(\dim=2\) classifier gap is now split cleanly: the
 constant-zero half is done, and only the complementary nonzero-constant half
 remains. No new Julia experiments were needed for this round either.
 
+I then probed that complementary nonzero-constant half directly in normalized
+coordinates rather than guessing its theorem shape. The new script
+\texttt{julia/low\_affine\_const\_perturbation\_2026\_04\_10.jl} tests models
+\((x_0, x_1, a + H_1, b + H_2)\) where \((H_1,H_2)\) spans a low-affine
+homogeneous plane. The recorded output is
+\[
+\texttt{low\_affine\_const\_perturbation\_probe}
+  = (\texttt{generic\_ranks}=[15],\ \dots).
+\]
+So all \(20\) random constant perturbations were rank \(15\). The controls show
+the same pattern for the coprime, diagonal, and split planes, while the
+constant-perturbed common-factor slice remains rank \(14\), missing only
+\((0,4)\). This sharply changes the expected final split: the nonzero-constant
+branch now looks generically surjective, with only the repeated-line/common-factor
+subcase still behaving like a genuine low-rank obstruction.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

@@ -2001,6 +2001,21 @@ branch through the previously formalized theorem
 So the no-constant \(\dim=2\) classifier gap is now cut exactly in half: only
 the complementary nonzero-constant split on the translated kernel remains.
 
+The latest normalized probe suggests that this remaining half is narrower than
+it first appeared. The script
+\texttt{julia/low\_affine\_const\_perturbation\_2026\_04\_10.jl} samples the
+model
+\[
+  (x_0,\ x_1,\ a + H_1,\ b + H_2)
+\]
+with \((H_1,H_2)\) spanning a random nontrivial homogeneous low-affine plane.
+All \(20\) random samples came back with image rank \(15\). Among the control
+families, the constant-perturbed coprime, diagonal, and split planes are also
+rank \(15\), while the constant-perturbed common-factor slice remains rank
+\(14\), missing only \(x_1^4\). So the likely remaining theorem shape is not a
+generic low-affine obstruction with constants; it is a surjective generic
+deformation plus a special repeated-line/common-factor subcase.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.
