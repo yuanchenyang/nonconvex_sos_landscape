@@ -1962,6 +1962,19 @@ the remaining gap in that branch is no longer affine-pair extraction; it is the
 next low-affine or translated-homogeneous quadratic package sitting above that
 pair.
 
+That next package theorem is now formalized at the low-affine homogeneous
+surface too. In \texttt{RepresentativeLowAffine.lean}, the new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_homQuadratics\_independent}
+starts from exact relations to \(x_0 + r_0\), \(x_1 + r_1\), and a quadratic
+pair \(q_2,q_3\). If translating by \((-r_0,-r_1)\) makes both quadratics
+homogeneous and linearly independent, Lean now performs that translation
+internally, proves the translated homogeneous plane is nontrivial, and
+dispatches to the existing low-affine homogeneous theorem surface. So the
+remaining no-constant \(\dim=2\) classifier gap is now narrower again: it only
+has to extract the right quadratic pair above the internally reconstructed
+affine pair, not reprove the translation step or the low-affine homogeneous
+reduction.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

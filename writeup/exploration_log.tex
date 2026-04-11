@@ -1960,6 +1960,18 @@ pair \(x_0 + r_0\), \(x_1 + r_1\) internally. So the remaining no-constant
 quadratic-package theorem above that pair. No new Julia experiments were needed
 for this round either.
 
+I then formalized exactly that next package surface on the low-affine side. The
+new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_homQuadratics\_independent}
+in \texttt{RepresentativeLowAffine.lean} starts from exact relations to
+\(x_0 + r_0\), \(x_1 + r_1\), and a quadratic pair \(q_2,q_3\). If the common
+translation by \((-r_0,-r_1)\) makes \(q_2,q_3\) homogeneous and linearly
+independent, Lean now performs that translation internally and closes through
+the existing low-affine homogeneous plane theorem. So the remaining
+no-constant \(\dim=2\) gap is now only the extraction of the right quadratic
+pair above the affine pair, not the affine-pair normalization itself. No new
+Julia experiments were needed for this round either.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
