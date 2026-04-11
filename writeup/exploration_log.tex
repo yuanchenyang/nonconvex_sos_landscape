@@ -1737,8 +1737,9 @@ No new Julia experiments were needed for this round.
 I then mirrored that same normalization surface on the low-affine side. In
 \texttt{RepresentativeLowAffine.lean} I added
 \texttt{residual\_eq\_zero\_of\_relations\_linearForm\_homQuadBasis\_det} for
-the linear \(\dim=1\) branch, and the three arbitrary-linear-basis plane
+the linear \(\dim=1\) branch, and the four arbitrary-linear-basis plane
 wrappers
+\texttt{residual\_eq\_zero\_of\_relations\_linearPair\_x0sq\_x0x1Plane},
 \texttt{residual\_eq\_zero\_of\_relations\_linearPair\_x0sq\_x1sqPlane},
 \texttt{residual\_eq\_zero\_of\_relations\_linearPair\_x0x1\_diffsqPlane}, and
 \texttt{residual\_eq\_zero\_of\_relations\_linearPair\_x0x1\_sumsqPlane}. These
@@ -1775,6 +1776,32 @@ So neither rank-one affine-image branch is waiting on an externally supplied
 homogeneous quadratic basis either. No new Julia experiments were needed for
 these rounds.
 
+I then ran a focused Julia sweep on the unresolved low-affine homogeneous plane
+classifier. The new script
+\texttt{julia/low\_affine\_hom\_plane\_2026\_04\_10.jl} works directly in the
+coefficient model
+\[
+  (x_0,x_1,q_2,q_3),
+  \qquad
+  q_j \in \operatorname{span}(x_0^2,x_0x_1,x_1^2),
+\]
+using only the image matrix \(A_u\). Its recorded outputs are:
+\begin{itemize}
+\item \texttt{low\_affine\_hom\_plane\_random\_probe = (samples = 20, ranks =
+  [14], missing = [(0, 0)])}
+\item \texttt{low\_affine\_hom\_plane\_control\_probe = (common\_factor =
+  (rank = 13, missing = [(0, 0), (0, 4)]), diagonal = (rank = 14, missing =
+  [(0, 0)]), split = (rank = 14, missing = [(0, 0)]))}
+\end{itemize}
+So the numerical picture is now sharper than before. Random full-rank
+homogeneous planes always behaved like the same codimension-one branch, with
+only the constant quartic class missing. The only stable rank-\(13\) slice in
+that normalized low-affine family is still the common-factor plane
+\(\operatorname{span}(x_0^2,x_0x_1)\). This does not prove the missing Lean
+classifier, but it makes the likely final theorem surface much narrower: a
+generic low-affine homogeneous plane theorem plus the already-formalized
+common-factor exception should be enough.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
@@ -1783,7 +1810,9 @@ linear-basis data needed by the low-affine theorems. The constant-containing
 extraction, and the rank-one affine-image branches no longer need externally
 supplied homogeneous bases either. What remains is the upstream classification
 step that identifies the relevant affine or linear basis and the appropriate
-rank-one or rank-two coefficient-map image.
+rank-one or rank-two coefficient-map image. On the low-affine homogeneous side,
+the new numerical evidence suggests that this rank-two step may only need to
+separate the common-factor plane from the generic rank-\(14\) plane.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}
