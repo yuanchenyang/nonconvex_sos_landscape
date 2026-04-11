@@ -1989,6 +1989,18 @@ constant-term functional on that already-formalized \(2\)-dimensional kernel
 and route the resulting cases to the mixed-affine or low-affine theorem
 surfaces.
 
+One side of that split is now formalized too. The theorem
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constZero}
+in \texttt{ExactAffineClassification.lean} assumes an exact affine pair
+\(x_0+r_0\), \(x_1+r_1\) and the condition that every relation in the
+translated two-dimensional zero-linear-tail kernel already has zero translated
+constant coefficient. Lean then chooses a basis of that kernel, proves the two
+translated basis images are homogeneous and linearly independent, and closes the
+branch through the previously formalized theorem
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_homQuadratics\_independent}.
+So the no-constant \(\dim=2\) classifier gap is now cut exactly in half: only
+the complementary nonzero-constant split on the translated kernel remains.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

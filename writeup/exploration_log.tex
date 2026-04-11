@@ -1985,6 +1985,20 @@ to recover that kernel, but to analyze the constant-term functional on it and
 separate the mixed-affine and low-affine outcomes. No new Julia experiments
 were needed for this round either.
 
+I then formalized the zero-constant side of that split instead of guessing at
+the complementary mixed-affine branch. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constZero}
+in \texttt{ExactAffineClassification.lean} starts from an exact affine pair
+\(x_0+r_0\), \(x_1+r_1\) and the hypothesis that every relation in the common
+translated zero-linear-tail kernel already has zero translated constant term.
+Lean chooses a basis of that two-dimensional kernel, proves the translated
+basis images are homogeneous and linearly independent, and dispatches directly
+to the previously-built low-affine theorem
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_homQuadratics\_independent}.
+So the no-constant \(\dim=2\) classifier gap is now split cleanly: the
+constant-zero half is done, and only the complementary nonzero-constant half
+remains. No new Julia experiments were needed for this round either.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

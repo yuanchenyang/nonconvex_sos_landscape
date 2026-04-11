@@ -1,5 +1,6 @@
 import TernaryQuarticProof.RepresentativeSpanThree
 import TernaryQuarticProof.RepresentativeMixedAffinePlane
+import TernaryQuarticProof.RepresentativeLowAffine
 import TernaryQuarticProof.QuadraticCoordinateForm
 
 set_option autoImplicit false
@@ -564,5 +565,117 @@ theorem translatedLinearCoeffKernel_finrank_two_of_affinePair
   have hker : Module.finrank ℝ (LinearMap.ker f) = 2 := by
     omega
   exact hker
+
+/-- If an affine pair is known exactly and every relation in the translated
+zero-linear-tail kernel has zero translated constant term, then the no-constant
+`dim = 2` branch closes through the low-affine homogeneous plane theorem. -/
+theorem residual_eq_zero_of_relations_affinePair_translatedKernel_constZero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    {c0 c1 : Fin 4 → ℝ}
+    {r0 r1 : ℝ}
+    (h0 : relationPoly u c0 = affineLinePoly r0 1 0)
+    (h1 : relationPoly u c1 = affineLinePoly r1 0 1)
+    (hconstZero :
+      ∀ c,
+        c ∈ LinearMap.ker
+          (linearCoeffMap
+            (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u)) →
+          MvPolynomial.coeff m00
+            (relationPoly
+              (mapVec (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1]) u) c) = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let b : Fin 2 → ℝ := ![-r0, -r1]
+  let b' : Fin 2 → ℝ := ![r0, r1]
+  let e : Poly ≃ₐ[ℝ] Poly :=
+    affineEquiv (1 : Matrix (Fin 2) (Fin 2) ℝ) 1 b b'
+      (by simp) (by simp)
+      (by
+        intro i
+        fin_cases i <;> simp [b, b'])
+      (by
+        intro i
+        fin_cases i <;> simp [b, b'])
+  let u' : RankFourVec := mapVec e.toAlgHom u
+  let K : Submodule ℝ (Fin 4 → ℝ) := LinearMap.ker (linearCoeffMap u')
+  have hKdim : Module.finrank ℝ K = 2 := by
+    simpa [K, u', e, b] using translatedLinearCoeffKernel_finrank_two_of_affinePair h0 h1
+  let basisK : Module.Basis (Fin 2) ℝ K := Module.finBasisOfFinrankEq ℝ K hKdim
+  let d : Fin 2 → Fin 4 → ℝ := fun j => (basisK j : Fin 4 → ℝ)
+  let q' : Fin 2 → Poly := fun j => relationPoly u' (d j)
+  let relK : K →ₗ[ℝ] Poly := {
+    toFun x := relationPoly u' (x : Fin 4 → ℝ)
+    map_add' x y := by
+      exact relationPoly_add u' (x : Fin 4 → ℝ) (y : Fin 4 → ℝ)
+    map_smul' a x := by
+      exact relationPoly_smul u' a (x : Fin 4 → ℝ) }
+  have hrelKBot : LinearMap.ker relK = ⊥ := by
+    ext x
+    constructor
+    · intro hx
+      rw [Submodule.mem_bot]
+      have hx0' : relationPoly u' (x : Fin 4 → ℝ) = 0 := by
+        simpa [relK] using hx
+      have hx0 : relationPoly u (x : Fin 4 → ℝ) = 0 := by
+        apply e.injective
+        simpa [u', e, relationPoly_map] using hx0'
+      have hrelInj : Function.Injective (relationPolyLin u) := LinearMap.ker_eq_bot.mp hrelker
+      have hxvec : (x : Fin 4 → ℝ) = 0 := by
+        apply hrelInj
+        simpa [relationPolyLin, relationPoly] using hx0
+      exact Subtype.ext hxvec
+    · intro hx
+      rw [Submodule.mem_bot] at hx
+      subst x
+      simp [relK]
+  have hq'ind : LinearIndependent ℝ q' := by
+    simpa [q', d, relK] using basisK.linearIndependent.map' relK hrelKBot
+  let q2 : Poly := relationPoly u (d 0)
+  let q3 : Poly := relationPoly u (d 1)
+  have h2 : relationPoly u (d 0) = q2 := by rfl
+  have h3 : relationPoly u (d 1) = q3 := by rfl
+  have hq2 : IsQuadratic q2 := by
+    dsimp [q2]
+    exact isQuadratic_relationPoly hu (d 0)
+  have hq3 : IsQuadratic q3 := by
+    dsimp [q3]
+    exact isQuadratic_relationPoly hu (d 1)
+  have hk0 : linearCoeffMap u' (d 0) = 0 := (basisK 0).2
+  have hk1 : linearCoeffMap u' (d 1) = 0 := (basisK 1).2
+  have hq2_00 : MvPolynomial.coeff m00 (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) b q2) = 0 := by
+    simpa [u', e, b, q2, relationPoly_map] using hconstZero (d 0) (basisK 0).2
+  have hq2_10 : MvPolynomial.coeff m10 (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) b q2) = 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 0) hk0
+    simpa [u', e, b, q2, linearCoeffMap, relationPoly_map] using h
+  have hq2_01 : MvPolynomial.coeff m01 (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) b q2) = 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 1) hk0
+    simpa [u', e, b, q2, linearCoeffMap, relationPoly_map] using h
+  have hq3_00 : MvPolynomial.coeff m00 (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) b q3) = 0 := by
+    simpa [u', e, b, q3, relationPoly_map] using hconstZero (d 1) (basisK 1).2
+  have hq3_10 : MvPolynomial.coeff m10 (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) b q3) = 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 0) hk1
+    simpa [u', e, b, q3, linearCoeffMap, relationPoly_map] using h
+  have hq3_01 : MvPolynomial.coeff m01 (affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) b q3) = 0 := by
+    have h := congrArg (fun z : Fin 2 → ℝ => z 1) hk1
+    simpa [u', e, b, q3, linearCoeffMap, relationPoly_map] using h
+  have hind' :
+      LinearIndependent ℝ
+        (fun j : Fin 2 => affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) b (relationPoly u (d j))) := by
+    simpa [q', u', e, b, relationPoly_map] using hq'ind
+  have hind :
+      LinearIndependent ℝ
+        ![affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) b q2,
+          affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) b q3] := by
+    convert hind' using 1
+    funext j
+    fin_cases j <;> simp [q2, q3, d]
+  exact residual_eq_zero_of_relations_affinePair_homQuadratics_independent
+    (B := B) (u := u) hu h0 h1 h2 h3 hq2 hq3
+    hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01 hind hp hsocp
 
 end TernaryQuartic
