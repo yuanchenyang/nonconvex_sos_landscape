@@ -2018,7 +2018,7 @@ through the existing affine-rank-one theorem. So the genuinely remaining
 \(\dim=1\) work is now concentrated in the affine-image rank-\(2\) tailed
 subcase, not the pure rank-\(1\) image.
 
-One constant-tailed affine-\(\dim=1\) endpoint is now formalized as well. In
+Two constant-tailed affine-\(\dim=1\) endpoints are now formalized. In
 \texttt{RepresentativeAffineRankOne.lean}, the theorem
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0sqBX1sq\_x0x1\_x1sq}
 shows that exact relations
@@ -2028,6 +2028,15 @@ shows that exact relations
 \]
 already force zero residual. So the affine-\(\dim=1\) classifier no longer has
 to treat the mixed \(x_0^2/x_1^2\) constant-tail family as an open endpoint.
+The same file now also proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0x1\_x0sq\_x1sq}, so
+\[
+  x_0,\qquad 1 + a x_0x_1,\qquad x_0^2,\qquad x_1^2
+\]
+is now formalized directly as a surjective exact-affine \(\dim=1\) endpoint as
+well: Lean first reconstructs \(x_1\) from the constant-cross relation using
+the exact \(x_0\) and \(x_1^2\) relations, then reconstructs \(1\), and from
+there reaches every quartic monomial in the admissible image.
 
 The numerical side now matches that split more sharply. The Julia file
 \texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl} records
@@ -2043,12 +2052,35 @@ So among the visible pure constant tails, the families
   \quad\text{and}\quad
   (x_0,\ 1 + a x_0x_1,\ x_0^2,\ x_1^2)
 \]
-look surjective in every tested nonzero scalar sample, while the repeated-line
+are now both in the proved column and also look surjective in every tested
+nonzero scalar sample, while the repeated-line
 family
 \[
   (x_0,\ 1 + a x_1^2,\ x_0^2,\ x_0x_1)
 \]
 stays rank \(13\) with the entire \(x_1\)-axis monomial strip missing.
+
+That remaining repeated-line constant-tail endpoint is now formalized too. The
+same file proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX1sq\_x0sq\_x0x1}, with
+the matching equivariant wrapper. The proof mirrors the earlier
+\(x_1 + a x_1^2\) repeated-line branch but uses the exact relations
+\[
+  x_0^2,\qquad x_0x_1
+\]
+to build a two-parameter admissible-kernel family whose \(\sigma\)-image moves
+the pure \(x_1\)-quartic strip into the divisibility conditions for
+\((1 + a x_1^2)\). So all three visible pure constant-tail affine-\(\dim=1\)
+endpoints are now in the proved column:
+\[
+  (x_0,\ 1 + a x_0^2 + b x_1^2,\ x_0x_1,\ x_1^2),\qquad
+  (x_0,\ 1 + a x_0x_1,\ x_0^2,\ x_1^2),\qquad
+  (x_0,\ 1 + a x_1^2,\ x_0^2,\ x_0x_1).
+\]
+The remaining exact-affine \(\dim=1\) gap is therefore no longer a missing
+constant-tail endpoint; it is the classifier that packages a general
+rank-\(2\) affine-image tailed branch into one of the already solved
+constant-tail or \(x_1\)-tail surfaces.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and

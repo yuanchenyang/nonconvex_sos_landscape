@@ -2515,10 +2515,39 @@ with no missing quartic monomials in the tested scalar sweep;
 \item \((x_0,\ 1 + a x_1^2,\ x_0^2,\ x_0x_1)\) stays rank \(13\), with the full
 \(x_1\)-axis monomial strip \((0,0),(0,1),(0,2),(0,3),(0,4)\) missing.
 \end{itemize}
-So the affine-\(\dim=1\) classifier is now visibly narrower: the mixed
-\(x_0^2/x_1^2\) constant-tail family moved into the proved column, while the
-repeated-line \(1 + a x_1^2\) slice remains the obvious nonsurjective constant
-endpoint.
+I then formalized the second rank-\(15\) constant-tail model in
+\texttt{RepresentativeAffineRankOne.lean}. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0x1\_x0sq\_x1sq}
+closes
+\[
+  (x_0,\ 1 + a x_0x_1,\ x_0^2,\ x_1^2)
+\]
+directly by admissible-image surjectivity: Lean reconstructs \(x_1\) from the
+constant-cross relation using the exact \(x_0\) and \(x_1^2\) relations, then
+reconstructs \(1\), and then reaches every quartic monomial from
+\((1,x_0,x_1,x_0^2,x_1^2)\). So the affine-\(\dim=1\) classifier is now
+visibly narrower: both rank-\(15\) constant-tail families have moved into the
+proved column, while the repeated-line \(1 + a x_1^2\) slice remains the
+obvious nonsurjective constant endpoint.
+
+I then formalized that last repeated-line constant endpoint too. The new
+theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX1sq\_x0sq\_x0x1},
+again in \texttt{RepresentativeAffineRankOne.lean}, closes
+\[
+  (x_0,\ 1 + a x_1^2,\ x_0^2,\ x_0x_1).
+\]
+The proof uses a new admissible-kernel family built from the exact relations to
+\[
+  x_0^2,\qquad x_0x_1,
+\]
+so that \(\sigma\) contributes exactly the pure \(x_1^2/x_1^3/x_1^4\) strip.
+That lets Lean correct each SOS summand into the divisibility conditions for
+\((1 + a x_1^2)\), and then finish via the indexed-family certificate. So the
+constant-tail affine-\(\dim=1\) side is no longer missing a representative or
+endpoint theorem. The remaining work is now purely classifier-level: package a
+general exact-affine \(\dim=1\), affine-image-rank-\(2\) branch into one of the
+already solved constant-tail or \(x_1\)-tail surfaces.
 
 \section*{Open Subgoals}
 \begin{itemize}
