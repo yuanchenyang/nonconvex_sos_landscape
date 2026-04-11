@@ -2322,6 +2322,34 @@ is the remaining affine-rank-one extraction/classification layer above the
 already-formalized rank-one endpoint theorems, followed by the final assembly
 in \texttt{TernaryQuarticProof.lean}.
 
+The next rank-one probe clarified one more endpoint. I added
+\texttt{julia/affine\_rank\_one\_nonzero\_const\_2026\_04\_11.jl} and checked
+the normalized family
+\[
+  (\alpha + x_0,\ q_1,\ q_2,\ q_3),
+  \qquad \operatorname{span}(q_1,q_2,q_3)=
+    \operatorname{span}(x_0^2,x_0x_1,x_1^2).
+\]
+The recorded result is
+\[
+  \texttt{affine\_rank\_one\_nonzero\_const\_probe}
+  = (\texttt{generic\_ranks}=[15],\dots),
+\]
+with the canonical scalar sweep showing rank \(15\) for every tested
+\(\alpha \in \{-3,-2,-1,-\tfrac12,\tfrac12,1,2,3\}\), while the limiting
+\(\alpha=0\) model drops back to the old linear rank-\(13\) pattern missing
+\((0,0)\) and \((0,1)\). So the nonzero-constant affine-rank-one endpoint now
+looks surjective rather than ``image plus kernel.'' I then formalized exactly
+that in Lean:
+\texttt{RepresentativeSurjective.lean} now proves
+\texttt{quartic\_in\_image\_of\_relations\_constX0\_x0sq\_x0x1\_x1sq},
+\texttt{residual\_eq\_zero\_of\_relations\_constX0\_x0sq\_x0x1\_x1sq}, and
+\texttt{residual\_eq\_zero\_of\_relations\_constX0\_homQuadBasis\_det}, and
+\texttt{RepresentativeAffineRankOne.lean} lifts that to the rank-one surface
+\texttt{residual\_eq\_zero\_of\_relations\_constX0\_affineRankOne}. So the
+rank-one layer now has a third endpoint beside the pure constant and pure
+linear cases.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

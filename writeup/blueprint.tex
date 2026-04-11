@@ -1862,6 +1862,35 @@ linearly independent, reconstructs the exact \((x_0^2,x_0x_1,x_1^2)\)
 relations by an internal \(3 \times 3\) coefficient-matrix argument, and
 applies the existing constant or linear representative theorem.
 
+That rank-one layer is now wider on the nonzero-constant side too. In
+\texttt{RepresentativeSurjective.lean} the new theorems
+\texttt{quartic\_in\_image\_of\_relations\_constX0\_x0sq\_x0x1\_x1sq},
+\texttt{residual\_eq\_zero\_of\_relations\_constX0\_x0sq\_x0x1\_x1sq}, and
+\texttt{residual\_eq\_zero\_of\_relations\_constX0\_homQuadBasis\_det} show
+that once one has an exact relation to \(\alpha + x_0\) with \(\alpha \neq 0\)
+and an invertible homogeneous quadratic basis, the branch is actually
+surjective: Lean reconstructs \(x_0\), \(1\), and \(x_1\) directly inside the
+admissible image and then reaches every quartic monomial without any kernel
+certificate. On top of that, \texttt{RepresentativeAffineRankOne.lean} now
+packages the same endpoint as
+\texttt{residual\_eq\_zero\_of\_relations\_constX0\_affineRankOne}, so the
+rank-one affine-image branch no longer needs to collapse all nonzero-constant
+affine lines to the pure constant theorem.
+
+The supporting numerical probe
+\texttt{julia/affine\_rank\_one\_nonzero\_const\_2026\_04\_11.jl} matches that
+shape. For the normalized model
+\[
+  (\alpha + x_0,\ q_1,\ q_2,\ q_3),
+  \qquad \operatorname{span}(q_1,q_2,q_3)=
+    \operatorname{span}(x_0^2,x_0x_1,x_1^2),
+\]
+all tested nonzero constants \(\alpha \in
+\{-3,-2,-1,-\tfrac12,\tfrac12,1,2,3\}\) gave image rank \(15\), and \(20\)
+random homogeneous bases at \(\alpha=1\) also gave rank \(15\). Only the
+\(\alpha=0\) limit returns to the old linear rank-\(13\) pattern, missing the
+constant and \(x_1\) classes.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data for the branches not yet reduced to a one-line interface:
