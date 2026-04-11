@@ -2131,6 +2131,22 @@ linear-cross affine-rank-one slices, the classifier no longer needs exact
 \((x_0^2,x_1^2)\) relations either; determinant-nondegenerate plane data in
 \(\operatorname{span}(x_0^2,x_1^2)\) is now enough.
 
+The same reduction is now available for the remaining linear repeated-line
+endpoints too. In \texttt{RepresentativeAffineRankOne.lean}, the new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX0sq\_x0x1\_x1sqPlane}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX1sq\_x0sq\_x0x1Plane},
+again with matching equivariant wrappers, lift
+\[
+  (x_0,\ x_1 + a x_0^2,\ x_0x_1,\ x_1^2)
+  \quad\text{and}\quad
+  (x_0,\ x_1 + a x_1^2,\ x_0^2,\ x_0x_1)
+\]
+from exact repeated-line bases to arbitrary determinant-nondegenerate bases of
+their repeated-line planes. So the exact-affine \(\dim=1\) classifier no
+longer has to reconstruct exact \((x_0x_1,x_1^2)\) or exact
+\((x_0^2,x_0x_1)\) before entering those linear-tail branches.
+
 The remaining exact-affine \(\dim=1\) gap is therefore no longer a missing
 constant-tail endpoint; it is the classifier that packages a general
 rank-\(2\) affine-image tailed branch into one of the already solved

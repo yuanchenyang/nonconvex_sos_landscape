@@ -2603,6 +2603,17 @@ to arbitrary determinant-nondegenerate bases of
 \(\operatorname{span}(x_0^2,x_1^2)\). So the classifier no longer needs to
 hand those cross slices a pre-normalized diagonal basis either.
 
+I then lifted the remaining linear repeated-line endpoints to the same
+determinant-nondegenerate plane surface. The new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX0sq\_x0x1\_x1sqPlane}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX1sq\_x0sq\_x0x1Plane},
+again with their equivariant wrappers, reconstruct exact
+\((x_0x_1,x_1^2)\) or \((x_0^2,x_0x_1)\) internally by the same \(2\times2\)
+Cramer's-rule step and then dispatch to the already proved linear repeated-line
+endpoint theorems. So the exact-affine \(\dim=1\) classifier no longer has to
+hand those branches an exact repeated-line basis either.
+
 I then pushed one retained exact-affine \(\dim=1\) classifier case into Lean.
 In \texttt{ExactAffineClassification.lean}, the new theorem
 \texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeZero} closes the
