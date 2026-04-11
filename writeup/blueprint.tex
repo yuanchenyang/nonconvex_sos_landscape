@@ -1893,21 +1893,54 @@ constant and \(x_1\) classes.
 
 However, the remaining \(\dim=1\) exact-affine branch is now visibly broader
 than the pure affine-rank-one surface. The new file
-\texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl} probes three
-normalized ``one exact affine line plus one tailed affine direction''
-families:
+\texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl} now records both image
+ranks and the exact-affine dimension for several normalized ``one exact affine
+line plus one tailed affine direction'' families. The first three probes were
 \[
   (x_0,\ x_1+\lambda x_0x_1,\ x_0^2,\ x_1^2),\qquad
   (x_0,\ x_1+\lambda x_0x_1,\ x_0^2,\ x_0x_1),\qquad
   (x_0,\ x_1+\lambda x_0^2,\ x_0^2,\ x_1^2).
 \]
+Numerically, only the first of those is genuinely exact-affine \(\dim=1\): the
+script records
+\[
+  \texttt{cross\_tail\_exact\_affine\_dims}=[1],\qquad
+  \texttt{common\_factor\_tail\_exact\_affine\_dims}=[2],\qquad
+  \texttt{x0sq\_tail\_exact\_affine\_dims}=[2].
+\]
+So the second and third families already belong to the exact-affine
+\(\dim=2\) branch, which is closed in Lean, and only the cross family remains
+as a genuine new \(\dim=1\) endpoint among those three.
+
+That cross slice is now formalized. In
+\texttt{RepresentativeAffineRankOne.lean} the new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX0x1\_x0sq\_x1sq}
+proves zero residual from exact relations to
+\[
+  (x_0,\ x_1 + a x_0x_1,\ x_0^2,\ x_1^2),\qquad a \ne 0.
+\]
+The image part uses the explicit identity
+\[
+  x_1 = (x_1 + a x_0x_1)(1-a x_0) + a^2 x_0^2 x_1,
+\]
+and the kernel part matches the missing constant coefficient with the same
+\(x_0/x_0^2\)-based admissible kernel direction used in the previous codimension
+one branches.
+
+The updated script also shows that two other families are genuinely
+exact-affine \(\dim=1\):
+\[
+  (x_0,\ x_1+\lambda x_1^2,\ x_0^2,\ x_0x_1),\qquad
+  (x_0,\ x_1+\lambda x_0^2,\ x_0x_1,\ x_1^2).
+\]
 For every tested nonzero \(\lambda \in
-\{-3,-2,-1,-\tfrac12,\tfrac12,1,2,3\}\), the first and third families have
-image rank \(14\) with only the constant monomial missing, while the
-common-factor family has image rank \(13\) with only \((0,0)\) and
-\((0,4)\) missing. So the remaining classifier cannot simply identify the
-\(\dim=1\) branch with affine rank one unless one also proves an exclusion
-statement for these tailed models.
+\{-3,-2,-1,-\tfrac12,\tfrac12,1,2,3\}\), the first has image rank \(13\)
+with missing pure \(x_1\)-powers
+\((0,0),(0,1),(0,2),(0,3),(0,4)\), while the second has image rank \(14\) with
+only the constant monomial missing. So the remaining classifier still cannot
+identify the exact-affine \(\dim=1\) branch with the pure affine-rank-one
+surface; it now has one closed cross-tail endpoint and two remaining genuine
+tailed charts.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and

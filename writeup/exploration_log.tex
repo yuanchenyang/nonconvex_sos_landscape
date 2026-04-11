@@ -2351,8 +2351,9 @@ rank-one layer now has a third endpoint beside the pure constant and pure
 linear cases.
 
 That did not actually collapse the whole remaining \(\dim=1\) branch. The new
-probe \texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl} tests the three
-normalized tailed families
+probe \texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl} now records both
+image ranks and exact-affine dimensions. It first tests the three normalized
+tailed families
 \[
   (x_0,\ x_1+\lambda x_0x_1,\ x_0^2,\ x_1^2),\qquad
   (x_0,\ x_1+\lambda x_0x_1,\ x_0^2,\ x_0x_1),\qquad
@@ -2364,7 +2365,10 @@ output is
   \texttt{affine\_dim\_one\_tailed\_probe}
   = (\texttt{cross\_tail\_ranks}=[14],\ 
      \texttt{common\_factor\_tail\_ranks}=[13],\
-     \texttt{x0sq\_tail\_ranks}=[14],\dots),
+     \texttt{x0sq\_tail\_ranks}=[14],\
+     \texttt{cross\_tail\_exact\_affine\_dims}=[1],\
+     \texttt{common\_factor\_tail\_exact\_affine\_dims}=[2],\
+     \texttt{x0sq\_tail\_exact\_affine\_dims}=[2],\dots),
 \]
 with stable missing sets
 \[
@@ -2372,10 +2376,38 @@ with stable missing sets
   \texttt{common\_factor\_tail\_missing}=[[(0,0),(0,4)]],\qquad
   \texttt{x0sq\_tail\_missing}=[[(0,0)]].
 \]
-So the surviving \(\dim=1\) work is not just the pure affine-rank-one image:
-there are stable ``one exact affine line plus one tailed affine direction''
-models that still look like genuine codimension-one or codimension-two image
-branches.
+So only the cross slice is genuinely exact-affine \(\dim=1\) among those
+three; the common-factor and \(x_0^2\)-tail slices already belong to the
+exact-affine \(\dim=2\) branch because the homogeneous plane already contains
+the tailed monomial.
+
+I then formalized that genuine cross slice in
+\texttt{RepresentativeAffineRankOne.lean}. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX0x1\_x0sq\_x1sq}
+proves zero residual from exact relations to
+\[
+  (x_0,\ x_1 + a x_0x_1,\ x_0^2,\ x_1^2),\qquad a \ne 0.
+\]
+The image proof uses the explicit identity
+\[
+  x_1 = (x_1 + a x_0x_1)(1-a x_0) + a^2 x_0^2 x_1,
+\]
+and the kernel proof matches the missing constant coefficient by the admissible
+direction built from the exact \(x_0\) and \(x_0^2\) relations.
+
+The same updated Julia script then checked two further genuinely
+exact-affine-\(\dim=1\) slices:
+\[
+  (x_0,\ x_1+\lambda x_1^2,\ x_0^2,\ x_0x_1),\qquad
+  (x_0,\ x_1+\lambda x_0^2,\ x_0x_1,\ x_1^2).
+\]
+For every tested nonzero \(\lambda\), the first has exact-affine dimension
+\(1\), image rank \(13\), and missing set
+\((0,0),(0,1),(0,2),(0,3),(0,4)\), while the second has exact-affine
+dimension \(1\), image rank \(14\), and only the constant monomial missing.
+So the surviving \(\dim=1\) work is now sharper: the cross slice is closed in
+Lean, but there are still at least two genuine tailed \(\dim=1\) charts beyond
+the pure affine-rank-one surface.
 
 \section*{Open Subgoals}
 \begin{itemize}

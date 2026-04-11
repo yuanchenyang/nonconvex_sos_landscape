@@ -56,6 +56,13 @@ function image_rank_missing(u::Vector{Vector{Float64}})
     (rank = r, missing = missing)
 end
 
+function exact_affine_dim(u::Vector{Vector{Float64}})
+    H = reduce(hcat, [ui[4:6] for ui in u])
+    F = svd(H)
+    r = sum(F.S .> 1e-9)
+    4 - r
+end
+
 function quad_coeffs(; a00 = 0.0, a10 = 0.0, a01 = 0.0, a20 = 0.0, a11 = 0.0, a02 = 0.0)
     [a00, a10, a01, a20, a11, a02]
 end
@@ -70,13 +77,25 @@ function affine_dim_one_tailed_probe()
     cross_tail = NamedTuple[]
     common_factor_tail = NamedTuple[]
     x0sq_tail = NamedTuple[]
+    x1sq_common_factor = NamedTuple[]
+    x0sq_swapped_common_factor = NamedTuple[]
 
     for λ in lambdas
         qtail_cross = quad_coeffs(a01 = 1.0, a11 = λ)
         qtail_x0sq = quad_coeffs(a01 = 1.0, a20 = λ)
-        push!(cross_tail, (; λ, image_rank_missing([x0, qtail_cross, x0sq, x1sq])...))
-        push!(common_factor_tail, (; λ, image_rank_missing([x0, qtail_cross, x0sq, x0x1])...))
-        push!(x0sq_tail, (; λ, image_rank_missing([x0, qtail_x0sq, x0sq, x1sq])...))
+        qtail_x1sq = quad_coeffs(a01 = 1.0, a02 = λ)
+
+        u_cross = [x0, qtail_cross, x0sq, x1sq]
+        u_common = [x0, qtail_cross, x0sq, x0x1]
+        u_x0sq = [x0, qtail_x0sq, x0sq, x1sq]
+        u_x1sq_common = [x0, qtail_x1sq, x0sq, x0x1]
+        u_x0sq_swapped = [x0, qtail_x0sq, x0x1, x1sq]
+
+        push!(cross_tail, (; λ, exact_affine_dim = exact_affine_dim(u_cross), image_rank_missing(u_cross)...))
+        push!(common_factor_tail, (; λ, exact_affine_dim = exact_affine_dim(u_common), image_rank_missing(u_common)...))
+        push!(x0sq_tail, (; λ, exact_affine_dim = exact_affine_dim(u_x0sq), image_rank_missing(u_x0sq)...))
+        push!(x1sq_common_factor, (; λ, exact_affine_dim = exact_affine_dim(u_x1sq_common), image_rank_missing(u_x1sq_common)...))
+        push!(x0sq_swapped_common_factor, (; λ, exact_affine_dim = exact_affine_dim(u_x0sq_swapped), image_rank_missing(u_x0sq_swapped)...))
     end
 
     result = (
@@ -84,12 +103,24 @@ function affine_dim_one_tailed_probe()
         cross_tail = cross_tail,
         common_factor_tail = common_factor_tail,
         x0sq_tail = x0sq_tail,
+        x1sq_common_factor = x1sq_common_factor,
+        x0sq_swapped_common_factor = x0sq_swapped_common_factor,
         cross_tail_ranks = sort(unique(x.rank for x in cross_tail)),
         common_factor_tail_ranks = sort(unique(x.rank for x in common_factor_tail)),
         x0sq_tail_ranks = sort(unique(x.rank for x in x0sq_tail)),
+        x1sq_common_factor_ranks = sort(unique(x.rank for x in x1sq_common_factor)),
+        x0sq_swapped_common_factor_ranks = sort(unique(x.rank for x in x0sq_swapped_common_factor)),
         cross_tail_missing = sort(unique(x.missing for x in cross_tail)),
         common_factor_tail_missing = sort(unique(x.missing for x in common_factor_tail)),
         x0sq_tail_missing = sort(unique(x.missing for x in x0sq_tail)),
+        x1sq_common_factor_missing = sort(unique(x.missing for x in x1sq_common_factor)),
+        x0sq_swapped_common_factor_missing = sort(unique(x.missing for x in x0sq_swapped_common_factor)),
+        cross_tail_exact_affine_dims = sort(unique(x.exact_affine_dim for x in cross_tail)),
+        common_factor_tail_exact_affine_dims = sort(unique(x.exact_affine_dim for x in common_factor_tail)),
+        x0sq_tail_exact_affine_dims = sort(unique(x.exact_affine_dim for x in x0sq_tail)),
+        x1sq_common_factor_exact_affine_dims = sort(unique(x.exact_affine_dim for x in x1sq_common_factor)),
+        x0sq_swapped_common_factor_exact_affine_dims =
+            sort(unique(x.exact_affine_dim for x in x0sq_swapped_common_factor)),
     )
     println("affine_dim_one_tailed_probe = ", result)
     result
