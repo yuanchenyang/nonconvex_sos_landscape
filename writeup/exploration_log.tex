@@ -2031,7 +2031,13 @@ I then converted the easiest of those generic-looking slices into Lean. In
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusX0sq\_x1sq}. So the
 coprime constant-perturbed model \((x_0, x_1, 1 + x_0^2, x_1^2)\) is now
 formally proved quartic-surjective at the exact-relation level, matching the
-rank-\(15\) numerical probe.
+rank-\(15\) numerical probe. I then lifted that slice to the affine-pair
+surface in the same file via
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlusX0sq\_x1sq}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlusX0sq\_x1sq}, so
+later classifier code will not need to normalize that case all the way down to
+literal \((x_0, x_1, 1 + x_0^2, x_1^2)\) coordinates by hand.
 
 \section*{Open Subgoals}
 \begin{itemize}

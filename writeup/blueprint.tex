@@ -2036,7 +2036,15 @@ constant-perturbed coprime slice
   (x_0,\ x_1,\ 1 + x_0^2,\ x_1^2)
 \]
 is no longer only a numerical observation: Lean now proves full quartic
-surjectivity for that exact-relation surface.
+surjectivity for that exact-relation surface. That theorem now also sits on the
+same affine-pair transport layer as the other low-affine branches: the same file
+proves
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1\_onePlusX0sq\_x1sq}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlusX0sq\_x1sq}.
+So once classifier code identifies the coprime constant-perturbed case above an
+exact affine pair \(x_0+r_0,\ x_1+r_1\), Lean now performs the common
+translation internally instead of requiring hand-normalized coordinates.
 
 \section*{Planned File Map}
 \begin{itemize}
