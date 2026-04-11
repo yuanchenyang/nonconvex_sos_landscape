@@ -2114,6 +2114,22 @@ exact-affine \(\dim=2\) branch into that dependent theorem. So the remaining
 no-constant exact-affine \(\dim=2\) gap is no longer the whole nonzero-constant
 half; it is the complementary independent constant-perturbed branch.
 
+That interface has now been tightened one step further. In
+\texttt{RepresentativeLowAffine.lean}, the theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlus\_homQuadratics\_not\_independent}
+shows that the dependent branch does not need the explicit vanishing equations
+\(\texttt{lowHomQuadPlaneA}=\texttt{lowHomQuadPlaneB}=\texttt{lowHomQuadPlaneC}=0\)
+as input: it is enough that the homogeneous pair
+\((q_2-1,q_3)\) is not linearly independent and that \(q_3 \neq 0\). Lean now
+extracts the scalar-multiple relation internally and falls back to the older
+dependent theorem. On top of that,
+\texttt{ExactAffineClassification.lean} now contains
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constSplit\_not\_independent},
+so the exact-affine classifier can branch directly on
+\(\operatorname{LinearIndependent}(q_2-1,q_3)\). This sharpens the remaining
+open work again: the no-constant exact-affine \(\dim=2\) branch is now reduced
+to its genuinely independent constant-perturbed half.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

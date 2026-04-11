@@ -2110,6 +2110,20 @@ translated-kernel constant-split case now only remains unresolved when its
 homogeneous quadratic part is genuinely independent. No new Julia experiments
 were needed for this round.
 
+I then tightened that dependent branch to the natural linear-algebra input. In
+\texttt{RepresentativeLowAffine.lean}, the theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlus\_homQuadratics\_not\_independent}
+shows that Lean no longer needs the three explicit equations
+\texttt{lowHomQuadPlaneA = lowHomQuadPlaneB = lowHomQuadPlaneC = 0} to enter
+the dependent constant-perturbed branch. It is enough to assume
+\(\neg\,\operatorname{LinearIndependent}(q_2 - 1, q_3)\) together with
+\(q_3 \neq 0\); Lean now extracts the scalar-multiple relation internally and
+reuses the existing dependent theorem. I lifted that immediately into
+\texttt{ExactAffineClassification.lean} as
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constSplit\_not\_independent}.
+So the classifier can now branch directly on linear independence of the
+homogeneous pair. No new Julia experiment was needed for this round.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

@@ -4603,6 +4603,20 @@ private theorem lowHomQuadPlane_zero_imp_smul
     rw [h20q3, h11q3, h02q3]
     simp [smul_add, smul_smul]
 
+private theorem lowHomQuadPlane_zero_of_smul_left
+    {q : Poly} (t : ℝ) :
+    lowHomQuadPlaneA (t • q) q = 0 ∧
+      lowHomQuadPlaneB (t • q) q = 0 ∧
+      lowHomQuadPlaneC (t • q) q = 0 := by
+  constructor
+  · simp [lowHomQuadPlaneA, MvPolynomial.coeff_smul]
+    ring
+  constructor
+  · simp [lowHomQuadPlaneB, MvPolynomial.coeff_smul]
+    ring
+  · simp [lowHomQuadPlaneC, MvPolynomial.coeff_smul]
+    ring
+
 private theorem lowHomQuadPlane_relation_left (q2 q3 : Poly) :
     lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 q2 +
       (-lowHomQuadPlaneB q2 q3) * MvPolynomial.coeff m11 q2 +
@@ -6230,6 +6244,51 @@ theorem residual_eq_zero_of_relations_x0_x1_homQuadratics_independent
       hq2 hq3 hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01 hind)
     hp hsocp
 
+private theorem coeff_m10_one_lowAffine :
+    MvPolynomial.coeff m10 (1 : Poly) = 0 := by
+  rw [show (1 : Poly) = MvPolynomial.C (1 : ℝ) by simp, MvPolynomial.coeff_C]
+  split_ifs with h
+  · exfalso
+    have h0 := congrArg (fun s : Fin 2 →₀ ℕ => s 0) h.symm
+    simp [m10] at h0
+  · rfl
+
+private theorem coeff_m01_one_lowAffine :
+    MvPolynomial.coeff m01 (1 : Poly) = 0 := by
+  rw [show (1 : Poly) = MvPolynomial.C (1 : ℝ) by simp, MvPolynomial.coeff_C]
+  split_ifs with h
+  · exfalso
+    have h1 := congrArg (fun s : Fin 2 →₀ ℕ => s 1) h.symm
+    simp [m01] at h1
+  · rfl
+
+private theorem coeff_m20_one_lowAffine :
+    MvPolynomial.coeff m20 (1 : Poly) = 0 := by
+  rw [show (1 : Poly) = MvPolynomial.C (1 : ℝ) by simp, MvPolynomial.coeff_C]
+  split_ifs with h
+  · exfalso
+    have h0 := congrArg (fun s : Fin 2 →₀ ℕ => s 0) h.symm
+    simp [m20] at h0
+  · rfl
+
+private theorem coeff_m11_one_lowAffine :
+    MvPolynomial.coeff m11 (1 : Poly) = 0 := by
+  rw [show (1 : Poly) = MvPolynomial.C (1 : ℝ) by simp, MvPolynomial.coeff_C]
+  split_ifs with h
+  · exfalso
+    have h0 := congrArg (fun s : Fin 2 →₀ ℕ => s 0) h.symm
+    simp [m11] at h0
+  · rfl
+
+private theorem coeff_m02_one_lowAffine :
+    MvPolynomial.coeff m02 (1 : Poly) = 0 := by
+  rw [show (1 : Poly) = MvPolynomial.C (1 : ℝ) by simp, MvPolynomial.coeff_C]
+  split_ifs with h
+  · exfalso
+    have h1 := congrArg (fun s : Fin 2 →₀ ℕ => s 1) h.symm
+    simp [m02] at h1
+  · rfl
+
 theorem residual_eq_zero_of_relations_x0_x1_onePlus_homQuadratics_dependent
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}
@@ -6354,6 +6413,61 @@ theorem residual_eq_zero_of_relations_x0_x1_onePlus_homQuadratics_dependent
     exact residual_eq_zero_of_contains_aff1
       (B := B) (u := u) (c0 := cconst) (c1 := c0) (c2 := c1)
       hu hconst h0 h1 hp hsocp
+
+theorem residual_eq_zero_of_relations_x0_x1_onePlus_homQuadratics_not_independent
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • u i = x1)
+    {q2 q3 : Poly}
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 1)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hnotind : ¬ LinearIndependent ℝ ![q2 - (1 : Poly), q3])
+    (hq3_ne : q3 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let q2h : Poly := q2 - 1
+  have hnotind' : ¬ LinearIndependent ℝ ![q2h, q3] := by
+    simpa [q2h] using hnotind
+  have hsmul : ∃ t : ℝ, t • q3 = q2h := by
+    rw [linearIndependent_fin2] at hnotind'
+    by_contra hno
+    have hall : ∀ a : ℝ, a • q3 ≠ q2h := by
+      intro a ha
+      exact hno ⟨a, ha⟩
+    exact hnotind' ⟨hq3_ne, hall⟩
+  rcases hsmul with ⟨t, ht⟩
+  have hA0h : lowHomQuadPlaneA q2h q3 = 0 := by
+    simpa [ht] using (lowHomQuadPlane_zero_of_smul_left (q := q3) t).1
+  have hB0h : lowHomQuadPlaneB q2h q3 = 0 := by
+    simpa [ht] using (lowHomQuadPlane_zero_of_smul_left (q := q3) t).2.1
+  have hC0h : lowHomQuadPlaneC q2h q3 = 0 := by
+    simpa [ht] using (lowHomQuadPlane_zero_of_smul_left (q := q3) t).2.2
+  have hA0 : lowHomQuadPlaneA q2 q3 = 0 := by
+    dsimp [q2h, lowHomQuadPlaneA] at hA0h ⊢
+    simpa [MvPolynomial.coeff_sub, coeff_m11_one_lowAffine, coeff_m02_one_lowAffine] using hA0h
+  have hB0 : lowHomQuadPlaneB q2 q3 = 0 := by
+    dsimp [q2h, lowHomQuadPlaneB] at hB0h ⊢
+    simpa [MvPolynomial.coeff_sub, coeff_m20_one_lowAffine, coeff_m02_one_lowAffine] using hB0h
+  have hC0 : lowHomQuadPlaneC q2 q3 = 0 := by
+    dsimp [q2h, lowHomQuadPlaneC] at hC0h ⊢
+    simpa [MvPolynomial.coeff_sub, coeff_m20_one_lowAffine, coeff_m11_one_lowAffine] using hC0h
+  exact residual_eq_zero_of_relations_x0_x1_onePlus_homQuadratics_dependent
+    (B := B) (u := u) hu h0 h1 h2 h3 hq2 hq3
+    hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+    hA0 hB0 hC0 hq3_ne hp hsocp
 
 theorem residual_eq_zero_of_relations_affinePair_homQuadratics_independent
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
