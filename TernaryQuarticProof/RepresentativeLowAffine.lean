@@ -1,4 +1,5 @@
 import TernaryQuarticProof.QuadraticNormalForm
+import TernaryQuarticProof.QuadraticCoordinateForm
 import TernaryQuarticProof.AffineSocpTransform
 import TernaryQuarticProof.MixedAffineNormalization
 import TernaryQuarticProof.RepresentativeTransport
@@ -2795,6 +2796,33 @@ theorem residual_eq_zero_of_relations_linearPair_x0x1_x1sqPlane
     (heQuartic := fun {_} hq => heQuartic hq)
     hB hp hu hsocp h0' h1' h2' h3' hdetPlane
 
+private def lowHomQuadPlaneA (q2 q3 : Poly) : ℝ :=
+  MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
+    MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3
+
+private def lowHomQuadPlaneB (q2 q3 : Poly) : ℝ :=
+  MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m02 q3 -
+    MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m20 q3
+
+private def lowHomQuadPlaneC (q2 q3 : Poly) : ℝ :=
+  MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 -
+    MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3
+
+private theorem lowHomQuadPlane_relation_left (q2 q3 : Poly) :
+    lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 q2 +
+      (-lowHomQuadPlaneB q2 q3) * MvPolynomial.coeff m11 q2 +
+        lowHomQuadPlaneC q2 q3 * MvPolynomial.coeff m02 q2 = 0 := by
+  simp [lowHomQuadPlaneA, lowHomQuadPlaneB, lowHomQuadPlaneC]
+  ring
+
+private theorem lowHomQuadPlane_relation_right (q2 q3 : Poly) :
+    lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 q3 +
+      (-lowHomQuadPlaneB q2 q3) * MvPolynomial.coeff m11 q3 +
+        lowHomQuadPlaneC q2 q3 * MvPolynomial.coeff m02 q3 = 0 := by
+  simp [lowHomQuadPlaneA, lowHomQuadPlaneB, lowHomQuadPlaneC]
+  ring
+
+
 /-- The rank-4 linear low-affine representative. -/
 def linearAffineRep : RankFourVec := ![x0, x0 ^ 2, x0 * x1, x1 ^ 2]
 
@@ -3450,7 +3478,7 @@ private theorem coeff_m01_sq_of_quadratic (q : Poly) (hq : IsQuadratic q) :
     simpa [m00] using coeff_m01_m00_mul_qRest_zero q a
   have hCC :
       MvPolynomial.coeff m01 (MvPolynomial.C a * MvPolynomial.C a) = 0 := by
-    simpa [m00] using h00
+    exact h00
   have hC01 :
       MvPolynomial.coeff m01 (MvPolynomial.C a * MvPolynomial.monomial m01 b) = a * b := by
     exact h01

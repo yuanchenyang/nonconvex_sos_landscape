@@ -1823,6 +1823,18 @@ swap before entering the theorem layer: both
 \(\operatorname{span}(x_0x_1,x_1^2)\) are now directly available at the same
 \texttt{linearPair} surface.
 
+I then tried to formalize the generic non-common-factor low-affine homogeneous
+plane theorem directly in \texttt{RepresentativeLowAffine.lean}. The retained
+part of that attempt is the new coefficient-space helper layer
+\texttt{lowHomQuadPlaneA/B/C} together with the exact relation lemmas they
+satisfy on both quadratics in the plane. Those are the cross-product scalars of
+the \(2 \times 3\) homogeneous coefficient matrix, and they encode the
+canonical annihilator line of the plane. The larger dispatcher theorem itself
+was backed out after repeated heartbeat blowups, so the repository stays
+build-clean; the next step is to rebuild the generic rank-\(14\) theorem on top
+of these helpers in smaller pieces. No new Julia experiments were needed for
+this round.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

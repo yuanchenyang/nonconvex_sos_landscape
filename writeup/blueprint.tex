@@ -1867,7 +1867,14 @@ To finish the theorem, it remains to formalize the remaining normalization and
 classification data for the branches not yet reduced to a one-line interface:
 most notably the remaining low-affine extraction/classification interface,
 which now looks numerically like a split between the common-factor plane and a
-generic rank-\(14\) homogeneous plane, and then
+generic rank-\(14\) homogeneous plane. The latest retained Lean step toward that
+classifier is a coefficient-space helper layer in
+\texttt{RepresentativeLowAffine.lean}: the new cross-product scalars
+\texttt{lowHomQuadPlaneA/B/C} and their two relation lemmas formalize the
+canonical annihilator line of a homogeneous quadratic plane directly in Lean.
+The unsuccessful larger dispatcher attempt was backed out rather than left as a
+non-terminating proof script. The remaining task is to build the actual generic
+rank-\(14\) theorem on top of that helper layer, and then
 then assemble the root declaration in
 \texttt{TernaryQuarticProof.lean}. The admissible image-plus-cone certificate
 and the representative/plane-level no-spurious-SOCP theorems are already in
