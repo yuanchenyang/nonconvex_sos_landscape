@@ -2577,6 +2577,21 @@ nonzero \(a,b \in \{-2,-1,1,2\}\) it reports
 So numerically the mixed repeated-line family behaves exactly like the pure
 \(1 + a x_1^2\) slice, which matches the translation proof.
 
+I then lifted that same repeated-line constant branch to determinant-nondegenerate
+plane data instead of keeping it tied to exact \((x_0^2,x_0x_1)\) relations.
+The retained theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1PlusAX1sq\_x0sq\_x0x1Plane}
+in \texttt{RepresentativeAffineRankOne.lean} assumes exact relations to
+\[
+  x_0,\qquad 1 + b x_1 + a x_1^2,\qquad
+  r x_0^2 + s x_0x_1,\qquad t x_0^2 + w x_0x_1
+\]
+with \(a \ne 0\) and \(rw-st \ne 0\). Lean then reconstructs exact \(x_0^2\)
+and \(x_0x_1\) by the same \(2 \times 2\) Cramer's-rule linear combination used
+elsewhere in the low-affine plane layer, and finishes through the already
+proved translated repeated-line theorem. So that slice now sits one level
+closer to the eventual classifier surface.
+
 I then pushed one retained exact-affine \(\dim=1\) classifier case into Lean.
 In \texttt{ExactAffineClassification.lean}, the new theorem
 \texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeZero} closes the

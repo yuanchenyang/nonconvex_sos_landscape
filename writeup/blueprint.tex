@@ -2108,6 +2108,20 @@ and for all tested nonzero \(a,b \in \{-2,-1,1,2\}\) it returns
 So numerically this new mixed repeated-line family behaves exactly like the
 pure \(1 + a x_1^2\) slice, which matches the translation-based Lean proof.
 
+That repeated-line constant surface is now also available one step above exact
+normal form. In \texttt{RepresentativeAffineRankOne.lean}, the theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1PlusAX1sq\_x0sq\_x0x1Plane}
+starts from exact relations to
+\[
+  x_0,\qquad 1 + b x_1 + a x_1^2,\qquad
+  r x_0^2 + s x_0x_1,\qquad t x_0^2 + w x_0x_1
+\]
+with \(a \ne 0\) and \(rw-st \ne 0\), reconstructs exact \(x_0^2\) and
+\(x_0x_1\) internally by Cramer's rule, and then dispatches to the translated
+repeated-line endpoint. So the remaining exact-affine \(\dim=1\) classifier no
+longer has to hand back a pre-normalized \((x_0^2,x_0x_1)\) pair in that
+slice.
+
 The remaining exact-affine \(\dim=1\) gap is therefore no longer a missing
 constant-tail endpoint; it is the classifier that packages a general
 rank-\(2\) affine-image tailed branch into one of the already solved
