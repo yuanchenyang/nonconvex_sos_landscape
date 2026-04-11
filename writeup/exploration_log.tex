@@ -2191,6 +2191,21 @@ For every tested
 \((4,0)\) missing. So the repeated-line/common-factor output now looks stable
 across its whole nonzero scalar family, both numerically and in Lean.
 
+I then lifted that repeated-line/common-factor branch one level higher in
+\texttt{TernaryQuarticProof/RepresentativeLowAffine.lean}. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusAX0sq\_x0x1Plane}
+takes exact relations to
+\[
+  x_0,\quad x_1,\quad 1 + a x_0^2 + b x_0x_1,\quad c x_0^2 + d x_0x_1
+\]
+with \(ad-bc \neq 0\), and internally reduces them to one of the already solved
+scalar families. The \(d=0\) branch cancels the \(x_0^2\) term, rescales to
+\((1+\beta x_0x_1,\ x_1^2)\), and swaps coordinates; the \(d \neq 0\) branch
+uses an internal \(x_1\)-shear to kill the \(x_0^2\) term in the second
+quadratic and then subtracts off the cross term in the first, reducing to
+\((1+\alpha x_0^2,\ x_0x_1)\). So the classifier will only need determinant-nondegenerate
+common-factor plane data, not already-normalized scalar representatives.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

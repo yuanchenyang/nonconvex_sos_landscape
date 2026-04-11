@@ -4401,6 +4401,309 @@ private def lowAffineSwapEquiv : Poly ≃ₐ[ℝ] Poly :=
     lowAffineSwapEquiv (x1 ^ 2 : Poly) = x0 ^ 2 := by
   simp [lowAffineSwapEquiv_apply_x1]
 
+@[simp] private theorem lowAffineSwapEquiv_apply_x0sq :
+    lowAffineSwapEquiv (x0 ^ 2 : Poly) = x1 ^ 2 := by
+  simp [lowAffineSwapEquiv_apply_x0]
+
+private theorem affineHom_x1Shear_x0sq_x0x1_plane
+    (t a b : ℝ) :
+    affineHom (x1ShearMatrix t) 0
+      (a • (x0 ^ 2 : Poly) + b • (x0 * x1)) =
+        (a + b * t) • (x0 ^ 2 : Poly) + b • (x0 * x1) := by
+  simp [affineHom_x1Shear_x0, affineHom_x1Shear_x1, MvPolynomial.smul_eq_C_mul]
+  ring_nf
+
+theorem residual_eq_zero_of_relations_x0_x1_onePlusAX0sq_x0x1Plane
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • u i = x1)
+    {a b c d : ℝ}
+    (h2 :
+      ∑ i : Fin 4, c2 i • u i =
+        (1 : Poly) + a • (x0 ^ 2 : Poly) + b • (x0 * x1))
+    (h3 :
+      ∑ i : Fin 4, c3 i • u i =
+        c • (x0 ^ 2 : Poly) + d • (x0 * x1))
+    (hdet : a * d - b * c ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  by_cases hd : d = 0
+  · have hc : c ≠ 0 := by
+      intro hc
+      apply hdet
+      simp [hd, hc]
+    have hb : b ≠ 0 := by
+      intro hb
+      apply hdet
+      simp [hd, hb]
+    let c2' : Fin 4 → ℝ := fun i => c2 i + (-(a / c)) * c3 i
+    let c3' : Fin 4 → ℝ := fun i => (1 / c) * c3 i
+    have h2' :
+        ∑ i : Fin 4, c2' i • u i = (1 : Poly) + b • (x0 * x1) := by
+      have h2lin :
+          ∑ i : Fin 4, c2' i • u i =
+            (∑ i : Fin 4, c2 i • u i) + (-(a / c)) • (∑ i : Fin 4, c3 i • u i) := by
+        simp [c2', Finset.sum_add_distrib, add_smul, Finset.smul_sum, smul_smul]
+      calc
+        ∑ i : Fin 4, c2' i • u i
+            = ((1 : Poly) + a • (x0 ^ 2 : Poly) + b • (x0 * x1)) +
+                (-(a / c)) • (c • (x0 ^ 2 : Poly) + d • (x0 * x1)) := by
+                  rw [h2lin, h2, h3]
+        _ = (1 : Poly) + (a + (-(a / c)) * c) • (x0 ^ 2 : Poly) +
+              (b + (-(a / c)) * d) • (x0 * x1) := by
+                calc
+                  ((1 : Poly) + a • (x0 ^ 2 : Poly) + b • (x0 * x1)) +
+                      (-(a / c)) • (c • (x0 ^ 2 : Poly) + d • (x0 * x1))
+                      =
+                      (1 : Poly) + a • (x0 ^ 2 : Poly) + ((-(a / c)) * c) • (x0 ^ 2 : Poly) +
+                        (b • (x0 * x1) + ((-(a / c)) * d) • (x0 * x1)) := by
+                          simp [smul_add, smul_smul, add_assoc, add_left_comm, add_comm]
+                  _ = (1 : Poly) + (a + (-(a / c)) * c) • (x0 ^ 2 : Poly) +
+                        (b + (-(a / c)) * d) • (x0 * x1) := by
+                          have hsq :
+                              a • (x0 ^ 2 : Poly) + ((-(a / c)) * c) • (x0 ^ 2 : Poly) =
+                                (a + (-(a / c)) * c) • (x0 ^ 2 : Poly) := by
+                            rw [← add_smul]
+                          have hxy :
+                              b • (x0 * x1 : Poly) + ((-(a / c)) * d) • (x0 * x1) =
+                                (b + (-(a / c)) * d) • (x0 * x1 : Poly) := by
+                            rw [← add_smul]
+                          calc
+                            (1 : Poly) + a • (x0 ^ 2 : Poly) + ((-(a / c)) * c) • (x0 ^ 2 : Poly) +
+                                (b • (x0 * x1) + ((-(a / c)) * d) • (x0 * x1))
+                                =
+                                (1 : Poly) +
+                                  (a • (x0 ^ 2 : Poly) + ((-(a / c)) * c) • (x0 ^ 2 : Poly)) +
+                                  (b • (x0 * x1) + ((-(a / c)) * d) • (x0 * x1)) := by
+                                    abel
+                            _ = (1 : Poly) +
+                                  (a + (-(a / c)) * c) • (x0 ^ 2 : Poly) +
+                                  (b • (x0 * x1) + ((-(a / c)) * d) • (x0 * x1)) := by
+                                    rw [hsq]
+                            _ = (1 : Poly) + (a + (-(a / c)) * c) • (x0 ^ 2 : Poly) +
+                                  (b + (-(a / c)) * d) • (x0 * x1) := by
+                                    rw [hxy]
+        _ = (1 : Poly) + b • (x0 * x1) := by
+              have hcoef0 : a + (-(a / c)) * c = 0 := by
+                field_simp [hc]
+                ring
+              have hcoef1 : b + (-(a / c)) * d = b := by
+                simp [hd]
+              rw [hcoef0, hcoef1]
+              simp
+    have h3' : ∑ i : Fin 4, c3' i • u i = x0 ^ 2 := by
+      have h3lin :
+          ∑ i : Fin 4, c3' i • u i = (1 / c) • (∑ i : Fin 4, c3 i • u i) := by
+        simp [c3', Finset.smul_sum, smul_smul]
+      calc
+        ∑ i : Fin 4, c3' i • u i
+            = (1 / c) • (c • (x0 ^ 2 : Poly) + d • (x0 * x1)) := by
+                rw [h3lin, h3]
+        _ = ((1 / c) * c) • (x0 ^ 2 : Poly) + ((1 / c) * d) • (x0 * x1) := by
+              simp [smul_add, smul_smul]
+        _ = x0 ^ 2 := by
+              have hcoef0 : (1 / c) * c = 1 := by
+                field_simp [hc]
+              have hcoef1 : (1 / c) * d = 0 := by
+                simp [hd]
+              rw [hcoef0, hcoef1]
+              simp
+    exact residual_eq_zero_of_equiv_relations_x0_x1_onePlusBX0x1_x1sq
+      (e := lowAffineSwapEquiv)
+      (heQuad := fun {_} hpq =>
+        isQuadratic_affineEquiv
+          (linearPairMatrix 0 1 1 0) (linearPairInvMatrix 0 1 1 0) 0 0
+          (linearPair_mul_inv 0 1 1 0 (by norm_num))
+          (linearPair_inv_mul 0 1 1 0 (by norm_num))
+          (by intro i; simp) (by intro i; simp) hpq)
+      (heQuadSymm := fun {_} hpq =>
+        isQuadratic_affineEquiv_symm
+          (linearPairMatrix 0 1 1 0) (linearPairInvMatrix 0 1 1 0) 0 0
+          (linearPair_mul_inv 0 1 1 0 (by norm_num))
+          (linearPair_inv_mul 0 1 1 0 (by norm_num))
+          (by intro i; simp) (by intro i; simp) hpq)
+      (heQuartic := fun {_} hpq =>
+        isQuartic_affineEquiv
+          (linearPairMatrix 0 1 1 0) (linearPairInvMatrix 0 1 1 0) 0 0
+          (linearPair_mul_inv 0 1 1 0 (by norm_num))
+          (linearPair_inv_mul 0 1 1 0 (by norm_num))
+          (by intro i; simp) (by intro i; simp) hpq)
+      (β := b) hb hB hp hu hsocp
+      ((relation_map lowAffineSwapEquiv.toAlgHom h1).trans lowAffineSwapEquiv_apply_x1)
+      ((relation_map lowAffineSwapEquiv.toAlgHom h0).trans lowAffineSwapEquiv_apply_x0)
+      (by
+        calc
+          ∑ i : Fin 4, c2' i • mapVec lowAffineSwapEquiv.toAlgHom u i
+              = lowAffineSwapEquiv (∑ i : Fin 4, c2' i • u i) := by
+                  simp [mapVec, map_sum]
+          _ = lowAffineSwapEquiv ((1 : Poly) + b • (x0 * x1)) := by rw [h2']
+          _ = (1 : Poly) + b • (x0 * x1) := by
+                simp [add_comm])
+      (by
+        calc
+          ∑ i : Fin 4, c3' i • mapVec lowAffineSwapEquiv.toAlgHom u i
+              = lowAffineSwapEquiv (∑ i : Fin 4, c3' i • u i) := by
+                  simp [mapVec, map_sum]
+          _ = lowAffineSwapEquiv (x0 ^ 2 : Poly) := by rw [h3']
+          _ = x1 ^ 2 := by simp)
+  · have hd0 : d ≠ 0 := hd
+    let t : ℝ := -(c / d)
+    let e : Poly ≃ₐ[ℝ] Poly := x1ShearEquiv t
+    let c1' : Fin 4 → ℝ := fun i => c1 i + (-t) * c0 i
+    let c2' : Fin 4 → ℝ := fun i => c2 i + (-(b / d)) * c3 i
+    let c3' : Fin 4 → ℝ := fun i => (1 / d) * c3 i
+    let α : ℝ := a - b * c / d
+    have hα : α ≠ 0 := by
+      intro hα0
+      apply hdet
+      have hmul : a * d - b * c = α * d := by
+        dsimp [α]
+        field_simp [hd0]
+      rw [hmul, hα0]
+      simp
+    have heQuad : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e q) := by
+      intro q hq
+      exact isQuadratic_affineEquiv (x1ShearMatrix t) (x1ShearInvMatrix t) 0 0
+        (x1Shear_mul_inv t) (x1Shear_inv_mul t) (by intro i; simp) (by intro i; simp) hq
+    have heQuadSymm : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e.symm q) := by
+      intro q hq
+      exact isQuadratic_affineEquiv_symm (x1ShearMatrix t) (x1ShearInvMatrix t) 0 0
+        (x1Shear_mul_inv t) (x1Shear_inv_mul t) (by intro i; simp) (by intro i; simp) hq
+    have heQuartic : ∀ {q : Poly}, IsQuartic q → IsQuartic (e q) := by
+      intro q hq
+      exact isQuartic_affineEquiv (x1ShearMatrix t) (x1ShearInvMatrix t) 0 0
+        (x1Shear_mul_inv t) (x1Shear_inv_mul t) (by intro i; simp) (by intro i; simp) hq
+    have h0' : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0 := by
+      simpa [e] using (relation_map e.toAlgHom h0).trans (affineHom_x1Shear_x0 t)
+    have h1e : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = MvPolynomial.C t * x0 + x1 := by
+      simpa [e] using (relation_map e.toAlgHom h1).trans (affineHom_x1Shear_x1 t)
+    have h1' : ∑ i : Fin 4, c1' i • mapVec e.toAlgHom u i = x1 := by
+      calc
+        ∑ i : Fin 4, c1' i • mapVec e.toAlgHom u i
+            = 1 • (MvPolynomial.C t * x0 + x1) + (-t) • x0 := by
+                simpa [c1'] using relation_linearCombination_low h1e h0' (1 : ℝ) (-t)
+        _ = x1 := by
+              simp [x0, MvPolynomial.smul_eq_C_mul, add_assoc, add_left_comm]
+    have h2e :
+        ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i =
+          (1 : Poly) + (a + b * t) • (x0 ^ 2 : Poly) + b • (x0 * x1) := by
+      calc
+        ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = e ((1 : Poly) + a • (x0 ^ 2 : Poly) + b • (x0 * x1)) := by
+            simpa using relation_map e.toAlgHom h2
+        _ = affineHom (x1ShearMatrix t) 0 ((1 : Poly) + a • (x0 ^ 2 : Poly) + b • (x0 * x1)) := by
+            rfl
+        _ = affineHom (x1ShearMatrix t) 0 (1 : Poly) +
+              affineHom (x1ShearMatrix t) 0 (a • (x0 ^ 2 : Poly) + b • (x0 * x1)) := by
+            simp [add_assoc]
+        _ = (1 : Poly) + (a + b * t) • (x0 ^ 2 : Poly) + b • (x0 * x1) := by
+            rw [affineHom_x1Shear_x0sq_x0x1_plane]
+            simp [add_assoc]
+    have h3e :
+        ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i =
+          (c + d * t) • (x0 ^ 2 : Poly) + d • (x0 * x1) := by
+      calc
+        ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = e (c • (x0 ^ 2 : Poly) + d • (x0 * x1)) := by
+            simpa using relation_map e.toAlgHom h3
+        _ = affineHom (x1ShearMatrix t) 0 (c • (x0 ^ 2 : Poly) + d • (x0 * x1)) := by
+            rfl
+        _ = (c + d * t) • (x0 ^ 2 : Poly) + d • (x0 * x1) := by
+            rw [affineHom_x1Shear_x0sq_x0x1_plane]
+    have h2'' :
+        ∑ i : Fin 4, c2' i • mapVec e.toAlgHom u i = (1 : Poly) + α • (x0 ^ 2 : Poly) := by
+      have h2lin :
+          ∑ i : Fin 4, c2' i • mapVec e.toAlgHom u i =
+            (∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i) +
+              (-(b / d)) • (∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i) := by
+        simp [c2', Finset.sum_add_distrib, add_smul, Finset.smul_sum, smul_smul]
+      calc
+        ∑ i : Fin 4, c2' i • mapVec e.toAlgHom u i
+            = ((1 : Poly) + (a + b * t) • (x0 ^ 2 : Poly) + b • (x0 * x1)) +
+                (-(b / d)) • ((c + d * t) • (x0 ^ 2 : Poly) + d • (x0 * x1)) := by
+                  rw [h2lin, h2e, h3e]
+        _ = (1 : Poly) +
+              ((a + b * t) + (-(b / d)) * (c + d * t)) • (x0 ^ 2 : Poly) +
+              (b + (-(b / d)) * d) • (x0 * x1) := by
+                calc
+                  ((1 : Poly) + (a + b * t) • (x0 ^ 2 : Poly) + b • (x0 * x1)) +
+                      (-(b / d)) • ((c + d * t) • (x0 ^ 2 : Poly) + d • (x0 * x1))
+                      =
+                      (1 : Poly) + (a + b * t) • (x0 ^ 2 : Poly) +
+                        ((-(b / d)) * (c + d * t)) • (x0 ^ 2 : Poly) +
+                        (b • (x0 * x1) + ((-(b / d)) * d) • (x0 * x1)) := by
+                          simp [smul_add, smul_smul, add_assoc, add_left_comm, add_comm]
+                  _ = (1 : Poly) +
+                        ((a + b * t) + (-(b / d)) * (c + d * t)) • (x0 ^ 2 : Poly) +
+                        (b + (-(b / d)) * d) • (x0 * x1) := by
+                          have hsq :
+                              (a + b * t) • (x0 ^ 2 : Poly) +
+                                  ((-(b / d)) * (c + d * t)) • (x0 ^ 2 : Poly) =
+                                ((a + b * t) + (-(b / d)) * (c + d * t)) • (x0 ^ 2 : Poly) := by
+                            rw [← add_smul]
+                          have hxy :
+                              b • (x0 * x1 : Poly) + ((-(b / d)) * d) • (x0 * x1) =
+                                (b + (-(b / d)) * d) • (x0 * x1 : Poly) := by
+                            rw [← add_smul]
+                          calc
+                            (1 : Poly) + (a + b * t) • (x0 ^ 2 : Poly) +
+                                ((-(b / d)) * (c + d * t)) • (x0 ^ 2 : Poly) +
+                                (b • (x0 * x1) + ((-(b / d)) * d) • (x0 * x1))
+                                =
+                                (1 : Poly) +
+                                  ((a + b * t) • (x0 ^ 2 : Poly) +
+                                    ((-(b / d)) * (c + d * t)) • (x0 ^ 2 : Poly)) +
+                                  (b • (x0 * x1) + ((-(b / d)) * d) • (x0 * x1)) := by
+                                    abel
+                            _ = (1 : Poly) +
+                                  ((a + b * t) + (-(b / d)) * (c + d * t)) • (x0 ^ 2 : Poly) +
+                                  (b • (x0 * x1) + ((-(b / d)) * d) • (x0 * x1)) := by
+                                    rw [hsq]
+                            _ = (1 : Poly) +
+                                  ((a + b * t) + (-(b / d)) * (c + d * t)) • (x0 ^ 2 : Poly) +
+                                  (b + (-(b / d)) * d) • (x0 * x1) := by
+                                    rw [hxy]
+        _ = (1 : Poly) + α • (x0 ^ 2 : Poly) := by
+              have hcoef0 :
+                  (a + b * t) + (-(b / d)) * (c + d * t) = α := by
+                dsimp [α, t]
+                field_simp [hd0]
+                ring
+              have hcoef1 : b + (-(b / d)) * d = 0 := by
+                field_simp [hd0]
+                ring
+              rw [hcoef0, hcoef1]
+              simp
+    have h3'' : ∑ i : Fin 4, c3' i • mapVec e.toAlgHom u i = x0 * x1 := by
+      have h3lin :
+          ∑ i : Fin 4, c3' i • mapVec e.toAlgHom u i =
+            (1 / d) • (∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i) := by
+        simp [c3', Finset.smul_sum, smul_smul]
+      calc
+        ∑ i : Fin 4, c3' i • mapVec e.toAlgHom u i
+            = (1 / d) • ((c + d * t) • (x0 ^ 2 : Poly) + d • (x0 * x1)) := by
+                rw [h3lin, h3e]
+        _ = ((1 / d) * (c + d * t)) • (x0 ^ 2 : Poly) + ((1 / d) * d) • (x0 * x1) := by
+              simp [smul_add, smul_smul]
+        _ = x0 * x1 := by
+              have hcoef0 : (1 / d) * (c + d * t) = 0 := by
+                dsimp [t]
+                field_simp [hd0]
+                ring
+              have hcoef1 : (1 / d) * d = 1 := by
+                field_simp [hd0]
+              rw [hcoef0, hcoef1]
+              simp
+    exact residual_eq_zero_of_equiv_relations_x0_x1_onePlusAX0sq_x0x1
+      (e := e) (heQuad := fun {_} hq => heQuad hq) (heQuadSymm := fun {_} hq => heQuadSymm hq)
+      (heQuartic := fun {_} hq => heQuartic hq)
+      (α := α) hα hB hp hu hsocp h0' h1' h2'' h3''
+
 theorem residual_eq_zero_of_relations_x0_x1_x0x1_x1sqPlane
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}

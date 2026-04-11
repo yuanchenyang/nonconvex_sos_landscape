@@ -2198,6 +2198,20 @@ only \(x_0^4\) missing. This sharpens the remaining classifier target again:
 the repeated-line/common-factor output is now numerically and formally stable
 across its whole nonzero scalar family.
 
+The same low-affine file now also contains the determinant-nondegenerate plane
+wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusAX0sq\_x0x1Plane}.
+So the classifier no longer needs to hand back a specially normalized common-factor
+pair of the exact form \((1+\alpha x_0^2,\ x_0x_1)\). It is enough to produce
+exact relations to
+\[
+  x_0,\quad x_1,\quad 1 + a x_0^2 + b x_0x_1,\quad c x_0^2 + d x_0x_1
+\]
+with \(ad-bc \neq 0\); Lean now performs the internal elimination, including
+the \(d=0\) swap-to-\((1+\beta x_0x_1,\ x_1^2)\) branch and the \(d \neq 0\)
+\(x_1\)-shear branch, before dispatching to the already-formalized scalar
+families.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.
