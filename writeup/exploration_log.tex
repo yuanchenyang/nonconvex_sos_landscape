@@ -1913,6 +1913,30 @@ mixing, an exact coordinate picture \((x_0,x_1,q_2,q_3)\) with nontrivial
 homogeneous plane data is enough to close the SOCP point directly. Again, no
 new Julia experiments were needed for this round.
 
+I then started moving the global classifier itself into Lean, rather than only
+the representative and plane endpoints. The new file
+\texttt{ExactAffineClassification.lean} defines the exact affine relation space
+as the kernel of the homogeneous coefficient map
+\[
+  c \mapsto
+  \bigl(\operatorname{coeff}_{x_0^2},
+    \operatorname{coeff}_{x_0x_1},
+    \operatorname{coeff}_{x_1^2}\bigr)\Bigl(\sum_i c_i u_i\Bigr).
+\]
+The first theorem there,
+\texttt{residual\_eq\_zero\_of\_exactAffineDimThree}, shows that if this kernel
+has dimension \(3\) and the scalar relation map is injective, Lean reconstructs
+exact relations to \(1\), \(x_0\), and \(x_1\) internally and closes by the
+already-formalized \texttt{contains\_aff1} theorem. The second theorem,
+\texttt{residual\_eq\_zero\_of\_exactAffineDimTwo\_contains\_one}, handles the
+constant-containing exact-affine \(\dim=2\) branch in the same language: from a
+single exact constant relation and the dimension-\(2\) kernel hypothesis, Lean
+extracts a second independent exact affine line and closes by the coarse
+mixed-affine theorem \texttt{residual\_eq\_zero\_of\_relations\_const\_affineLine}.
+So the final extraction step is no longer purely external: two global outputs
+are now packaged directly in terms of the kernel of the homogeneous coefficient
+map. No new Julia experiments were needed for this round either.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or

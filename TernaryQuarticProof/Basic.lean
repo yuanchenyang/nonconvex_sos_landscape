@@ -12,6 +12,7 @@ import TernaryQuarticProof.RepresentativeMixedAffinePlane
 import TernaryQuarticProof.RepresentativeSpanThree
 import TernaryQuarticProof.RepresentativeTransport
 import TernaryQuarticProof.RepresentativeSurjective
+import TernaryQuarticProof.ExactAffineClassification
 
 set_option autoImplicit false
 set_option warningAsError true

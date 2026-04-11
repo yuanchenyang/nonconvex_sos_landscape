@@ -1917,6 +1917,30 @@ or rank-one relation package, and then assemble the root declaration in
 and the representative/plane-level no-spurious-SOCP theorems are already in
 place.
 
+The next Lean step finally starts to package that extraction itself. In
+\texttt{ExactAffineClassification.lean} the exact affine relations inside
+\(\operatorname{span}(u_0,u_1,u_2,u_3)\) are encoded as the kernel of the
+homogeneous coefficient map
+\[
+  c \longmapsto
+  \bigl(\operatorname{coeff}_{x_0^2},
+    \operatorname{coeff}_{x_0x_1},
+    \operatorname{coeff}_{x_1^2}\bigr)\Bigl(\sum_i c_i u_i\Bigr).
+\]
+This already closes two classifier outputs directly. The theorem
+\texttt{residual\_eq\_zero\_of\_exactAffineDimThree} shows that if this exact
+affine kernel has dimension \(3\), then Lean reconstructs exact relations to
+\(1\), \(x_0\), and \(x_1\) internally and dispatches to the existing
+\(\dim(W \cap \mathrm{Aff}_1)=3\) certificate. The theorem
+\texttt{residual\_eq\_zero\_of\_exactAffineDimTwo\_contains\_one} does the same
+for the constant-containing \(\dim = 2\) output: from a single exact constant
+relation and the fact that the exact affine kernel has dimension \(2\), Lean
+proves there is a second independent exact affine line and closes through the
+coarse mixed-affine theorem
+\texttt{residual\_eq\_zero\_of\_relations\_const\_affineLine}. So two global
+classification branches are now expressed directly in the kernel-of-homogeneous
+map language rather than by hand-picked representative coordinates.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.
