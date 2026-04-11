@@ -2155,6 +2155,42 @@ remaining independent translated-kernel branch look less like a missing family
 of rank-\(14\) endpoints and more like a classifier problem whose exceptional
 output is specifically the repeated-line/common-factor surface.
 
+I then widened that repeated-line/common-factor endpoint on both canonical
+scalar families in \texttt{RepresentativeLowAffine.lean}. The file now proves
+the nonzero-\(\alpha\) family
+\[
+  (x_0,\ x_1,\ 1 + \alpha x_0^2,\ x_0x_1),\qquad \alpha \neq 0,
+\]
+via the new theorems
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x1\_onePlusAX0sq\_x0x1\_of\_coeff\_m04\_zero},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusAX0sq\_x0x1}, and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlusAX0sq\_x0x1}.
+It also proves the symmetric nonzero-\(\beta\) family
+\[
+  (x_0,\ x_1,\ 1 + \beta x_0x_1,\ x_1^2),\qquad \beta \neq 0,
+\]
+via
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x1\_onePlusBX0x1\_x1sq\_of\_coeff\_m40\_zero},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusBX0x1\_x1sq}, and
+\texttt{residual\_eq\_zero\_of\_relations\_affinePair\_onePlusBX0x1\_x1sq}.
+So the repeated-line branch no longer needs those coefficients normalized to
+\(1\) before entering the theorem surface.
+
+I then recorded the matching scalar sweep in the new script
+\texttt{julia/low\_affine\_common\_factor\_scalars\_2026\_04\_10.jl}. Its
+output is
+\[
+\texttt{low\_affine\_common\_factor\_scalar\_probe}
+= (\texttt{x0sq\_tail} = [\dots],\ \texttt{x1sq\_tail} = [\dots]).
+\]
+For every tested
+\(\alpha,\beta \in \{-3,-2,-1,-\tfrac12,\tfrac12,1,2,3\}\), the family
+\((x_0,\ x_1,\ 1+\alpha x_0^2,\ x_0x_1)\) had rank \(14\) with only
+\((0,4)\) missing, while the family
+\((x_0,\ x_1,\ 1+\beta x_0x_1,\ x_1^2)\) had rank \(14\) with only
+\((4,0)\) missing. So the repeated-line/common-factor output now looks stable
+across its whole nonzero scalar family, both numerically and in Lean.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
