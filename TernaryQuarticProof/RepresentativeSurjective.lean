@@ -574,6 +574,43 @@ theorem residual_eq_zero_of_equiv_relations_const_homQuadBasis_det
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 hc hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
+theorem residual_eq_zero_of_equiv_relations_constX0_homQuadBasis_det
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {α : ℝ}
+    (hα : α ≠ 0)
+    {c0 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = (MvPolynomial.C α : Poly) + x0)
+    {c : Fin 3 → Fin 4 → ℝ} {A : Matrix (Fin 3) (Fin 3) ℝ}
+    (hc :
+      ∀ j : Fin 3,
+        ∑ i : Fin 4, c j i • mapVec e.toAlgHom u i = ∑ k : Fin 3, A j k • homQuadBasis k)
+    (hdet : A.det ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_constX0_homQuadBasis_det
+      (B := B0) (u := mapVec e.toAlgHom u) hα hu0 h0 hc hdet hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
 theorem residual_eq_zero_of_socp_of_eq_mix_mapVec_const_homQuadBasis_det
     (e : Poly ≃ₐ[ℝ] Poly)
     (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))

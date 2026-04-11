@@ -2350,15 +2350,41 @@ that in Lean:
 rank-one layer now has a third endpoint beside the pure constant and pure
 linear cases.
 
+That did not actually collapse the whole remaining \(\dim=1\) branch. The new
+probe \texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl} tests the three
+normalized tailed families
+\[
+  (x_0,\ x_1+\lambda x_0x_1,\ x_0^2,\ x_1^2),\qquad
+  (x_0,\ x_1+\lambda x_0x_1,\ x_0^2,\ x_0x_1),\qquad
+  (x_0,\ x_1+\lambda x_0^2,\ x_0^2,\ x_1^2),
+\]
+over \(\lambda \in \{-3,-2,-1,-\tfrac12,\tfrac12,1,2,3\}\). The recorded
+output is
+\[
+  \texttt{affine\_dim\_one\_tailed\_probe}
+  = (\texttt{cross\_tail\_ranks}=[14],\ 
+     \texttt{common\_factor\_tail\_ranks}=[13],\
+     \texttt{x0sq\_tail\_ranks}=[14],\dots),
+\]
+with stable missing sets
+\[
+  \texttt{cross\_tail\_missing}=[[(0,0)]],\qquad
+  \texttt{common\_factor\_tail\_missing}=[[(0,0),(0,4)]],\qquad
+  \texttt{x0sq\_tail\_missing}=[[(0,0)]].
+\]
+So the surviving \(\dim=1\) work is not just the pure affine-rank-one image:
+there are stable ``one exact affine line plus one tailed affine direction''
+models that still look like genuine codimension-one or codimension-two image
+branches.
+
 \section*{Open Subgoals}
 \begin{itemize}
-\item Extract from a general admissible factor the remaining affine- or
-linear-basis data needed by the low-affine theorems. The constant-containing
-\(\dim=2\) mixed-affine branch no longer needs external quadratic-pair
-extraction, and the exact-affine \(\dim=2\) low-affine branch is now closed.
-What remains is the upstream classification step that identifies the remaining
-rank-one affine-image branch and supplies the appropriate one-dimensional image
-data for the already-formalized rank-one endpoint theorems.
+\item Extract from a general admissible factor the remaining exact-affine
+\(\dim=1\) data. The constant-containing \(\dim=2\) mixed-affine branch no
+longer needs external quadratic-pair extraction, and the exact-affine
+\(\dim=2\) low-affine branch is now closed. What remains is the upstream
+classification step that either excludes or normalizes the newly observed
+tailed \(\dim=1\) families, not merely the pure affine-rank-one image.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

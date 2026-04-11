@@ -1891,6 +1891,24 @@ random homogeneous bases at \(\alpha=1\) also gave rank \(15\). Only the
 \(\alpha=0\) limit returns to the old linear rank-\(13\) pattern, missing the
 constant and \(x_1\) classes.
 
+However, the remaining \(\dim=1\) exact-affine branch is now visibly broader
+than the pure affine-rank-one surface. The new file
+\texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl} probes three
+normalized ``one exact affine line plus one tailed affine direction''
+families:
+\[
+  (x_0,\ x_1+\lambda x_0x_1,\ x_0^2,\ x_1^2),\qquad
+  (x_0,\ x_1+\lambda x_0x_1,\ x_0^2,\ x_0x_1),\qquad
+  (x_0,\ x_1+\lambda x_0^2,\ x_0^2,\ x_1^2).
+\]
+For every tested nonzero \(\lambda \in
+\{-3,-2,-1,-\tfrac12,\tfrac12,1,2,3\}\), the first and third families have
+image rank \(14\) with only the constant monomial missing, while the
+common-factor family has image rank \(13\) with only \((0,0)\) and
+\((0,4)\) missing. So the remaining classifier cannot simply identify the
+\(\dim=1\) branch with affine rank one unless one also proves an exclusion
+statement for these tailed models.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data for the branches not yet reduced to a one-line interface:
@@ -2362,9 +2380,11 @@ exact affine kernel has dimension \(2\) and contains no exact constant
 relation, Lean reconstructs an exact affine pair, analyzes the translated
 zero-linear-tail kernel, and dispatches internally to either the homogeneous
 low-affine branch or the constant-perturbed low-affine branch. The remaining
-global work is no longer in the exact-affine \(\dim=2\) classifier. It is the
-affine-rank-one extraction/classification layer and then the final assembly in
-\texttt{TernaryQuarticProof.lean}.
+global work is no longer in the exact-affine \(\dim=2\) classifier. It is now
+the exact-affine \(\dim=1\) classifier: one must either exclude or directly
+formalize the tailed families with one exact affine line and a second affine
+direction carrying quadratic tail, and then assemble the resulting endpoint
+theorems in \texttt{TernaryQuarticProof.lean}.
 
 \section*{Planned File Map}
 \begin{itemize}
