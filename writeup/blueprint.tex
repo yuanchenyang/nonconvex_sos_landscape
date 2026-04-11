@@ -1753,11 +1753,29 @@ quadratic relation vectors. From there Lean performs the determinant split,
 tail swap, extracted-line normalization, homogeneous-plane fallback, and
 dependent constant-relation closure internally.
 
+The next Lean round packages the affine normalization itself. The file
+\texttt{MixedAffineNormalization.lean} now contains the explicit affine
+equivalences \texttt{affineLineEquiv} and \texttt{linearPairEquiv}, sending an
+arbitrary nonconstant affine line to \(x_0\) and an arbitrary independent pair
+of linear forms to \((x_0,x_1)\). On top of that,
+\texttt{RepresentativeSpanThree.lean} now proves the equivariant relation-level
+contains-\(\mathrm{Aff}_1\) theorem
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_contains\_aff1} and the
+direct wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_const\_affinePair\_det}. Likewise,
+\texttt{RepresentativeMixedAffinePlane.lean} now proves
+\texttt{residual\_eq\_zero\_of\_relations\_const\_affineLine\_pair\_coeff\_m00\_m10\_zero\_gram}.
+So the remaining classification step no longer has to pre-normalize these
+branches to exact relations with \(x_0\) or \((x_0,x_1)\); it only has to
+extract a constant together with an affine basis and the quadratic kernel
+data.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data, especially the extraction of exact relation data and Gram
-nondegeneracy for the constant-containing mixed-affine $\dim=2$ branch, and
-then assemble the root declaration in
+nondegeneracy for the constant-containing mixed-affine $\dim=2$ branch and the
+matching affine-basis data for the low-affine branches, and then assemble the
+root declaration in
 \texttt{TernaryQuarticProof.lean}. The admissible image-plus-cone certificate
 and the representative/plane-level no-spurious-SOCP theorems are already in
 place.

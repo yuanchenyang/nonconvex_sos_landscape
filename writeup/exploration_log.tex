@@ -1693,6 +1693,26 @@ determinant split, tail swap, extracted-line normalization, homogeneous-plane
 fallback, and dependent constant-relation closure internally. No new Julia
 experiments were needed for these rounds.
 
+The next round stabilized the affine normalization layer that the final
+classification will need anyway. In
+\texttt{MixedAffineNormalization.lean} I added the explicit affine
+equivalences \texttt{affineLineEquiv} and \texttt{linearPairEquiv}, together
+with the exact image lemmas showing that they send a chosen affine line to
+\(x_0\) and an independent linear pair to \((x_0,x_1)\). I then used those in
+two theorem-level wrappers:
+\begin{itemize}
+\item \texttt{RepresentativeSpanThree.lean} now proves
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_contains\_aff1} and the
+concrete affine-basis wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_const\_affinePair\_det}.
+\item \texttt{RepresentativeMixedAffinePlane.lean} now proves
+\texttt{residual\_eq\_zero\_of\_relations\_const\_affineLine\_pair\_coeff\_m00\_m10\_zero\_gram}.
+\end{itemize}
+So the remaining classification no longer has to hand back relations already
+normalized to \(x_0\) or \((x_0,x_1)\) for those branches. It can work with an
+arbitrary affine basis and let Lean perform the explicit affine change of
+variables internally. No new Julia experiments were needed for this round.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
@@ -1713,8 +1733,9 @@ factor into that relation package.
 \item Extract from a general admissible factor the relation vectors and
 coefficient data needed to feed that classification into the existing
 transport lemmas; for the remaining mixed-affine and low-affine branches this
-now only needs zero-tail coefficient normalization plus determinant or Gram
-data inside the canonical homogeneous plane or triple type.
+now only needs affine-basis extraction plus zero-tail coefficient
+normalization and determinant or Gram data inside the canonical homogeneous
+plane or triple type.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}
