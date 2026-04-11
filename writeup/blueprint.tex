@@ -2016,6 +2016,17 @@ rank \(15\), while the constant-perturbed common-factor slice remains rank
 generic low-affine obstruction with constants; it is a surjective generic
 deformation plus a special repeated-line/common-factor subcase.
 
+The first formal theorem in that direction is now in place. The file
+\texttt{TernaryQuarticProof/RepresentativeLowAffine.lean} proves
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x1\_onePlusX0sq\_x1sq} and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusX0sq\_x1sq}. So the
+constant-perturbed coprime slice
+\[
+  (x_0,\ x_1,\ 1 + x_0^2,\ x_1^2)
+\]
+is no longer only a numerical observation: Lean now proves full quartic
+surjectivity for that exact-relation surface.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

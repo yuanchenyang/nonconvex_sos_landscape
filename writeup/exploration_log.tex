@@ -2015,6 +2015,14 @@ constant-perturbed common-factor slice remains rank \(14\), missing only
 branch now looks generically surjective, with only the repeated-line/common-factor
 subcase still behaving like a genuine low-rank obstruction.
 
+I then converted the easiest of those generic-looking slices into Lean. In
+\texttt{TernaryQuarticProof/RepresentativeLowAffine.lean} I added
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x1\_onePlusX0sq\_x1sq} and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1\_onePlusX0sq\_x1sq}. So the
+coprime constant-perturbed model \((x_0, x_1, 1 + x_0^2, x_1^2)\) is now
+formally proved quartic-surjective at the exact-relation level, matching the
+rank-\(15\) numerical probe.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining affine- or
