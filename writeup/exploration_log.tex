@@ -2420,13 +2420,23 @@ exact relations to \(x_0\), \(x_0x_1\), and \(x_1^2\). The missing constant is
 handled by the admissible kernel direction built from the exact \(x_0\) and
 \(x_0x_1\) relations.
 
-So the surviving \(\dim=1\) work is now sharper again: the cross slice and the
-\(x_0^2\)-tail/common-factor slice are both closed in Lean, and the visibly
-remaining genuine tailed \(\dim=1\) chart beyond the pure affine-rank-one
-surface is the repeated-line slice
+I then formalized the repeated-line slice too. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX1sq\_x0sq\_x0x1}
+proves zero residual from exact relations to
 \[
-  (x_0,\ x_1+\lambda x_1^2,\ x_0^2,\ x_0x_1).
+  (x_0,\ x_1 + a x_1^2,\ x_0^2,\ x_0x_1),\qquad a \ne 0.
 \]
+Here the image proof splits quartics into a pure-\(x_1\) piece, handled by the
+divisibility identity through \(x_1 + a x_1^2\), and an \(x_0\)-divisible
+remainder, handled directly from the exact \(x_0\), \(x_0^2\), and \(x_0x_1\)
+relations. The kernel part uses a two-parameter \(x_0/x_0^2\)-based admissible
+family, matching both the missing constant coefficient and the extracted
+\texttt{x1sqTailFunctional} square-by-square in the SOS decomposition.
+
+So the surviving \(\dim=1\) work is now purely classifier-level: all three
+visible normalized tailed endpoints are closed in Lean, and the remaining gap
+is to extract one of those solved surfaces, or the pure affine-rank-one
+surface, from a general exact-affine-\(\dim=1\) factor.
 
 \section*{Open Subgoals}
 \begin{itemize}
