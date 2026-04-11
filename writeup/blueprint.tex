@@ -1770,6 +1770,24 @@ branches to exact relations with \(x_0\) or \((x_0,x_1)\); it only has to
 extract a constant together with an affine basis and the quadratic kernel
 data.
 
+The next Lean round collapses the constant-containing \(\dim=2\) branch even
+further. The same file now proves
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0} and
+\texttt{residual\_eq\_zero\_of\_relations\_const\_affineLine}. The proof no
+longer asks the classification step to hand back any quadratic pair at all.
+Once relations to \(1\) and to one nonconstant affine line are available,
+Lean forms the normalized coefficient map
+\[
+  c \longmapsto
+  \bigl(\operatorname{coeff}_1,\operatorname{coeff}_{x_0}\bigr)
+  \bigl(\sum_i c_i u_i\bigr),
+\]
+extracts a basis of its kernel internally, and feeds the resulting quadratic
+pair into the already-formalized coarse mixed-affine relation theorem. So the
+mixed-affine constant-containing \(\dim=2\) branch is no longer an external
+quadratic-normalization problem; at theorem level it has reduced to the single
+task of extracting \(1\) together with one nonconstant affine line.
+
 The same normalization pattern is now available on the low-affine side as
 well. In \texttt{RepresentativeLowAffine.lean} the new theorems
 \texttt{residual\_eq\_zero\_of\_relations\_linearForm\_homQuadBasis\_det},
@@ -1784,9 +1802,9 @@ corresponding linear basis and transformed homogeneous quadratic data.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
-classification data, especially the extraction of exact relation data and Gram
-nondegeneracy for the constant-containing mixed-affine $\dim=2$ branch and the
-matching affine-basis data for the low-affine branches, and then assemble the
+classification data for the branches not yet reduced to a one-line interface:
+most notably the pure-constant \(\dim=1\) branch and the matching affine- or
+linear-basis extraction for the low-affine branches, and then assemble the
 root declaration in
 \texttt{TernaryQuarticProof.lean}. The admissible image-plus-cone certificate
 and the representative/plane-level no-spurious-SOCP theorems are already in

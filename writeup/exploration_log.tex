@@ -1713,6 +1713,27 @@ normalized to \(x_0\) or \((x_0,x_1)\) for those branches. It can work with an
 arbitrary affine basis and let Lean perform the explicit affine change of
 variables internally. No new Julia experiments were needed for this round.
 
+The next Lean round removed the last external quadratic-normalization burden
+from the constant-containing \(\dim=2\) branch itself. In
+\texttt{RepresentativeMixedAffinePlane.lean} I added
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0} and
+\texttt{residual\_eq\_zero\_of\_relations\_const\_affineLine}. Instead of
+asking the classification step to return a quadratic pair
+\((q_2,q_3)\) with zero constant/\(x_0\) coefficients and nonzero Gram
+determinant, Lean now constructs that pair internally: after normalizing the
+chosen affine line to \(x_0\), it forms the coefficient map
+\[
+  c \longmapsto
+  \bigl(\operatorname{coeff}_1,\operatorname{coeff}_{x_0}\bigr)
+  \bigl(\sum_i c_i u_i\bigr),
+\]
+takes a basis of its kernel inside \(\mathbf{R}^4\), and applies the existing
+coarse mixed-affine relation theorem to the resulting quadratics. So the
+constant-containing mixed-affine \(\dim=2\) branch is no longer waiting on any
+external \(q_2,q_3\) extraction at all: theorem-level input has shrunk to
+``there is a constant and one nonconstant affine line in the factor span.''
+No new Julia experiments were needed for this round.
+
 I then mirrored that same normalization surface on the low-affine side. In
 \texttt{RepresentativeLowAffine.lean} I added
 \texttt{residual\_eq\_zero\_of\_relations\_linearForm\_homQuadBasis\_det} for
@@ -1729,27 +1750,16 @@ Julia experiments were needed for this round.
 
 \section*{Open Subgoals}
 \begin{itemize}
-\item Finish the constant-containing $\dim = 2$ classification on the dual
-coefficient side: extract a nontrivial homogeneous quadratic plane together
-\emph{or, more likely generically,} extract one homogeneous quadratic line plus
-one tailed quadratic together with the linear relation \(x_1\)-direction data.
-The canonical annihilator coefficients are now computed internally from the
-homogeneous plane when available, so this step no longer has to hand-feed
-\((a,b,c)\) into the mixed-affine wrappers. The determinant-nondegenerate
-sub-branch is now sharper than that wording suggests: there the common-
-translation lemma and its integration are done, and the usable theorem no
-longer needs an orthonormalized factor basis. The determinant-zero mixed-
-affine side is sharper too: it no longer needs extracted-line subtype data at
-the theorem surface, only exact relation data plus nonzero Gram determinant for
-the two tailed relation vectors. So the remaining work there is now genuinely
-the upstream extraction/classification theorem from a general admissible rank-4
-factor into that relation package.
-\item Extract from a general admissible factor the relation vectors and
-coefficient data needed to feed that classification into the existing
-transport lemmas; for the remaining mixed-affine and low-affine branches this
-now only needs affine-basis extraction plus zero-tail coefficient
-normalization and determinant or Gram data inside the canonical homogeneous
-plane or triple type.
+\item Finish the pure-constant \(\dim = 1\) branch at the same abstraction
+level: from one relation to \(1\), extract the homogeneous quadratic kernel
+data needed to feed the existing
+\texttt{const\_homQuadBasis\_det} theorem, or close the dependent homogeneous
+case directly by a constant relation.
+\item Extract from a general admissible factor the remaining affine- or
+linear-basis data needed by the low-affine theorems. The constant-containing
+\(\dim=2\) mixed-affine branch no longer needs external quadratic-pair
+extraction; it is enough there to produce \(1\) together with one nonconstant
+affine line.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

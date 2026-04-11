@@ -128,6 +128,51 @@ theorem relation_mixedAffineTailHomLine
     using relation_linearCombination h2 h3
       (MvPolynomial.coeff m01 q3) (-MvPolynomial.coeff m01 q2)
 
+/-- The polynomial obtained from a coefficient-space relation vector. -/
+private def relationPoly (u : RankFourVec) (c : Fin 4 → ℝ) : Poly :=
+  ∑ i : Fin 4, c i • u i
+
+private theorem relationPoly_add
+    (u : RankFourVec) (c d : Fin 4 → ℝ) :
+    relationPoly u (c + d) = relationPoly u c + relationPoly u d := by
+  simp [relationPoly, Fin.sum_univ_four, add_smul, add_assoc, add_left_comm]
+
+private theorem relationPoly_smul
+    (u : RankFourVec) (a : ℝ) (c : Fin 4 → ℝ) :
+    relationPoly u (a • c) = a • relationPoly u c := by
+  simp [relationPoly, Fin.sum_univ_four, smul_smul]
+
+private theorem isQuadratic_relationPoly
+    {u : RankFourVec} (hu : IsAdmissiblePoint u) (c : Fin 4 → ℝ) :
+    IsQuadratic (relationPoly u c) := by
+  have h0 : IsQuadratic (c 0 • u 0) := isQuadratic_smul_local (c 0) (hu 0)
+  have h1 : IsQuadratic (c 1 • u 1) := isQuadratic_smul_local (c 1) (hu 1)
+  have h2 : IsQuadratic (c 2 • u 2) := isQuadratic_smul_local (c 2) (hu 2)
+  have h3 : IsQuadratic (c 3 • u 3) := isQuadratic_smul_local (c 3) (hu 3)
+  have h01 : IsQuadratic (c 0 • u 0 + c 1 • u 1) :=
+    by
+      simpa using isQuadratic_linearCombination_local h0 h1 1 1
+  have h23 : IsQuadratic (c 2 • u 2 + c 3 • u 3) :=
+    by
+      simpa using isQuadratic_linearCombination_local h2 h3 1 1
+  simpa [relationPoly, Fin.sum_univ_four, add_assoc, add_left_comm, add_comm] using
+    isQuadratic_linearCombination_local h01 h23 1 1
+
+/-- The pair of normalized constant and `x₀` coefficients of a relation. -/
+private def constX0CoeffMap (u : RankFourVec) :
+    (Fin 4 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ) where
+  toFun c := ![
+    MvPolynomial.coeff m00 (relationPoly u c),
+    MvPolynomial.coeff m10 (relationPoly u c)]
+  map_add' c d := by
+    ext j
+    fin_cases j <;>
+      simp [relationPoly_add, MvPolynomial.coeff_add]
+  map_smul' a c := by
+    ext j
+    fin_cases j <;>
+      simp [relationPoly_smul, MvPolynomial.coeff_smul]
+
 private theorem affineX1_eq_of_quadratic_coeffs_zero
     {q : Poly}
     (hq : IsQuadratic q)
@@ -12787,6 +12832,172 @@ theorem residual_eq_zero_of_relations_const_affineLine_pair_coeff_m00_m10_zero_g
     (by simpa [e] using hq2_00) (by simpa [e] using hq2_10)
     (by simpa [e] using hq3_00) (by simpa [e] using hq3_10)
     hgram
+
+theorem residual_eq_zero_of_relations_const_x0
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    (h1 : ∑ i : Fin 4, c1 i • u i = x0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let L : (Fin 4 → ℝ) →ₗ[ℝ] (Fin 2 → ℝ) := constX0CoeffMap u
+  have hsurj : Function.Surjective L := by
+    intro y
+    refine ⟨y 0 • c0 + y 1 • c1, ?_⟩
+    ext j
+    fin_cases j
+    · have hrel :
+          relationPoly u (y 0 • c0 + y 1 • c1) =
+            y 0 • (1 : Poly) + y 1 • x0 := by
+        simpa [relationPoly, Pi.add_apply, Pi.smul_apply, Fin.sum_univ_four,
+          smul_smul, mul_comm, mul_left_comm, mul_assoc]
+          using relation_linearCombination h0 h1 (y 0) (y 1)
+      have hm00 := congrArg (MvPolynomial.coeff m00) hrel
+      simpa [L, constX0CoeffMap, x0, m00, m10, MvPolynomial.coeff_add,
+        MvPolynomial.coeff_smul] using hm00
+    · have hrel :
+          relationPoly u (y 0 • c0 + y 1 • c1) =
+            y 0 • (1 : Poly) + y 1 • x0 := by
+        simpa [relationPoly, Pi.add_apply, Pi.smul_apply, Fin.sum_univ_four,
+          smul_smul, mul_comm, mul_left_comm, mul_assoc]
+          using relation_linearCombination h0 h1 (y 0) (y 1)
+      have hm10 := congrArg (MvPolynomial.coeff m10) hrel
+      simpa [L, constX0CoeffMap, x0, m00, m10, MvPolynomial.coeff_add,
+        MvPolynomial.coeff_smul, MvPolynomial.coeff_one] using hm10
+  have hrangeTop : LinearMap.range L = ⊤ := LinearMap.range_eq_top.2 hsurj
+  have hrange : Module.finrank ℝ (LinearMap.range L) = 2 := by
+    rw [hrangeTop, finrank_top]
+    calc
+      Module.finrank ℝ (Fin 2 → ℝ) = Fintype.card (Fin 2) :=
+        Module.finrank_fintype_fun_eq_card (R := ℝ) (η := Fin 2)
+      _ = 2 := by decide
+  have hker : Module.finrank ℝ (LinearMap.ker L) = 2 := by
+    have hsum := LinearMap.finrank_range_add_finrank_ker L
+    have hdim : Module.finrank ℝ (Fin 4 → ℝ) = 4 := by
+      calc
+        Module.finrank ℝ (Fin 4 → ℝ) = Fintype.card (Fin 4) :=
+          Module.finrank_fintype_fun_eq_card (R := ℝ) (η := Fin 4)
+        _ = 4 := by decide
+    omega
+  let b : Module.Basis (Fin 2) ℝ (LinearMap.ker L) :=
+    Module.finBasisOfFinrankEq ℝ (LinearMap.ker L) hker
+  let c2 : Fin 4 → ℝ := b 0
+  let c3 : Fin 4 → ℝ := b 1
+  let q2 : Poly := relationPoly u c2
+  let q3 : Poly := relationPoly u c3
+  have h2 : ∑ i : Fin 4, c2 i • u i = q2 := by
+    rfl
+  have h3 : ∑ i : Fin 4, c3 i • u i = q3 := by
+    rfl
+  have hq2 : IsQuadratic q2 := by
+    dsimp [q2]
+    exact isQuadratic_relationPoly hu c2
+  have hq3 : IsQuadratic q3 := by
+    dsimp [q3]
+    exact isQuadratic_relationPoly hu c3
+  have hc2ker : L c2 = 0 := by
+    exact (b 0).2
+  have hc3ker : L c3 = 0 := by
+    exact (b 1).2
+  have hq2_00 : MvPolynomial.coeff m00 q2 = 0 := by
+    have h0coord := congrArg (fun z : Fin 2 → ℝ => z 0) hc2ker
+    change MvPolynomial.coeff m00 q2 = 0
+    simpa [L, constX0CoeffMap, q2] using h0coord
+  have hq2_10 : MvPolynomial.coeff m10 q2 = 0 := by
+    have h1coord := congrArg (fun z : Fin 2 → ℝ => z 1) hc2ker
+    change MvPolynomial.coeff m10 q2 = 0
+    simpa [L, constX0CoeffMap, q2] using h1coord
+  have hq3_00 : MvPolynomial.coeff m00 q3 = 0 := by
+    have h0coord := congrArg (fun z : Fin 2 → ℝ => z 0) hc3ker
+    change MvPolynomial.coeff m00 q3 = 0
+    simpa [L, constX0CoeffMap, q3] using h0coord
+  have hq3_10 : MvPolynomial.coeff m10 q3 = 0 := by
+    have h1coord := congrArg (fun z : Fin 2 → ℝ => z 1) hc3ker
+    change MvPolynomial.coeff m10 q3 = 0
+    simpa [L, constX0CoeffMap, q3] using h1coord
+  have hgram :
+      (∑ i : Fin 4, (c2 i) ^ 2) * (∑ i : Fin 4, (c3 i) ^ 2) -
+        (∑ i : Fin 4, c2 i * c3 i) ^ 2 ≠ 0 := by
+    intro hgram0
+    rcases gram_det_zero_imp_linearRelation c2 c3 hgram0 with ⟨a, d, had, hlin⟩
+    have hzero : a • (b 0) + d • (b 1) = 0 := by
+      ext i
+      exact hlin i
+    have ha0 : a = 0 := by
+      have hre := congrArg (fun z => (b.repr z) 0) hzero
+      simpa using hre
+    have hd0 : d = 0 := by
+      have hre := congrArg (fun z => (b.repr z) 1) hzero
+      simpa [ha0] using hre
+    rcases had with ha | hd
+    · exact ha ha0
+    · exact hd hd0
+  exact residual_eq_zero_of_relations_const_x0_pair_coeff_m00_m10_zero_gram
+    (B := B) (u := u) hu
+    h0 h1 h2 h3 hq2 hq3 hq2_00 hq2_10 hq3_00 hq3_10 hgram hp hsocp
+
+theorem residual_eq_zero_of_relations_const_affineLine
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = (1 : Poly))
+    {r a b : ℝ}
+    (h1 : ∑ i : Fin 4, c1 i • u i = affineLinePoly r a b)
+    (hs : a ^ 2 + b ^ 2 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let e : Poly ≃ₐ[ℝ] Poly := affineLineEquiv r a b hs
+  have heQuad : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv
+      (affineLineMatrix a b) (affineLineInvMatrix a b)
+      (affineLineVec r a b) (affineLineInvVec r)
+      (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+      (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs) hq
+  have heQuadSymm : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e.symm q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv_symm
+      (affineLineMatrix a b) (affineLineInvMatrix a b)
+      (affineLineVec r a b) (affineLineInvVec r)
+      (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+      (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs) hq
+  have heQuartic : ∀ {q : Poly}, IsQuartic q → IsQuartic (e q) := by
+    intro q hq
+    exact isQuartic_affineEquiv
+      (affineLineMatrix a b) (affineLineInvMatrix a b)
+      (affineLineVec r a b) (affineLineInvVec r)
+      (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+      (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs) hq
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  have h0' : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = (1 : Poly) := by
+    simpa [e] using relation_map e.toAlgHom h0
+  have h1' : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x0 := by
+    simpa [e, affineLineEquiv] using
+      (relation_map e.toAlgHom h1).trans (affineHom_affineLinePoly r a b hs)
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_const_x0
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0' h1' hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
 theorem residual_eq_zero_of_const_x0_mixedAffineTailHomLine_origDetZero_cases
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
