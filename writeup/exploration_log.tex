@@ -1637,6 +1637,21 @@ that packaged theorem instead of carrying a long inlined proof of the
 this round; the change is purely formal consolidation of the homogeneous
 mixed-affine branch.
 
+The next Lean round lifted two more pieces of the pure-\(x_0^2\)
+determinant-zero branch to relation level. I added
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x0sqTail\_m02\_nonzero}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_const\_x0\_x0sqTail\_m11\_nonzero}.
+Both are direct replays of the earlier exact-coordinate proofs, but they now
+start from exact relation data rather than from coordinates already equal to
+\((1,x_0,q_2,q_3)\). In each case the translation and affine-tail correction
+produce a nontrivial homogeneous quadratic plane, and the new
+\texttt{\dots\_plane\_nontrivial\_noGram} wrapper closes that plane without any
+separate Gram hypothesis. No new Julia experiments were needed for this round.
+The pure-\(x_0^2\) determinant-zero branch is therefore now missing only its
+residual affine/dependent relation-level subcase, namely the case where the
+corrected tail has both \(x_0x_1\)- and \(x_1^2\)-coefficients zero.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Finish the constant-containing $\dim = 2$ classification on the dual
