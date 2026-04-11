@@ -1970,6 +1970,20 @@ normalized tailed endpoint. What remains is the upstream extraction step that
 routes a general exact-affine \(\dim=1\) factor into one of the already solved
 surfaces.
 
+The transport surface for those three tailed endpoints is now aligned with the
+rest of the proof as well. In
+\texttt{RepresentativeAffineRankOne.lean} the new theorems
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1PlusAX0x1\_x0sq\_x1sq},
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1PlusAX0sq\_x0x1\_x1sq},
+and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1PlusAX1sq\_x0sq\_x0x1}
+show that after any polynomial algebra equivalence preserving quadratic and
+quartic degree, these normalized affine-dim-one coordinate pictures can be
+pulled back directly to the original SOCP point. So the remaining classifier no
+longer has to package separate transported relation vectors for the tailed
+\(\dim=1\) branches; exact normalized coordinates after affine normalization are
+enough.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data for the branches not yet reduced to a one-line interface:

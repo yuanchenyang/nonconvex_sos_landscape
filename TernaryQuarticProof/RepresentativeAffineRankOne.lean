@@ -13,6 +13,16 @@ namespace TernaryQuartic
 
 open scoped BigOperators
 
+/-- Map an exact scalar relation through an algebra equivalence coordinatewise on
+the factor tuple. -/
+private theorem relation_map
+    (φ : Poly →ₐ[ℝ] Poly)
+    {u : RankFourVec} {c : Fin 4 → ℝ} {r : Poly}
+    (hc : ∑ i : Fin 4, c i • u i = r) :
+    ∑ i : Fin 4, c i • mapVec φ u i = φ r := by
+  have hmap := congrArg φ hc
+  simpa [mapVec, Fin.sum_univ_four] using hmap
+
 /-- The polynomial obtained from a scalar relation vector. -/
 private def relationPoly (u : RankFourVec) (c : Fin 4 → ℝ) : Poly :=
   ∑ i : Fin 4, c i • u i
@@ -789,6 +799,43 @@ theorem residual_eq_zero_of_relations_x0_x1PlusAX0x1_x0sq_x1sq
     exact hwker
   · simp [w, sub_eq_add_neg]
 
+theorem residual_eq_zero_of_equiv_relations_x0_x1PlusAX0x1_x0sq_x1sq
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    {a : ℝ}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x1 + a • (x0 * x1 : Poly))
+    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = x0 ^ 2)
+    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = x1 ^ 2) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := fun {_} hpq => heQuad hpq)
+      (heQuartic := fun {_} hpq => heQuartic hpq)
+      hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_x1PlusAX0x1_x0sq_x1sq
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
 private def affineDimOneX0sqTailKer
     (c0 c2 : Fin 4 → ℝ) (t : ℝ) : RankFourVec :=
   relationDirection (-c0) (t • x1) + relationDirection c2 (t • (1 : Poly))
@@ -1086,6 +1133,44 @@ theorem residual_eq_zero_of_relations_x0_x1PlusAX0sq_x0x1_x1sq
     subst hw'
     exact hwker
   · simp [w, sub_eq_add_neg]
+
+theorem residual_eq_zero_of_equiv_relations_x0_x1PlusAX0sq_x0x1_x1sq
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    {a : ℝ}
+    (ha : a ≠ 0)
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x1 + a • (x0 ^ 2 : Poly))
+    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = x0 * x1)
+    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = x1 ^ 2) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := fun {_} hpq => heQuad hpq)
+      (heQuartic := fun {_} hpq => heQuartic hpq)
+      hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_x1PlusAX0sq_x0x1_x1sq
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 ha h0 h1 h2 h3 hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
 private theorem coeff_m02_sq_of_quadratic
     (q : Poly) (hq : IsQuadratic q) :
@@ -1959,3 +2044,41 @@ theorem residual_eq_zero_of_relations_x0_x1PlusAX1sq_x0sq_x0x1
     (B := B) (u := u) (uImg := u) hu hsocp
     (imageOrthogonalResidual_self (B := B) hsocp.1)
     himgPart hker hdecomp
+
+theorem residual_eq_zero_of_equiv_relations_x0_x1PlusAX1sq_x0sq_x0x1
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    {a : ℝ}
+    (ha : a ≠ 0)
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x1 + a • (x1 ^ 2 : Poly))
+    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = x0 ^ 2)
+    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = x0 * x1) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := fun {_} hpq => heQuad hpq)
+      (heQuartic := fun {_} hpq => heQuartic hpq)
+      hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_x1PlusAX1sq_x0sq_x0x1
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 ha h0 h1 h2 h3 hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0

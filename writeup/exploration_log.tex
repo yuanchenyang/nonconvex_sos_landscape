@@ -2438,6 +2438,18 @@ visible normalized tailed endpoints are closed in Lean, and the remaining gap
 is to extract one of those solved surfaces, or the pure affine-rank-one
 surface, from a general exact-affine-\(\dim=1\) factor.
 
+I then added the matching affine-equivalence transport wrappers in
+\texttt{RepresentativeAffineRankOne.lean} for all three normalized tailed
+\(\dim=1\) endpoints:
+\texttt{...equiv\_relations\_x0\_x1PlusAX0x1\_x0sq\_x1sq},
+\texttt{...equiv\_relations\_x0\_x1PlusAX0sq\_x0x1\_x1sq}, and
+\texttt{...equiv\_relations\_x0\_x1PlusAX1sq\_x0sq\_x0x1}. No new numerical
+claim was needed for that round. The effect is only on the theorem surface:
+the remaining classifier no longer has to carry raw transported relation data
+for these three tailed branches. It can instead target exact normalized
+coordinates after affine normalization, in the same style as the mixed-affine
+and low-affine transport layers.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
