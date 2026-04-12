@@ -2596,6 +2596,27 @@ into the already solved endpoint or generic-surjective surfaces, with the
 diagonal charts now reduced to concrete Lean interfaces rather than
 unclassified numerical branches.
 
+The new probe \texttt{julia/affine\_dim\_one\_mixed\_diagonal\_shear\_2026\_04\_12.jl}
+checks the most obvious reduction attempt on that remaining mixed branch. If
+one starts from the normalized mixed diagonal families
+\[
+1 + b x_1 + u x_0x_1 + v(x_0^2-x_1^2)
+\quad\text{or}\quad
+1 + b x_1 + u x_0x_1 + v(x_0^2+x_1^2)
+\]
+and applies an extra \(x_1\)-shear chosen to kill the \(x_0x_1\)-coefficient
+of the tailed relation, the accompanying homogeneous plane still does not fall
+into the already solved cross or common-factor charts. In every tested sample,
+the transformed \(\operatorname{span}(x_0x_1,\ x_0^2-x_1^2)\) plane keeps
+\(\texttt{lowHomQuadPlaneA}=-1\) and a strictly negative diagonal parameter,
+while the transformed \(\operatorname{span}(x_0x_1,\ x_0^2+x_1^2)\) plane keeps
+\(\texttt{lowHomQuadPlaneA}=1\) but still stays diagonal, with both diagonal
+signs appearing across the tested shears. So
+the remaining mixed \(1+b x_1\) obstruction is not just a missed
+cross/common-factor reduction; it is genuinely a diagonal affine-rank-one
+surface that still needs either a direct theorem or a higher-level classifier
+reduction.
+
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
 classification data for the branches not yet reduced to a one-line interface:

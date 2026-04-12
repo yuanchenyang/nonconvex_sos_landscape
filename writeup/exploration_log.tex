@@ -3144,6 +3144,28 @@ is no longer asymmetry between the constant and pure-\(x_1\) branches; it is
 the classifier step that must produce the needed \(q_1\) diagonal relation,
 together with the still-open mixed \(1+b x_1\) diagonal outputs.
 
+I then added the focused probe
+\texttt{julia/affine\_dim\_one\_mixed\_diagonal\_shear\_2026\_04\_12.jl}. The
+point was to test the most tempting remaining shortcut: in the mixed
+affine-rank-one diagonal families, choose the unique extra \(x_1\)-shear that
+kills the \(x_0x_1\)-coefficient of the tailed relation, and ask whether the
+pure homogeneous plane then drops into one of the already solved cross or
+common-factor charts. The retained result is
+\[
+\texttt{affine\_dim\_one\_mixed\_diagonal\_shear\_probe}
+=
+(\texttt{diff.A\_values}=[-1],\ \texttt{diff.d\_signs}=[-1],\
+\texttt{sum.A\_values}=[1],\ \texttt{sum.d\_signs}=[-1,1]),
+\]
+with \texttt{all\_cross\_false = true} and
+\texttt{all\_common\_factor\_false = true} in both slices, and also
+\texttt{all\_diagonal\_true = true}. So the mixed diagonal branch really does
+stay diagonal under that natural normalization; it does not collapse to the
+already formalized cross/common-factor surfaces. The diff slice keeps a fixed
+negative diagonal sign, while the sum slice can land in either diagonal-sign
+subcase. This rules out one easy reduction strategy and sharpens the remaining
+local Lean target.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
