@@ -2382,6 +2382,15 @@ but then repairs the induced \(x_0\)-linear term in the tailed relation by a
 single subtraction of the exact \(x_0\) relation before dispatching to the
 existing \texttt{x0sq\_x1sqPlane} mixed theorem.
 
+The pure \(x_1\)-tail surface now has the same coprime-cross reduction above
+exact plane data. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_crossDet\_zero}
+again performs the internal \(x_1\)-shear and repairs the induced \(x_0\)-term
+by subtracting the exact \(x_0\) relation. Its only extra hypothesis is the
+expected one: after that shear, the tailed quadratic must still have nonzero
+\(x_0x_1\)-coefficient so that Lean can dispatch to the solved
+\texttt{x1Plus\_homQuadratics\_x0sq\_x1sqPlane} surface.
+
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
 theorems, and the genuinely open classifier work is the formal routing of
