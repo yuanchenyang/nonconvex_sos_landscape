@@ -3601,15 +3601,40 @@ So the exact-affine \(\dim=1\), tail-rank \(1\) branch is now fully closed.
 The remaining exact-affine \(\dim=1\) work is the separate tail-rank \(2\)
 closure, plus the final theorem assembly.
 
+I then added the analogous bundled basis-level package for the tail-rank \(2\)
+side. In \texttt{ExactAffineClassification.lean}, the new structure
+\texttt{X0TailConstX1HomBasisMatrixData} stores the normalized relations
+\[
+  1+q_0,\qquad x_1+q_1,\qquad q_2,
+\]
+their common \(x_0\)-kernel hypotheses, and the invertible homogeneous
+coefficient matrix against \((x_0^2,x_0x_1,x_1^2)\). The constructor
+\texttt{exactAffineDimOneRangeTwoData} now packages that extractor output as a
+single object, parallel to the already used range-one data package. Inside the
+namespace, Lean reconstructs the canonical quadratic directions explicitly:
+\texttt{relation\_c20}, \texttt{relation\_c11}, and
+\texttt{relation\_c02} prove exact relations of the form
+\[
+  \alpha_{20} + \beta_{20} x_1 + x_0^2,\qquad
+  \alpha_{11} + \beta_{11} x_1 + x_0x_1,\qquad
+  \alpha_{02} + \beta_{02} x_1 + x_1^2.
+\]
+So the remaining range-two gap is no longer the raw linear algebra of
+extracting canonical quadratics from the homogeneous basis matrix. What still
+remains is the final classifier routing that normalizes these three tailed
+canonical relations into one of the existing affine-rank-one representative
+theorem surfaces.
+
 \section*{Open Subgoals}
 \begin{itemize}
-\item Extract from a general admissible factor the remaining exact-affine
-\(\dim=1\) tail-rank \(2\) data. The constant-containing \(\dim=2\)
-mixed-affine branch no longer needs external quadratic-pair extraction, the
-exact-affine \(\dim=2\) low-affine branch is closed, and the exact-affine
-\(\dim=1\), tail-rank \(1\) branch is now fully closed as well. What remains
-is the upstream range-two classification/routing layer above the already
-extracted normalized \(x_0\)-tail package.
+\item Route the already extracted exact-affine \(\dim=1\) tail-rank \(2\)
+package into the solved affine-rank-one theorem surfaces. The
+constant-containing \(\dim=2\) mixed-affine branch no longer needs external
+quadratic-pair extraction, the exact-affine \(\dim=2\) low-affine branch is
+closed, and the exact-affine \(\dim=1\), tail-rank \(1\) branch is fully
+closed as well. What remains is the last range-two normalization/classifier
+layer above the bundled basis data
+\texttt{exactAffineDimOneRangeTwoData}.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}

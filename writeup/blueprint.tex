@@ -3489,6 +3489,32 @@ formalized affine-rank-one endpoint theorems. The older theorem
 \texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_resolvedRegion}
 is now only a backward-compatible corollary of that full closure result.
 
+The tail-rank \(2\) side now has the same kind of basis-level interface. In
+\texttt{ExactAffineClassification.lean}, the new structure
+\texttt{X0TailConstX1HomBasisMatrixData} bundles the normalized range-two
+extractor output
+\[
+  1+q_0,\qquad x_1+q_1,\qquad q_2,
+\]
+together with the invertible homogeneous coefficient matrix against
+\((x_0^2,x_0x_1,x_1^2)\). The canonical constructor
+\texttt{exactAffineDimOneRangeTwoData} packages that data once and for all.
+Inside the namespace, Lean now also reconstructs the three canonical quadratic
+directions directly:
+\[
+  \texttt{relation\_c20}:
+    \alpha_{20} + \beta_{20} x_1 + x_0^2,\qquad
+  \texttt{relation\_c11}:
+    \alpha_{11} + \beta_{11} x_1 + x_0x_1,\qquad
+  \texttt{relation\_c02}:
+    \alpha_{02} + \beta_{02} x_1 + x_1^2.
+\]
+So the remaining tail-rank \(2\) gap is no longer ``recover the canonical
+quadratic relations from the extracted basis matrix''; Lean now exposes those
+relations explicitly. What still remains is the last routing step that uses
+their two-dimensional affine-tail data to enter one of the already solved
+affine-rank-one representative surfaces.
+
 So the remaining exact-affine \(\dim=1\) gap is no longer on the tail-rank
 \(1\) side at all. What remains is the still-separate tail-rank \(2\) closure,
 followed by the final assembly in \texttt{TernaryQuarticProof.lean}.
