@@ -6014,7 +6014,7 @@ theorem residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_h10_ne_h20_ne_r0_
       dsimp [a, b]
       field_simp [h00_ne, hr0]
     rw [smul_add, smul_add, smul_smul, smul_smul, hscale, hscalex1]
-    simp [add_assoc]
+    simp
   have h2 :
       ∑ i : Fin 4, (c • D.c11) i • u i =
         (1 : Poly) + b • x1 + c • (x0 * x1 : Poly) := by
@@ -6029,7 +6029,7 @@ theorem residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_h10_ne_h20_ne_r0_
       dsimp [b, c]
       field_simp [h10_ne, hr0]
     rw [smul_add, smul_add, smul_smul, smul_smul, hscale, hscalex1]
-    simp [add_assoc]
+    simp
   have h3 :
       ∑ i : Fin 4, (d • D.c02) i • u i =
         (1 : Poly) + b • x1 + d • (x1 ^ 2 : Poly) := by
@@ -6044,7 +6044,7 @@ theorem residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_h10_ne_h20_ne_r0_
       dsimp [b, d]
       field_simp [h20_ne, hr0]
     rw [smul_add, smul_add, smul_smul, smul_smul, hscale, hscalex1]
-    simp [add_assoc]
+    simp
   exact residual_eq_zero_of_relations_x0_onePlusBX1PlusAX0sq_onePlusBX1PlusCX0x1_onePlusBX1PlusDX1sq
     (B := B) (u := u) hu ha hc hd h0' h1 h2 h3 hp hsocp
 
@@ -6071,6 +6071,93 @@ theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne_h10_ne_h20_ne_r0_ne_z
   classical
   let D : X0TailHomBasisMatrixData u := exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1
   exact residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_h10_ne_h20_ne_r0_ne_zero
+    (B := B) (u := u) hu h0 D h00_ne h10_ne h20_ne hr0 hp hsocp
+
+/-- In the exact-affine `dim = 1`, tail-rank `1` mixed-support branch, if all
+three canonical quadratics `c20/c11/c02` carry the same pure `x₁` tail, then
+the branch closes directly through the exact shared-tail affine-rank-one
+endpoint with three tailed relations. -/
+theorem residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_h10_ne_h20_ne_r0_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (D : X0TailHomBasisMatrixData u)
+    (h00_ne : D.A⁻¹ 0 0 ≠ 0)
+    (h10_ne : D.A⁻¹ 1 0 ≠ 0)
+    (h20_ne : D.A⁻¹ 2 0 ≠ 0)
+    (hr0 : D.r0 = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let a : ℝ := (D.A⁻¹ 0 0 * D.b0)⁻¹
+  let b : ℝ := (D.A⁻¹ 1 0 * D.b0)⁻¹
+  let d : ℝ := (D.A⁻¹ 2 0 * D.b0)⁻¹
+  have h0' : ∑ i : Fin 4, c0 i • u i = x0 := by
+    simpa [relationPoly] using h0
+  have hb0 : D.b0 ≠ 0 := X0TailHomBasisMatrixData.b0_ne_zero_of_r0_zero D hr0
+  have ha : a ≠ 0 := by
+    simp [a, h00_ne, hb0]
+  have hb : b ≠ 0 := by
+    simp [b, h10_ne, hb0]
+  have hd : d ≠ 0 := by
+    simp [d, h20_ne, hb0]
+  have h1 :
+      ∑ i : Fin 4, (a • D.c20) i • u i =
+        x1 + a • (x0 ^ 2 : Poly) := by
+    change relationPoly u (a • D.c20) = x1 + a • (x0 ^ 2 : Poly)
+    rw [relationPoly_smul, X0TailHomBasisMatrixData.relation_c20, hr0]
+    have hne : D.A⁻¹ 0 0 * D.b0 ≠ 0 := mul_ne_zero h00_ne hb0
+    have hscale : a * (D.A⁻¹ 0 0 * D.b0) = 1 := by
+      rw [show a = (D.A⁻¹ 0 0 * D.b0)⁻¹ by rfl]
+      exact inv_mul_cancel₀ hne
+    rw [smul_add, smul_add, smul_smul, smul_smul, hscale]
+    simp
+  have h2 :
+      ∑ i : Fin 4, (b • D.c11) i • u i =
+        x1 + b • (x0 * x1 : Poly) := by
+    simpa [relationPoly, b] using
+      X0TailHomBasisMatrixData.relation_c11_normalized_x1Tail_of_h20_zero_r0_zero
+        D h10_ne hr0
+  have h3 :
+      ∑ i : Fin 4, (d • D.c02) i • u i =
+        x1 + d • (x1 ^ 2 : Poly) := by
+    change relationPoly u (d • D.c02) = x1 + d • (x1 ^ 2 : Poly)
+    rw [relationPoly_smul, X0TailHomBasisMatrixData.relation_c02, hr0]
+    have hne : D.A⁻¹ 2 0 * D.b0 ≠ 0 := mul_ne_zero h20_ne hb0
+    have hscale : d * (D.A⁻¹ 2 0 * D.b0) = 1 := by
+      rw [show d = (D.A⁻¹ 2 0 * D.b0)⁻¹ by rfl]
+      exact inv_mul_cancel₀ hne
+    rw [smul_add, smul_add, smul_smul, smul_smul, hscale]
+    simp
+  exact residual_eq_zero_of_relations_x0_x1PlusAX0sq_x1PlusBX0x1_x1PlusDX1sq
+    (B := B) (u := u) hu ha hb hd h0' h1 h2 h3 hp hsocp
+
+/-- Classifier-level wrapper for the exact-affine `dim = 1`, tail-rank `1`
+subcase where the extracted inverse homogeneous column has nonzero
+`x₀²/x₀x₁/x₁²` entries and zero constant tail. -/
+theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne_h10_ne_h20_ne_r0_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange1 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 1)
+    (h00_ne : (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 0 0 ≠ 0)
+    (h10_ne : (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 1 0 ≠ 0)
+    (h20_ne : (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 2 0 ≠ 0)
+    (hr0 : (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).r0 = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  classical
+  let D : X0TailHomBasisMatrixData u := exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1
+  exact residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_h10_ne_h20_ne_r0_zero
     (B := B) (u := u) hu h0 D h00_ne h10_ne h20_ne hr0 hp hsocp
 
 /-- Above the normalized `x₀` exact-affine `dim = 1`, tail-rank `1`

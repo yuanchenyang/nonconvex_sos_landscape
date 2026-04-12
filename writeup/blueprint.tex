@@ -3422,6 +3422,27 @@ remaining Lean target is now even more clearly concentrated in the genuinely
 pure-\(x_1\)-tail and diagonal/basis-routing remnants of exact-affine
 \(\dim=1\).
 
+The next Lean round closes the pure shared-tail companion as well. The new
+exact endpoint
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX0sq\_x1PlusBX0x1\_x1PlusDX1sq}
+handles
+\[
+  x_0,\qquad x_1+a x_0^2,\qquad x_1+b x_0x_1,\qquad x_1+d x_1^2
+\]
+for nonzero \(a,b,d\), again by a direct image argument that recovers
+\(x_1\), \(x_0x_1\), and \(x_1^2\) from differences and then generates the
+remaining quartic monomials after killing the constant term with the standard
+kernel direction. In \texttt{ExactAffineClassification.lean}, the theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_h10\_ne\_h20\_ne\_r0\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_h10\_ne\_h20\_ne\_r0\_zero}
+push that endpoint up to the extracted tail-rank \(1\) branch. So the whole
+``all three inverse-column entries nonzero'' shared-tail slice is now closed,
+for both \(r_0=0\) and \(r_0\neq 0\). The remaining exact-affine \(\dim=1\)
+gap is therefore the complementary diagonal/basis-routing branch above the
+existing affine-rank-one chart theorems, rather than any missing shared-tail
+endpoint.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.

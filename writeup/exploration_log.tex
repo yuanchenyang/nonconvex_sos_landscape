@@ -3526,6 +3526,27 @@ So that mixed-support subcase is no longer part of the remaining classifier
 gap; what remains is the genuinely pure-\(x_1\)-tail shared family and the
 complementary diagonal/basis-routing residue.
 
+The next Lean round closes that pure shared-tail family too. In
+\texttt{RepresentativeAffineRankOne.lean} I added
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX0sq\_x1PlusBX0x1\_x1PlusDX1sq},
+which handles exact relations
+\[
+  x_0,\qquad x_1+a x_0^2,\qquad x_1+b x_0x_1,\qquad x_1+d x_1^2
+\]
+for \(a,b,d\neq 0\). The proof mirrors the mixed shared-tail endpoint:
+differences recover \(x_1\), \(x_0x_1\), and \(x_1^2\), the constant term is
+removed with the usual admissible kernel direction, and the remaining quartic
+monomials are generated directly in the admissible image. I then lifted that
+endpoint into \texttt{ExactAffineClassification.lean} via
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_h10\_ne\_h20\_ne\_r0\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_h10\_ne\_h20\_ne\_r0\_zero}.
+So the entire ``all three inverse-column entries nonzero'' shared-tail region
+is now formalized, both for \(r_0=0\) and \(r_0\neq 0\). The remaining
+exact-affine \(\dim=1\), tail-rank \(1\) gap is now only the complementary
+diagonal/basis-routing branch above the existing affine-rank-one chart
+theorems.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
