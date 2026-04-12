@@ -2771,9 +2771,13 @@ output is
 So the diagonal charts follow the same pattern as the earlier rank-\(1\) tail
 probe: pure constant and mixed \(1+b x_1\) tails look generically surjective,
 while the pure \(x_1\)-tail output retains the same codimension-one missing
-constant monomial. This makes the next Lean step much less ambiguous: add the
-affine-rank-one diagonal chart reducers rather than searching for a new hidden
-normal form.
+constant monomial. That sharpened the search space, but later theorem-inventory
+inspection showed that it was still too optimistic as a Lean roadmap. The
+remaining \(\dim=1\) gap is not only the diagonal chart reducers: the exact
+classifier now extracts a full homogeneous basis, so the true missing layer is
+the basis-level affine-rank-one normalization that routes that basis into one
+of the solved plane/chart theorems. The diagonal reducers are part of that
+layer, not the whole gap.
 
 I then pinned that down on exact canonical complement models rather than only
 after the outer shear normalization. The new script
