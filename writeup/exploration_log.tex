@@ -2789,6 +2789,31 @@ tail and pure \(1\) tail branches now have coarse plane wrappers above the
 exact normalized representative layer. No new Julia experiment was needed for
 this round either.
 
+I then pushed one small but real piece of the exact-affine \(\dim=1\),
+tail-rank \(1\) classifier itself into Lean. In
+\texttt{ExactAffineClassification.lean} I added
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_homQuadBasis\_singleConstTail}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_homQuadBasis\_singleX1Tail}.
+These sit directly above the canonical hom-basis extraction theorem
+\texttt{exists\_relations\_x0\_homQuadBasis\_of\_exactAffineDimOne}. Once the
+extracted tails are supported on exactly one canonical homogeneous direction,
+Lean now rescales that single tailed relation and dispatches immediately to the
+already-solved affine-rank-one endpoint or coarse-plane theorem. Concretely,
+all six support-one patterns are now closed:
+\[
+  (1+x_0^2,\ x_0x_1,\ x_1^2),\quad
+  (1+x_0x_1,\ x_0^2,\ x_1^2),\quad
+  (1+x_1^2,\ x_0^2,\ x_0x_1),
+\]
+and their pure \(x_1\)-tail analogues
+\[
+  (x_1+x_0^2,\ x_0x_1,\ x_1^2),\quad
+  (x_1+x_0x_1,\ x_0^2,\ x_1^2),\quad
+  (x_1+x_1^2,\ x_0^2,\ x_0x_1).
+\]
+No new Julia computation was needed for this round.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine

@@ -295,6 +295,10 @@ private theorem coeff_m01_x1sq : MvPolynomial.coeff m01 (x1 ^ 2 : Poly) = 0 := b
     simp [m01] at h1
   simp [h]
 
+private theorem coeff_m02_x1sq : MvPolynomial.coeff m02 (x1 ^ 2 : Poly) = 1 := by
+  rw [x1, MvPolynomial.coeff_X_pow]
+  simp [m02]
+
 private theorem coeff_m01_x1 : MvPolynomial.coeff m01 (x1 : Poly) = 1 := by
   simp [x1, m01]
 
@@ -2965,6 +2969,190 @@ theorem residual_eq_zero_of_exactAffineDimOne_tailRangeZero
   have h02' : relationPoly u c02 = x1 ^ 2 := by simpa [hα02, hβ02] using h02
   exact residual_eq_zero_of_relations_x0_x0sq_x0x1_x1sq
     (B := B) (u := u) hu h0 h20' h11' h02' hp hsocp
+
+/-- In the exact-affine `dim = 1` branch, if only one canonical homogeneous
+relation carries a constant tail, the branch closes by direct normalization to
+the corresponding affine-rank-one endpoint. -/
+theorem residual_eq_zero_of_relations_x0_homQuadBasis_singleConstTail
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c20 c11 c02 : Fin 4 → ℝ}
+    {a20 a11 a02 : ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (h20 : relationPoly u c20 = a20 • (1 : Poly) + x0 ^ 2)
+    (h11 : relationPoly u c11 = a11 • (1 : Poly) + (x0 * x1 : Poly))
+    (h02 : relationPoly u c02 = a02 • (1 : Poly) + x1 ^ 2)
+    (hsupp :
+      (a20 ≠ 0 ∧ a11 = 0 ∧ a02 = 0) ∨
+      (a20 = 0 ∧ a11 ≠ 0 ∧ a02 = 0) ∨
+      (a20 = 0 ∧ a11 = 0 ∧ a02 ≠ 0))
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  rcases hsupp with h20case | h11case | h02case
+  · rcases h20case with ⟨ha20, ha11, ha02⟩
+    have h20' : relationPoly u (a20⁻¹ • c20) =
+        (1 : Poly) + a20⁻¹ • (x0 ^ 2 : Poly) + (0 : ℝ) • (x1 ^ 2 : Poly) := by
+      calc
+        relationPoly u (a20⁻¹ • c20) = a20⁻¹ • relationPoly u c20 := by
+          rw [relationPoly_smul]
+        _ = a20⁻¹ • (a20 • (1 : Poly) + x0 ^ 2) := by rw [h20]
+        _ = (1 : Poly) + a20⁻¹ • (x0 ^ 2 : Poly) + (0 : ℝ) • (x1 ^ 2 : Poly) := by
+          simp [ha20]
+    have h11' : relationPoly u c11 = (x0 * x1 : Poly) := by
+      simpa [ha11] using h11
+    have h02' : relationPoly u c02 = x1 ^ 2 := by
+      simpa [ha02] using h02
+    exact residual_eq_zero_of_relations_x0_onePlusAX0sqBX1sq_x0x1_x1sq
+      (B := B) (u := u) hu (a := a20⁻¹) (b := 0) (inv_ne_zero ha20)
+      (by simpa [relationPoly] using h0)
+      (by simpa [relationPoly] using h20')
+      (by simpa [relationPoly] using h11')
+      (by simpa [relationPoly] using h02')
+      hp hsocp
+  · rcases h11case with ⟨ha20, ha11, ha02⟩
+    have h20' : relationPoly u c20 = x0 ^ 2 := by
+      simpa [ha20] using h20
+    have h11' :
+        relationPoly u (a11⁻¹ • c11) = (1 : Poly) + a11⁻¹ • (x0 * x1 : Poly) := by
+      calc
+        relationPoly u (a11⁻¹ • c11) = a11⁻¹ • relationPoly u c11 := by
+          rw [relationPoly_smul]
+        _ = a11⁻¹ • (a11 • (1 : Poly) + (x0 * x1 : Poly)) := by rw [h11]
+        _ = (1 : Poly) + a11⁻¹ • (x0 * x1 : Poly) := by
+          simp [ha11]
+    have h02' : relationPoly u c02 = x1 ^ 2 := by
+      simpa [ha02] using h02
+    exact residual_eq_zero_of_relations_x0_onePlusAX0x1_x0sq_x1sq
+      (B := B) (u := u) hu
+      (by simpa [relationPoly] using h0)
+      (by simpa [relationPoly] using h11')
+      (by simpa [relationPoly] using h20')
+      (by simpa [relationPoly] using h02')
+      hp hsocp
+  · rcases h02case with ⟨ha20, ha11, ha02⟩
+    let q1 : Poly := relationPoly u (a02⁻¹ • c02)
+    have h20' : relationPoly u c20 = x0 ^ 2 := by
+      simpa [ha20] using h20
+    have h11' : relationPoly u c11 = (x0 * x1 : Poly) := by
+      simpa [ha11] using h11
+    have hq1 :
+        q1 = (1 : Poly) + a02⁻¹ • (x1 ^ 2 : Poly) := by
+      calc
+        q1 = relationPoly u (a02⁻¹ • c02) := by rfl
+        _ = a02⁻¹ • relationPoly u c02 := by rw [relationPoly_smul]
+        _ = a02⁻¹ • (a02 • (1 : Poly) + x1 ^ 2) := by rw [h02]
+        _ = (1 : Poly) + a02⁻¹ • (x1 ^ 2 : Poly) := by
+          simp [ha02]
+    have hq1Quad : IsQuadratic q1 := by
+      dsimp [q1]
+      exact isQuadratic_relationPoly hu (a02⁻¹ • c02)
+    have hq1_00 : MvPolynomial.coeff m00 q1 = 1 := by
+      simpa [q1, coeff_m00_x1sq] using congrArg (MvPolynomial.coeff m00) hq1
+    have hq1_10 : MvPolynomial.coeff m10 q1 = 0 := by
+      simpa [q1, coeff_m10_one, coeff_m10_x1sq] using congrArg (MvPolynomial.coeff m10) hq1
+    have hq1_01 : MvPolynomial.coeff m01 q1 = 0 := by
+      simpa [q1, coeff_m01_one, coeff_m01_x1sq] using congrArg (MvPolynomial.coeff m01) hq1
+    have htail : MvPolynomial.coeff m02 q1 ≠ 0 := by
+      have hcoeff : MvPolynomial.coeff m02 q1 = a02⁻¹ := by
+        simpa [q1, coeff_m02_one, coeff_m02_x1sq] using congrArg (MvPolynomial.coeff m02) hq1
+      rw [hcoeff]
+      exact inv_ne_zero ha02
+    exact residual_eq_zero_of_relations_x0_onePlus_homQuadratics_x0sq_x0x1Plane
+      (B := B) (u := u) hu
+      (by simpa [relationPoly] using h0)
+      (c1 := a02⁻¹ • c02) (q1 := q1) (by simp [q1, relationPoly]) hq1Quad
+      hq1_00 hq1_10 hq1_01
+      (r := 1) (s := 0) (t := 0) (w := 1)
+      (by simpa [relationPoly] using h20')
+      (by simpa [relationPoly] using h11')
+      htail (by norm_num)
+      hp hsocp
+
+/-- In the exact-affine `dim = 1` branch, if only one canonical homogeneous
+relation carries an `x₁` tail, the branch closes by direct normalization to the
+corresponding affine-rank-one endpoint. -/
+theorem residual_eq_zero_of_relations_x0_homQuadBasis_singleX1Tail
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c20 c11 c02 : Fin 4 → ℝ}
+    {b20 b11 b02 : ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (h20 : relationPoly u c20 = b20 • x1 + x0 ^ 2)
+    (h11 : relationPoly u c11 = b11 • x1 + (x0 * x1 : Poly))
+    (h02 : relationPoly u c02 = b02 • x1 + x1 ^ 2)
+    (hsupp :
+      (b20 ≠ 0 ∧ b11 = 0 ∧ b02 = 0) ∨
+      (b20 = 0 ∧ b11 ≠ 0 ∧ b02 = 0) ∨
+      (b20 = 0 ∧ b11 = 0 ∧ b02 ≠ 0))
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  rcases hsupp with h20case | h11case | h02case
+  · rcases h20case with ⟨hb20, hb11, hb02⟩
+    have h20' :
+        relationPoly u (b20⁻¹ • c20) = x1 + b20⁻¹ • (x0 ^ 2 : Poly) := by
+      calc
+        relationPoly u (b20⁻¹ • c20) = b20⁻¹ • relationPoly u c20 := by
+          rw [relationPoly_smul]
+        _ = b20⁻¹ • (b20 • x1 + x0 ^ 2) := by rw [h20]
+        _ = x1 + b20⁻¹ • (x0 ^ 2 : Poly) := by
+          simp [hb20]
+    have h11' : relationPoly u c11 = (x0 * x1 : Poly) := by
+      simpa [hb11] using h11
+    have h02' : relationPoly u c02 = x1 ^ 2 := by
+      simpa [hb02] using h02
+    exact residual_eq_zero_of_relations_x0_x1PlusAX0sq_x0x1_x1sq
+      (B := B) (u := u) hu (a := b20⁻¹) (inv_ne_zero hb20)
+      (by simpa [relationPoly] using h0)
+      (by simpa [relationPoly] using h20')
+      (by simpa [relationPoly] using h11')
+      (by simpa [relationPoly] using h02')
+      hp hsocp
+  · rcases h11case with ⟨hb20, hb11, hb02⟩
+    have h20' : relationPoly u c20 = x0 ^ 2 := by
+      simpa [hb20] using h20
+    have h11' :
+        relationPoly u (b11⁻¹ • c11) = x1 + b11⁻¹ • (x0 * x1 : Poly) := by
+      calc
+        relationPoly u (b11⁻¹ • c11) = b11⁻¹ • relationPoly u c11 := by
+          rw [relationPoly_smul]
+        _ = b11⁻¹ • (b11 • x1 + (x0 * x1 : Poly)) := by rw [h11]
+        _ = x1 + b11⁻¹ • (x0 * x1 : Poly) := by
+          simp [hb11]
+    have h02' : relationPoly u c02 = x1 ^ 2 := by
+      simpa [hb02] using h02
+    exact residual_eq_zero_of_relations_x0_x1PlusAX0x1_x0sq_x1sq
+      (B := B) (u := u) hu
+      (by simpa [relationPoly] using h0)
+      (by simpa [relationPoly] using h11')
+      (by simpa [relationPoly] using h20')
+      (by simpa [relationPoly] using h02')
+      hp hsocp
+  · rcases h02case with ⟨hb20, hb11, hb02⟩
+    have h20' : relationPoly u c20 = x0 ^ 2 := by
+      simpa [hb20] using h20
+    have h11' : relationPoly u c11 = (x0 * x1 : Poly) := by
+      simpa [hb11] using h11
+    have h02' :
+        relationPoly u (b02⁻¹ • c02) = x1 + b02⁻¹ • (x1 ^ 2 : Poly) := by
+      calc
+        relationPoly u (b02⁻¹ • c02) = b02⁻¹ • relationPoly u c02 := by
+          rw [relationPoly_smul]
+        _ = b02⁻¹ • (b02 • x1 + x1 ^ 2) := by rw [h02]
+        _ = x1 + b02⁻¹ • (x1 ^ 2 : Poly) := by
+          simp [hb02]
+    exact residual_eq_zero_of_relations_x0_x1PlusAX1sq_x0sq_x0x1
+      (B := B) (u := u) hu (a := b02⁻¹) (inv_ne_zero hb02)
+      (by simpa [relationPoly] using h0)
+      (by simpa [relationPoly] using h02')
+      (by simpa [relationPoly] using h20')
+      (by simpa [relationPoly] using h11')
+      hp hsocp
 
 /-- If the exact affine relation space has dimension one and contains no exact
 constant relation, then it contains a genuine nonconstant affine line. -/

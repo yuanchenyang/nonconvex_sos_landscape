@@ -2301,6 +2301,23 @@ determinant-nondegenerate basis of one canonical homogeneous plane, Lean now
 recovers the exact plane basis internally and reduces to the already solved
 constant affine-rank-one endpoints.
 
+The new classifier-facing bridge in \texttt{ExactAffineClassification.lean}
+then packages the first exact-affine \(\dim=1\), tail-rank \(1\) subfamily
+directly above those endpoint surfaces:
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_homQuadBasis\_singleConstTail}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_homQuadBasis\_singleX1Tail}.
+These start from the explicit canonical hom-basis relations
+\[
+  r_{20} + b_{20}x_1 + x_0^2,\qquad
+  r_{11} + b_{11}x_1 + x_0x_1,\qquad
+  r_{02} + b_{02}x_1 + x_1^2
+\]
+and close all six support-one tail patterns, i.e. when exactly one of
+\((r_{20},r_{11},r_{02})\) is nonzero or exactly one of
+\((b_{20},b_{11},b_{02})\) is nonzero. So the remaining \(\dim=1\) classifier
+no longer needs to handle those isolated pure-coordinate tail outputs by hand.
+
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
 theorems, and the genuinely open classifier work is the formal routing of
