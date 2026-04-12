@@ -2645,7 +2645,25 @@ with \((\lambda_0,\lambda_1,\lambda_2)\) the first inverse-matrix column. So
 the open mixed-support branch is now concretely in the expected ``annihilator
 quadratic plus complementary plane'' form; the missing step is to normalize
 that pair by discriminant into the already-solved common-factor or diagonal
-surfaces. One additional piece of the affine-rank-one
+surfaces. The repeated-line/common-factor half of that discriminant split is
+now internal too: \texttt{ExactAffineClassification.lean} proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_commonFactorComplement}
+and its classifier wrapper
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_commonFactorComplement}.
+These start only from the packaged range-\(1\) data, the nonvanishing
+\((A^{-1})_{00}\neq 0\), and the repeated-line discriminant relation
+\[
+  (A^{-1})_{00}(A^{-1})_{20} - ((A^{-1})_{10})^2 = 0.
+\]
+Lean then reconstructs the complementary pure plane
+\((\texttt{comp11},\texttt{comp02})\), proves that its
+\(\texttt{lowHomQuadPlane}\)-discriminant is exactly that scalar condition, and
+normalizes the common-tail relation \(\texttt{c20}\) internally to either a
+pure \(x_1\)-tail or a mixed \(1+b x_1\) tail before calling the already solved
+affine-rank-one common-factor chart theorems. So the remaining tail-rank \(1\)
+exact-affine \(\dim=1\) gap is no longer the whole
+\((A^{-1})_{00}\neq 0\) mixed-support branch; it is only the complementary
+diagonal normalization. One additional piece of the affine-rank-one
 surface is now closed on the constant side: in
 \texttt{RepresentativeAffineRankOne.lean} the new theorems
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_x0x1\_diffsqPlane}

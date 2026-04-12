@@ -3297,7 +3297,26 @@ piece of that same package: the complementary pure homogeneous relations
 where \((\lambda_0,\lambda_1,\lambda_2)\) is the first inverse column of the
 extracted homogeneous-basis matrix. So the remaining mixed-support branch is
 now concretely packaged as ``one common-tail direction plus a pure complementary
-plane'' rather than as three unrelated reconstructed relations.
+plane'' rather than as three unrelated reconstructed relations. I then used
+that package to close the repeated-line/common-factor half of the
+\((A^{-1})_{00}\neq 0\) branch in Lean. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_commonFactorComplement}
+starts only from the packaged range-\(1\) data, the nonzero hypothesis
+\((A^{-1})_{00}\neq 0\), and the discriminant-zero relation
+\[
+  (A^{-1})_{00}(A^{-1})_{20} - ((A^{-1})_{10})^2 = 0.
+\]
+It proves internally that the complementary pure plane
+\((\texttt{comp11},\texttt{comp02})\) lies in the affine-rank-one
+common-factor chart, rescales the common-tail relation \(\texttt{c20}\) to
+either a pure \(x_1\)-tail or a mixed \(1+b x_1\) tail depending on whether the
+constant coefficient vanishes, and dispatches to the already solved
+\texttt{RepresentativeAffineRankOne} common-factor chart theorems. I also added
+the classifier wrapper
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_commonFactorComplement}.
+So the tail-rank \(1\), exact-affine \(\dim=1\) gap is now narrower than the
+previous writeup claimed: the repeated-line/common-factor complement is closed,
+and only the complementary diagonal normalization remains.
 
 \section*{Open Subgoals}
 \begin{itemize}
