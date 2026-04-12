@@ -3420,6 +3420,113 @@ theorem relation_comp02
           simp [smul_add, smul_smul, sub_eq_add_neg, mul_left_comm, add_assoc,
             add_left_comm, add_comm]
 
+/-- The annihilator quadratic built from the first inverse homogeneous column
+has homogeneous part exactly `mixedAffineAnnihilator`, with the common affine
+tail scaled by the squared column norm. -/
+theorem relation_ann
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    relationPoly u D.ann =
+      D.tailScale • affineLinePoly D.r0 0 D.b0 +
+        mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0) := by
+  calc
+    relationPoly u D.ann
+        = (D.A⁻¹ 0 0) • relationPoly u D.c20 +
+            (D.A⁻¹ 1 0) • relationPoly u D.c11 +
+            (D.A⁻¹ 2 0) • relationPoly u D.c02 := by
+            rw [show D.ann =
+                (D.A⁻¹ 0 0) • D.c20 + (D.A⁻¹ 1 0) • D.c11 + (D.A⁻¹ 2 0) • D.c02 by
+                  funext i
+                  simp [ann]
+                , relationPoly_add, relationPoly_add, relationPoly_smul,
+                  relationPoly_smul, relationPoly_smul]
+    _ =
+        (D.A⁻¹ 0 0) •
+            ((D.A⁻¹ 0 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 0 0 * D.b0) • x1 + x0 ^ 2) +
+          (D.A⁻¹ 1 0) •
+            ((D.A⁻¹ 1 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 1 0 * D.b0) • x1 +
+              (x0 * x1 : Poly)) +
+          (D.A⁻¹ 2 0) •
+            ((D.A⁻¹ 2 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 2 0 * D.b0) • x1 + x1 ^ 2) := by
+          rw [relation_c20, relation_c11, relation_c02]
+    _ =
+        ((D.A⁻¹ 0 0) ^ 2 + (D.A⁻¹ 1 0) ^ 2 + (D.A⁻¹ 2 0) ^ 2) • affineLinePoly D.r0 0 D.b0 +
+          mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0) := by
+          set a : ℝ := D.A⁻¹ 0 0
+          set b : ℝ := D.A⁻¹ 1 0
+          set c : ℝ := D.A⁻¹ 2 0
+          have hCr0 : MvPolynomial.C D.r0 = D.r0 • (1 : Poly) := by
+            simpa using
+              (show MvPolynomial.C D.r0 * (1 : Poly) = D.r0 • (1 : Poly) from
+                MvPolynomial.C_mul')
+          have hAff :
+              affineLinePoly D.r0 0 D.b0 = D.r0 • (1 : Poly) + D.b0 • x1 := by
+            simp [affineLinePoly, hCr0, MvPolynomial.C_mul']
+          have hQuad :
+              mixedAffineAnnihilator a b c =
+                a • (x0 ^ 2 : Poly) + b • (x0 * x1 : Poly) + c • (x1 ^ 2 : Poly) := by
+            simp [mixedAffineAnnihilator, MvPolynomial.C_mul', add_assoc]
+          have hConst :
+              a • ((a * D.r0) • (1 : Poly)) +
+                  b • ((b * D.r0) • (1 : Poly)) +
+                  c • ((c * D.r0) • (1 : Poly)) =
+                (a ^ 2 + b ^ 2 + c ^ 2) • (D.r0 • (1 : Poly)) := by
+            rw [smul_smul, smul_smul, smul_smul, smul_smul, ← add_smul, ← add_smul]
+            congr 1
+            ring
+          have hX1 :
+              a • ((a * D.b0) • x1) +
+                  b • ((b * D.b0) • x1) +
+                  c • ((c * D.b0) • x1) =
+                (a ^ 2 + b ^ 2 + c ^ 2) • (D.b0 • x1) := by
+            rw [smul_smul, smul_smul, smul_smul, smul_smul, ← add_smul, ← add_smul]
+            congr 1
+            ring
+          calc
+            a • ((a * D.r0) • (1 : Poly) + (a * D.b0) • x1 + x0 ^ 2) +
+                b • ((b * D.r0) • (1 : Poly) + (b * D.b0) • x1 + (x0 * x1 : Poly)) +
+                c • ((c * D.r0) • (1 : Poly) + (c * D.b0) • x1 + x1 ^ 2)
+                =
+                  (a • ((a * D.r0) • (1 : Poly)) +
+                      b • ((b * D.r0) • (1 : Poly)) +
+                      c • ((c * D.r0) • (1 : Poly))) +
+                    (a • ((a * D.b0) • x1) +
+                      b • ((b * D.b0) • x1) +
+                      c • ((c * D.b0) • x1)) +
+                    (a • (x0 ^ 2 : Poly) +
+                      b • (x0 * x1 : Poly) +
+                      c • (x1 ^ 2 : Poly)) := by
+                    rw [smul_add, smul_add, smul_add, smul_add, smul_add, smul_add]
+                    abel_nf
+            _ =
+                  (a ^ 2 + b ^ 2 + c ^ 2) • (D.r0 • (1 : Poly)) +
+                    (a ^ 2 + b ^ 2 + c ^ 2) • (D.b0 • x1) +
+                    (a • (x0 ^ 2 : Poly) +
+                      b • (x0 * x1 : Poly) +
+                      c • (x1 ^ 2 : Poly)) := by
+                    rw [hConst, hX1]
+            _ =
+                  (a ^ 2 + b ^ 2 + c ^ 2) • (D.r0 • (1 : Poly) + D.b0 • x1) +
+                    (a • (x0 ^ 2 : Poly) +
+                      b • (x0 * x1 : Poly) +
+                      c • (x1 ^ 2 : Poly)) := by
+                    rw [← smul_add]
+            _ =
+                  (a ^ 2 + b ^ 2 + c ^ 2) • affineLinePoly D.r0 0 D.b0 +
+                    mixedAffineAnnihilator a b c := by
+                    rw [← hAff, ← hQuad]
+
+/-- The common affine-tail scale is automatically nonzero whenever the `x₀²`
+entry of the first inverse homogeneous column is nonzero. -/
+theorem tailScale_ne_zero_of_h00_ne
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
+    (h00_ne : D.A⁻¹ 0 0 ≠ 0) :
+    D.tailScale ≠ 0 := by
+  dsimp [tailScale]
+  intro hzero
+  have hsq0 : (D.A⁻¹ 0 0) ^ 2 = 0 := by
+    nlinarith
+  exact h00_ne (eq_zero_of_pow_eq_zero hsq0)
+
 end X0TailHomBasisMatrixData
 
 /-- Canonical choice of the tail-rank `1` homogeneous basis matrix data in the
@@ -5369,6 +5476,37 @@ theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne_commonFactorComplemen
   let D : X0TailHomBasisMatrixData u := exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1
   exact residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_commonFactorComplement
     (B := B) (u := u) hu h0 D h00_ne hdisc0 hp hsocp
+
+/-- Above the normalized `x₀` exact-affine `dim = 1`, tail-rank `1`
+extractor, the whole already-resolved region closes in one theorem: either the
+inverse homogeneous-basis column lies in the previously solved simple branch, or
+it lies in the complementary `m20 ≠ 0` mixed-support branch but with repeated
+line discriminant zero. The only remaining range-one gap is therefore the
+genuinely complementary discriminant-nonzero branch. -/
+theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne_resolvedRegion
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange1 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 1)
+    (hresolved :
+      (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).SimpleBranch ∨
+        ((exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 0 0 ≠ 0 ∧
+          (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 0 0 *
+              (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 2 0 -
+            ((exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 1 0) ^ 2 = 0))
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  rcases hresolved with hsimple | hcf
+  · exact residual_eq_zero_of_exactAffineDimOne_tailRangeOne_simpleBranch
+      (B := B) (u := u) hu hrelker hdim h0 hrange1 hsimple hp hsocp
+  · exact residual_eq_zero_of_exactAffineDimOne_tailRangeOne_commonFactorComplement
+      (B := B) (u := u) hu hrelker hdim h0 hrange1 hcf.1 hcf.2 hp hsocp
 
 /-- If the exact affine relation space has dimension one and contains no exact
 constant relation, then it contains a genuine nonconstant affine line. -/

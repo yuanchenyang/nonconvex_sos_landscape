@@ -3316,7 +3316,23 @@ the classifier wrapper
 \texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_commonFactorComplement}.
 So the tail-rank \(1\), exact-affine \(\dim=1\) gap is now narrower than the
 previous writeup claimed: the repeated-line/common-factor complement is closed,
-and only the complementary diagonal normalization remains.
+and only the complementary diagonal normalization remains. In this round I
+packaged that updated boundary more cleanly. First,
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_resolvedRegion}
+now closes the entire already-resolved range-\(1\) region in one theorem: the
+simple branch together with the repeated-line/common-factor complement.
+Second, I made the complementary branch's canonical tailed annihilator explicit.
+In \texttt{X0TailHomBasisMatrixData}, the new relation \texttt{ann} is the
+first inverse-column combination of \texttt{c20}, \texttt{c11}, and
+\texttt{c02}; Lean proves in \texttt{relation\_ann} that it equals the common
+affine line scaled by \texttt{tailScale}, plus the binary quadratic annihilator
+\(\lambda_0 x_0^2 + \lambda_1 x_0x_1 + \lambda_2 x_1^2\). The companion lemma
+\texttt{tailScale\_ne\_zero\_of\_h00\_ne} shows that once
+\((A^{-1})_{00}\neq 0\), this tailed annihilator really carries a nonzero
+affine part. So the residual gap is now exactly what it should be: normalize
+that explicit tailed annihilator/complementary-plane package in the
+discriminant-nonzero branch into the remaining affine-rank-one diagonal
+surfaces.
 
 \section*{Open Subgoals}
 \begin{itemize}
