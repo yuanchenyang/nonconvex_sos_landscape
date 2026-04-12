@@ -3555,6 +3555,28 @@ The retained output is
 \texttt{pos\_disc}=(\texttt{count}=121,\ \texttt{ranks}=[15],\
   \texttt{missing}=[[]]).
 \]
+I also formalized the first exact normalization step inside that
+determinant-zero family. The new theorem
+\texttt{relations\_x0\_affineTail\_x0sq\_sharedTail\_x0x1\_affineTail\_x1sq\_shear\_normalized}
+in \texttt{RepresentativeAffineRankOne.lean} starts from exact relations
+\[
+  x_0,\qquad
+  a+b x_1+x_0^2,\qquad
+  g(a+b x_1)+x_0x_1,\qquad
+  e+f x_1+x_1^2
+\]
+and proves that an internal \(x_1\)-shear plus exact row operations produces
+\[
+  x_0,\qquad
+  a+b x_1+x_0^2,\qquad
+  x_0x_1,\qquad
+  (e-g^2 a)+(f-g^2 b)x_1+x_1^2.
+\]
+So the complementary range-two branch no longer has to keep the duplicated
+affine tail on both the \(x_0^2\)- and \(x_0x_1\)-relations; one exact
+relation can now be normalized to pure \(x_0x_1\) before the final
+determinant-zero routing.
+
 So inside the determinant-zero range-two branch, the only visible rank-drop
 subfamily is the codimension-one discriminant-zero slice, and its missing
 direction is again exactly the pure \(x_1\)-axis tower. This is now the right

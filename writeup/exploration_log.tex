@@ -3678,6 +3678,28 @@ The retained output is
     \texttt{pos\_disc}=(\texttt{count}=121,\ \texttt{ranks}=[15],\
     \texttt{missing}=[[]])).
 \]
+I then fixed the first exact representative normalization for that slice in
+\texttt{RepresentativeAffineRankOne.lean}. The new theorem
+\texttt{relations\_x0\_affineTail\_x0sq\_sharedTail\_x0x1\_affineTail\_x1sq\_shear\_normalized}
+handles exact relations
+\[
+  x_0,\qquad
+  a+b x_1+x_0^2,\qquad
+  g(a+b x_1)+x_0x_1,\qquad
+  e+f x_1+x_1^2
+\]
+and proves that after the internal \(x_1\)-shear and exact row repairs, the
+middle relation becomes exactly \(x_0x_1\), while the remaining tail is pushed
+entirely into the \(x_1^2\)-relation:
+\[
+  x_0,\qquad
+  a+b x_1+x_0^2,\qquad
+  x_0x_1,\qquad
+  (e-g^2 a)+(f-g^2 b)x_1+x_1^2.
+\]
+So the determinant-zero range-two branch now has a retained representative
+normalization theorem, not just numerical evidence.
+
 So the determinant-zero range-two slice is not uniformly singular. Both
 \(\Delta<0\) and \(\Delta>0\) still look generically surjective, while the
 rank-\(14\) obstruction only appears on the codimension-one discriminant-zero

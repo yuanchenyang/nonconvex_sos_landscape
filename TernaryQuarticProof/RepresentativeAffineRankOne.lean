@@ -4523,6 +4523,191 @@ theorem residual_eq_zero_of_relations_x0_affineTail_x0sq_affineTail_x0x1_affineT
     (quartic_in_image_of_relations_x0_affineTail_x0sq_affineTail_x0x1_affineTail_x1sq
       hdet h0 h1 h2 h3 hp.1)
 
+/-- Determinant-zero range-two normalization step: if the `x₀²` and `x₀x₁`
+relations carry tails on the same affine line, an internal `x₁`-shear and
+exact row operations make the middle relation pure `x₀x₁`, while keeping the
+first relation in `a + b x₁ + x₀²` form and pushing all remaining tail data
+into the `x₁²` relation. -/
+theorem relations_x0_affineTail_x0sq_sharedTail_x0x1_affineTail_x1sq_shear_normalized
+    {u : RankFourVec}
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    {a b e f g : ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    (h1 : ∑ i : Fin 4, c1 i • u i = a • (1 : Poly) + b • x1 + x0 ^ 2)
+    (h2 : ∑ i : Fin 4, c2 i • u i = (g * a) • (1 : Poly) + (g * b) • x1 + (x0 * x1 : Poly))
+    (h3 : ∑ i : Fin 4, c3 i • u i = e • (1 : Poly) + f • x1 + x1 ^ 2) :
+    ∃ c1' c2' c3' : Fin 4 → ℝ,
+      ∑ i : Fin 4, c0 i • mapVec (x1ShearEquiv g).toAlgHom u i = x0 ∧
+      ∑ i : Fin 4, c1' i • mapVec (x1ShearEquiv g).toAlgHom u i =
+        a • (1 : Poly) + b • x1 + x0 ^ 2 ∧
+      ∑ i : Fin 4, c2' i • mapVec (x1ShearEquiv g).toAlgHom u i = x0 * x1 ∧
+      ∑ i : Fin 4, c3' i • mapVec (x1ShearEquiv g).toAlgHom u i =
+        (e - g ^ 2 * a) • (1 : Poly) + (f - g ^ 2 * b) • x1 + x1 ^ 2 := by
+  let eAlg : Poly ≃ₐ[ℝ] Poly := x1ShearEquiv g
+  let c1' : Fin 4 → ℝ := c1 + (-(b * g)) • c0
+  let c2' : Fin 4 → ℝ := c2 + (-g) • c1
+  let c3' : Fin 4 → ℝ := c3 + (g ^ 2) • c1 + (-2 * g) • c2 + (-(g * (f - b * g ^ 2))) • c0
+  refine ⟨c1', c2', c3', ?_, ?_, ?_, ?_⟩
+  · simpa [eAlg] using (relation_map eAlg.toAlgHom h0).trans (affineHom_x1Shear_x0 g)
+  · change relationPoly (mapVec eAlg.toAlgHom u) c1' =
+        a • (1 : Poly) + b • x1 + x0 ^ 2
+    calc
+      relationPoly (mapVec eAlg.toAlgHom u) c1'
+          = relationPoly (mapVec eAlg.toAlgHom u) c1 +
+              relationPoly (mapVec eAlg.toAlgHom u) ((-(b * g)) • c0) := by
+              rw [show c1' = c1 + (-(b * g)) • c0 by
+                funext i
+                simp [c1']
+              , relationPoly_add]
+      _ = eAlg (a • (1 : Poly) + b • x1 + x0 ^ 2) +
+            relationPoly (mapVec eAlg.toAlgHom u) ((-(b * g)) • c0) := by
+            rw [show relationPoly (mapVec eAlg.toAlgHom u) c1 =
+                eAlg (a • (1 : Poly) + b • x1 + x0 ^ 2) by
+                  simpa [eAlg] using relation_map eAlg.toAlgHom h1]
+      _ = eAlg (a • (1 : Poly) + b • x1 + x0 ^ 2) + (-(b * g)) • x0 := by
+            rw [relationPoly_smul, show relationPoly (mapVec eAlg.toAlgHom u) c0 = x0 by
+              simpa [relationPoly, eAlg] using
+                (relation_map eAlg.toAlgHom h0).trans (affineHom_x1Shear_x0 g)]
+      _ = a • (1 : Poly) + b • x1 + x0 ^ 2 := by
+            change
+              affineHom (x1ShearMatrix g) 0 (a • (1 : Poly) + b • x1 + x0 ^ 2) +
+                  (-(b * g)) • x0 =
+                a • (1 : Poly) + b • x1 + x0 ^ 2
+            have hq1 : quadForm a 0 b 1 0 0 = a • (1 : Poly) + b • x1 + x0 ^ 2 := by
+              rw [quadForm_eq_explicit]
+              simp [MvPolynomial.smul_eq_C_mul]
+            rw [← hq1]
+            rw [affineHom_x1Shear_quadForm]
+            rw [quadForm_eq_explicit, quadForm_eq_explicit]
+            simp [MvPolynomial.smul_eq_C_mul]
+            ring_nf
+  · change relationPoly (mapVec eAlg.toAlgHom u) c2' = x0 * x1
+    calc
+      relationPoly (mapVec eAlg.toAlgHom u) c2'
+          = relationPoly (mapVec eAlg.toAlgHom u) c2 +
+              relationPoly (mapVec eAlg.toAlgHom u) ((-g) • c1) := by
+              rw [show c2' = c2 + (-g) • c1 by
+                funext i
+                simp [c2']
+              , relationPoly_add]
+      _ = eAlg ((g * a) • (1 : Poly) + (g * b) • x1 + (x0 * x1 : Poly)) +
+            relationPoly (mapVec eAlg.toAlgHom u) ((-g) • c1) := by
+            rw [show relationPoly (mapVec eAlg.toAlgHom u) c2 =
+                eAlg ((g * a) • (1 : Poly) + (g * b) • x1 + (x0 * x1 : Poly)) by
+                  simpa [eAlg] using relation_map eAlg.toAlgHom h2]
+      _ = eAlg ((g * a) • (1 : Poly) + (g * b) • x1 + (x0 * x1 : Poly)) +
+            (-g) • eAlg (a • (1 : Poly) + b • x1 + x0 ^ 2) := by
+            rw [relationPoly_smul, show relationPoly (mapVec eAlg.toAlgHom u) c1 =
+                eAlg (a • (1 : Poly) + b • x1 + x0 ^ 2) by
+                  simpa [eAlg] using relation_map eAlg.toAlgHom h1]
+      _ = x0 * x1 := by
+            change
+              affineHom (x1ShearMatrix g) 0
+                  ((g * a) • (1 : Poly) + (g * b) • x1 + (x0 * x1 : Poly)) +
+                (-g) • affineHom (x1ShearMatrix g) 0
+                  (a • (1 : Poly) + b • x1 + x0 ^ 2) =
+              x0 * x1
+            have hq2 : quadForm (g * a) 0 (g * b) 0 1 0 =
+                (g * a) • (1 : Poly) + (g * b) • x1 + (x0 * x1 : Poly) := by
+              rw [quadForm_eq_explicit]
+              simp [MvPolynomial.smul_eq_C_mul]
+            have hq1 : quadForm a 0 b 1 0 0 = a • (1 : Poly) + b • x1 + x0 ^ 2 := by
+              rw [quadForm_eq_explicit]
+              simp [MvPolynomial.smul_eq_C_mul]
+            rw [← hq2, ← hq1]
+            rw [affineHom_x1Shear_quadForm, affineHom_x1Shear_quadForm]
+            rw [quadForm_eq_explicit, quadForm_eq_explicit]
+            simp [MvPolynomial.smul_eq_C_mul]
+            ring_nf
+  · change relationPoly (mapVec eAlg.toAlgHom u) c3' =
+        (e - g ^ 2 * a) • (1 : Poly) + (f - g ^ 2 * b) • x1 + x1 ^ 2
+    calc
+      relationPoly (mapVec eAlg.toAlgHom u) c3'
+          = relationPoly (mapVec eAlg.toAlgHom u) c3 +
+              relationPoly (mapVec eAlg.toAlgHom u) ((g ^ 2) • c1) +
+              relationPoly (mapVec eAlg.toAlgHom u) ((-2 * g) • c2) +
+              relationPoly (mapVec eAlg.toAlgHom u)
+                ((-(g * (f - b * g ^ 2))) • c0) := by
+              rw [show c3' =
+                  c3 + (g ^ 2) • c1 + (-2 * g) • c2 + (-(g * (f - b * g ^ 2))) • c0 by
+                funext i
+                simp [c3', add_assoc]
+              , relationPoly_add, relationPoly_add, relationPoly_add]
+      _ = eAlg (e • (1 : Poly) + f • x1 + x1 ^ 2) +
+            (g ^ 2) • eAlg (a • (1 : Poly) + b • x1 + x0 ^ 2) +
+            (-2 * g) • eAlg ((g * a) • (1 : Poly) + (g * b) • x1 + (x0 * x1 : Poly)) +
+            relationPoly (mapVec eAlg.toAlgHom u)
+              ((-(g * (f - b * g ^ 2))) • c0) := by
+            rw [relationPoly_smul, relationPoly_smul, relationPoly_smul,
+              show relationPoly (mapVec eAlg.toAlgHom u) c3 =
+                eAlg (e • (1 : Poly) + f • x1 + x1 ^ 2) by
+                  simpa [eAlg] using relation_map eAlg.toAlgHom h3,
+              show relationPoly (mapVec eAlg.toAlgHom u) c1 =
+                eAlg (a • (1 : Poly) + b • x1 + x0 ^ 2) by
+                  simpa [eAlg] using relation_map eAlg.toAlgHom h1,
+              show relationPoly (mapVec eAlg.toAlgHom u) c2 =
+                eAlg ((g * a) • (1 : Poly) + (g * b) • x1 + (x0 * x1 : Poly)) by
+                  simpa [eAlg] using relation_map eAlg.toAlgHom h2]
+      _ = eAlg (e • (1 : Poly) + f • x1 + x1 ^ 2) +
+            (g ^ 2) • eAlg (a • (1 : Poly) + b • x1 + x0 ^ 2) +
+            (-2 * g) • eAlg ((g * a) • (1 : Poly) + (g * b) • x1 + (x0 * x1 : Poly)) +
+            (-(g * (f - b * g ^ 2))) • x0 := by
+            rw [relationPoly_smul, show relationPoly (mapVec eAlg.toAlgHom u) c0 = x0 by
+              simpa [relationPoly, eAlg] using
+                (relation_map eAlg.toAlgHom h0).trans (affineHom_x1Shear_x0 g)]
+      _ = quadForm (e - g ^ 2 * a) 0 (f - g ^ 2 * b) 0 0 1 := by
+            change
+              affineHom (x1ShearMatrix g) 0 (e • (1 : Poly) + f • x1 + x1 ^ 2) +
+                (g ^ 2) • affineHom (x1ShearMatrix g) 0 (a • (1 : Poly) + b • x1 + x0 ^ 2) +
+                (-2 * g) •
+                  affineHom (x1ShearMatrix g) 0
+                    ((g * a) • (1 : Poly) + (g * b) • x1 + (x0 * x1 : Poly)) +
+                (-(g * (f - b * g ^ 2))) • x0 =
+              quadForm (e - g ^ 2 * a) 0 (f - g ^ 2 * b) 0 0 1
+            have hq3 : quadForm e 0 f 0 0 1 = e • (1 : Poly) + f • x1 + x1 ^ 2 := by
+              rw [quadForm_eq_explicit]
+              simp [MvPolynomial.smul_eq_C_mul]
+            have hq1 : quadForm a 0 b 1 0 0 = a • (1 : Poly) + b • x1 + x0 ^ 2 := by
+              rw [quadForm_eq_explicit]
+              simp [MvPolynomial.smul_eq_C_mul]
+            have hq2 : quadForm (g * a) 0 (g * b) 0 1 0 =
+                (g * a) • (1 : Poly) + (g * b) • x1 + (x0 * x1 : Poly) := by
+              rw [quadForm_eq_explicit]
+              simp [MvPolynomial.smul_eq_C_mul]
+            have hx0 : quadForm 0 1 0 0 0 0 = x0 := by
+              rw [quadForm_eq_explicit]
+              simp
+            rw [← hq3, ← hq1, ← hq2, ← hx0]
+            have hmain :
+                (affineHom (x1ShearMatrix g) 0 (quadForm e 0 f 0 0 1) +
+                    (g ^ 2) • affineHom (x1ShearMatrix g) 0 (quadForm a 0 b 1 0 0) +
+                    (-2 * g) •
+                      affineHom (x1ShearMatrix g) 0 (quadForm (g * a) 0 (g * b) 0 1 0) +
+                    (-(g * (f - b * g ^ 2))) • quadForm 0 1 0 0 0 0 -
+                    quadForm (e - g ^ 2 * a) 0 (f - g ^ 2 * b) 0 0 1 : Poly) = 0 := by
+              rw [affineHom_x1Shear_quadForm, affineHom_x1Shear_quadForm,
+                affineHom_x1Shear_quadForm]
+              rw [quadForm_eq_explicit, quadForm_eq_explicit, quadForm_eq_explicit,
+                quadForm_eq_explicit, quadForm_eq_explicit]
+              simp [MvPolynomial.smul_eq_C_mul, pow_two, sub_eq_add_neg, mul_left_comm,
+                mul_comm]
+              ring_nf
+              have htwo_right : ∀ p : Poly, p * (2 : Poly) = p * MvPolynomial.C (2 : ℝ) := by
+                intro p
+                simpa using congrArg (fun q : Poly => p * q)
+                  (show (2 : Poly) = MvPolynomial.C (2 : ℝ) by
+                    change MvPolynomial.C (2 : ℝ) = MvPolynomial.C (2 : ℝ)
+                    rfl)
+              rw [htwo_right, htwo_right, htwo_right, htwo_right]
+              simp [mul_left_comm, mul_comm]
+            exact sub_eq_zero.mp hmain
+      _ = (e - g ^ 2 * a) • (1 : Poly) + (f - g ^ 2 * b) • x1 + x1 ^ 2 := by
+            have hq4 : quadForm (e - g ^ 2 * a) 0 (f - g ^ 2 * b) 0 0 1 =
+                (e - g ^ 2 * a) • (1 : Poly) + (f - g ^ 2 * b) • x1 + x1 ^ 2 := by
+              rw [quadForm_eq_explicit]
+              simp [MvPolynomial.smul_eq_C_mul]
+            exact hq4
+
 theorem quartic_in_image_of_relations_x0_onePlusBX1PlusAX0sq_x0x1_onePlusBX1PlusDX1sq
     {u : RankFourVec}
     {c0 c1 c2 c3 : Fin 4 → ℝ}
