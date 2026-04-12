@@ -2895,6 +2895,16 @@ subtracts the in-plane homogeneous directions internally and reduces to the
 already formalized mixed endpoints. No new Julia data was needed for this
 round; the change is purely on the theorem-surface side.
 
+I then added the constant-tail coprime cross-chart analogue. In
+\texttt{RepresentativeAffineRankOne.lean} the new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_crossDet\_zero}
+shows that once the pure homogeneous pair satisfies
+\(\texttt{lowHomQuadPlaneA}=0\) and \(\texttt{lowHomQuadPlaneB}\neq 0\), Lean
+can do the necessary internal \(x_1\)-shear itself and reduce directly to the
+already solved \((x_0^2,x_1^2)\)-plane wrapper. So the exact-affine
+\(\dim=1\) classifier no longer needs to hand back an explicitly diagonalized
+homogeneous pair for that constant-tail chart; chart data alone is enough.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
