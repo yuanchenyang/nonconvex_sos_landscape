@@ -2628,6 +2628,21 @@ and dispatches to the existing exact theorem
 exact-affine \(\dim=1\) branch no longer leaves the pure homogeneous-tail case
 to the external classifier.
 
+I then tightened that same branch to match the real classifier output. The new
+theorem
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_affineLine\_tailRangeZero}
+starts from an arbitrary exact affine line
+\[
+  r + a x_0 + b x_1,\qquad a^2+b^2\neq 0,
+\]
+rather than an already normalized exact \(x_0\) relation. Lean now applies
+\texttt{affineLineEquiv}, proves the exact-affine submodule still has
+dimension \(1\) after normalization, invokes
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeZero} on the
+transformed point, and transports the residual equality back. This removes one
+more purely clerical normalization burden from the remaining \(\dim=1\)
+classifier. No new Julia experiment was needed for this step.
+
 In the same round I retained the structural extractor
 \texttt{exists\_x0\_tail\_const\_x1\_hom\_of\_exactAffineDimOne\_rangeTwo}.
 That theorem does not close the tail-rank \(2\) branch by itself, but it shows

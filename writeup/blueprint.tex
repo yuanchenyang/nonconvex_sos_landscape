@@ -2212,6 +2212,20 @@ and dispatches directly to the existing
 the remaining \(\dim=1\) classifier no longer needs to treat the pure
 homogeneous-tail subcase as open.
 
+The new theorem
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_affineLine\_tailRangeZero}
+pushes that one step outward. The classifier no longer has to pre-normalize
+the unique exact affine line to exact \(x_0\) coordinates before using the
+tail-rank \(0\) closure: from any exact affine relation
+\[
+  r + a x_0 + b x_1,\qquad a^2+b^2\neq 0,
+\]
+Lean applies \texttt{affineLineEquiv}, proves exact-affine dimension \(1\) is
+preserved under that normalization, invokes the existing exact-\(x_0\)
+tail-rank \(0\) theorem on the transformed point, and transports the residual
+equality back. So this subcase is now closed from the same affine-line-level
+input that the outer exact-affine classifier naturally produces.
+
 The same file also now proves
 \texttt{exists\_x0\_tail\_const\_x1\_hom\_of\_exactAffineDimOne\_rangeTwo}.
 So in the opposite tail-rank \(2\) extreme, Lean can already normalize the

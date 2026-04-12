@@ -3530,4 +3530,191 @@ theorem exists_exactAffine_affineLine_of_dimOne_noConst
     exact hnoConst ⟨r⁻¹ • c, Submodule.smul_mem _ _ hc_mem, hone⟩
   exact ⟨c, r, a, b, hc_mem, by simpa [q] using hqaff, hab⟩
 
+private theorem affineLineEquiv_symm_affineLinePoly
+    (c a b : ℝ) (hs : a ^ 2 + b ^ 2 ≠ 0) (r u v : ℝ) :
+    (affineLineEquiv c a b hs).symm (affineLinePoly r u v) =
+      affineLinePoly (r + u * c) (u * a - v * b) (u * b + v * a) := by
+  change
+    affineHom (affineLineInvMatrix a b) (affineLineInvVec c) (affineLinePoly r u v) =
+      affineLinePoly (r + u * c) (u * a - v * b) (u * b + v * a)
+  simp [affineLinePoly, affineLineInvMatrix, affineLineInvVec, affineImage, x0, x1,
+    Fin.sum_univ_two]
+  ring
+
+private theorem mem_exactAffineSubmodule_of_mem_mapVec_affineLineEquiv
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c a b : ℝ}
+    (hs : a ^ 2 + b ^ 2 ≠ 0)
+    {d : Fin 4 → ℝ}
+    (hd :
+      d ∈ exactAffineSubmodule
+        (mapVec (affineLineEquiv c a b hs).toAlgHom u)) :
+    d ∈ exactAffineSubmodule u := by
+  let e : Poly ≃ₐ[ℝ] Poly := affineLineEquiv c a b hs
+  let u' : RankFourVec := mapVec e.toAlgHom u
+  have hu' : IsAdmissiblePoint u' := by
+    exact isAdmissiblePoint_mapVec_of_equiv
+      (e := e)
+      (he := by
+        intro q hq
+        exact isQuadratic_affineEquiv
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec c a b) (affineLineInvVec c)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec c a b hs) (affineLine_add_mulVec_inv c a b hs)
+          hq)
+      hu
+  let r : ℝ := MvPolynomial.coeff m00 (relationPoly u' d)
+  let u0 : ℝ := MvPolynomial.coeff m10 (relationPoly u' d)
+  let v0 : ℝ := MvPolynomial.coeff m01 (relationPoly u' d)
+  have hd_aff :
+      relationPoly u' d = affineLinePoly r u0 v0 := by
+    have hAff := relationPoly_eq_affine_of_mem_exactAffineSubmodule hu' hd
+    simpa [r, u0, v0, affineLinePoly, MvPolynomial.smul_eq_C_mul, add_assoc] using hAff
+  have hmap : relationPoly u' d = e (relationPoly u d) := by
+    simpa [u', e] using (relationPoly_map (φ := e.toAlgHom) (u := u) (c := d))
+  have hpre :
+      relationPoly u d =
+        affineLinePoly (r + u0 * c) (u0 * a - v0 * b) (u0 * b + v0 * a) := by
+    calc
+      relationPoly u d = e.symm (relationPoly u' d) := by
+        rw [hmap]
+        simp
+      _ = e.symm (affineLinePoly r u0 v0) := by rw [hd_aff]
+      _ = affineLinePoly (r + u0 * c) (u0 * a - v0 * b) (u0 * b + v0 * a) := by
+            simpa [e] using affineLineEquiv_symm_affineLinePoly c a b hs r u0 v0
+  exact mem_exactAffineSubmodule_of_relation_eq_affineLine hpre
+
+private theorem exactAffineDimOne_mapVec_affineLineEquiv
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    {c a b : ℝ}
+    (h0 : relationPoly u c0 = affineLinePoly c a b)
+    (hs : a ^ 2 + b ^ 2 ≠ 0) :
+    Module.finrank ℝ
+      (exactAffineSubmodule
+        (mapVec (affineLineEquiv c a b hs).toAlgHom u)) = 1 := by
+  let e : Poly ≃ₐ[ℝ] Poly := affineLineEquiv c a b hs
+  let u' : RankFourVec := mapVec e.toAlgHom u
+  have hsub :
+      exactAffineSubmodule u' ≤ exactAffineSubmodule u := by
+    intro d hd
+    exact mem_exactAffineSubmodule_of_mem_mapVec_affineLineEquiv hu hs hd
+  have hle : Module.finrank ℝ (exactAffineSubmodule u') ≤ 1 := by
+    calc
+      Module.finrank ℝ (exactAffineSubmodule u') ≤ Module.finrank ℝ (exactAffineSubmodule u) := by
+        exact Submodule.finrank_mono hsub
+      _ = 1 := hdim
+  have h0' : relationPoly u' c0 = x0 := by
+    rw [relationPoly_map]
+    rw [h0]
+    simpa [e] using affineHom_affineLinePoly c a b hs
+  have hc0mem : c0 ∈ exactAffineSubmodule u' := by
+    have h0aff : relationPoly u' c0 = affineLinePoly 0 1 0 := by
+      simpa [affineLinePoly, x0, MvPolynomial.smul_eq_C_mul] using h0'
+    exact mem_exactAffineSubmodule_of_relation_eq_affineLine
+      h0aff
+  have hc0ne : c0 ≠ 0 := by
+    intro hc0
+    have hzero : (0 : Poly) = x0 := by
+      simpa [hc0, relationPoly] using h0'
+    have hcoeff := congrArg (MvPolynomial.coeff m10) hzero
+    simp [x0, m10] at hcoeff
+  have hfin_ne_zero : Module.finrank ℝ (exactAffineSubmodule u') ≠ 0 := by
+    intro hzero
+    have hbot : exactAffineSubmodule u' = ⊥ := Submodule.finrank_eq_zero.mp hzero
+    have : c0 ∈ (⊥ : Submodule ℝ (Fin 4 → ℝ)) := by simpa [hbot] using hc0mem
+    exact hc0ne (by simpa using this)
+  have hge : 1 ≤ Module.finrank ℝ (exactAffineSubmodule u') := by
+    exact Nat.succ_le_of_lt (Nat.pos_of_ne_zero hfin_ne_zero)
+  exact le_antisymm hle hge
+
+/-- The tail-rank `0` exact-affine `dim = 1` branch now closes from an
+arbitrary exact affine line, not only after the classifier has already
+normalized that line to `x₀`. -/
+theorem residual_eq_zero_of_exactAffineDimOne_affineLine_tailRangeZero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    {r a b : ℝ}
+    (h0 : relationPoly u c0 = affineLinePoly r a b)
+    (hs : a ^ 2 + b ^ 2 ≠ 0)
+    (hrange0 :
+      Module.finrank ℝ
+        (LinearMap.range
+          (x0TailCoeffMap
+            (mapVec (affineLineEquiv r a b hs).toAlgHom u))) = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let e : Poly ≃ₐ[ℝ] Poly := affineLineEquiv r a b hs
+  let u' : RankFourVec := mapVec e.toAlgHom u
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  let B0 : DotForm := dotTransport e B
+  have hB0pos : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0pos⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := by
+        intro q hq
+        exact isQuadratic_affineEquiv
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec r a b) (affineLineInvVec r)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs)
+          hq)
+      (heQuartic := by
+        intro q hq
+        exact isQuartic_affineEquiv
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec r a b) (affineLineInvVec r)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs)
+          hq)
+      hp
+  have hu0 : IsAdmissiblePoint u' := by
+    exact isAdmissiblePoint_mapVec_of_equiv
+      (e := e)
+      (he := by
+        intro q hq
+        exact isQuadratic_affineEquiv
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec r a b) (affineLineInvVec r)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs)
+          hq)
+      hu
+  have hsocp0 : IsSOCP B0 (e p) u' := by
+    dsimp [B0, u']
+    exact isSOCP_mapVec_of_equiv
+      (e := e)
+      (heSymm := by
+        intro q hq
+        exact isQuadratic_affineEquiv_symm
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec r a b) (affineLineInvVec r)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs)
+          hq)
+      hsocp
+  have h0' : relationPoly u' c0 = x0 := by
+    rw [relationPoly_map]
+    rw [h0]
+    simpa [e] using affineHom_affineLinePoly r a b hs
+  have hdim0 :
+      Module.finrank ℝ (exactAffineSubmodule u') = 1 := by
+    exact exactAffineDimOne_mapVec_affineLineEquiv hu hdim h0 hs
+  have hres0 : residual (e p) u' = 0 := by
+    exact residual_eq_zero_of_exactAffineDimOne_tailRangeZero
+      (B := B0) (u := u') hu0 hdim0 h0' hrange0 hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
 end TernaryQuartic
