@@ -2243,6 +2243,19 @@ inside the \(x_0\)-kernel such that \(q_{\mathrm{tail}}\) has nonzero
 and are linearly independent. That means the rank-\(1\) tail case is no longer
 an unstructured kernel problem; it has been reduced to classifying one tailed
 quadratic relative to a \(2\)-dimensional homogeneous plane.
+The new strengthening
+\texttt{exists\_x0\_tail\_nonzero\_hom\_basis\_of\_exactAffineDimOne\_rangeOne}
+pushes the same branch one step further: after subtracting the explicit affine
+tail from \(q_{\mathrm{tail}}\), Lean now proves that
+\[
+  q_{\mathrm{tail}}-(r+b x_1),\qquad q_1,\qquad q_2
+\]
+are linearly independent homogeneous quadratics. Any nontrivial dependence
+would again manufacture an exact affine relation of the form \(r'+b' x_1\),
+impossible in a one-dimensional exact-affine space already containing \(x_0\).
+So the tail-rank \(1\) output is no longer only ``one tailed quadratic plus a
+homogeneous plane''; it already carries the full homogeneous-basis datum behind
+that picture.
 
 The new script
 \texttt{julia/affine\_dim\_one\_tail\_rank\_one\_2026\_04\_11.jl} records

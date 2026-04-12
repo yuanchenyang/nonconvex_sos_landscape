@@ -2673,6 +2673,21 @@ case is no longer blocked at a raw kernel-dimension statement; the remaining
 work is the classifier that routes one tailed quadratic over a homogeneous
 plane into the already solved affine-rank-one endpoint surfaces.
 
+I then strengthened that same rank-\(1\) extractor to
+\texttt{exists\_x0\_tail\_nonzero\_hom\_basis\_of\_exactAffineDimOne\_rangeOne}.
+This removes the last purely linear-algebra ambiguity on the homogeneous side:
+after subtracting the explicit affine tail \(r+b x_1\) from the unique tailed
+relation, Lean now proves that the three homogeneous quadratics
+\[
+  q_{\mathrm{tail}}-(r+b x_1),\qquad q_1,\qquad q_2
+\]
+are linearly independent. The proof is the same exact-affine contradiction as
+in the tail-rank \(2\) branch: any nontrivial dependence would create an exact
+affine relation of the form \(r'+b' x_1\), but in a one-dimensional
+exact-affine space already containing \(x_0\), every such relation must vanish.
+So the rank-\(1\) output is now not just one tailed relation plus a
+homogeneous plane, but a full homogeneous-basis package behind that picture.
+
 I also recorded the new rank-\(1\) numerical split in
 \texttt{julia/affine\_dim\_one\_tail\_rank\_one\_2026\_04\_11.jl}. Its retained
 output is

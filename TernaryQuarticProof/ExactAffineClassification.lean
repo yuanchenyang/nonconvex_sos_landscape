@@ -2589,6 +2589,104 @@ private theorem eq_zero_of_exactAffine_relation_const_x1
       MvPolynomial.smul_eq_C_mul] using hcoeff
   exact ⟨hr, hb⟩
 
+/-- In the tail-rank `1` exact-affine `dim = 1` branch, the tail-stripped
+homogeneous part of the unique tailed relation is independent from the two pure
+homogeneous relations. Otherwise one would recover an exact affine relation of
+the form `r + b x₁`, impossible in a one-dimensional exact-affine space already
+containing `x₀`. -/
+theorem exists_x0_tail_nonzero_hom_basis_of_exactAffineDimOne_rangeOne
+    {u : RankFourVec}
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange1 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 1) :
+    ∃ d0 d1 d2 : Fin 4 → ℝ,
+      d0 ∈ LinearMap.ker (x0CoeffMap u) ∧
+      d1 ∈ LinearMap.ker (x0CoeffMap u) ∧
+      d2 ∈ LinearMap.ker (x0CoeffMap u) ∧
+      (MvPolynomial.coeff m00 (relationPoly u d0)) ^ 2 +
+          (MvPolynomial.coeff m01 (relationPoly u d0)) ^ 2 ≠ 0 ∧
+      MvPolynomial.coeff m00 (relationPoly u d1) = 0 ∧
+      MvPolynomial.coeff m01 (relationPoly u d1) = 0 ∧
+      MvPolynomial.coeff m00 (relationPoly u d2) = 0 ∧
+      MvPolynomial.coeff m01 (relationPoly u d2) = 0 ∧
+      LinearIndependent ℝ
+        ![relationPoly u d0 -
+            affineLinePoly
+              (MvPolynomial.coeff m00 (relationPoly u d0))
+              0
+              (MvPolynomial.coeff m01 (relationPoly u d0)),
+          relationPoly u d1,
+          relationPoly u d2] := by
+  rcases exists_x0_tail_nonzero_homPair_of_finrank_range_one hrelker h0 hrange1 with
+    ⟨d0, d1, d2, hd0K, hd1K, hd2K, htail0_ne, h00_d1, h01_d1, h00_d2, h01_d2, hLI⟩
+  let r0 : ℝ := MvPolynomial.coeff m00 (relationPoly u d0)
+  let b0 : ℝ := MvPolynomial.coeff m01 (relationPoly u d0)
+  have hlin :
+      LinearIndependent ℝ
+        ![relationPoly u d0 - affineLinePoly r0 0 b0,
+          relationPoly u d1,
+          relationPoly u d2] := by
+    rw [Fintype.linearIndependent_iff]
+    intro g hg i
+    have hg' :
+        g 0 • (relationPoly u d0 - affineLinePoly r0 0 b0) +
+          g 1 • relationPoly u d1 +
+          g 2 • relationPoly u d2 = 0 := by
+      simpa [Fin.sum_univ_three] using hg
+    have hc :
+        relationPoly u (g 0 • d0 + g 1 • d1 + g 2 • d2) =
+          affineLinePoly (g 0 * r0) 0 (g 0 * b0) := by
+      calc
+        relationPoly u (g 0 • d0 + g 1 • d1 + g 2 • d2)
+            = g 0 • relationPoly u d0 + g 1 • relationPoly u d1 + g 2 • relationPoly u d2 := by
+                rw [relationPoly_add, relationPoly_add, relationPoly_smul, relationPoly_smul,
+                  relationPoly_smul]
+        _ =
+            (g 0 • (relationPoly u d0 - affineLinePoly r0 0 b0) +
+              g 1 • relationPoly u d1 +
+              g 2 • relationPoly u d2) +
+              g 0 • affineLinePoly r0 0 b0 := by
+                rw [smul_sub]
+                abel_nf
+        _ = g 0 • affineLinePoly r0 0 b0 := by rw [hg']; abel
+        _ = affineLinePoly (g 0 * r0) 0 (g 0 * b0) := by
+              simp [affineLinePoly, MvPolynomial.smul_eq_C_mul, smul_add]
+              ring
+    have hcmem :
+        g 0 • d0 + g 1 • d1 + g 2 • d2 ∈ exactAffineSubmodule u := by
+      exact mem_exactAffineSubmodule_of_relation_eq_affineLine hc
+    have hzero01 : g 0 * r0 = 0 ∧ g 0 * b0 = 0 := by
+      exact eq_zero_of_exactAffine_relation_const_x1 hdim h0 hcmem hc
+    have hg0zero : g 0 = 0 := by
+      have hmulr : g 0 * r0 ^ 2 = 0 := by
+        calc
+          g 0 * r0 ^ 2 = (g 0 * r0) * r0 := by ring
+          _ = 0 := by rw [hzero01.1, zero_mul]
+      have hmulb : g 0 * b0 ^ 2 = 0 := by
+        calc
+          g 0 * b0 ^ 2 = (g 0 * b0) * b0 := by ring
+          _ = 0 := by rw [hzero01.2, zero_mul]
+      have hmul : g 0 * (r0 ^ 2 + b0 ^ 2) = 0 := by
+        rw [mul_add, hmulr, hmulb, zero_add]
+      have htail0_ne' : r0 ^ 2 + b0 ^ 2 ≠ 0 := by
+        simpa [r0, b0] using htail0_ne
+      exact (mul_eq_zero.mp hmul).resolve_right htail0_ne'
+    have h12 :
+        g 1 • relationPoly u d1 + g 2 • relationPoly u d2 = 0 := by
+      simpa [hg0zero] using hg'
+    have hLI' := Fintype.linearIndependent_iff.mp hLI
+    have hcoeffs :
+        ∀ j : Fin 2, (![g 1, g 2] : Fin 2 → ℝ) j = 0 := by
+      exact hLI' (![g 1, g 2]) (by simpa [Fin.sum_univ_two] using h12)
+    fin_cases i
+    · exact hg0zero
+    · simpa using hcoeffs 0
+    · simpa using hcoeffs 1
+  exact ⟨d0, d1, d2, hd0K, hd1K, hd2K, htail0_ne, h00_d1, h01_d1, h00_d2, h01_d2, by
+    simpa [r0, b0] using hlin⟩
+
 /-- In the tail-rank `2` exact-affine `dim = 1` branch, the normalized constant
 and `x₁`-tail relations cannot collapse onto the unique pure homogeneous
 direction. Otherwise one would recover an exact `1` or exact `x₁` relation. -/
