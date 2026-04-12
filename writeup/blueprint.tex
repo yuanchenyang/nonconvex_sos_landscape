@@ -3521,9 +3521,16 @@ cannot collapse entirely into either boundary plane
 no longer ``recover the canonical quadratic relations from the extracted basis
 matrix'', ``show that the relevant pure quadratic planes are nondegenerate'',
 or ``show that the extracted basis still sees both diagonal directions''.
-What still remains is the last routing step that uses this basis-and-plane
-data and the two affine tails to enter one of the already solved
-representative surfaces or an equivalent surjective closure.
+The next retained step closes the generic branch directly: if the affine tails
+on the reconstructed \(x_0^2\) and \(x_0x_1\) relations are independent, i.e.
+\[
+  \alpha_{20}\beta_{11}-\beta_{20}\alpha_{11}\neq 0,
+\]
+then \texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_const\_x1\_hom\_basis\_matrix\_generic}
+dispatches immediately to the representative theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_affineTail\_x0sq\_affineTail\_x0x1\_affineTail\_x1sq}.
+So the remaining tail-rank \(2\) gap is now only the complementary
+determinant-zero routing step, not the generic matrix-data case.
 
 So the remaining exact-affine \(\dim=1\) gap is no longer on the tail-rank
 \(1\) side at all. What remains is the still-separate tail-rank \(2\) closure,
