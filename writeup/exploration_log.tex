@@ -2742,6 +2742,39 @@ still visible is the pure \(x_1\)-tail direction. The remaining work is the
 formal classifier that routes those outputs into the correct already-solved
 theorem surfaces.
 
+I then isolated the affine-rank-one diagonal complement numerically in
+\texttt{julia/affine\_dim\_one\_diagonal\_chart\_2026\_04\_12.jl}. This probes
+the two canonical diagonal-plane families
+\[
+  (x_0,\ \text{tail}+a(x_0^2+x_1^2)+b\,x_0x_1+c(x_0^2-x_1^2),\ x_0x_1,\ x_0^2-x_1^2)
+\]
+and
+\[
+  (x_0,\ \text{tail}+a(x_0^2-x_1^2)+b\,x_0x_1+c(x_0^2+x_1^2),\ x_0x_1,\ x_0^2+x_1^2),
+\]
+with \(a\neq 0\) so that the tailed relation really has a complementary
+diagonal component and the exact-affine dimension stays \(1\). The retained
+output is
+\[
+  \texttt{affine\_dim\_one\_diagonal\_chart\_probe}
+  =
+  (\texttt{samples}=30,\ 
+   \texttt{diag\_sum\_const.ranks}=[15],\ 
+   \texttt{diag\_sum\_x1.ranks}=[14],\ 
+   \texttt{diag\_sum\_x1.missing}=[\{(0,0)\}],\ 
+   \texttt{diag\_sum\_mixed.ranks}=[15],\ 
+   \texttt{diag\_diff\_const.ranks}=[15],\ 
+   \texttt{diag\_diff\_x1.ranks}=[14],\ 
+   \texttt{diag\_diff\_x1.missing}=[\{(0,0)\}],\ 
+   \texttt{diag\_diff\_mixed.ranks}=[15]).
+\]
+So the diagonal charts follow the same pattern as the earlier rank-\(1\) tail
+probe: pure constant and mixed \(1+b x_1\) tails look generically surjective,
+while the pure \(x_1\)-tail output retains the same codimension-one missing
+constant monomial. This makes the next Lean step much less ambiguous: add the
+affine-rank-one diagonal chart reducers rather than searching for a new hidden
+normal form.
+
 I then added one more affine-rank-one plane wrapper in
 \texttt{RepresentativeAffineRankOne.lean}:
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0sqBX1sq\_x0x1\_x1sqPlane},

@@ -2427,10 +2427,38 @@ So the repeated-line/common-factor chart is no longer open on the
 affine-rank-one side: constant, mixed, and pure \(x_1\) tails all reduce
 internally to the existing \((x_0x_1,x_1^2)\)-plane surfaces.
 
+The remaining affine-rank-one diagonal complement is now numerically pinned
+down too. The probe
+\texttt{julia/affine\_dim\_one\_diagonal\_chart\_2026\_04\_12.jl} samples the
+two canonical diagonal-plane outputs
+\(\operatorname{span}(x_0x_1,x_0^2-x_1^2)\) and
+\(\operatorname{span}(x_0x_1,x_0^2+x_1^2)\), with the tailed relation carrying
+a nonzero complementary diagonal component so that the exact-affine dimension
+stays \(1\). Its retained output is
+\[
+  \texttt{affine\_dim\_one\_diagonal\_chart\_probe}
+  =
+  (\texttt{samples}=30,\ 
+   \texttt{diag\_sum\_const.ranks}=[15],\ 
+   \texttt{diag\_sum\_x1.ranks}=[14],\ 
+   \texttt{diag\_sum\_x1.missing}=[\{(0,0)\}],\ 
+   \texttt{diag\_sum\_mixed.ranks}=[15],\ 
+   \texttt{diag\_diff\_const.ranks}=[15],\ 
+   \texttt{diag\_diff\_x1.ranks}=[14],\ 
+   \texttt{diag\_diff\_x1.missing}=[\{(0,0)\}],\ 
+   \texttt{diag\_diff\_mixed.ranks}=[15]).
+\]
+So both diagonal charts match the pattern already visible in the rank-\(1\)
+tail probe: the constant and mixed tails look generically surjective, while
+the pure \(x_1\)-tail direction still shows the same codimension-one missing
+constant monomial as the retained affine-rank-one linear endpoint.
+
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
 theorems, and the genuinely open classifier work is the formal routing of
-those outputs into the already solved endpoint or generic-surjective surfaces.
+those outputs into the already solved endpoint or generic-surjective surfaces,
+with the diagonal charts now reduced to a concrete Lean target rather than an
+unclassified numerical branch.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
