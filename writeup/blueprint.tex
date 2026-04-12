@@ -2601,8 +2601,28 @@ show that if the inverse coefficient matrix sends the unique tailed direction
 to exactly one of the three canonical homogeneous coordinates, Lean already
 reconstructs the corresponding exact tailed basis and closes through the
 existing support-one affine-rank-one endpoints. So the tail-rank \(1\) matrix
-output is no longer open on any one-support pattern; the remaining gap there is
-the genuinely mixed-support routing. One additional piece of the affine-rank-one
+output is no longer open on any one-support pattern. One mixed-support chart is
+internal too: the new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_m20\_zero\_m11\_nonzero}
+handles the whole branch where the first column of the inverse homogeneous
+basis matrix has zero \(x_0^2\)-entry but nonzero \(x_0x_1\)-entry. Lean
+reconstructs the exact tailed \(x_0x_1\) relation, subtracts the induced
+\(x_1^2\)-tail from the third quadratic, and dispatches to the already solved
+affine-rank-one cross chart. On top of that, the wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_m20\_zero}
+packages the whole \(A^{-1}_{00}=0\) slice by combining that mixed-support
+cross argument with the existing support-one \(x_1^2\)-tail theorem. So the
+remaining tail-rank \(1\) gap is now entirely in the complementary
+\(A^{-1}_{00}\neq 0\) mixed-support routing, especially the branches that still
+require basis-level normalization into the repeated-line or diagonal
+affine-rank-one surfaces. This is now reflected at classifier level too:
+\texttt{ExactAffineClassification.lean} bundles the extracted matrix data as
+\texttt{exactAffineDimOneRangeOneData}, and the new theorem
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_simpleBranch}
+closes the whole already-resolved tail-rank \(1\) region above the extractor in
+one step. So the remaining tail-rank \(1\) exact-affine \(\dim=1\) work is no
+longer about unpacking the range-\(1\) extractor itself; it is only the
+complementary \(A^{-1}_{00}\neq 0\) mixed-support normalization. One additional piece of the affine-rank-one
 surface is now closed on the constant side: in
 \texttt{RepresentativeAffineRankOne.lean} the new theorems
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_x0x1\_diffsqPlane}

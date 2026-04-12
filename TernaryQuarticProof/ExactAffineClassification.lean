@@ -243,6 +243,26 @@ private theorem coeff_m01_x0sq : MvPolynomial.coeff m01 (x0 ^ 2 : Poly) = 0 := b
     simp [m01] at h1
   simp [h]
 
+private theorem coeff_m20_x0sq : MvPolynomial.coeff m20 (x0 ^ 2 : Poly) = 1 := by
+  rw [x0, MvPolynomial.coeff_X_pow]
+  simp [m20]
+
+private theorem coeff_m11_x0sq : MvPolynomial.coeff m11 (x0 ^ 2 : Poly) = 0 := by
+  rw [x0, MvPolynomial.coeff_X_pow]
+  have h : Finsupp.single 0 2 ≠ m11 := by
+    intro hs
+    have h1 := congrArg (fun s : Fin 2 →₀ ℕ => s 1) hs
+    simp [m11] at h1
+  simp [h]
+
+private theorem coeff_m02_x0sq : MvPolynomial.coeff m02 (x0 ^ 2 : Poly) = 0 := by
+  rw [x0, MvPolynomial.coeff_X_pow]
+  have h : Finsupp.single 0 2 ≠ m02 := by
+    intro hs
+    have h1 := congrArg (fun s : Fin 2 →₀ ℕ => s 1) hs
+    simp [m02] at h1
+  simp [h]
+
 private theorem coeff_m01_one : MvPolynomial.coeff m01 (1 : Poly) = 0 := by
   rw [MvPolynomial.coeff_one]
   have h : (0 : Fin 2 →₀ ℕ) ≠ m01 := by
@@ -293,6 +313,24 @@ private theorem coeff_m01_x0x1 : MvPolynomial.coeff m01 (x0 * x1 : Poly) = 0 := 
   rw [hmon]
   simp [m01, m11]
 
+private theorem coeff_m11_x0x1 : MvPolynomial.coeff m11 (x0 * x1 : Poly) = 1 := by
+  have hmon : (x0 * x1 : Poly) = MvPolynomial.monomial m11 (1 : ℝ) := by
+    simp [x0, x1, m11, MvPolynomial.monomial_eq]
+  rw [hmon]
+  simp [m11]
+
+private theorem coeff_m02_x0x1 : MvPolynomial.coeff m02 (x0 * x1 : Poly) = 0 := by
+  have hmon : (x0 * x1 : Poly) = MvPolynomial.monomial m11 (1 : ℝ) := by
+    simp [x0, x1, m11, MvPolynomial.monomial_eq]
+  rw [hmon]
+  simp [m02, m11]
+
+private theorem coeff_m20_x0x1 : MvPolynomial.coeff m20 (x0 * x1 : Poly) = 0 := by
+  have hmon : (x0 * x1 : Poly) = MvPolynomial.monomial m11 (1 : ℝ) := by
+    simp [x0, x1, m11, MvPolynomial.monomial_eq]
+  rw [hmon]
+  simp [m20, m11]
+
 private theorem coeff_m10_x1sq : MvPolynomial.coeff m10 (x1 ^ 2 : Poly) = 0 := by
   rw [x1, MvPolynomial.coeff_X_pow]
   have h : Finsupp.single 1 2 ≠ m10 := by
@@ -334,6 +372,22 @@ private theorem coeff_m01_x1sq : MvPolynomial.coeff m01 (x1 ^ 2 : Poly) = 0 := b
 private theorem coeff_m02_x1sq : MvPolynomial.coeff m02 (x1 ^ 2 : Poly) = 1 := by
   rw [x1, MvPolynomial.coeff_X_pow]
   simp [m02]
+
+private theorem coeff_m11_x1sq : MvPolynomial.coeff m11 (x1 ^ 2 : Poly) = 0 := by
+  rw [x1, MvPolynomial.coeff_X_pow]
+  have h : Finsupp.single 1 2 ≠ m11 := by
+    intro hs
+    have h0 := congrArg (fun s : Fin 2 →₀ ℕ => s 0) hs
+    simp [m11] at h0
+  simp [h]
+
+private theorem coeff_m20_x1sq : MvPolynomial.coeff m20 (x1 ^ 2 : Poly) = 0 := by
+  rw [x1, MvPolynomial.coeff_X_pow]
+  have h : Finsupp.single 1 2 ≠ m20 := by
+    intro hs
+    have h0 := congrArg (fun s : Fin 2 →₀ ℕ => s 0) hs
+    simp [m20] at h0
+  simp [h]
 
 private theorem coeff_m01_x1 : MvPolynomial.coeff m01 (x1 : Poly) = 1 := by
   simp [x1, m01]
@@ -3099,6 +3153,101 @@ theorem exists_x0_tail_const_x1_hom_basis_matrix_of_exactAffineDimOne_rangeTwo
   exact ⟨d0, d1, d2, A, hd0K, hd1K, hd2K, hd0_00, hd0_01, hd1_00, hd1_01, hd2_00, hd2_01,
     hd2_ne, hA, hdet⟩
 
+/-- Bundled homogeneous basis matrix data for the normalized `x₀` exact-affine
+`dim = 1` tail-rank `1` branch. -/
+structure X0TailHomBasisMatrixData (u : RankFourVec) where
+  d0 : Fin 4 → ℝ
+  d1 : Fin 4 → ℝ
+  d2 : Fin 4 → ℝ
+  A : Matrix (Fin 3) (Fin 3) ℝ
+  hd0K : d0 ∈ LinearMap.ker (x0CoeffMap u)
+  hd1K : d1 ∈ LinearMap.ker (x0CoeffMap u)
+  hd2K : d2 ∈ LinearMap.ker (x0CoeffMap u)
+  htail0_ne :
+    (MvPolynomial.coeff m00 (relationPoly u d0)) ^ 2 +
+        (MvPolynomial.coeff m01 (relationPoly u d0)) ^ 2 ≠ 0
+  h00_d1 : MvPolynomial.coeff m00 (relationPoly u d1) = 0
+  h01_d1 : MvPolynomial.coeff m01 (relationPoly u d1) = 0
+  h00_d2 : MvPolynomial.coeff m00 (relationPoly u d2) = 0
+  h01_d2 : MvPolynomial.coeff m01 (relationPoly u d2) = 0
+  hA :
+    ∀ j : Fin 3,
+      (![relationPoly u d0 -
+            affineLinePoly
+              (MvPolynomial.coeff m00 (relationPoly u d0))
+              0
+              (MvPolynomial.coeff m01 (relationPoly u d0)),
+          relationPoly u d1,
+          relationPoly u d2] : Fin 3 → Poly) j =
+        ∑ k : Fin 3, A j k • homQuadBasis k
+  hdet : A.det ≠ 0
+
+namespace X0TailHomBasisMatrixData
+
+/-- The affine tail lands on exactly one canonical quadratic direction. -/
+def SingleSupport {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Prop :=
+  (D.A⁻¹ 0 0 ≠ 0 ∧ D.A⁻¹ 1 0 = 0 ∧ D.A⁻¹ 2 0 = 0) ∨
+    (D.A⁻¹ 0 0 = 0 ∧ D.A⁻¹ 1 0 ≠ 0 ∧ D.A⁻¹ 2 0 = 0) ∨
+      (D.A⁻¹ 0 0 = 0 ∧ D.A⁻¹ 1 0 = 0 ∧ D.A⁻¹ 2 0 ≠ 0)
+
+/-- The affine tail has no `x₀²` component but is still nontrivial. -/
+def M20Zero {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Prop :=
+  D.A⁻¹ 0 0 = 0 ∧ (D.A⁻¹ 1 0 ≠ 0 ∨ D.A⁻¹ 2 0 ≠ 0)
+
+/-- The already-solved tail-rank `1` matrix branches: either exact
+single-support, or the whole `m20 = 0` slice. -/
+def SimpleBranch {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Prop :=
+  D.SingleSupport ∨ D.M20Zero
+
+end X0TailHomBasisMatrixData
+
+/-- Canonical choice of the tail-rank `1` homogeneous basis matrix data in the
+normalized `x₀` exact-affine `dim = 1` branch. -/
+noncomputable def exactAffineDimOneRangeOneData
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange1 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 1) :
+    X0TailHomBasisMatrixData u := by
+  classical
+  let h :=
+    exists_x0_tail_nonzero_hom_basis_matrix_of_exactAffineDimOne_rangeOne
+      hu hrelker hdim h0 hrange1
+  let d0 := Classical.choose h
+  let h1 := Classical.choose_spec h
+  let d1 := Classical.choose h1
+  let h2 := Classical.choose_spec h1
+  let d2 := Classical.choose h2
+  let h3 := Classical.choose_spec h2
+  let A := Classical.choose h3
+  let hAdata := Classical.choose_spec h3
+  have hd0K : d0 ∈ LinearMap.ker (x0CoeffMap u) := hAdata.1
+  have hd1K : d1 ∈ LinearMap.ker (x0CoeffMap u) := hAdata.2.1
+  have hd2K : d2 ∈ LinearMap.ker (x0CoeffMap u) := hAdata.2.2.1
+  have htail0_ne :
+      (MvPolynomial.coeff m00 (relationPoly u d0)) ^ 2 +
+          (MvPolynomial.coeff m01 (relationPoly u d0)) ^ 2 ≠ 0 := hAdata.2.2.2.1
+  have h00_d1 : MvPolynomial.coeff m00 (relationPoly u d1) = 0 := hAdata.2.2.2.2.1
+  have h01_d1 : MvPolynomial.coeff m01 (relationPoly u d1) = 0 := hAdata.2.2.2.2.2.1
+  have h00_d2 : MvPolynomial.coeff m00 (relationPoly u d2) = 0 := hAdata.2.2.2.2.2.2.1
+  have h01_d2 : MvPolynomial.coeff m01 (relationPoly u d2) = 0 := hAdata.2.2.2.2.2.2.2.1
+  have hA :
+      ∀ j : Fin 3,
+        (![relationPoly u d0 -
+              affineLinePoly
+                (MvPolynomial.coeff m00 (relationPoly u d0))
+                0
+                (MvPolynomial.coeff m01 (relationPoly u d0)),
+            relationPoly u d1,
+            relationPoly u d2] : Fin 3 → Poly) j =
+          ∑ k : Fin 3, A j k • homQuadBasis k := hAdata.2.2.2.2.2.2.2.2.1
+  have hdet : A.det ≠ 0 := hAdata.2.2.2.2.2.2.2.2.2
+  exact ⟨d0, d1, d2, A, hd0K, hd1K, hd2K, htail0_ne, h00_d1, h01_d1, h00_d2, h01_d2, hA,
+    hdet⟩
+
 private theorem homQuadBasis_eq_sum_inv_mul_of_matrix
     {A : Matrix (Fin 3) (Fin 3) ℝ}
     {q : Fin 3 → Poly}
@@ -4293,6 +4442,395 @@ theorem residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_tailOnX0x1
     (by simpa [zero_smul] using h02)
     ha20 hb20 ha02 hb02 htail hp hsocp
 
+set_option maxHeartbeats 600000 in
+/-- Tail-rank `1` exact-affine matrix data also closes across the whole
+`m20 = 0`, `m11 ≠ 0` branch. After reconstructing the canonical tailed
+`x₀x₁` relation, any residual `x₁²` tail component is cancelled by subtracting
+the matching multiple of that tailed relation from the third quadratic, which
+reduces directly to the affine-rank-one cross chart. -/
+theorem residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_m20_zero_m11_nonzero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 d0 d1 d2 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (_hd0K : d0 ∈ LinearMap.ker (x0CoeffMap u))
+    (_hd1K : d1 ∈ LinearMap.ker (x0CoeffMap u))
+    (_hd2K : d2 ∈ LinearMap.ker (x0CoeffMap u))
+    (htail0_ne :
+      (MvPolynomial.coeff m00 (relationPoly u d0)) ^ 2 +
+          (MvPolynomial.coeff m01 (relationPoly u d0)) ^ 2 ≠ 0)
+    (_h00_d1 : MvPolynomial.coeff m00 (relationPoly u d1) = 0)
+    (_h01_d1 : MvPolynomial.coeff m01 (relationPoly u d1) = 0)
+    (_h00_d2 : MvPolynomial.coeff m00 (relationPoly u d2) = 0)
+    (_h01_d2 : MvPolynomial.coeff m01 (relationPoly u d2) = 0)
+    {A : Matrix (Fin 3) (Fin 3) ℝ}
+    (hA :
+      ∀ j : Fin 3,
+        (![relationPoly u d0 -
+              affineLinePoly
+                (MvPolynomial.coeff m00 (relationPoly u d0))
+                0
+                (MvPolynomial.coeff m01 (relationPoly u d0)),
+            relationPoly u d1,
+            relationPoly u d2] : Fin 3 → Poly) j =
+          ∑ k : Fin 3, A j k • homQuadBasis k)
+    (hdet : A.det ≠ 0)
+    (h20_0 : A⁻¹ 0 0 = 0)
+    (h11_0 : A⁻¹ 1 0 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let r0 : ℝ := MvPolynomial.coeff m00 (relationPoly u d0)
+  let b0 : ℝ := MvPolynomial.coeff m01 (relationPoly u d0)
+  let q : Fin 3 → Poly := ![
+    relationPoly u d0 - affineLinePoly r0 0 b0,
+    relationPoly u d1,
+    relationPoly u d2]
+  have hhom := homQuadBasis_eq_sum_inv_mul_of_matrix hA hdet
+  let c20 : Fin 4 → ℝ := fun i => (A⁻¹ 0 1) * d1 i + (A⁻¹ 0 2) * d2 i
+  let c11 : Fin 4 → ℝ :=
+    fun i => (A⁻¹ 1 0) * d0 i + (A⁻¹ 1 1) * d1 i + (A⁻¹ 1 2) * d2 i
+  let c02 : Fin 4 → ℝ :=
+    fun i => (A⁻¹ 2 0) * d0 i + (A⁻¹ 2 1) * d1 i + (A⁻¹ 2 2) * d2 i
+  let μ : ℝ := A⁻¹ 2 0 * (A⁻¹ 1 0)⁻¹
+  have hd0split : relationPoly u d0 = q 0 + affineLinePoly r0 0 b0 := by
+    dsimp [q, r0, b0]
+    abel
+  have h20 :
+      relationPoly u c20 = x0 ^ 2 := by
+    have hsum20 : ∑ j : Fin 3, A⁻¹ 0 j • q j = relationPoly u c20 := by
+      calc
+        ∑ j : Fin 3, A⁻¹ 0 j • q j
+            = A⁻¹ 0 0 • q 0 + (A⁻¹ 0 1 • q 1 + A⁻¹ 0 2 • q 2) := by
+                simp [Fin.sum_univ_three]
+                abel
+        _ = A⁻¹ 0 1 • relationPoly u d1 + A⁻¹ 0 2 • relationPoly u d2 := by
+              rw [h20_0]
+              simp [q]
+        _ = relationPoly u c20 := by
+              rw [show c20 = (A⁻¹ 0 1) • d1 + (A⁻¹ 0 2) • d2 by
+                funext i
+                simp [c20]
+              , relationPoly_add, relationPoly_smul, relationPoly_smul]
+    calc
+      relationPoly u c20
+          = ∑ j : Fin 3, A⁻¹ 0 j • q j := hsum20.symm
+      _ = x0 ^ 2 := by
+            simpa using (hhom 0).symm
+  have h11 :
+      relationPoly u c11 =
+        (A⁻¹ 1 0 * r0) • (1 : Poly) + (A⁻¹ 1 0 * b0) • x1 + (x0 * x1 : Poly) := by
+    calc
+      relationPoly u c11
+          = (A⁻¹ 1 0) • relationPoly u d0 +
+              (A⁻¹ 1 1) • relationPoly u d1 + (A⁻¹ 1 2) • relationPoly u d2 := by
+              rw [show c11 = (A⁻¹ 1 0) • d0 + (A⁻¹ 1 1) • d1 + (A⁻¹ 1 2) • d2 by
+                funext i
+                simp [c11]
+              , relationPoly_add, relationPoly_add, relationPoly_smul, relationPoly_smul,
+                relationPoly_smul]
+      _ = (A⁻¹ 1 0) • affineLinePoly r0 0 b0 +
+            ∑ j : Fin 3, A⁻¹ 1 j • q j := by
+            rw [hd0split]
+            rw [smul_add]
+            simp [q, Fin.sum_univ_three]
+            abel
+      _ = (A⁻¹ 1 0) • affineLinePoly r0 0 b0 + (x0 * x1 : Poly) := by
+            simpa [q] using congrArg (fun z : Poly => (A⁻¹ 1 0) • affineLinePoly r0 0 b0 + z)
+              (hhom 1).symm
+      _ = (A⁻¹ 1 0 * r0) • (1 : Poly) + (A⁻¹ 1 0 * b0) • x1 + (x0 * x1 : Poly) := by
+            simp [affineLinePoly, MvPolynomial.smul_eq_C_mul, mul_comm, mul_left_comm,
+              add_assoc]
+  have h02 :
+      relationPoly u c02 =
+        (A⁻¹ 2 0 * r0) • (1 : Poly) + (A⁻¹ 2 0 * b0) • x1 + x1 ^ 2 := by
+    calc
+      relationPoly u c02
+          = (A⁻¹ 2 0) • relationPoly u d0 +
+              (A⁻¹ 2 1) • relationPoly u d1 + (A⁻¹ 2 2) • relationPoly u d2 := by
+              rw [show c02 = (A⁻¹ 2 0) • d0 + (A⁻¹ 2 1) • d1 + (A⁻¹ 2 2) • d2 by
+                funext i
+                simp [c02]
+              , relationPoly_add, relationPoly_add, relationPoly_smul, relationPoly_smul,
+                relationPoly_smul]
+      _ = (A⁻¹ 2 0) • affineLinePoly r0 0 b0 +
+            ∑ j : Fin 3, A⁻¹ 2 j • q j := by
+            rw [hd0split]
+            rw [smul_add]
+            simp [q, Fin.sum_univ_three]
+            abel
+      _ = (A⁻¹ 2 0) • affineLinePoly r0 0 b0 + x1 ^ 2 := by
+            simpa [q] using congrArg (fun z : Poly => (A⁻¹ 2 0) • affineLinePoly r0 0 b0 + z)
+              (hhom 2).symm
+      _ = (A⁻¹ 2 0 * r0) • (1 : Poly) + (A⁻¹ 2 0 * b0) • x1 + x1 ^ 2 := by
+            simp [affineLinePoly, MvPolynomial.smul_eq_C_mul, mul_comm, mul_left_comm,
+              add_assoc]
+  let c3 : Fin 4 → ℝ := c02 + (-μ) • c11
+  have h3 :
+      relationPoly u c3 = (-μ) • (x0 * x1 : Poly) + x1 ^ 2 := by
+    calc
+      relationPoly u c3
+          = relationPoly u c02 + relationPoly u ((-μ) • c11) := by
+              rw [show c3 = c02 + (-μ) • c11 by
+                funext i
+                simp [c3]
+              , relationPoly_add]
+      _ = relationPoly u c02 + (-μ) • relationPoly u c11 := by
+            rw [relationPoly_smul]
+      _ = ((A⁻¹ 2 0 * r0) • (1 : Poly) + (A⁻¹ 2 0 * b0) • x1 + x1 ^ 2) +
+            (-μ) • ((A⁻¹ 1 0 * r0) • (1 : Poly) + (A⁻¹ 1 0 * b0) • x1 + (x0 * x1 : Poly)) := by
+            rw [h02, h11]
+      _ = (-μ) • (x0 * x1 : Poly) + x1 ^ 2 := by
+            simp [μ, h11_0, mul_assoc, mul_comm, mul_left_comm, add_assoc, add_left_comm,
+              add_comm, smul_add, smul_smul]
+  have hq20 : IsQuadratic (relationPoly u c20) := isQuadratic_relationPoly hu c20
+  have hq11 : IsQuadratic (relationPoly u c11) := isQuadratic_relationPoly hu c11
+  have hq3 : IsQuadratic (relationPoly u c3) := isQuadratic_relationPoly hu c3
+  have h20_00 : MvPolynomial.coeff m00 (relationPoly u c20) = 0 := by
+    simpa [coeff_m00_x0sq] using congrArg (MvPolynomial.coeff m00) h20
+  have h20_10 : MvPolynomial.coeff m10 (relationPoly u c20) = 0 := by
+    simpa [coeff_m10_x0sq] using congrArg (MvPolynomial.coeff m10) h20
+  have h20_01 : MvPolynomial.coeff m01 (relationPoly u c20) = 0 := by
+    simpa [coeff_m01_x0sq] using congrArg (MvPolynomial.coeff m01) h20
+  have h3_00 : MvPolynomial.coeff m00 (relationPoly u c3) = 0 := by
+    simpa [coeff_m00_x0x1, coeff_m00_x1sq] using congrArg (MvPolynomial.coeff m00) h3
+  have h3_10 : MvPolynomial.coeff m10 (relationPoly u c3) = 0 := by
+    simpa [coeff_m10_x0x1, coeff_m10_x1sq] using congrArg (MvPolynomial.coeff m10) h3
+  have h3_01 : MvPolynomial.coeff m01 (relationPoly u c3) = 0 := by
+    simpa [coeff_m01_x0x1, coeff_m01_x1sq] using congrArg (MvPolynomial.coeff m01) h3
+  have h20_11' : MvPolynomial.coeff m11 (relationPoly u c20) = 0 := by
+    simpa [coeff_m11_x0sq] using congrArg (MvPolynomial.coeff m11) h20
+  have h20_02' : MvPolynomial.coeff m02 (relationPoly u c20) = 0 := by
+    simpa [coeff_m02_x0sq] using congrArg (MvPolynomial.coeff m02) h20
+  have h20_20' : MvPolynomial.coeff m20 (relationPoly u c20) = 1 := by
+    simpa [coeff_m20_x0sq] using congrArg (MvPolynomial.coeff m20) h20
+  have h3_11' : MvPolynomial.coeff m11 (relationPoly u c3) = -μ := by
+    have hcoeff := congrArg (MvPolynomial.coeff m11) h3
+    simpa [MvPolynomial.coeff_add, MvPolynomial.coeff_smul, coeff_m11_x0x1, coeff_m11_x1sq]
+      using hcoeff
+  have h3_02' : MvPolynomial.coeff m02 (relationPoly u c3) = 1 := by
+    have hcoeff := congrArg (MvPolynomial.coeff m02) h3
+    simpa [MvPolynomial.coeff_add, MvPolynomial.coeff_smul, coeff_m02_x0x1, coeff_m02_x1sq]
+      using hcoeff
+  have h3_20' : MvPolynomial.coeff m20 (relationPoly u c3) = 0 := by
+    have hcoeff := congrArg (MvPolynomial.coeff m20) h3
+    simpa [MvPolynomial.coeff_add, MvPolynomial.coeff_smul, coeff_m20_x0x1, coeff_m20_x1sq]
+      using hcoeff
+  have hcross :
+      MvPolynomial.coeff m11 (relationPoly u c20) *
+          MvPolynomial.coeff m02 (relationPoly u c3) -
+        MvPolynomial.coeff m02 (relationPoly u c20) *
+          MvPolynomial.coeff m11 (relationPoly u c3) = 0 := by
+    rw [h20_11', h3_02', h20_02', h3_11']
+    ring
+  have hdetCross :
+      MvPolynomial.coeff m20 (relationPoly u c20) *
+          MvPolynomial.coeff m02 (relationPoly u c3) -
+        MvPolynomial.coeff m02 (relationPoly u c20) *
+          MvPolynomial.coeff m20 (relationPoly u c3) ≠ 0 := by
+    rw [h20_20', h3_02', h20_02', h3_20']
+    norm_num
+  by_cases hr0 : r0 = 0
+  · have hb0 : b0 ≠ 0 := by
+      intro hb0
+      apply htail0_ne
+      simp [r0, b0, hr0, hb0]
+    have h11x1 :
+        relationPoly u c11 = (A⁻¹ 1 0 * b0) • x1 + (x0 * x1 : Poly) := by
+      simpa [hr0, zero_smul, zero_add] using h11
+    let c1 : Fin 4 → ℝ := ((A⁻¹ 1 0 * b0)⁻¹) • c11
+    have hc1 :
+        relationPoly u c1 =
+          (A⁻¹ 1 0 * b0)⁻¹ • ((A⁻¹ 1 0 * b0) • x1 + (x0 * x1 : Poly)) := by
+      rw [relationPoly_smul, h11x1]
+    have h1_00 : MvPolynomial.coeff m00 (relationPoly u c1) = 0 := by
+      have hcoeff := congrArg (MvPolynomial.coeff m00) hc1
+      simpa [MvPolynomial.coeff_add, MvPolynomial.coeff_smul, coeff_m00_x1, coeff_m00_x0x1]
+        using hcoeff
+    have h1_10 : MvPolynomial.coeff m10 (relationPoly u c1) = 0 := by
+      have hcoeff := congrArg (MvPolynomial.coeff m10) hc1
+      simpa [MvPolynomial.coeff_add, MvPolynomial.coeff_smul, coeff_m10_x1, coeff_m10_x0x1]
+        using hcoeff
+    have h1_01 : MvPolynomial.coeff m01 (relationPoly u c1) = 1 := by
+      have hcoeff := congrArg (MvPolynomial.coeff m01) hc1
+      have hne : A⁻¹ 1 0 * b0 ≠ 0 := mul_ne_zero h11_0 hb0
+      have hcoeff' :
+          MvPolynomial.coeff m01 (relationPoly u c1) =
+            (A⁻¹ 1 0 * b0)⁻¹ * ((A⁻¹ 1 0 * b0) * 1 + 0) := by
+        simpa [smul_eq_mul, MvPolynomial.coeff_add, MvPolynomial.coeff_smul,
+          coeff_m01_x1, coeff_m01_x0x1] using hcoeff
+      calc
+        MvPolynomial.coeff m01 (relationPoly u c1) = (A⁻¹ 1 0 * b0)⁻¹ * (A⁻¹ 1 0 * b0) := by
+          simpa using hcoeff'
+        _ = 1 := inv_mul_cancel₀ hne
+    have h1_02 : MvPolynomial.coeff m02 (relationPoly u c1) = 0 := by
+      have hcoeff := congrArg (MvPolynomial.coeff m02) hc1
+      simpa [MvPolynomial.coeff_add, MvPolynomial.coeff_smul, coeff_m02_x1, coeff_m02_x0x1]
+        using hcoeff
+    have htail :
+        MvPolynomial.coeff m11
+            (affineHom
+              (x1ShearMatrix
+                (lowHomQuadPlaneC (relationPoly u c20) (relationPoly u c3) /
+                  (-(2 * lowHomQuadPlaneB (relationPoly u c20) (relationPoly u c3)))))
+              0
+              (relationPoly u c1)) ≠ 0 := by
+      have hq1 : IsQuadratic (relationPoly u c1) := isQuadratic_relationPoly hu c1
+      rw [coeff_m11_affineHom_x1Shear hq1, h1_02]
+      simp
+      have h1_11 :
+          MvPolynomial.coeff m11 (relationPoly u c1) = (A⁻¹ 1 0 * b0)⁻¹ := by
+        have hcoeff := congrArg (MvPolynomial.coeff m11) hc1
+        simpa [MvPolynomial.coeff_add, MvPolynomial.coeff_smul, coeff_m11_x1, coeff_m11_x0x1]
+          using hcoeff
+      rw [h1_11]
+      exact inv_ne_zero (mul_ne_zero h11_0 hb0)
+    exact residual_eq_zero_of_relations_x0_x1Plus_homQuadratics_crossDet_zero
+      (B := B) (u := u) hu
+      (by simpa [relationPoly] using h0)
+      (c1 := c1) (q1 := relationPoly u c1) (by rfl)
+      (c2 := c20) (q2 := relationPoly u c20) (by rfl)
+      (c3 := c3) (q3 := relationPoly u c3) (by rfl)
+      (isQuadratic_relationPoly hu c1) hq20 hq3
+      h1_00 h1_10 h1_01
+      h20_00 h20_10 h20_01
+      h3_00 h3_10 h3_01
+      hcross hdetCross htail hp hsocp
+  · by_cases hb0 : b0 = 0
+    · let c1 : Fin 4 → ℝ := ((A⁻¹ 1 0 * r0)⁻¹) • c11
+      have h11const :
+          relationPoly u c11 = (A⁻¹ 1 0 * r0) • (1 : Poly) + (x0 * x1 : Poly) := by
+        simpa [hb0, zero_smul, add_assoc] using h11
+      have h1' :
+          relationPoly u c1 = (1 : Poly) + (A⁻¹ 1 0 * r0)⁻¹ • (x0 * x1 : Poly) := by
+        have hscale : (A⁻¹ 1 0 * r0)⁻¹ • ((A⁻¹ 1 0 * r0) • (1 : Poly)) = (1 : Poly) := by
+          have hne : A⁻¹ 1 0 * r0 ≠ 0 := mul_ne_zero h11_0 hr0
+          have hmul : (A⁻¹ 1 0 * r0)⁻¹ * (A⁻¹ 1 0 * r0) = 1 := inv_mul_cancel₀ hne
+          rw [smul_smul, hmul, one_smul]
+        calc
+          relationPoly u c1 = (A⁻¹ 1 0 * r0)⁻¹ • relationPoly u c11 := by
+            rw [relationPoly_smul]
+          _ = (A⁻¹ 1 0 * r0)⁻¹ • ((A⁻¹ 1 0 * r0) • (1 : Poly) + (x0 * x1 : Poly)) := by
+                rw [h11const]
+          _ = (A⁻¹ 1 0 * r0)⁻¹ • ((A⁻¹ 1 0 * r0) • (1 : Poly)) +
+                (A⁻¹ 1 0 * r0)⁻¹ • (x0 * x1 : Poly) := by
+                rw [smul_add]
+          _ = (1 : Poly) + (A⁻¹ 1 0 * r0)⁻¹ • (x0 * x1 : Poly) := by
+                rw [hscale]
+      have h1_00 : MvPolynomial.coeff m00 (relationPoly u c1) = 1 := by
+        simpa [coeff_m00_x0x1] using congrArg (MvPolynomial.coeff m00) h1'
+      have h1_10 : MvPolynomial.coeff m10 (relationPoly u c1) = 0 := by
+        simpa [coeff_m10_one, coeff_m10_x0x1] using congrArg (MvPolynomial.coeff m10) h1'
+      have h1_01 : MvPolynomial.coeff m01 (relationPoly u c1) = 0 := by
+        simpa [coeff_m01_one, coeff_m01_x0x1] using congrArg (MvPolynomial.coeff m01) h1'
+      exact residual_eq_zero_of_relations_x0_onePlus_homQuadratics_crossDet_zero
+        (B := B) (u := u) hu
+        (by simpa [relationPoly] using h0)
+        (c1 := c1) (q1 := relationPoly u c1) (by rfl)
+        (c2 := c20) (q2 := relationPoly u c20) (by rfl)
+        (c3 := c3) (q3 := relationPoly u c3) (by rfl)
+        (isQuadratic_relationPoly hu c1) hq20 hq3
+        h1_00 h1_10 h1_01
+        h20_00 h20_10 h20_01
+        h3_00 h3_10 h3_01
+        hcross hdetCross hp hsocp
+    · let c1 : Fin 4 → ℝ := ((A⁻¹ 1 0 * r0)⁻¹) • c11
+      have h1' :
+          relationPoly u c1 =
+            (1 : Poly) + (b0 / r0) • x1 + (A⁻¹ 1 0 * r0)⁻¹ • (x0 * x1 : Poly) := by
+        have hscale : (A⁻¹ 1 0 * r0)⁻¹ • ((A⁻¹ 1 0 * r0) • (1 : Poly)) = (1 : Poly) := by
+          have hne : A⁻¹ 1 0 * r0 ≠ 0 := mul_ne_zero h11_0 hr0
+          have hmul : (A⁻¹ 1 0 * r0)⁻¹ * (A⁻¹ 1 0 * r0) = 1 := inv_mul_cancel₀ hne
+          rw [smul_smul, hmul, one_smul]
+        have hscalex1 :
+            (A⁻¹ 1 0 * r0)⁻¹ • ((A⁻¹ 1 0 * b0) • x1) = (b0 / r0) • x1 := by
+          rw [smul_smul]
+          have hmul :
+              (A⁻¹ 1 0 * r0)⁻¹ * (A⁻¹ 1 0 * b0) = b0 / r0 := by
+            field_simp [h11_0, hr0]
+          rw [hmul]
+        calc
+          relationPoly u c1 = (A⁻¹ 1 0 * r0)⁻¹ • relationPoly u c11 := by
+            rw [relationPoly_smul]
+          _ = (A⁻¹ 1 0 * r0)⁻¹ • ((A⁻¹ 1 0 * r0) • (1 : Poly) + (A⁻¹ 1 0 * b0) • x1 +
+                (x0 * x1 : Poly)) := by
+                rw [h11]
+          _ = (A⁻¹ 1 0 * r0)⁻¹ • ((A⁻¹ 1 0 * r0) • (1 : Poly)) +
+                (A⁻¹ 1 0 * r0)⁻¹ • ((A⁻¹ 1 0 * b0) • x1) +
+                (A⁻¹ 1 0 * r0)⁻¹ • (x0 * x1 : Poly) := by
+                simp [smul_add, add_assoc]
+          _ = (1 : Poly) + (b0 / r0) • x1 + (A⁻¹ 1 0 * r0)⁻¹ • (x0 * x1 : Poly) := by
+                rw [hscale, hscalex1]
+      have h1_00 : MvPolynomial.coeff m00 (relationPoly u c1) = 1 := by
+        simpa [coeff_m00_x1, coeff_m00_x0x1] using congrArg (MvPolynomial.coeff m00) h1'
+      have h1_10 : MvPolynomial.coeff m10 (relationPoly u c1) = 0 := by
+        simpa [coeff_m10_one, coeff_m10_x1, coeff_m10_x0x1] using
+          congrArg (MvPolynomial.coeff m10) h1'
+      exact residual_eq_zero_of_relations_x0_onePlusBX1Plus_homQuadratics_crossDet_zero
+        (B := B) (u := u) hu
+        (by simpa [relationPoly] using h0)
+        (c1 := c1) (q1 := relationPoly u c1) (by rfl)
+        (c2 := c20) (q2 := relationPoly u c20) (by rfl)
+        (c3 := c3) (q3 := relationPoly u c3) (by rfl)
+        (isQuadratic_relationPoly hu c1) hq20 hq3
+        h1_00 h1_10
+        h20_00 h20_10 h20_01
+        h3_00 h3_10 h3_01
+        hcross hdetCross hp hsocp
+
+/-- Tail-rank `1` exact-affine matrix data already closes across the whole
+`m20 = 0` branch. If the tailed inverse-matrix column has nonzero `m11`
+component, Lean uses the mixed-support cross-chart theorem above; otherwise the
+tail is supported only on `x₁²` and falls back to the corresponding
+support-one theorem. -/
+theorem residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_m20_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 d0 d1 d2 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hd0K : d0 ∈ LinearMap.ker (x0CoeffMap u))
+    (hd1K : d1 ∈ LinearMap.ker (x0CoeffMap u))
+    (hd2K : d2 ∈ LinearMap.ker (x0CoeffMap u))
+    (htail0_ne :
+      (MvPolynomial.coeff m00 (relationPoly u d0)) ^ 2 +
+          (MvPolynomial.coeff m01 (relationPoly u d0)) ^ 2 ≠ 0)
+    (h00_d1 : MvPolynomial.coeff m00 (relationPoly u d1) = 0)
+    (h01_d1 : MvPolynomial.coeff m01 (relationPoly u d1) = 0)
+    (h00_d2 : MvPolynomial.coeff m00 (relationPoly u d2) = 0)
+    (h01_d2 : MvPolynomial.coeff m01 (relationPoly u d2) = 0)
+    {A : Matrix (Fin 3) (Fin 3) ℝ}
+    (hA :
+      ∀ j : Fin 3,
+        (![relationPoly u d0 -
+              affineLinePoly
+                (MvPolynomial.coeff m00 (relationPoly u d0))
+                0
+                (MvPolynomial.coeff m01 (relationPoly u d0)),
+            relationPoly u d1,
+            relationPoly u d2] : Fin 3 → Poly) j =
+          ∑ k : Fin 3, A j k • homQuadBasis k)
+    (hdet : A.det ≠ 0)
+    (h20_0 : A⁻¹ 0 0 = 0)
+    (htail_ne : A⁻¹ 1 0 ≠ 0 ∨ A⁻¹ 2 0 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  by_cases h11_0 : A⁻¹ 1 0 = 0
+  · have h02_0 : A⁻¹ 2 0 ≠ 0 := by
+      rcases htail_ne with h11 | h02
+      · exact False.elim (h11 h11_0)
+      · exact h02
+    exact residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_tailOnX1sq
+      (B := B) (u := u) hu h0 hd0K hd1K hd2K htail0_ne h00_d1 h01_d1 h00_d2 h01_d2
+      hA hdet h20_0 h11_0 h02_0 hp hsocp
+  · exact residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_m20_zero_m11_nonzero
+      (B := B) (u := u) hu h0 hd0K hd1K hd2K htail0_ne h00_d1 h01_d1 h00_d2 h01_d2
+      hA hdet h20_0 h11_0 hp hsocp
+
 /-- Tail-rank `1` exact-affine matrix data closes as soon as the inverse
 homogeneous basis matrix shows that the affine tail lands on exactly one of the
 three canonical quadratic directions. -/
@@ -4343,6 +4881,40 @@ theorem residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_singleSupport
   · exact residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_tailOnX1sq
       (B := B) (u := u) hu h0 hd0K hd1K hd2K htail0_ne h00_d1 h01_d1 h00_d2 h01_d2
       hA hdet h2only.1 h2only.2.1 h2only.2.2 hp hsocp
+
+/-- Above the normalized `x₀` exact-affine `dim = 1`, tail-rank `1` extractor,
+the entire already-solved matrix region closes in one step: either the affine
+tail lands on a single canonical quadratic direction, or the inverse-matrix
+column lies in the resolved `m20 = 0` slice. The only remaining tail-rank `1`
+gap is therefore the complementary mixed-support `m20 ≠ 0` branch. -/
+theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne_simpleBranch
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange1 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 1)
+    (hbranch :
+      (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).SimpleBranch)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  classical
+  let D : X0TailHomBasisMatrixData u := exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1
+  rcases hbranch with hsingle | hm20
+  · exact residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_singleSupport
+      (B := B) (u := u) hu h0
+      D.hd0K D.hd1K D.hd2K D.htail0_ne
+      D.h00_d1 D.h01_d1 D.h00_d2 D.h01_d2
+      D.hA D.hdet hsingle hp hsocp
+  · exact residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_m20_zero
+      (B := B) (u := u) hu h0
+      D.hd0K D.hd1K D.hd2K D.htail0_ne
+      D.h00_d1 D.h01_d1 D.h00_d2 D.h01_d2
+      D.hA D.hdet hm20.1 hm20.2 hp hsocp
 
 /-- If the exact affine relation space has dimension one and contains no exact
 constant relation, then it contains a genuine nonconstant affine line. -/

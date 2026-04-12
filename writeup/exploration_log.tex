@@ -3256,8 +3256,29 @@ the canonical directions \(x_0^2\), \(x_0x_1\), or \(x_1^2\). Lean
 reconstructs the exact tailed coordinate in that direction, recovers the other
 two pure homogeneous coordinates from the same inverse matrix, and then
 dispatches to the existing support-one affine-rank-one endpoints. So the
-remaining tail-rank \(1\) gap is now strictly the genuinely mixed-support
-matrix outputs, not the one-support cases.
+remaining tail-rank \(1\) work is no longer the one-support cases. I then
+added the broader mixed-support closure
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_m20\_zero\_m11\_nonzero}.
+This covers the whole branch where the first inverse-matrix column satisfies
+\((A^{-1})_{00}=0\) and \((A^{-1})_{10}\neq 0\), without assuming
+\((A^{-1})_{20}=0\). The proof reconstructs the tailed \(x_0x_1\) relation,
+uses it to cancel the induced \(x_1^2\)-tail in the third quadratic, and then
+falls directly into the affine-rank-one cross chart. I then packaged that with
+the old support-one \(x_1^2\)-tail theorem as
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_m20\_zero},
+so the entire \((A^{-1})_{00}=0\) slice is now internal to Lean. The genuinely
+open tail-rank \(1\) matrix outputs are therefore only the complementary
+\((A^{-1})_{00}\neq 0\) mixed-support branches, especially the repeated-line and
+diagonal complements that still need basis-level normalization data for the
+tailed coordinate. I then bundled the range-\(1\) extractor itself as
+\texttt{exactAffineDimOneRangeOneData} and added the classifier-facing wrapper
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_simpleBranch}.
+So Lean no longer stops at local matrix theorems on the resolved part of the
+tail-rank \(1\) branch: as soon as the chosen extracted inverse matrix lies in
+either the exact single-support region or the full \((A^{-1})_{00}=0\) slice,
+the exact-affine \(\dim=1\) classifier closes directly. The only remaining
+tail-rank \(1\) gap is therefore the complementary \((A^{-1})_{00}\neq 0\)
+mixed-support routing.
 
 \section*{Open Subgoals}
 \begin{itemize}
