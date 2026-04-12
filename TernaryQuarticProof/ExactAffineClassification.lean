@@ -5898,6 +5898,77 @@ theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne_h20_zero_r0_zero
   exact residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_h20_zero_r0_zero
     (B := B) (u := u) hu h0 D h00_ne h20 h10_ne hr0 hp hsocp
 
+/-- In the exact-affine `dim = 1`, tail-rank `1` mixed-support branch, the
+subcase `(A⁻¹)₂₀ = 0` and `r₀ ≠ 0` produces the exact shared-tail relations
+`1 + b x₁ + a x₀²`, `1 + b x₁ + c x₀x₁`, and `x₁²`, so it closes directly
+through the dedicated affine-rank-one endpoint theorem. -/
+theorem residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_h20_zero_r0_ne_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (D : X0TailHomBasisMatrixData u)
+    (h00_ne : D.A⁻¹ 0 0 ≠ 0)
+    (h20 : D.A⁻¹ 2 0 = 0)
+    (h10_ne : D.A⁻¹ 1 0 ≠ 0)
+    (hr0 : D.r0 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let a : ℝ := (D.A⁻¹ 0 0 * D.r0)⁻¹
+  let c : ℝ := (D.A⁻¹ 1 0 * D.r0)⁻¹
+  let b : ℝ := D.b0 / D.r0
+  have h0' : ∑ i : Fin 4, c0 i • u i = x0 := by
+    simpa [relationPoly] using h0
+  have ha : a ≠ 0 := by
+    simp [a, h00_ne, hr0]
+  have hc : c ≠ 0 := by
+    simp [c, h10_ne, hr0]
+  have h1 :
+      ∑ i : Fin 4, (a • D.c20) i • u i =
+        (1 : Poly) + b • x1 + a • (x0 ^ 2 : Poly) := by
+    simpa [relationPoly, a, b] using
+      X0TailHomBasisMatrixData.relation_c20_normalized_onePlusBX1_of_h20_zero_r0_ne_zero
+        D h00_ne h20 hr0
+  have h2 :
+      ∑ i : Fin 4, (c • D.c11) i • u i =
+        (1 : Poly) + b • x1 + c • (x0 * x1 : Poly) := by
+    simpa [relationPoly, b, c] using
+      X0TailHomBasisMatrixData.relation_c11_normalized_onePlusBX1_of_h20_zero_r0_ne_zero
+        D h10_ne hr0
+  have h3 :
+      ∑ i : Fin 4, D.c02 i • u i = x1 ^ 2 := by
+    simpa [relationPoly] using
+      X0TailHomBasisMatrixData.relation_c02_of_h20_zero D h20
+  exact residual_eq_zero_of_relations_x0_onePlusBX1PlusAX0sq_onePlusBX1PlusCX0x1_x1sq
+    (B := B) (u := u) hu ha hc h0' h1 h2 h3 hp hsocp
+
+/-- Classifier-level wrapper for the exact-affine `dim = 1`, tail-rank `1`
+subcase `(A⁻¹)₂₀ = 0`, `(A⁻¹)₁₀ ≠ 0`, `r₀ ≠ 0`. -/
+theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne_h20_zero_r0_ne_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange1 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 1)
+    (h00_ne : (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 0 0 ≠ 0)
+    (h20 : (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 2 0 = 0)
+    (h10_ne : (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 1 0 ≠ 0)
+    (hr0 : (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).r0 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  classical
+  let D : X0TailHomBasisMatrixData u := exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1
+  exact residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_h20_zero_r0_ne_zero
+    (B := B) (u := u) hu h0 D h00_ne h20 h10_ne hr0 hp hsocp
+
 /-- Above the normalized `x₀` exact-affine `dim = 1`, tail-rank `1`
 extractor, the whole already-resolved region closes in one theorem: either the
 inverse homogeneous-basis column lies in the previously solved simple branch, or

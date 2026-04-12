@@ -3354,6 +3354,29 @@ in \texttt{RepresentativeAffineRankOne.lean}. So the remaining exact-affine
 mixed-tail \(r_0\neq 0\) outputs together with the diagonal-complement side of
 the first inverse homogeneous column.
 
+That \((A^{-1})_{20}=0\) boundary is now closed completely. In
+\texttt{RepresentativeAffineRankOne.lean} the new exact endpoint
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1PlusAX0sq\_onePlusBX1PlusCX0x1\_x1sq}
+handles the shared mixed-tail family
+\[
+  x_0,\qquad 1+b x_1+a x_0^2,\qquad 1+b x_1+c x_0x_1,\qquad x_1^2
+\]
+with \(a\neq 0\) and \(c\neq 0\). On top of that,
+\texttt{ExactAffineClassification.lean} now proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_h20\_zero\_r0\_ne\_zero}
+and the classifier wrapper
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_h20\_zero\_r0\_ne\_zero}.
+So the normalized mixed-support subcase
+\[
+  (A^{-1})_{00}\neq 0,\qquad (A^{-1})_{20}=0,\qquad (A^{-1})_{10}\neq 0
+\]
+is now closed uniformly, regardless of whether \(r_0=0\) or \(r_0\neq 0\).
+The remaining exact-affine \(\dim=1\), tail-rank \(1\) gap is therefore no
+longer on that explicit \(h_{20}=0\) slice. What remains is the genuinely
+complementary diagonal/basis-routing branch above the extracted pure
+homogeneous plane, before the final assembly in
+\texttt{TernaryQuarticProof.lean}.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.
