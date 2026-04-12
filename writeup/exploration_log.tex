@@ -3655,6 +3655,34 @@ and
 So the range-two branch is no longer missing its generic matrix-data case; the
 remaining gap is only the complementary determinant-zero routing step.
 
+I then tested that complementary determinant-zero slice directly in the new
+script \texttt{julia/affine\_dim\_one\_range\_two\_det\_zero\_2026\_04\_12.jl}.
+It samples the normalized range-two family
+\[
+  a+b x_1+x_0^2,\qquad
+  c+d x_1+x_0x_1,\qquad
+  e+f x_1+x_1^2
+\]
+under the determinant-zero constraint \(ad-bc=0\), keeps only the
+exact-affine-dimension-\(1\) cases, and records
+\[
+  \Delta = a^2-a b f+b^2 e.
+\]
+The retained output is
+\[
+\texttt{affine\_dim\_one\_range\_two\_det\_zero\_probe}
+ = (\texttt{samples}=200,\ \texttt{neg\_disc}=(\texttt{count}=60,\
+    \texttt{ranks}=[15],\ \texttt{missing}=[[]]),\
+    \texttt{zero\_disc}=(\texttt{count}=9,\ \texttt{ranks}=[14],\
+    \texttt{missing}=[[(0,0),(0,1),(0,2),(0,3),(0,4)]]),\
+    \texttt{pos\_disc}=(\texttt{count}=121,\ \texttt{ranks}=[15],\
+    \texttt{missing}=[[]])).
+\]
+So the determinant-zero range-two slice is not uniformly singular. Both
+\(\Delta<0\) and \(\Delta>0\) still look generically surjective, while the
+rank-\(14\) obstruction only appears on the codimension-one discriminant-zero
+subfamily, with exactly the pure \(x_1\)-axis tower missing.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Route the already extracted exact-affine \(\dim=1\) tail-rank \(2\)

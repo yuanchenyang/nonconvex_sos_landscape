@@ -3532,6 +3532,34 @@ dispatches immediately to the representative theorem
 So the remaining tail-rank \(2\) gap is now only the complementary
 determinant-zero routing step, not the generic matrix-data case.
 
+That complementary slice is now numerically pinned down too. The new script
+\texttt{julia/affine\_dim\_one\_range\_two\_det\_zero\_2026\_04\_12.jl} samples
+the normalized determinant-zero family
+\[
+  a+b x_1+x_0^2,\qquad
+  c+d x_1+x_0x_1,\qquad
+  e+f x_1+x_1^2
+\]
+with \(ad-bc=0\) and exact-affine dimension \(1\), and then records the scalar
+\[
+  \Delta = a^2-a b f+b^2 e.
+\]
+The retained output is
+\[
+\texttt{neg\_disc}=(\texttt{count}=60,\ \texttt{ranks}=[15],\
+  \texttt{missing}=[[]]),\qquad
+\texttt{zero\_disc}=(\texttt{count}=9,\ \texttt{ranks}=[14],\
+  \texttt{missing}=[[(0,0),(0,1),(0,2),(0,3),(0,4)]]),
+\]
+\[
+\texttt{pos\_disc}=(\texttt{count}=121,\ \texttt{ranks}=[15],\
+  \texttt{missing}=[[]]).
+\]
+So inside the determinant-zero range-two branch, the only visible rank-drop
+subfamily is the codimension-one discriminant-zero slice, and its missing
+direction is again exactly the pure \(x_1\)-axis tower. This is now the right
+formal split to target next.
+
 So the remaining exact-affine \(\dim=1\) gap is no longer on the tail-rank
 \(1\) side at all. What remains is the still-separate tail-rank \(2\) closure,
 followed by the final assembly in \texttt{TernaryQuarticProof.lean}.
