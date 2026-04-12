@@ -426,6 +426,26 @@ private theorem det_ne_zero_of_homCoeffMatrix
   funext j
   exact hvj j
 
+/-- Any linearly independent triple of homogeneous quadratics determines an
+invertible coefficient matrix in the canonical basis
+`(x₀², x₀x₁, x₁²)`. -/
+theorem exists_homQuadBasis_matrix_of_linearIndependent
+    {q : Fin 3 → Poly}
+    (hq : ∀ j : Fin 3, IsQuadratic (q j))
+    (h00 : ∀ j : Fin 3, MvPolynomial.coeff m00 (q j) = 0)
+    (h10 : ∀ j : Fin 3, MvPolynomial.coeff m10 (q j) = 0)
+    (h01 : ∀ j : Fin 3, MvPolynomial.coeff m01 (q j) = 0)
+    (hqind : LinearIndependent ℝ q) :
+    ∃ A : Matrix (Fin 3) (Fin 3) ℝ,
+      (∀ j : Fin 3, q j = ∑ k : Fin 3, A j k • homQuadBasis k) ∧
+      A.det ≠ 0 := by
+  let A : Matrix (Fin 3) (Fin 3) ℝ := homCoeffMatrix q
+  refine ⟨A, ?_, ?_⟩
+  · intro j
+    rw [homogeneousQuadratic_eq (hq j) (h00 j) (h10 j) (h01 j)]
+    simpa [A] using (sum_homCoeffMatrix_basis q j).symm
+  · simpa [A] using det_ne_zero_of_homCoeffMatrix hq h00 h10 h01 hqind
+
 theorem residual_eq_zero_of_relations_const_affineRankOne
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}

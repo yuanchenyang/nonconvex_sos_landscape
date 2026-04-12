@@ -3231,6 +3231,19 @@ remaining gap is now cleanly basis-level: the exact-affine \(\dim=1\)
 classifier must extract the needed diagonal relation and chart data from the
 homogeneous-basis package.
 
+I then tightened that basis-level statement in
+\texttt{ExactAffineClassification.lean}. The new theorems
+\texttt{exists\_x0\_tail\_nonzero\_hom\_basis\_matrix\_of\_exactAffineDimOne\_rangeOne}
+and
+\texttt{exists\_x0\_tail\_const\_x1\_hom\_basis\_matrix\_of\_exactAffineDimOne\_rangeTwo}
+upgrade the tail-rank \(1\) and tail-rank \(2\) extractors from abstract
+linear-independence statements to explicit invertible \(3\times 3\)
+coefficient matrices against the canonical homogeneous basis
+\((x_0^2,x_0x_1,x_1^2)\). So the remaining blocker is no longer ``find a
+homogeneous basis.'' Lean already returns the basis and its matrix. What is
+still missing is the next normalization layer that turns that matrix-valued
+output into one of the solved affine-rank-one chart inputs.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine

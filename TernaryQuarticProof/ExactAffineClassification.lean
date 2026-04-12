@@ -83,6 +83,42 @@ private theorem isQuadratic_relationPoly
             exact MvPolynomial.totalDegree_add _ _
     _ ≤ 2 := max_le h01 h23
 
+private theorem isQuadratic_linearCombination_local
+    {p q : Poly} (hp : IsQuadratic p) (hq : IsQuadratic q) (a b : ℝ) :
+    IsQuadratic (a • p + b • q) := by
+  calc
+    (a • p + b • q).totalDegree ≤ max (a • p).totalDegree (b • q).totalDegree := by
+      exact MvPolynomial.totalDegree_add _ _
+    _ ≤ 2 := by
+      exact max_le
+        ((MvPolynomial.totalDegree_smul_le a p).trans hp)
+        ((MvPolynomial.totalDegree_smul_le b q).trans hq)
+
+private theorem isQuadratic_one_local : IsQuadratic (1 : Poly) := by
+  change ((1 : Poly).totalDegree ≤ 2)
+  simp
+
+private theorem isQuadratic_x0_local : IsQuadratic x0 := by
+  change (x0 : Poly).totalDegree ≤ 2
+  simp [x0]
+
+private theorem isQuadratic_x1_local : IsQuadratic x1 := by
+  change (x1 : Poly).totalDegree ≤ 2
+  simp [x1]
+
+private theorem isQuadratic_affineLinePoly_local (r a b : ℝ) :
+    IsQuadratic (affineLinePoly r a b) := by
+  have hconst : IsQuadratic (r • (1 : Poly)) := by
+    exact (MvPolynomial.totalDegree_smul_le r (1 : Poly)).trans isQuadratic_one_local
+  have hx0 : IsQuadratic (a • x0) := by
+    exact (MvPolynomial.totalDegree_smul_le a x0).trans isQuadratic_x0_local
+  have hx1 : IsQuadratic (b • x1) := by
+    exact (MvPolynomial.totalDegree_smul_le b x1).trans isQuadratic_x1_local
+  simpa [affineLinePoly, MvPolynomial.smul_eq_C_mul, add_assoc, add_left_comm, add_comm] using
+    isQuadratic_linearCombination_local
+      (isQuadratic_linearCombination_local hconst hx0 1 1)
+      hx1 1 1
+
 /-- Homogeneous quadratic coefficients of a scalar relation. -/
 def homCoeffMap (u : RankFourVec) :
     (Fin 4 → ℝ) →ₗ[ℝ] (Fin 3 → ℝ) where
@@ -2691,6 +2727,98 @@ theorem exists_x0_tail_nonzero_hom_basis_of_exactAffineDimOne_rangeOne
   exact ⟨d0, d1, d2, hd0K, hd1K, hd2K, htail0_ne, h00_d1, h01_d1, h00_d2, h01_d2, by
     simpa [r0, b0] using hlin⟩
 
+/-- The tail-rank `1` exact-affine `dim = 1` extractor can be packaged as a
+homogeneous basis matrix in the canonical basis `(x₀², x₀x₁, x₁²)`. The unique
+tailed relation is first stripped of its affine tail, and the resulting
+homogeneous triple has invertible coefficient matrix. -/
+theorem exists_x0_tail_nonzero_hom_basis_matrix_of_exactAffineDimOne_rangeOne
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange1 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 1) :
+    ∃ d0 d1 d2 : Fin 4 → ℝ, ∃ A : Matrix (Fin 3) (Fin 3) ℝ,
+      d0 ∈ LinearMap.ker (x0CoeffMap u) ∧
+      d1 ∈ LinearMap.ker (x0CoeffMap u) ∧
+      d2 ∈ LinearMap.ker (x0CoeffMap u) ∧
+      (MvPolynomial.coeff m00 (relationPoly u d0)) ^ 2 +
+          (MvPolynomial.coeff m01 (relationPoly u d0)) ^ 2 ≠ 0 ∧
+      MvPolynomial.coeff m00 (relationPoly u d1) = 0 ∧
+      MvPolynomial.coeff m01 (relationPoly u d1) = 0 ∧
+      MvPolynomial.coeff m00 (relationPoly u d2) = 0 ∧
+      MvPolynomial.coeff m01 (relationPoly u d2) = 0 ∧
+      (∀ j : Fin 3,
+        (![relationPoly u d0 -
+              affineLinePoly
+                (MvPolynomial.coeff m00 (relationPoly u d0))
+                0
+                (MvPolynomial.coeff m01 (relationPoly u d0)),
+            relationPoly u d1,
+            relationPoly u d2] : Fin 3 → Poly) j =
+          ∑ k : Fin 3, A j k • homQuadBasis k) ∧
+      A.det ≠ 0 := by
+  rcases exists_x0_tail_nonzero_hom_basis_of_exactAffineDimOne_rangeOne
+      hrelker hdim h0 hrange1 with
+    ⟨d0, d1, d2, hd0K, hd1K, hd2K, htail0_ne, h00_d1, h01_d1, h00_d2, h01_d2, hqind⟩
+  let r0 : ℝ := MvPolynomial.coeff m00 (relationPoly u d0)
+  let b0 : ℝ := MvPolynomial.coeff m01 (relationPoly u d0)
+  let q : Fin 3 → Poly := ![
+    relationPoly u d0 - affineLinePoly r0 0 b0,
+    relationPoly u d1,
+    relationPoly u d2]
+  have hq : ∀ j : Fin 3, IsQuadratic (q j) := by
+    intro j
+    fin_cases j
+    · dsimp [q]
+      simpa [sub_eq_add_neg] using
+        isQuadratic_linearCombination_local
+          (isQuadratic_relationPoly hu d0)
+          (isQuadratic_affineLinePoly_local r0 0 b0)
+          1 (-1)
+    · simpa [q] using isQuadratic_relationPoly hu d1
+    · simpa [q] using isQuadratic_relationPoly hu d2
+  have h00 : ∀ j : Fin 3, MvPolynomial.coeff m00 (q j) = 0 := by
+    intro j
+    fin_cases j
+    · dsimp [q, r0, b0]
+      rw [MvPolynomial.coeff_sub]
+      simp [affineLinePoly, coeff_m00_x1]
+    · simpa [q] using h00_d1
+    · simpa [q] using h00_d2
+  have h10 : ∀ j : Fin 3, MvPolynomial.coeff m10 (q j) = 0 := by
+    intro j
+    fin_cases j
+    · have hd0_10 : MvPolynomial.coeff m10 (relationPoly u d0) = 0 := by
+        change x0CoeffMap u d0 = 0
+        exact hd0K
+      dsimp [q]
+      rw [MvPolynomial.coeff_sub]
+      simp [affineLinePoly, hd0_10, coeff_m10_x1]
+    · have hd1_10 : MvPolynomial.coeff m10 (relationPoly u d1) = 0 := by
+        change x0CoeffMap u d1 = 0
+        exact hd1K
+      simpa [q] using hd1_10
+    · have hd2_10 : MvPolynomial.coeff m10 (relationPoly u d2) = 0 := by
+        change x0CoeffMap u d2 = 0
+        exact hd2K
+      simpa [q] using hd2_10
+  have h01 : ∀ j : Fin 3, MvPolynomial.coeff m01 (q j) = 0 := by
+    intro j
+    fin_cases j
+    · dsimp [q, r0, b0]
+      rw [MvPolynomial.coeff_sub]
+      simp [affineLinePoly, coeff_m01_x1]
+    · simpa [q] using h01_d1
+    · simpa [q] using h01_d2
+  have hqind' : LinearIndependent ℝ q := by
+    simpa [q, r0, b0] using hqind
+  rcases exists_homQuadBasis_matrix_of_linearIndependent hq h00 h10 h01 hqind' with
+    ⟨A, hA, hdet⟩
+  exact ⟨d0, d1, d2, A, hd0K, hd1K, hd2K, htail0_ne, h00_d1, h01_d1, h00_d2, h01_d2, hA,
+    hdet⟩
+
 /-- In the tail-rank `2` exact-affine `dim = 1` branch, the normalized constant
 and `x₁`-tail relations cannot collapse onto the unique pure homogeneous
 direction. Otherwise one would recover an exact `1` or exact `x₁` relation. -/
@@ -2875,6 +3003,101 @@ theorem exists_x0_tail_const_x1_hom_basis_of_exactAffineDimOne_rangeTwo
     · exact hg2zero
   exact ⟨d0, d1, d2, hd0K, hd1K, hd2K, hd0_00, hd0_01, hd1_00, hd1_01,
     hd2_00, hd2_01, hd2_ne, hli⟩
+
+/-- The tail-rank `2` exact-affine `dim = 1` extractor can also be packaged as
+an invertible homogeneous coefficient matrix in the canonical basis
+`(x₀², x₀x₁, x₁²)`, after stripping the normalized affine tails `1` and `x₁`
+from the two tailed relations. -/
+theorem exists_x0_tail_const_x1_hom_basis_matrix_of_exactAffineDimOne_rangeTwo
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    (hnoConst : ¬ ∃ c ∈ exactAffineSubmodule u, relationPoly u c = (1 : Poly))
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange2 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 2) :
+    ∃ d0 d1 d2 : Fin 4 → ℝ, ∃ A : Matrix (Fin 3) (Fin 3) ℝ,
+      d0 ∈ LinearMap.ker (x0CoeffMap u) ∧
+      d1 ∈ LinearMap.ker (x0CoeffMap u) ∧
+      d2 ∈ LinearMap.ker (x0CoeffMap u) ∧
+      MvPolynomial.coeff m00 (relationPoly u d0) = 1 ∧
+      MvPolynomial.coeff m01 (relationPoly u d0) = 0 ∧
+      MvPolynomial.coeff m00 (relationPoly u d1) = 0 ∧
+      MvPolynomial.coeff m01 (relationPoly u d1) = 1 ∧
+      MvPolynomial.coeff m00 (relationPoly u d2) = 0 ∧
+      MvPolynomial.coeff m01 (relationPoly u d2) = 0 ∧
+      relationPoly u d2 ≠ 0 ∧
+      (∀ j : Fin 3,
+        (![relationPoly u d0 - (1 : Poly), relationPoly u d1 - x1, relationPoly u d2] :
+              Fin 3 → Poly) j =
+          ∑ k : Fin 3, A j k • homQuadBasis k) ∧
+      A.det ≠ 0 := by
+  rcases exists_x0_tail_const_x1_hom_basis_of_exactAffineDimOne_rangeTwo
+      hrelker hdim hnoConst h0 hrange2 with
+    ⟨d0, d1, d2, hd0K, hd1K, hd2K, hd0_00, hd0_01, hd1_00, hd1_01,
+      hd2_00, hd2_01, hd2_ne, hqind⟩
+  let q : Fin 3 → Poly := ![
+    relationPoly u d0 - (1 : Poly),
+    relationPoly u d1 - x1,
+    relationPoly u d2]
+  have hq : ∀ j : Fin 3, IsQuadratic (q j) := by
+    intro j
+    fin_cases j
+    · dsimp [q]
+      simpa [sub_eq_add_neg] using
+        isQuadratic_linearCombination_local
+          (isQuadratic_relationPoly hu d0) isQuadratic_one_local 1 (-1)
+    · dsimp [q]
+      simpa [sub_eq_add_neg] using
+        isQuadratic_linearCombination_local
+          (isQuadratic_relationPoly hu d1) isQuadratic_x1_local 1 (-1)
+    · simpa [q] using isQuadratic_relationPoly hu d2
+  have h00 : ∀ j : Fin 3, MvPolynomial.coeff m00 (q j) = 0 := by
+    intro j
+    fin_cases j
+    · dsimp [q]
+      rw [MvPolynomial.coeff_sub]
+      simp [hd0_00]
+    · dsimp [q]
+      rw [MvPolynomial.coeff_sub]
+      simp [hd1_00, coeff_m00_x1]
+    · simpa [q] using hd2_00
+  have h10 : ∀ j : Fin 3, MvPolynomial.coeff m10 (q j) = 0 := by
+    intro j
+    fin_cases j
+    · have hd0_10 : MvPolynomial.coeff m10 (relationPoly u d0) = 0 := by
+        change x0CoeffMap u d0 = 0
+        exact hd0K
+      dsimp [q]
+      rw [MvPolynomial.coeff_sub]
+      simp [hd0_10, coeff_m10_one]
+    · have hd1_10 : MvPolynomial.coeff m10 (relationPoly u d1) = 0 := by
+        change x0CoeffMap u d1 = 0
+        exact hd1K
+      dsimp [q]
+      rw [MvPolynomial.coeff_sub]
+      simp [hd1_10, coeff_m10_x1]
+    · have hd2_10 : MvPolynomial.coeff m10 (relationPoly u d2) = 0 := by
+        change x0CoeffMap u d2 = 0
+        exact hd2K
+      simpa [q] using hd2_10
+  have h01 : ∀ j : Fin 3, MvPolynomial.coeff m01 (q j) = 0 := by
+    intro j
+    fin_cases j
+    · dsimp [q]
+      rw [MvPolynomial.coeff_sub]
+      simp [hd0_01, coeff_m01_one]
+    · dsimp [q]
+      rw [MvPolynomial.coeff_sub]
+      simp [hd1_01, coeff_m01_x1]
+    · simpa [q] using hd2_01
+  have hqind' : LinearIndependent ℝ q := by
+    simpa [q] using hqind
+  rcases exists_homQuadBasis_matrix_of_linearIndependent hq h00 h10 h01 hqind' with
+    ⟨A, hA, hdet⟩
+  exact ⟨d0, d1, d2, A, hd0K, hd1K, hd2K, hd0_00, hd0_01, hd1_00, hd1_01, hd2_00, hd2_01,
+    hd2_ne, hA, hdet⟩
 
 /-- If the exact-affine `dim = 1` branch normalized by an exact `x₀` relation
 has zero tail map, the three residual quadratic relations are already exactly

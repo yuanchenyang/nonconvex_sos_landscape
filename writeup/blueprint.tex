@@ -2580,8 +2580,19 @@ proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
 theorems, and the genuinely open classifier work is the basis-level routing of
 those extracted homogeneous-basis outputs into the affine-rank-one theorem
 surface above. The diagonal-complement reducers are one visible part of that
-layer, not the whole missing abstraction. One additional piece of that surface
-is now closed on the constant side: in
+layer, not the whole missing abstraction. This basis-level statement is now
+formalized a little more explicitly in
+\texttt{ExactAffineClassification.lean}: the new theorems
+\texttt{exists\_x0\_tail\_nonzero\_hom\_basis\_matrix\_of\_exactAffineDimOne\_rangeOne}
+and
+\texttt{exists\_x0\_tail\_const\_x1\_hom\_basis\_matrix\_of\_exactAffineDimOne\_rangeTwo}
+upgrade the old tail-rank \(1\) and tail-rank \(2\) extractors from mere
+linear-independence packages to explicit invertible \(3\times 3\) coefficient
+matrices against \((x_0^2,x_0x_1,x_1^2)\). So the remaining gap is no longer
+``extract a homogeneous basis''; Lean already does that. The missing step is
+to normalize the returned basis-level matrix data into one of the solved
+affine-rank-one chart surfaces. One additional piece of that surface is now
+closed on the constant side: in
 \texttt{RepresentativeAffineRankOne.lean} the new theorems
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_x0x1\_diffsqPlane}
 and
