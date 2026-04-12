@@ -3527,6 +3527,97 @@ theorem tailScale_ne_zero_of_h00_ne
     nlinarith
   exact h00_ne (eq_zero_of_pow_eq_zero hsq0)
 
+/-- If the extracted affine tail has zero constant term, its `x₁` coefficient
+is automatically nonzero. -/
+theorem b0_ne_zero_of_r0_zero
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
+    (hr0 : D.r0 = 0) :
+    D.b0 ≠ 0 := by
+  have htail0_ne' : D.r0 ^ 2 + D.b0 ^ 2 ≠ 0 := by
+    simpa [X0TailHomBasisMatrixData.r0, X0TailHomBasisMatrixData.b0] using D.htail0_ne
+  intro hb0
+  apply htail0_ne'
+  simp [hr0, hb0]
+
+/-- In the `r₀ = 0` branch, the canonical annihilator normalizes to a pure
+`x₁`-tail relation. -/
+theorem relation_ann_normalized_x1Tail
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
+    (h00_ne : D.A⁻¹ 0 0 ≠ 0)
+    (hr0 : D.r0 = 0) :
+    relationPoly u (((D.tailScale * D.b0)⁻¹) • D.ann) =
+      x1 + ((D.tailScale * D.b0)⁻¹) •
+        mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0) := by
+  have hs_ne : D.tailScale ≠ 0 := tailScale_ne_zero_of_h00_ne D h00_ne
+  have hb0 : D.b0 ≠ 0 := b0_ne_zero_of_r0_zero D hr0
+  calc
+    relationPoly u (((D.tailScale * D.b0)⁻¹) • D.ann)
+        = ((D.tailScale * D.b0)⁻¹) • relationPoly u D.ann := by
+            rw [relationPoly_smul]
+    _ = ((D.tailScale * D.b0)⁻¹) •
+          (D.tailScale • affineLinePoly D.r0 0 D.b0 +
+            mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0)) := by
+          rw [relation_ann]
+    _ = ((D.tailScale * D.b0)⁻¹) • (D.tailScale • affineLinePoly D.r0 0 D.b0) +
+          ((D.tailScale * D.b0)⁻¹) •
+            mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0) := by
+          rw [smul_add]
+    _ = ((D.tailScale * D.b0)⁻¹) • ((D.tailScale * D.b0) • x1) +
+          ((D.tailScale * D.b0)⁻¹) •
+            mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0) := by
+          rw [hr0]
+          simp [affineLinePoly, MvPolynomial.C_mul', smul_smul, mul_assoc]
+    _ = x1 + ((D.tailScale * D.b0)⁻¹) •
+          mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0) := by
+          rw [smul_smul, inv_mul_cancel₀ (mul_ne_zero hs_ne hb0), one_smul]
+
+/-- In the `r₀ ≠ 0` branch, the canonical annihilator normalizes to a mixed
+constant-plus-`x₁` tail relation. -/
+theorem relation_ann_normalized_onePlusBX1
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
+    (h00_ne : D.A⁻¹ 0 0 ≠ 0)
+    (hr0 : D.r0 ≠ 0) :
+    relationPoly u (((D.tailScale * D.r0)⁻¹) • D.ann) =
+      (1 : Poly) + (D.b0 / D.r0) • x1 +
+        ((D.tailScale * D.r0)⁻¹) •
+          mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0) := by
+  have hs_ne : D.tailScale ≠ 0 := tailScale_ne_zero_of_h00_ne D h00_ne
+  calc
+    relationPoly u (((D.tailScale * D.r0)⁻¹) • D.ann)
+        = ((D.tailScale * D.r0)⁻¹) • relationPoly u D.ann := by
+            rw [relationPoly_smul]
+    _ = ((D.tailScale * D.r0)⁻¹) •
+          (D.tailScale • affineLinePoly D.r0 0 D.b0 +
+            mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0)) := by
+          rw [relation_ann]
+    _ = ((D.tailScale * D.r0)⁻¹) • (D.tailScale • affineLinePoly D.r0 0 D.b0) +
+          ((D.tailScale * D.r0)⁻¹) •
+            mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0) := by
+          rw [smul_add]
+    _ = ((D.tailScale * D.r0)⁻¹) •
+          ((D.tailScale * D.r0) • (1 : Poly) + (D.tailScale * D.b0) • x1) +
+          ((D.tailScale * D.r0)⁻¹) •
+            mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0) := by
+          simp [affineLinePoly, MvPolynomial.smul_eq_C_mul, mul_assoc]
+    _ = (1 : Poly) + (D.b0 / D.r0) • x1 +
+          ((D.tailScale * D.r0)⁻¹) •
+            mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0) := by
+          rw [smul_add, smul_smul, smul_smul]
+          have hconst : ((D.tailScale * D.r0)⁻¹ * (D.tailScale * D.r0)) • (1 : Poly) = (1 : Poly) := by
+            rw [inv_mul_cancel₀ (mul_ne_zero hs_ne hr0), one_smul]
+          have hlin :
+              ((D.tailScale * D.r0)⁻¹ * (D.tailScale * D.b0)) • x1 =
+                (D.b0 / D.r0) • x1 := by
+            congr 1
+            have hcancel : (D.tailScale * D.r0)⁻¹ * D.tailScale = D.r0⁻¹ := by
+              field_simp [hs_ne, hr0]
+            calc
+              (D.tailScale * D.r0)⁻¹ * (D.tailScale * D.b0)
+                  = ((D.tailScale * D.r0)⁻¹ * D.tailScale) * D.b0 := by ring
+              _ = D.r0⁻¹ * D.b0 := by rw [hcancel]
+              _ = D.b0 / D.r0 := by rw [div_eq_mul_inv, mul_comm]
+          rw [hconst, hlin]
+
 end X0TailHomBasisMatrixData
 
 /-- Canonical choice of the tail-rank `1` homogeneous basis matrix data in the

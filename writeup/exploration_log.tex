@@ -3332,7 +3332,20 @@ affine line scaled by \texttt{tailScale}, plus the binary quadratic annihilator
 affine part. So the residual gap is now exactly what it should be: normalize
 that explicit tailed annihilator/complementary-plane package in the
 discriminant-nonzero branch into the remaining affine-rank-one diagonal
-surfaces.
+surfaces. I then made that tailed annihilator usable without redoing scalar
+algebra each time. In \texttt{X0TailHomBasisMatrixData} the new lemmas
+\texttt{relation\_ann\_normalized\_x1Tail} and
+\texttt{relation\_ann\_normalized\_onePlusBX1} show that a single scalar
+multiple of \texttt{ann} already has one of the two exact tail shapes
+\[
+  x_1 + s(\lambda_0 x_0^2+\lambda_1 x_0x_1+\lambda_2 x_1^2)
+  \quad\text{or}\quad
+  1+b x_1 + s(\lambda_0 x_0^2+\lambda_1 x_0x_1+\lambda_2 x_1^2),
+\]
+depending only on whether the extracted constant coefficient vanishes. So the
+remaining \((A^{-1})_{00}\neq 0\), discriminant-nonzero branch is now missing
+only the matching pure-plane normalization and routing, not the tailed
+coordinate itself.
 
 \section*{Open Subgoals}
 \begin{itemize}

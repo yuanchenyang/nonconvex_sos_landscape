@@ -2659,6 +2659,16 @@ namespace defines \texttt{ann} and proves
 \]
 and \texttt{tailScale\_ne\_zero\_of\_h00\_ne} shows that this affine tail is
 genuinely nonzero throughout the complementary \(A^{-1}_{00}\neq 0\) branch.
+The same namespace now also normalizes that tailed annihilator directly:
+\texttt{relation\_ann\_normalized\_x1Tail} proves that when the extracted
+constant coefficient vanishes, a scalar multiple of \texttt{ann} has exact form
+\(x_1 + s(\lambda_0 x_0^2+\lambda_1 x_0x_1+\lambda_2 x_1^2)\), while
+\texttt{relation\_ann\_normalized\_onePlusBX1} proves that otherwise a scalar
+multiple has exact form \(1+b x_1+s(\lambda_0 x_0^2+\lambda_1 x_0x_1+\lambda_2
+x_1^2)\). So the complementary branch no longer lacks a canonical tailed
+coordinate; what remains is to choose the matching pure homogeneous plane data
+that feeds the already-formalized repeated-line or diagonal affine-rank-one
+surfaces.
 So the repeated-line/common-factor half of that discriminant split is now
 internal too: \texttt{ExactAffineClassification.lean} proves
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_commonFactorComplement}
