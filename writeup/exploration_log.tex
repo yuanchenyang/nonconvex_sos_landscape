@@ -2895,6 +2895,15 @@ subtracts the in-plane homogeneous directions internally and reduces to the
 already formalized mixed endpoints. No new Julia data was needed for this
 round; the change is purely on the theorem-surface side.
 
+I then lifted that mixed surface one chart higher. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_crossDet\_zero}
+handles the coprime cross chart for a mixed constant-plus-\(x_1\) tailed
+relation. It uses the same internal \(x_1\)-shear as the older constant-tail
+cross theorem, then subtracts the induced \(x_0\)-linear term from the tailed
+relation before applying the existing
+\texttt{onePlusBX1Plus\_homQuadratics\_x0sq\_x1sqPlane} wrapper. No new Julia
+data was needed for this step either.
+
 I then added the constant-tail coprime cross-chart analogue. In
 \texttt{RepresentativeAffineRankOne.lean} the new theorem
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_crossDet\_zero}
