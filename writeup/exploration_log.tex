@@ -3215,8 +3215,21 @@ coefficient \(1\), zero \(x_0\)-coefficient, and a diagonal relation
 pair into the canonical \((x_0x_1,\ x_0^2 \mp x_1^2)\) plane, and dispatches
 to the mixed diagonal plane wrappers automatically. So the mixed
 \(1+b x_1\) side is no longer blocked at the diagonal scaling algebra. The
-remaining gap is still the outer exact-affine \(\dim=1\) basis-level routing
-that must extract those diagonal inputs from the homogeneous-basis package.
+remaining gap was therefore no longer the inner diagonal algebra.
+
+I then closed the next outer layer in the same file by adding
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_diagSumChart}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_diagDiffChart}.
+These are the mixed affine-rank-one outer diagonal chart reducers. Starting
+from an unsheared homogeneous pair in a diagonal chart and an explicit
+diagonal relation for the tailed coordinate, Lean now performs the internal
+\(x_1\)-shear, repairs the induced \(x_0\)-term in the tailed relation, and
+dispatches to the mixed diagonal scaling theorems automatically. So the mixed
+diagonal branch is no longer missing its outer chart algebra either. The
+remaining gap is now cleanly basis-level: the exact-affine \(\dim=1\)
+classifier must extract the needed diagonal relation and chart data from the
+homogeneous-basis package.
 
 \section*{Open Subgoals}
 \begin{itemize}
