@@ -2453,6 +2453,17 @@ tail probe: the constant and mixed tails look generically surjective, while
 the pure \(x_1\)-tail direction still shows the same codimension-one missing
 constant monomial as the retained affine-rank-one linear endpoint.
 
+The next Lean round has already absorbed the local diagonal normal-form
+algebra needed for that branch. In
+\texttt{RepresentativeAffineRankOne.lean} there are now explicit expansion
+lemmas for the constant, pure \(x_1\), and mixed \(1+b x_1\) affine-rank-one
+tails relative to the two diagonal bases
+\(\operatorname{span}(x_0x_1,x_0^2-x_1^2)\) and
+\(\operatorname{span}(x_0x_1,x_0^2+x_1^2)\). So the remaining diagonal-chart
+work is no longer blocked on repeated coefficient rewrites from
+\(\texttt{quadForm}\); what remains is the actual chart reduction theorems
+that feed those normal forms into the already solved endpoint surfaces.
+
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
 theorems, and the genuinely open classifier work is the formal routing of

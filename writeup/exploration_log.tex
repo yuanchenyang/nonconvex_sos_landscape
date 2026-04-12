@@ -3017,6 +3017,16 @@ induced \(x_0\)-term. So the repeated-line/common-factor chart is now fully
 internal on the affine-rank-one side; what remains there is the diagonal
 complements and the outer exact-affine \(\dim=1\) routing theorem.
 
+I then added the local diagonal normal-form lemmas in
+\texttt{RepresentativeAffineRankOne.lean} for all three affine-rank-one tail
+types: constant, pure \(x_1\), and mixed \(1+b x_1\). These lemmas rewrite a
+quadratic relation with vanishing affine \(x_0\)-term into the explicit bases
+\(\operatorname{span}(x_0x_1,x_0^2-x_1^2)\) and
+\(\operatorname{span}(x_0x_1,x_0^2+x_1^2)\) once the corresponding diagonal
+coefficient relation is known. This does not close a new branch by itself, but
+it removes the last repeated coefficient-expansion bottleneck from the pending
+affine-rank-one diagonal chart proofs.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine

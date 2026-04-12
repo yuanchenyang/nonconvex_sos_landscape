@@ -175,6 +175,179 @@ private theorem quadratic_eq_one_plus_x1_homogeneous_local
           rw [quadForm_eq_explicit]
           simp [h00, h10, MvPolynomial.smul_eq_C_mul, add_assoc, add_left_comm, add_comm]
 
+private theorem quadratic_eq_one_plus_x0x1_diffsq_local
+    {q : Poly}
+    (hq : IsQuadratic q)
+    (h00 : MvPolynomial.coeff m00 q = 1)
+    (h10 : MvPolynomial.coeff m10 q = 0)
+    (h01 : MvPolynomial.coeff m01 q = 0)
+    (hdiag : MvPolynomial.coeff m20 q + MvPolynomial.coeff m02 q = 0) :
+    q = (1 : Poly) +
+      MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+      MvPolynomial.coeff m20 q • (x0 ^ 2 - x1 ^ 2 : Poly) := by
+  have h02 : MvPolynomial.coeff m02 q = -MvPolynomial.coeff m20 q := by
+    linarith
+  calc
+    q =
+      quadForm
+        (MvPolynomial.coeff m00 q)
+        (MvPolynomial.coeff m10 q)
+        (MvPolynomial.coeff m01 q)
+        (MvPolynomial.coeff m20 q)
+        (MvPolynomial.coeff m11 q)
+        (MvPolynomial.coeff m02 q) := by
+          exact quadratic_eq_quadForm hq
+    _ = (1 : Poly) +
+          MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m20 q • (x0 ^ 2 - x1 ^ 2 : Poly) := by
+            rw [quadForm_eq_explicit, h00, h10, h01, h02]
+            simp [sub_eq_add_neg, MvPolynomial.smul_eq_C_mul, add_assoc, add_left_comm,
+              add_comm]
+
+private theorem quadratic_eq_one_plus_x0x1_sumsq_local
+    {q : Poly}
+    (hq : IsQuadratic q)
+    (h00 : MvPolynomial.coeff m00 q = 1)
+    (h10 : MvPolynomial.coeff m10 q = 0)
+    (h01 : MvPolynomial.coeff m01 q = 0)
+    (hdiag : MvPolynomial.coeff m20 q - MvPolynomial.coeff m02 q = 0) :
+    q = (1 : Poly) +
+      MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+      MvPolynomial.coeff m20 q • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+  have h02 : MvPolynomial.coeff m02 q = MvPolynomial.coeff m20 q := by
+    linarith
+  calc
+    q =
+      quadForm
+        (MvPolynomial.coeff m00 q)
+        (MvPolynomial.coeff m10 q)
+        (MvPolynomial.coeff m01 q)
+        (MvPolynomial.coeff m20 q)
+        (MvPolynomial.coeff m11 q)
+        (MvPolynomial.coeff m02 q) := by
+          exact quadratic_eq_quadForm hq
+    _ = (1 : Poly) +
+          MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m20 q • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+            rw [quadForm_eq_explicit, h00, h10, h01, h02]
+            simp [MvPolynomial.smul_eq_C_mul, add_assoc, add_left_comm, add_comm]
+
+private theorem quadratic_eq_x1_plus_x0x1_diffsq_local
+    {q : Poly}
+    (hq : IsQuadratic q)
+    (h00 : MvPolynomial.coeff m00 q = 0)
+    (h10 : MvPolynomial.coeff m10 q = 0)
+    (h01 : MvPolynomial.coeff m01 q = 1)
+    (hdiag : MvPolynomial.coeff m20 q + MvPolynomial.coeff m02 q = 0) :
+    q = x1 +
+      MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+      MvPolynomial.coeff m20 q • (x0 ^ 2 - x1 ^ 2 : Poly) := by
+  have h02 : MvPolynomial.coeff m02 q = -MvPolynomial.coeff m20 q := by
+    linarith
+  calc
+    q =
+      quadForm
+        (MvPolynomial.coeff m00 q)
+        (MvPolynomial.coeff m10 q)
+        (MvPolynomial.coeff m01 q)
+        (MvPolynomial.coeff m20 q)
+        (MvPolynomial.coeff m11 q)
+        (MvPolynomial.coeff m02 q) := by
+          exact quadratic_eq_quadForm hq
+    _ = x1 +
+          MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m20 q • (x0 ^ 2 - x1 ^ 2 : Poly) := by
+            rw [quadForm_eq_explicit, h00, h10, h01, h02]
+            simp [sub_eq_add_neg, MvPolynomial.smul_eq_C_mul, add_assoc, add_left_comm,
+              add_comm]
+
+private theorem quadratic_eq_x1_plus_x0x1_sumsq_local
+    {q : Poly}
+    (hq : IsQuadratic q)
+    (h00 : MvPolynomial.coeff m00 q = 0)
+    (h10 : MvPolynomial.coeff m10 q = 0)
+    (h01 : MvPolynomial.coeff m01 q = 1)
+    (hdiag : MvPolynomial.coeff m20 q - MvPolynomial.coeff m02 q = 0) :
+    q = x1 +
+      MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+      MvPolynomial.coeff m20 q • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+  have h02 : MvPolynomial.coeff m02 q = MvPolynomial.coeff m20 q := by
+    linarith
+  calc
+    q =
+      quadForm
+        (MvPolynomial.coeff m00 q)
+        (MvPolynomial.coeff m10 q)
+        (MvPolynomial.coeff m01 q)
+        (MvPolynomial.coeff m20 q)
+        (MvPolynomial.coeff m11 q)
+        (MvPolynomial.coeff m02 q) := by
+          exact quadratic_eq_quadForm hq
+    _ = x1 +
+          MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m20 q • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+            rw [quadForm_eq_explicit, h00, h10, h01, h02]
+            simp [MvPolynomial.smul_eq_C_mul, add_assoc, add_left_comm, add_comm]
+
+private theorem quadratic_eq_one_plus_x1_x0x1_diffsq_local
+    {q : Poly}
+    (hq : IsQuadratic q)
+    (h00 : MvPolynomial.coeff m00 q = 1)
+    (h10 : MvPolynomial.coeff m10 q = 0)
+    (hdiag : MvPolynomial.coeff m20 q + MvPolynomial.coeff m02 q = 0) :
+    q = (1 : Poly) +
+      MvPolynomial.coeff m01 q • x1 +
+      MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+      MvPolynomial.coeff m20 q • (x0 ^ 2 - x1 ^ 2 : Poly) := by
+  have h02 : MvPolynomial.coeff m02 q = -MvPolynomial.coeff m20 q := by
+    linarith
+  calc
+    q =
+      quadForm
+        (MvPolynomial.coeff m00 q)
+        (MvPolynomial.coeff m10 q)
+        (MvPolynomial.coeff m01 q)
+        (MvPolynomial.coeff m20 q)
+        (MvPolynomial.coeff m11 q)
+        (MvPolynomial.coeff m02 q) := by
+          exact quadratic_eq_quadForm hq
+    _ = (1 : Poly) +
+          MvPolynomial.coeff m01 q • x1 +
+          MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m20 q • (x0 ^ 2 - x1 ^ 2 : Poly) := by
+            rw [quadForm_eq_explicit, h00, h10, h02]
+            simp [sub_eq_add_neg, MvPolynomial.smul_eq_C_mul, add_assoc, add_left_comm,
+              add_comm]
+
+private theorem quadratic_eq_one_plus_x1_x0x1_sumsq_local
+    {q : Poly}
+    (hq : IsQuadratic q)
+    (h00 : MvPolynomial.coeff m00 q = 1)
+    (h10 : MvPolynomial.coeff m10 q = 0)
+    (hdiag : MvPolynomial.coeff m20 q - MvPolynomial.coeff m02 q = 0) :
+    q = (1 : Poly) +
+      MvPolynomial.coeff m01 q • x1 +
+      MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+      MvPolynomial.coeff m20 q • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+  have h02 : MvPolynomial.coeff m02 q = MvPolynomial.coeff m20 q := by
+    linarith
+  calc
+    q =
+      quadForm
+        (MvPolynomial.coeff m00 q)
+        (MvPolynomial.coeff m10 q)
+        (MvPolynomial.coeff m01 q)
+        (MvPolynomial.coeff m20 q)
+        (MvPolynomial.coeff m11 q)
+        (MvPolynomial.coeff m02 q) := by
+          exact quadratic_eq_quadForm hq
+    _ = (1 : Poly) +
+          MvPolynomial.coeff m01 q • x1 +
+          MvPolynomial.coeff m11 q • (x0 * x1 : Poly) +
+          MvPolynomial.coeff m20 q • (x0 ^ 2 + x1 ^ 2 : Poly) := by
+            rw [quadForm_eq_explicit, h00, h10, h02]
+            simp [MvPolynomial.smul_eq_C_mul, add_assoc, add_left_comm, add_comm]
+
 /-- Constant, `x₀`, and `x₁` coefficients of a scalar relation. -/
 private def affineCoeffMap (u : RankFourVec) :
     (Fin 4 → ℝ) →ₗ[ℝ] (Fin 3 → ℝ) where
