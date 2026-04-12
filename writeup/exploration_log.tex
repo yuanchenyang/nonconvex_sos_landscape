@@ -3027,6 +3027,25 @@ coefficient relation is known. This does not close a new branch by itself, but
 it removes the last repeated coefficient-expansion bottleneck from the pending
 affine-rank-one diagonal chart proofs.
 
+I then turned that local algebra into classifier-facing theorems for the pure
+\(x_1\)-tail diagonal branch. The new results
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_diag\_sum\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_diag\_diff\_zero}
+assume exact relations to \(x_0\), a tailed quadratic \(q_1\), and a
+homogeneous pair \(q_2,q_3\) together with the diagonal coefficient relation
+\[
+  a\,\operatorname{coeff}_{20}(q_i) + d\,\operatorname{coeff}_{02}(q_i)=0
+\]
+for \(i=1,2,3\). Lean then performs the internal \(x_1\)-scaling by
+\(\sqrt{d/a}\) or \(\sqrt{-d/a}\), rescales the transformed tailed relation so
+that its \(x_1\)-coefficient is again \(1\), reconstructs the canonical
+\((x_0x_1,\ x_0^2-x_1^2)\) or \((x_0x_1,\ x_0^2+x_1^2)\) plane basis by
+Cramer's rule, and dispatches to the already solved diagonal plane theorems.
+So the affine-rank-one diagonal complement is no longer open on the scaling
+side; what remains is the outer shear/chart layer that produces these diagonal
+relations from a general normalized homogeneous pair.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
