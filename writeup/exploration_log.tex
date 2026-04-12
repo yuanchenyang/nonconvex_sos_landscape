@@ -3203,6 +3203,21 @@ quadratic, and an invertible basis of the canonical diagonal plane. No new
 Julia experiment was needed for this round; the retained numerical diagonal
 probe above already matched the new theorem surface.
 
+I then lifted that same mixed diagonal branch one layer higher in
+\texttt{RepresentativeAffineRankOne.lean}. The new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_diag\_sum\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_diag\_diff\_zero},
+with their equivariant wrappers, package the internal \(x_1\)-scaling step
+above those plane endpoints. Starting from a tailed coordinate with constant
+coefficient \(1\), zero \(x_0\)-coefficient, and a diagonal relation
+\(a\,m_{20}+d\,m_{02}=0\), Lean now rescales \(x_1\), rewrites the homogeneous
+pair into the canonical \((x_0x_1,\ x_0^2 \mp x_1^2)\) plane, and dispatches
+to the mixed diagonal plane wrappers automatically. So the mixed
+\(1+b x_1\) side is no longer blocked at the diagonal scaling algebra. The
+remaining gap is still the outer exact-affine \(\dim=1\) basis-level routing
+that must extract those diagonal inputs from the homogeneous-basis package.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine

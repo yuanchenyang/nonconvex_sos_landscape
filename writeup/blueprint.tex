@@ -2624,6 +2624,23 @@ mixed endpoint; it is the outer diagonal chart/classifier layer that must
 extract those diagonal-relation inputs from the exact-affine \(\dim=1\)
 homogeneous-basis data.
 
+That diagonal surface is now stronger one step higher. The same file also
+proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_diag\_sum\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_diag\_diff\_zero},
+again with equivariant transport. These package the internal \(x_1\)-scaling
+step above the mixed diagonal plane theorems: starting from a tailed
+coordinate \(q_1\) with constant coefficient \(1\), zero \(x_0\)-coefficient,
+and one diagonal relation \(a\,m_{20}+d\,m_{02}=0\), Lean rescales \(x_1\),
+converts the homogeneous pair to the canonical
+\((x_0x_1,\ x_0^2 \mp x_1^2)\) plane, and then dispatches to the already
+formalized mixed diagonal plane wrappers automatically. So the mixed
+\(1+b x_1\) side is no longer blocked at the diagonal scaling layer either;
+the only remaining input is the outer basis-level routing that must produce
+the diagonal relation and the correct chart from the extracted
+exact-affine \(\dim=1\) homogeneous-basis data.
+
 The new probe \texttt{julia/affine\_dim\_one\_mixed\_diagonal\_shear\_2026\_04\_12.jl}
 checks the most obvious reduction attempt on that remaining mixed branch. If
 one starts from the normalized mixed diagonal families
