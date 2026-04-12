@@ -3622,12 +3622,18 @@ namespace, Lean reconstructs the canonical quadratic directions explicitly:
 I then tightened that range-two package further. The same namespace now proves
 that the stripped homogeneous triple \((q_0,q_1,q_2)\) is linearly
 independent, and that the pure pairs \((q_0,q_2)\) and \((q_1,q_2)\) already
-span genuine low-homogeneous planes. So the remaining range-two gap is no
-longer the raw linear algebra of extracting canonical quadratics from the
-homogeneous basis matrix, nor the separate plane-nondegeneracy check for the
-obvious pure pairs. What still remains is the final classifier routing that
-normalizes this basis-and-plane data into one of the existing affine-rank-one
-representative theorem surfaces.
+span genuine low-homogeneous planes. I then added two more consequences:
+\texttt{exists\_q\_coeff\_m20\_ne\_zero} and
+\texttt{exists\_q\_coeff\_m02\_ne\_zero}. So the same extracted triple cannot
+lie entirely in \(\operatorname{span}(x_0x_1,x_1^2)\) and cannot lie entirely
+in \(\operatorname{span}(x_0^2,x_0x_1)\). The remaining range-two gap is
+therefore no longer the raw linear algebra of extracting canonical quadratics
+from the homogeneous basis matrix, nor the separate plane-nondegeneracy check
+for the obvious pure pairs, nor the boundary-plane exclusion for the stripped
+homogeneous basis. What still remains is the final classifier routing that
+normalizes this basis-and-plane data into one of the existing
+affine-rank-one representative theorem surfaces or a direct surjective
+closure.
 
 \section*{Open Subgoals}
 \begin{itemize}

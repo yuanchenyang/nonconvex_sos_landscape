@@ -3512,14 +3512,18 @@ directions directly:
 Lean now also proves that the stripped triple \((q_0,q_1,q_2)\) is linearly
 independent and that the pure pairs \((q_0,q_2)\) and \((q_1,q_2)\) already
 span genuine low-homogeneous planes via
-\texttt{q02\_plane\_nontrivial} and \texttt{q12\_plane\_nontrivial}. So the
-remaining tail-rank \(2\) gap is no longer ``recover the canonical quadratic
-relations from the extracted basis matrix'' or ``show that the relevant pure
-quadratic planes are nondegenerate''; Lean now exposes both the canonical
-quadratic relations and the nontrivial plane certificates explicitly. What
-still remains is the last routing step that uses this plane data and the
-shared affine tails to enter one of the already solved affine-rank-one
-representative surfaces.
+\texttt{q02\_plane\_nontrivial} and \texttt{q12\_plane\_nontrivial}. It now
+also proves \texttt{exists\_q\_coeff\_m20\_ne\_zero} and
+\texttt{exists\_q\_coeff\_m02\_ne\_zero}: the extracted homogeneous triple
+cannot collapse entirely into either boundary plane
+\(\operatorname{span}(x_0x_1,x_1^2)\) or
+\(\operatorname{span}(x_0^2,x_0x_1)\). So the remaining tail-rank \(2\) gap is
+no longer ``recover the canonical quadratic relations from the extracted basis
+matrix'', ``show that the relevant pure quadratic planes are nondegenerate'',
+or ``show that the extracted basis still sees both diagonal directions''.
+What still remains is the last routing step that uses this basis-and-plane
+data and the two affine tails to enter one of the already solved
+representative surfaces or an equivalent surjective closure.
 
 So the remaining exact-affine \(\dim=1\) gap is no longer on the tail-rank
 \(1\) side at all. What remains is the still-separate tail-rank \(2\) closure,
