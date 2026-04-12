@@ -3376,6 +3376,133 @@ theorem relation_c02
     _ = (D.A⁻¹ 2 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 2 0 * D.b0) • x1 + x1 ^ 2 := by
           simp [affineLinePoly, MvPolynomial.smul_eq_C_mul, mul_comm, mul_left_comm, add_assoc]
 
+/-- In the `A⁻¹₂₀ = 0` cross-complement branch, the canonical reconstructed
+`x₁²` relation is already pure. -/
+theorem relation_c02_of_h20_zero
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
+    (h20 : D.A⁻¹ 2 0 = 0) :
+    relationPoly u D.c02 = x1 ^ 2 := by
+  rw [relation_c02, h20]
+  simp
+
+/-- In the `A⁻¹₂₀ = 0`, `r₀ = 0` branch, the canonical `x₀²` relation
+normalizes to a pure `x₁` tail plus an `x₀²` term. -/
+theorem relation_c20_normalized_x1Tail_of_h20_zero_r0_zero
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
+    (h00_ne : D.A⁻¹ 0 0 ≠ 0)
+    (_h20 : D.A⁻¹ 2 0 = 0)
+    (hr0 : D.r0 = 0) :
+    relationPoly u (((D.A⁻¹ 0 0 * D.b0)⁻¹) • D.c20) =
+      x1 + ((D.A⁻¹ 0 0 * D.b0)⁻¹) • (x0 ^ 2 : Poly) := by
+  have hb0 : D.b0 ≠ 0 := by
+    have htail0_ne' : D.r0 ^ 2 + D.b0 ^ 2 ≠ 0 := by
+      simpa [X0TailHomBasisMatrixData.r0, X0TailHomBasisMatrixData.b0] using D.htail0_ne
+    intro hb0
+    apply htail0_ne'
+    simp [hr0, hb0]
+  calc
+    relationPoly u (((D.A⁻¹ 0 0 * D.b0)⁻¹) • D.c20)
+        = ((D.A⁻¹ 0 0 * D.b0)⁻¹) • relationPoly u D.c20 := by
+            rw [relationPoly_smul]
+    _ = ((D.A⁻¹ 0 0 * D.b0)⁻¹) •
+          ((D.A⁻¹ 0 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 0 0 * D.b0) • x1 + x0 ^ 2) := by
+          rw [relation_c20]
+    _ = ((D.A⁻¹ 0 0 * D.b0)⁻¹) • ((D.A⁻¹ 0 0 * D.b0) • x1) +
+          ((D.A⁻¹ 0 0 * D.b0)⁻¹) • (x0 ^ 2 : Poly) := by
+          rw [hr0]
+          simp [smul_add]
+    _ = x1 + ((D.A⁻¹ 0 0 * D.b0)⁻¹) • (x0 ^ 2 : Poly) := by
+          rw [smul_smul, inv_mul_cancel₀ (mul_ne_zero h00_ne hb0), one_smul]
+
+/-- In the `A⁻¹₂₀ = 0`, `r₀ = 0` branch, the canonical `x₀x₁` relation
+normalizes to the same pure `x₁` tail plus an `x₀x₁` term. -/
+theorem relation_c11_normalized_x1Tail_of_h20_zero_r0_zero
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
+    (h10_ne : D.A⁻¹ 1 0 ≠ 0)
+    (hr0 : D.r0 = 0) :
+    relationPoly u (((D.A⁻¹ 1 0 * D.b0)⁻¹) • D.c11) =
+      x1 + ((D.A⁻¹ 1 0 * D.b0)⁻¹) • (x0 * x1 : Poly) := by
+  have hb0 : D.b0 ≠ 0 := by
+    have htail0_ne' : D.r0 ^ 2 + D.b0 ^ 2 ≠ 0 := by
+      simpa [X0TailHomBasisMatrixData.r0, X0TailHomBasisMatrixData.b0] using D.htail0_ne
+    intro hb0
+    apply htail0_ne'
+    simp [hr0, hb0]
+  calc
+    relationPoly u (((D.A⁻¹ 1 0 * D.b0)⁻¹) • D.c11)
+        = ((D.A⁻¹ 1 0 * D.b0)⁻¹) • relationPoly u D.c11 := by
+            rw [relationPoly_smul]
+    _ = ((D.A⁻¹ 1 0 * D.b0)⁻¹) •
+          ((D.A⁻¹ 1 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 1 0 * D.b0) • x1 + (x0 * x1 : Poly)) := by
+          rw [relation_c11]
+    _ = ((D.A⁻¹ 1 0 * D.b0)⁻¹) • ((D.A⁻¹ 1 0 * D.b0) • x1) +
+          ((D.A⁻¹ 1 0 * D.b0)⁻¹) • (x0 * x1 : Poly) := by
+          rw [hr0]
+          simp [smul_add]
+    _ = x1 + ((D.A⁻¹ 1 0 * D.b0)⁻¹) • (x0 * x1 : Poly) := by
+          rw [smul_smul, inv_mul_cancel₀ (mul_ne_zero h10_ne hb0), one_smul]
+
+/-- In the `A⁻¹₂₀ = 0`, `r₀ ≠ 0` branch, the canonical `x₀²` relation
+normalizes to a mixed constant-plus-`x₁` tail plus an `x₀²` term. -/
+theorem relation_c20_normalized_onePlusBX1_of_h20_zero_r0_ne_zero
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
+    (h00_ne : D.A⁻¹ 0 0 ≠ 0)
+    (_h20 : D.A⁻¹ 2 0 = 0)
+    (hr0 : D.r0 ≠ 0) :
+    relationPoly u (((D.A⁻¹ 0 0 * D.r0)⁻¹) • D.c20) =
+      (1 : Poly) + (D.b0 / D.r0) • x1 +
+        ((D.A⁻¹ 0 0 * D.r0)⁻¹) • (x0 ^ 2 : Poly) := by
+  calc
+    relationPoly u (((D.A⁻¹ 0 0 * D.r0)⁻¹) • D.c20)
+        = ((D.A⁻¹ 0 0 * D.r0)⁻¹) • relationPoly u D.c20 := by
+            rw [relationPoly_smul]
+    _ = ((D.A⁻¹ 0 0 * D.r0)⁻¹) •
+          ((D.A⁻¹ 0 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 0 0 * D.b0) • x1 + x0 ^ 2) := by
+          rw [relation_c20]
+    _ = ((D.A⁻¹ 0 0 * D.r0)⁻¹) • ((D.A⁻¹ 0 0 * D.r0) • (1 : Poly)) +
+          ((D.A⁻¹ 0 0 * D.r0)⁻¹) • ((D.A⁻¹ 0 0 * D.b0) • x1) +
+          ((D.A⁻¹ 0 0 * D.r0)⁻¹) • (x0 ^ 2 : Poly) := by
+          simp [smul_add, add_assoc]
+    _ = (1 : Poly) + (D.b0 / D.r0) • x1 +
+          ((D.A⁻¹ 0 0 * D.r0)⁻¹) • (x0 ^ 2 : Poly) := by
+          rw [smul_smul, inv_mul_cancel₀ (mul_ne_zero h00_ne hr0), one_smul, smul_smul]
+          have hlin :
+              ((D.A⁻¹ 0 0 * D.r0)⁻¹ * (D.A⁻¹ 0 0 * D.b0)) • x1 =
+                (D.b0 / D.r0) • x1 := by
+            congr 1
+            field_simp [h00_ne, hr0]
+          rw [hlin]
+
+/-- In the `A⁻¹₂₀ = 0`, `r₀ ≠ 0` branch, the canonical `x₀x₁` relation
+normalizes to the same mixed constant-plus-`x₁` tail plus an `x₀x₁` term. -/
+theorem relation_c11_normalized_onePlusBX1_of_h20_zero_r0_ne_zero
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
+    (h10_ne : D.A⁻¹ 1 0 ≠ 0)
+    (hr0 : D.r0 ≠ 0) :
+    relationPoly u (((D.A⁻¹ 1 0 * D.r0)⁻¹) • D.c11) =
+      (1 : Poly) + (D.b0 / D.r0) • x1 +
+        ((D.A⁻¹ 1 0 * D.r0)⁻¹) • (x0 * x1 : Poly) := by
+  calc
+    relationPoly u (((D.A⁻¹ 1 0 * D.r0)⁻¹) • D.c11)
+        = ((D.A⁻¹ 1 0 * D.r0)⁻¹) • relationPoly u D.c11 := by
+            rw [relationPoly_smul]
+    _ = ((D.A⁻¹ 1 0 * D.r0)⁻¹) •
+          ((D.A⁻¹ 1 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 1 0 * D.b0) • x1 + (x0 * x1 : Poly)) := by
+          rw [relation_c11]
+    _ = ((D.A⁻¹ 1 0 * D.r0)⁻¹) • ((D.A⁻¹ 1 0 * D.r0) • (1 : Poly)) +
+          ((D.A⁻¹ 1 0 * D.r0)⁻¹) • ((D.A⁻¹ 1 0 * D.b0) • x1) +
+          ((D.A⁻¹ 1 0 * D.r0)⁻¹) • (x0 * x1 : Poly) := by
+          simp [smul_add, add_assoc]
+    _ = (1 : Poly) + (D.b0 / D.r0) • x1 +
+          ((D.A⁻¹ 1 0 * D.r0)⁻¹) • (x0 * x1 : Poly) := by
+          rw [smul_smul, inv_mul_cancel₀ (mul_ne_zero h10_ne hr0), one_smul, smul_smul]
+          have hlin :
+              ((D.A⁻¹ 1 0 * D.r0)⁻¹ * (D.A⁻¹ 1 0 * D.b0)) • x1 =
+                (D.b0 / D.r0) • x1 := by
+            congr 1
+            field_simp [h10_ne, hr0]
+          rw [hlin]
+
 /-- The first complementary relation is pure homogeneous in the plane
 `span(x₀²,x₀x₁)`. -/
 theorem relation_comp11
@@ -5698,6 +5825,78 @@ theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne_commonFactorComplemen
   let D : X0TailHomBasisMatrixData u := exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1
   exact residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_commonFactorComplement
     (B := B) (u := u) hu h0 D h00_ne hdisc0 hp hsocp
+
+/-- In the exact-affine `dim = 1`, tail-rank `1` mixed-support branch, the
+subcase `(A⁻¹)₂₀ = 0` and `r₀ = 0` produces the exact shared-`x₁`-tail
+relations
+`x₁ + a x₀²`, `x₁ + b x₀x₁`, and `x₁²`, so it now closes directly through the
+dedicated affine-rank-one endpoint theorem. -/
+theorem residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_h20_zero_r0_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (D : X0TailHomBasisMatrixData u)
+    (h00_ne : D.A⁻¹ 0 0 ≠ 0)
+    (h20 : D.A⁻¹ 2 0 = 0)
+    (h10_ne : D.A⁻¹ 1 0 ≠ 0)
+    (hr0 : D.r0 = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let a : ℝ := (D.A⁻¹ 0 0 * D.b0)⁻¹
+  let b : ℝ := (D.A⁻¹ 1 0 * D.b0)⁻¹
+  have h0' : ∑ i : Fin 4, c0 i • u i = x0 := by
+    simpa [relationPoly] using h0
+  have hb0 : D.b0 ≠ 0 := X0TailHomBasisMatrixData.b0_ne_zero_of_r0_zero D hr0
+  have ha : a ≠ 0 := by
+    simp [a, h00_ne, hb0]
+  have hb : b ≠ 0 := by
+    simp [b, h10_ne, hb0]
+  have h1 :
+      ∑ i : Fin 4, (a • D.c20) i • u i =
+        x1 + a • (x0 ^ 2 : Poly) := by
+    simpa [relationPoly, a] using
+      X0TailHomBasisMatrixData.relation_c20_normalized_x1Tail_of_h20_zero_r0_zero
+        D h00_ne h20 hr0
+  have h2 :
+      ∑ i : Fin 4, (b • D.c11) i • u i =
+        x1 + b • (x0 * x1 : Poly) := by
+    simpa [relationPoly, b] using
+      X0TailHomBasisMatrixData.relation_c11_normalized_x1Tail_of_h20_zero_r0_zero
+        D h10_ne hr0
+  have h3 :
+      ∑ i : Fin 4, D.c02 i • u i = x1 ^ 2 := by
+    simpa [relationPoly] using
+      X0TailHomBasisMatrixData.relation_c02_of_h20_zero D h20
+  exact residual_eq_zero_of_relations_x0_x1PlusAX0sq_x1PlusBX0x1_x1sq
+    (B := B) (u := u) hu ha hb h0' h1 h2 h3 hp hsocp
+
+/-- Classifier-level wrapper for the exact-affine `dim = 1`, tail-rank `1`
+subcase `(A⁻¹)₂₀ = 0`, `(A⁻¹)₁₀ ≠ 0`, `r₀ = 0`. -/
+theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne_h20_zero_r0_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange1 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 1)
+    (h00_ne : (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 0 0 ≠ 0)
+    (h20 : (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 2 0 = 0)
+    (h10_ne : (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 1 0 ≠ 0)
+    (hr0 : (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).r0 = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  classical
+  let D : X0TailHomBasisMatrixData u := exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1
+  exact residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_h20_zero_r0_zero
+    (B := B) (u := u) hu h0 D h00_ne h20 h10_ne hr0 hp hsocp
 
 /-- Above the normalized `x₀` exact-affine `dim = 1`, tail-rank `1`
 extractor, the whole already-resolved region closes in one theorem: either the

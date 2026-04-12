@@ -3369,7 +3369,30 @@ multiple of \texttt{ann} already has one of the two exact tail shapes
 depending only on whether the extracted constant coefficient vanishes. So the
 remaining \((A^{-1})_{00}\neq 0\), discriminant-nonzero branch is now missing
 only the matching pure-plane normalization and routing, not the tailed
-coordinate itself. I then packaged the next reduction step explicitly in Lean:
+coordinate itself. I then tightened the cross-complement branch one step
+further. The attempt to close it directly by reusing the existing affine-rank-one
+cross chart was wrong: the packaged pure plane
+\((\texttt{comp11},\texttt{comp02})\) sits in the diagonal-complement chart, not
+the cross chart. I backed that out and kept only the normalization that really
+survived verification. The new lemmas
+\texttt{relation\_c02\_of\_h20\_zero},
+\texttt{relation\_c20\_normalized\_x1Tail\_of\_h20\_zero\_r0\_zero},
+\texttt{relation\_c11\_normalized\_x1Tail\_of\_h20\_zero\_r0\_zero},
+\texttt{relation\_c20\_normalized\_onePlusBX1\_of\_h20\_zero\_r0\_ne\_zero}, and
+\texttt{relation\_c11\_normalized\_onePlusBX1\_of\_h20\_zero\_r0\_ne\_zero}
+show that the branch \((\lambda_2=0,\ \lambda_1\neq 0)\) already carries exact
+relations to
+\[
+  x_1+s x_0^2,\qquad x_1+t x_0x_1,\qquad x_1^2
+\]
+or to
+\[
+  1+b x_1+s x_0^2,\qquad 1+b x_1+t x_0x_1,\qquad x_1^2,
+\]
+according to whether \(r_0=0\) or \(r_0\neq 0\). So the next step there is now
+clearer: not tail normalization, but a basis-level affine-rank-one routing from
+that exact package into the correct chart surface. I then packaged the next
+reduction step explicitly in Lean:
 \texttt{mixedAffineAnnihilator\_normal\_form\_cases\_of\_h00\_ne\_hmixed}
 specializes the general binary-quadratic normal-form split to that same first
 inverse column, with the already-closed pure \(x_0^2\) support case removed.
@@ -3377,6 +3400,28 @@ So the remaining branch is no longer open because the classifier lacks a
 named cross / repeated-line / diagonal split for the extracted annihilator.
 The remaining work is narrower: above that split, choose the compatible pure
 homogeneous basis that feeds the existing affine-rank-one chart theorems.
+That boundary improved again in the next Lean round. I added the exact endpoint
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1PlusAX0sq\_x1PlusBX0x1\_x1sq}
+to \texttt{RepresentativeAffineRankOne.lean}, then used it in
+\texttt{ExactAffineClassification.lean} to prove
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_h20\_zero\_r0\_zero}
+and the classifier wrapper
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_h20\_zero\_r0\_zero}.
+So the mixed-support tail-rank \(1\) subcase
+\[
+  (A^{-1})_{00}\neq 0,\qquad (A^{-1})_{20}=0,\qquad (A^{-1})_{10}\neq 0,\qquad r_0=0
+\]
+is now closed outright: the extractor package
+\((c_{20},c_{11},c_{02})\) rescales to exact relations
+\[
+  x_0,\qquad x_1 + a x_0^2,\qquad x_1 + b x_0x_1,\qquad x_1^2,
+\]
+and Lean dispatches directly to the new affine-rank-one endpoint theorem.
+That means the residual exact-affine \(\dim=1\), tail-rank \(1\) gap is now
+strictly smaller than the previous note suggested. It is no longer the whole
+\((A^{-1})_{20}=0\) branch; what remains is the \(r_0\neq 0\) mixed-tail
+routing and the diagonal-complement normalization on the same mixed-support
+side.
 
 \section*{Open Subgoals}
 \begin{itemize}
