@@ -3154,6 +3154,56 @@ theorem residual_eq_zero_of_relations_x0_homQuadBasis_singleX1Tail
       (by simpa [relationPoly] using h11')
       hp hsocp
 
+/-- In the exact-affine `dim = 1` branch, if only the `x₁²`-direction carries
+both constant and `x₁` tails, the branch closes by the translated repeated-line
+affine-rank-one theorem. -/
+theorem residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x1sq
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c20 c11 c02 : Fin 4 → ℝ}
+    {a20 b20 a11 b11 a02 b02 : ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (h20 : relationPoly u c20 = a20 • (1 : Poly) + b20 • x1 + x0 ^ 2)
+    (h11 : relationPoly u c11 = a11 • (1 : Poly) + b11 • x1 + (x0 * x1 : Poly))
+    (h02 : relationPoly u c02 = a02 • (1 : Poly) + b02 • x1 + x1 ^ 2)
+    (ha20 : a20 = 0) (hb20 : b20 = 0)
+    (ha11 : a11 = 0) (hb11 : b11 = 0)
+    (ha02 : a02 ≠ 0) (hb02 : b02 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have _ : b02 / a02 ≠ 0 := by
+    exact div_ne_zero hb02 ha02
+  have h20' : relationPoly u c20 = x0 ^ 2 := by
+    simpa [ha20, hb20] using h20
+  have h11' : relationPoly u c11 = (x0 * x1 : Poly) := by
+    simpa [ha11, hb11] using h11
+  have h02' :
+      relationPoly u (a02⁻¹ • c02) =
+        (1 : Poly) + (b02 / a02) • x1 + a02⁻¹ • (x1 ^ 2 : Poly) := by
+    calc
+      relationPoly u (a02⁻¹ • c02) = a02⁻¹ • relationPoly u c02 := by
+        rw [relationPoly_smul]
+      _ = a02⁻¹ • (a02 • (1 : Poly) + b02 • x1 + x1 ^ 2) := by
+        rw [h02]
+      _ = (1 : Poly) + (b02 / a02) • x1 + a02⁻¹ • (x1 ^ 2 : Poly) := by
+        rw [smul_add, smul_add, smul_smul, smul_smul]
+        have hconst : (a02⁻¹ * a02) • (1 : Poly) = (1 : Poly) := by
+          rw [inv_mul_cancel₀ ha02, one_smul]
+        have hlin : (a02⁻¹ * b02) • x1 = (b02 / a02) • x1 := by
+          congr 1
+          simp [div_eq_mul_inv, mul_comm]
+        rw [hconst, hlin]
+  exact residual_eq_zero_of_relations_x0_onePlusBX1PlusAX1sq_x0sq_x0x1
+    (B := B) (u := u) hu (a := a02⁻¹) (b := b02 / a02) (inv_ne_zero ha02)
+    (by simpa [relationPoly] using h0)
+    (by simpa [relationPoly] using h02')
+    (by simpa [relationPoly] using h20')
+    (by simpa [relationPoly] using h11')
+    hp hsocp
+
 /-- If the exact affine relation space has dimension one and contains no exact
 constant relation, then it contains a genuine nonconstant affine line. -/
 theorem exists_exactAffine_affineLine_of_dimOne_noConst

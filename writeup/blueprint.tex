@@ -2317,6 +2317,16 @@ and close all six support-one tail patterns, i.e. when exactly one of
 \((r_{20},r_{11},r_{02})\) is nonzero or exactly one of
 \((b_{20},b_{11},b_{02})\) is nonzero. So the remaining \(\dim=1\) classifier
 no longer needs to handle those isolated pure-coordinate tail outputs by hand.
+The same layer now also proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_homQuadBasis\_singleMixedTail\_x1sq},
+which closes the first genuinely mixed support-one slice: only the
+\(x_1^2\)-direction carries tails, and it carries both a nonzero constant term
+and a nonzero \(x_1\)-term. Lean rescales that single relation to the normal
+form \(1 + b x_1 + a x_1^2\), keeps the exact \(x_0^2\) and \(x_0x_1\)
+relations untouched, and dispatches directly to the already-formalized
+translated repeated-line affine-rank-one theorem. So the remaining tail-rank
+\(1\) classifier is no longer missing the mixed repeated-line support slice
+either.
 
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor

@@ -2812,7 +2812,20 @@ and their pure \(x_1\)-tail analogues
   (x_1+x_0x_1,\ x_0^2,\ x_1^2),\quad
   (x_1+x_1^2,\ x_0^2,\ x_0x_1).
 \]
-No new Julia computation was needed for this round.
+I then added one more exact-affine \(\dim=1\), tail-rank \(1\) closure that is
+still classifier-facing but no longer only pure support. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_homQuadBasis\_singleMixedTail\_x1sq}
+handles the canonical subfamily in which only the \(x_1^2\)-direction carries
+tails, but it carries both a nonzero constant term and a nonzero \(x_1\)-term:
+\[
+  x_0,\qquad x_0^2,\qquad x_0x_1,\qquad a + b x_1 + x_1^2.
+\]
+The Lean proof is short because the algebra is already in place. It rescales
+the tailed \(x_1^2\)-relation to \(1 + b' x_1 + a' x_1^2\), leaves the exact
+\((x_0^2,x_0x_1)\) pair alone, and dispatches directly to the translated
+repeated-line theorem in \texttt{RepresentativeAffineRankOne.lean}. So the
+support-one repeated-line mixed slice is no longer open either. No new Julia
+computation was needed for this round.
 
 \section*{Open Subgoals}
 \begin{itemize}
