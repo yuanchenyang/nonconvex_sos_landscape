@@ -3182,6 +3182,46 @@ structure X0TailHomBasisMatrixData (u : RankFourVec) where
         ∑ k : Fin 3, A j k • homQuadBasis k
   hdet : A.det ≠ 0
 
+private theorem homQuadBasis_eq_sum_inv_mul_of_matrix
+    {A : Matrix (Fin 3) (Fin 3) ℝ}
+    {q : Fin 3 → Poly}
+    (hA : ∀ j : Fin 3, q j = ∑ k : Fin 3, A j k • homQuadBasis k)
+    (hdet : A.det ≠ 0) :
+    ∀ k : Fin 3, homQuadBasis k = ∑ j : Fin 3, A⁻¹ k j • q j := by
+  intro k
+  have hAunit : IsUnit A.det := isUnit_iff_ne_zero.mpr hdet
+  have hmul : A⁻¹ * A = 1 := Matrix.nonsing_inv_mul A hAunit
+  symm
+  calc
+    ∑ j : Fin 3, A⁻¹ k j • q j
+        = ∑ j : Fin 3, A⁻¹ k j • (∑ l : Fin 3, A j l • homQuadBasis l) := by
+            refine Finset.sum_congr rfl ?_
+            intro j hj
+            rw [hA j]
+    _ = ∑ j : Fin 3, ∑ l : Fin 3, (A⁻¹ k j * A j l) • homQuadBasis l := by
+          refine Finset.sum_congr rfl ?_
+          intro j hj
+          rw [Finset.smul_sum]
+          refine Finset.sum_congr rfl ?_
+          intro l hl
+          rw [smul_smul]
+    _ = ∑ l : Fin 3, (∑ j : Fin 3, A⁻¹ k j * A j l) • homQuadBasis l := by
+          rw [Finset.sum_comm]
+          refine Finset.sum_congr rfl ?_
+          intro l hl
+          simpa using
+            (Finset.sum_smul
+              (s := (Finset.univ : Finset (Fin 3)))
+              (f := fun j : Fin 3 => A⁻¹ k j * A j l)
+              (x := homQuadBasis l)).symm
+    _ = ∑ l : Fin 3, (A⁻¹ * A) k l • homQuadBasis l := by
+          refine Finset.sum_congr rfl ?_
+          intro l hl
+          rw [Matrix.mul_apply]
+    _ = homQuadBasis k := by
+          rw [hmul]
+          simp [Matrix.one_apply]
+
 namespace X0TailHomBasisMatrixData
 
 /-- The affine tail lands on exactly one canonical quadratic direction. -/
@@ -3198,6 +3238,125 @@ def M20Zero {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Prop :=
 single-support, or the whole `m20 = 0` slice. -/
 def SimpleBranch {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Prop :=
   D.SingleSupport ∨ D.M20Zero
+
+/-- Constant coefficient of the unique tailed relation in the extracted basis. -/
+def r0 {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : ℝ :=
+  MvPolynomial.coeff m00 (relationPoly u D.d0)
+
+/-- `x₁` coefficient of the unique tailed relation in the extracted basis. -/
+def b0 {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : ℝ :=
+  MvPolynomial.coeff m01 (relationPoly u D.d0)
+
+/-- Tail-stripped homogeneous basis returned by the extractor. -/
+def q {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Fin 3 → Poly :=
+  ![relationPoly u D.d0 - affineLinePoly D.r0 0 D.b0,
+    relationPoly u D.d1,
+    relationPoly u D.d2]
+
+/-- Canonical reconstructed `x₀²` relation from the inverse homogeneous matrix. -/
+def c20 {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Fin 4 → ℝ :=
+  fun i => (D.A⁻¹ 0 0) * D.d0 i + (D.A⁻¹ 0 1) * D.d1 i + (D.A⁻¹ 0 2) * D.d2 i
+
+/-- Canonical reconstructed `x₀x₁` relation from the inverse homogeneous matrix. -/
+def c11 {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Fin 4 → ℝ :=
+  fun i => (D.A⁻¹ 1 0) * D.d0 i + (D.A⁻¹ 1 1) * D.d1 i + (D.A⁻¹ 1 2) * D.d2 i
+
+/-- Canonical reconstructed `x₁²` relation from the inverse homogeneous matrix. -/
+def c02 {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Fin 4 → ℝ :=
+  fun i => (D.A⁻¹ 2 0) * D.d0 i + (D.A⁻¹ 2 1) * D.d1 i + (D.A⁻¹ 2 2) * D.d2 i
+
+private theorem q_eq_sum_homQuadBasis
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    ∀ j : Fin 3, D.q j = ∑ k : Fin 3, D.A j k • homQuadBasis k := by
+  intro j
+  simpa [q, r0, b0] using D.hA j
+
+private theorem hd0split
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    relationPoly u D.d0 = D.q 0 + affineLinePoly D.r0 0 D.b0 := by
+  dsimp [q, r0, b0]
+  abel
+
+/-- The canonical reconstructed `x₀²` relation has homogeneous part exactly
+`x₀²`, and its affine tail lies on the same extracted affine line. -/
+theorem relation_c20
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    relationPoly u D.c20 =
+      (D.A⁻¹ 0 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 0 0 * D.b0) • x1 + x0 ^ 2 := by
+  have hhom := homQuadBasis_eq_sum_inv_mul_of_matrix (q_eq_sum_homQuadBasis D) D.hdet
+  calc
+    relationPoly u D.c20
+        = (D.A⁻¹ 0 0) • relationPoly u D.d0 +
+            (D.A⁻¹ 0 1) • relationPoly u D.d1 + (D.A⁻¹ 0 2) • relationPoly u D.d2 := by
+            rw [show D.c20 = (D.A⁻¹ 0 0) • D.d0 + (D.A⁻¹ 0 1) • D.d1 + (D.A⁻¹ 0 2) • D.d2 by
+              funext i
+              simp [c20]
+            , relationPoly_add, relationPoly_add, relationPoly_smul, relationPoly_smul,
+              relationPoly_smul]
+    _ = (D.A⁻¹ 0 0) • affineLinePoly D.r0 0 D.b0 + ∑ j : Fin 3, D.A⁻¹ 0 j • D.q j := by
+          rw [hd0split D]
+          rw [smul_add]
+          simp [q, Fin.sum_univ_three]
+          abel
+    _ = (D.A⁻¹ 0 0) • affineLinePoly D.r0 0 D.b0 + x0 ^ 2 := by
+          simpa [q] using
+            congrArg (fun z : Poly => (D.A⁻¹ 0 0) • affineLinePoly D.r0 0 D.b0 + z) (hhom 0).symm
+    _ = (D.A⁻¹ 0 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 0 0 * D.b0) • x1 + x0 ^ 2 := by
+          simp [affineLinePoly, MvPolynomial.smul_eq_C_mul, mul_comm, mul_left_comm, add_assoc]
+
+/-- The canonical reconstructed `x₀x₁` relation has homogeneous part exactly
+`x₀x₁`, and its affine tail lies on the same extracted affine line. -/
+theorem relation_c11
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    relationPoly u D.c11 =
+      (D.A⁻¹ 1 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 1 0 * D.b0) • x1 + (x0 * x1 : Poly) := by
+  have hhom := homQuadBasis_eq_sum_inv_mul_of_matrix (q_eq_sum_homQuadBasis D) D.hdet
+  calc
+    relationPoly u D.c11
+        = (D.A⁻¹ 1 0) • relationPoly u D.d0 +
+            (D.A⁻¹ 1 1) • relationPoly u D.d1 + (D.A⁻¹ 1 2) • relationPoly u D.d2 := by
+            rw [show D.c11 = (D.A⁻¹ 1 0) • D.d0 + (D.A⁻¹ 1 1) • D.d1 + (D.A⁻¹ 1 2) • D.d2 by
+              funext i
+              simp [c11]
+            , relationPoly_add, relationPoly_add, relationPoly_smul, relationPoly_smul,
+              relationPoly_smul]
+    _ = (D.A⁻¹ 1 0) • affineLinePoly D.r0 0 D.b0 + ∑ j : Fin 3, D.A⁻¹ 1 j • D.q j := by
+          rw [hd0split D]
+          rw [smul_add]
+          simp [q, Fin.sum_univ_three]
+          abel
+    _ = (D.A⁻¹ 1 0) • affineLinePoly D.r0 0 D.b0 + (x0 * x1 : Poly) := by
+          simpa [q] using
+            congrArg (fun z : Poly => (D.A⁻¹ 1 0) • affineLinePoly D.r0 0 D.b0 + z) (hhom 1).symm
+    _ = (D.A⁻¹ 1 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 1 0 * D.b0) • x1 + (x0 * x1 : Poly) := by
+          simp [affineLinePoly, MvPolynomial.smul_eq_C_mul, mul_comm, mul_left_comm, add_assoc]
+
+/-- The canonical reconstructed `x₁²` relation has homogeneous part exactly
+`x₁²`, and its affine tail lies on the same extracted affine line. -/
+theorem relation_c02
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    relationPoly u D.c02 =
+      (D.A⁻¹ 2 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 2 0 * D.b0) • x1 + x1 ^ 2 := by
+  have hhom := homQuadBasis_eq_sum_inv_mul_of_matrix (q_eq_sum_homQuadBasis D) D.hdet
+  calc
+    relationPoly u D.c02
+        = (D.A⁻¹ 2 0) • relationPoly u D.d0 +
+            (D.A⁻¹ 2 1) • relationPoly u D.d1 + (D.A⁻¹ 2 2) • relationPoly u D.d2 := by
+            rw [show D.c02 = (D.A⁻¹ 2 0) • D.d0 + (D.A⁻¹ 2 1) • D.d1 + (D.A⁻¹ 2 2) • D.d2 by
+              funext i
+              simp [c02]
+            , relationPoly_add, relationPoly_add, relationPoly_smul, relationPoly_smul,
+              relationPoly_smul]
+    _ = (D.A⁻¹ 2 0) • affineLinePoly D.r0 0 D.b0 + ∑ j : Fin 3, D.A⁻¹ 2 j • D.q j := by
+          rw [hd0split D]
+          rw [smul_add]
+          simp [q, Fin.sum_univ_three]
+          abel
+    _ = (D.A⁻¹ 2 0) • affineLinePoly D.r0 0 D.b0 + x1 ^ 2 := by
+          simpa [q] using
+            congrArg (fun z : Poly => (D.A⁻¹ 2 0) • affineLinePoly D.r0 0 D.b0 + z) (hhom 2).symm
+    _ = (D.A⁻¹ 2 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 2 0 * D.b0) • x1 + x1 ^ 2 := by
+          simp [affineLinePoly, MvPolynomial.smul_eq_C_mul, mul_comm, mul_left_comm, add_assoc]
 
 end X0TailHomBasisMatrixData
 
@@ -3247,46 +3406,6 @@ noncomputable def exactAffineDimOneRangeOneData
   have hdet : A.det ≠ 0 := hAdata.2.2.2.2.2.2.2.2.2
   exact ⟨d0, d1, d2, A, hd0K, hd1K, hd2K, htail0_ne, h00_d1, h01_d1, h00_d2, h01_d2, hA,
     hdet⟩
-
-private theorem homQuadBasis_eq_sum_inv_mul_of_matrix
-    {A : Matrix (Fin 3) (Fin 3) ℝ}
-    {q : Fin 3 → Poly}
-    (hA : ∀ j : Fin 3, q j = ∑ k : Fin 3, A j k • homQuadBasis k)
-    (hdet : A.det ≠ 0) :
-    ∀ k : Fin 3, homQuadBasis k = ∑ j : Fin 3, A⁻¹ k j • q j := by
-  intro k
-  have hAunit : IsUnit A.det := isUnit_iff_ne_zero.mpr hdet
-  have hmul : A⁻¹ * A = 1 := Matrix.nonsing_inv_mul A hAunit
-  symm
-  calc
-    ∑ j : Fin 3, A⁻¹ k j • q j
-        = ∑ j : Fin 3, A⁻¹ k j • (∑ l : Fin 3, A j l • homQuadBasis l) := by
-            refine Finset.sum_congr rfl ?_
-            intro j hj
-            rw [hA j]
-    _ = ∑ j : Fin 3, ∑ l : Fin 3, (A⁻¹ k j * A j l) • homQuadBasis l := by
-          refine Finset.sum_congr rfl ?_
-          intro j hj
-          rw [Finset.smul_sum]
-          refine Finset.sum_congr rfl ?_
-          intro l hl
-          rw [smul_smul]
-    _ = ∑ l : Fin 3, (∑ j : Fin 3, A⁻¹ k j * A j l) • homQuadBasis l := by
-          rw [Finset.sum_comm]
-          refine Finset.sum_congr rfl ?_
-          intro l hl
-          simpa using
-            (Finset.sum_smul
-              (s := (Finset.univ : Finset (Fin 3)))
-              (f := fun j : Fin 3 => A⁻¹ k j * A j l)
-              (x := homQuadBasis l)).symm
-    _ = ∑ l : Fin 3, (A⁻¹ * A) k l • homQuadBasis l := by
-          refine Finset.sum_congr rfl ?_
-          intro l hl
-          rw [Matrix.mul_apply]
-    _ = homQuadBasis k := by
-          rw [hmul]
-          simp [Matrix.one_apply]
 
 /-- If the exact-affine `dim = 1` branch normalized by an exact `x₀` relation
 has zero tail map, the three residual quadratic relations are already exactly

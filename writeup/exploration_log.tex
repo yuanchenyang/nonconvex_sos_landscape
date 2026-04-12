@@ -3278,7 +3278,16 @@ tail-rank \(1\) branch: as soon as the chosen extracted inverse matrix lies in
 either the exact single-support region or the full \((A^{-1})_{00}=0\) slice,
 the exact-affine \(\dim=1\) classifier closes directly. The only remaining
 tail-rank \(1\) gap is therefore the complementary \((A^{-1})_{00}\neq 0\)
-mixed-support routing.
+mixed-support routing. I then tightened that remaining branch one step further
+without pretending to solve it: in
+\texttt{X0TailHomBasisMatrixData} I added the reconstructed relations
+\texttt{c20}, \texttt{c11}, and \texttt{c02} and proved that they satisfy exact
+relation formulas with homogeneous parts \(x_0^2\), \(x_0x_1\), and \(x_1^2\),
+while all three affine tails lie on the same extracted line determined by the
+tailed basis vector \(d_0\). So the open \((A^{-1})_{00}\neq 0\) branch is now
+cleaner than before: the missing step is not basis recovery but basis
+normalization of an already explicit common-tail triple into one of the solved
+affine-rank-one repeated-line or diagonal chart surfaces.
 
 \section*{Open Subgoals}
 \begin{itemize}

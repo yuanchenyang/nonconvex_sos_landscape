@@ -2622,7 +2622,19 @@ affine-rank-one surfaces. This is now reflected at classifier level too:
 closes the whole already-resolved tail-rank \(1\) region above the extractor in
 one step. So the remaining tail-rank \(1\) exact-affine \(\dim=1\) work is no
 longer about unpacking the range-\(1\) extractor itself; it is only the
-complementary \(A^{-1}_{00}\neq 0\) mixed-support normalization. One additional piece of the affine-rank-one
+complementary \(A^{-1}_{00}\neq 0\) mixed-support normalization. One additional
+piece of that complementary branch is now also explicit at extractor level: in
+\texttt{X0TailHomBasisMatrixData}, the new reconstructed relations
+\texttt{c20}, \texttt{c11}, and \texttt{c02} satisfy exact formulas with
+homogeneous parts \(x_0^2\), \(x_0x_1\), and \(x_1^2\), and all three carry
+affine tails on the same extracted line
+\[
+  \alpha\,r_0 + \alpha\,b_0 x_1.
+\]
+So the remaining tail-rank \(1\) gap is no longer to recover a canonical
+tailed triple from the inverse matrix; Lean now does that. What remains is only
+to normalize that common-tail triple into one of the solved repeated-line or
+diagonal affine-rank-one chart surfaces. One additional piece of the affine-rank-one
 surface is now closed on the constant side: in
 \texttt{RepresentativeAffineRankOne.lean} the new theorems
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_x0x1\_diffsqPlane}
