@@ -2453,6 +2453,34 @@ tail probe: the constant and mixed tails look generically surjective, while
 the pure \(x_1\)-tail direction still shows the same codimension-one missing
 constant monomial as the retained affine-rank-one linear endpoint.
 
+The new script
+\texttt{julia/affine\_dim\_one\_diagonal\_complement\_2026\_04\_12.jl}
+shows that this is not just a chart artifact. On the exact canonical
+complement models
+\[
+  (x_0,\ 1 + a(x_0^2+x_1^2),\ x_0x_1,\ x_0^2-x_1^2),\qquad
+  (x_0,\ x_1 + a(x_0^2+x_1^2),\ x_0x_1,\ x_0^2-x_1^2),
+\]
+their mixed \(1+b x_1\) companions, and the corresponding
+\(\operatorname{span}(x_0x_1,\ x_0^2+x_1^2)\) versions with the complementary
+tail \(a(x_0^2-x_1^2)\), the retained output is
+\[
+  \texttt{affine\_dim\_one\_diagonal\_complement\_probe}
+  =
+  (\texttt{diag\_sum\_const.ranks}=[15],\ 
+   \texttt{diag\_sum\_x1.ranks}=[14],\ 
+   \texttt{diag\_sum\_x1.missing}=[\{(0,0)\}],\ 
+   \texttt{diag\_sum\_mixed.ranks}=[15],\ 
+   \texttt{diag\_diff\_const.ranks}=[15],\ 
+   \texttt{diag\_diff\_x1.ranks}=[14],\ 
+   \texttt{diag\_diff\_x1.missing}=[\{(0,0)\}],\ 
+   \texttt{diag\_diff\_mixed.ranks}=[15]).
+\]
+So the remaining diagonal theorem is now pinned down to an exact affine-rank-one
+plane family: the pure \(x_1\)-tail diagonal-complement models are the only
+stable nonsurjective outputs, while the constant and mixed complement models
+already look uniformly surjective on their exact canonical representatives.
+
 The next Lean round has already absorbed the local diagonal normal-form
 algebra needed for that branch. In
 \texttt{RepresentativeAffineRankOne.lean} there are now explicit expansion

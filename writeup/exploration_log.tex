@@ -2775,6 +2775,34 @@ constant monomial. This makes the next Lean step much less ambiguous: add the
 affine-rank-one diagonal chart reducers rather than searching for a new hidden
 normal form.
 
+I then pinned that down on exact canonical complement models rather than only
+after the outer shear normalization. The new script
+\texttt{julia/affine\_dim\_one\_diagonal\_complement\_2026\_04\_12.jl}
+tests the exact families
+\[
+  (x_0,\ 1 + a(x_0^2+x_1^2),\ x_0x_1,\ x_0^2-x_1^2),\qquad
+  (x_0,\ x_1 + a(x_0^2+x_1^2),\ x_0x_1,\ x_0^2-x_1^2),
+\]
+their mixed \(1+b x_1\) companions, and the corresponding
+\(\operatorname{span}(x_0x_1,\ x_0^2+x_1^2)\) versions with complementary
+tail \(a(x_0^2-x_1^2)\). The retained output is
+\[
+  \texttt{affine\_dim\_one\_diagonal\_complement\_probe}
+  =
+  (\texttt{diag\_sum\_const.ranks}=[15],\ 
+   \texttt{diag\_sum\_x1.ranks}=[14],\ 
+   \texttt{diag\_sum\_x1.missing}=[\{(0,0)\}],\ 
+   \texttt{diag\_sum\_mixed.ranks}=[15],\ 
+   \texttt{diag\_diff\_const.ranks}=[15],\ 
+   \texttt{diag\_diff\_x1.ranks}=[14],\ 
+   \texttt{diag\_diff\_x1.missing}=[\{(0,0)\}],\ 
+   \texttt{diag\_diff\_mixed.ranks}=[15]).
+\]
+So the open affine-rank-one diagonal branch is now sharper than before: it is
+not a vague chart output, but the specific pure \(x_1\)-tail diagonal
+complement plane family. The constant and mixed complement models already look
+uniformly surjective on their exact canonical representatives.
+
 I then added one more affine-rank-one plane wrapper in
 \texttt{RepresentativeAffineRankOne.lean}:
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusAX0sqBX1sq\_x0x1\_x1sqPlane},
