@@ -2597,10 +2597,32 @@ the exact constant diagonal-complement slice is no longer merely numerical; the
 remaining affine-rank-one diagonal work is now concentrated in the mixed
 \(1+b x_1\) outputs, together with the classifier step that must provide the
 explicit \(q_1\) diagonal relation needed to invoke the constant and pure
-\(x_1\) partial chart theorems. Those outputs still need basis-level routing
-into the already solved endpoint or generic-surjective surfaces, with the
-diagonal charts now reduced to concrete Lean interfaces rather than
-unclassified numerical branches.
+\(x_1\) partial chart theorems. That local mixed gap is now smaller than
+before. In \texttt{RepresentativeAffineRankOne.lean} the new exact endpoints
+\texttt{quartic\_in\_image\_of\_relations\_x0\_onePlusBX1PlusADiffsq\_x0x1}
+and
+\texttt{quartic\_in\_image\_of\_relations\_x0\_onePlusBX1PlusASumsq\_x0x1},
+together with their residual/equivariant wrappers, close the normalized mixed
+diagonal families
+\[
+  (x_0,\ 1+b x_1 + a(x_0^2-x_1^2),\ x_0x_1,\ x_0^2-x_1^2)
+\]
+and
+\[
+  (x_0,\ 1+b x_1 + a(x_0^2+x_1^2),\ x_0x_1,\ x_0^2+x_1^2).
+\]
+On top of those, the same file now proves the coarse plane wrappers
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_x0x1\_diffsqPlane}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_x0x1\_sumsqPlane},
+again with equivariant transport. So the mixed diagonal branch no longer needs
+an exact hand-normalized diagonal relation before entering the affine-rank-one
+layer: a quadratic \(q_1\) with affine part \(1+b x_1\), the matching
+diagonal coefficient relation, and an invertible basis of the canonical
+diagonal plane are enough. The remaining work is therefore not another local
+mixed endpoint; it is the outer diagonal chart/classifier layer that must
+extract those diagonal-relation inputs from the exact-affine \(\dim=1\)
+homogeneous-basis data.
 
 The new probe \texttt{julia/affine\_dim\_one\_mixed\_diagonal\_shear\_2026\_04\_12.jl}
 checks the most obvious reduction attempt on that remaining mixed branch. If
@@ -2620,8 +2642,10 @@ while the transformed \(\operatorname{span}(x_0x_1,\ x_0^2+x_1^2)\) plane keeps
 signs appearing across the tested shears. So
 the remaining mixed \(1+b x_1\) obstruction is not just a missed
 cross/common-factor reduction; it is genuinely a diagonal affine-rank-one
-surface that still needs either a direct theorem or a higher-level classifier
-reduction.
+surface. What is still missing there is no longer the normalized diagonal
+endpoint or the canonical diagonal-plane wrapper, both of which are now
+formalized; it is the higher-level chart/classifier reduction that feeds those
+theorems from arbitrary extracted basis data.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and

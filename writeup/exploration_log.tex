@@ -3175,6 +3175,34 @@ negative diagonal sign, while the sum slice can land in either diagonal-sign
 subcase. This rules out one easy reduction strategy and sharpens the remaining
 local Lean target.
 
+I then formalized that local mixed diagonal target itself in
+\texttt{RepresentativeAffineRankOne.lean}. First I added the exact normalized
+mixed diagonal endpoints
+\texttt{quartic\_in\_image\_of\_relations\_x0\_onePlusBX1PlusADiffsq\_x0x1}
+and
+\texttt{quartic\_in\_image\_of\_relations\_x0\_onePlusBX1PlusASumsq\_x0x1},
+with the corresponding residual and equivariant wrappers. These close the two
+families
+\[
+  (x_0,\ 1+b x_1 + a(x_0^2-x_1^2),\ x_0x_1,\ x_0^2-x_1^2)
+\]
+and
+\[
+  (x_0,\ 1+b x_1 + a(x_0^2+x_1^2),\ x_0x_1,\ x_0^2+x_1^2)
+\]
+by direct image arguments. I then lifted both into the coarse diagonal plane
+surface via
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_x0x1\_diffsqPlane}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_x0x1\_sumsqPlane},
+again with equivariant wrappers. So the mixed affine-rank-one diagonal branch
+no longer needs the classifier to hand back a fully normalized exact diagonal
+relation; it is enough to supply exact \(x_0\), one quadratic with affine part
+\(1+b x_1\), the corresponding diagonal coefficient relation for that
+quadratic, and an invertible basis of the canonical diagonal plane. No new
+Julia experiment was needed for this round; the retained numerical diagonal
+probe above already matched the new theorem surface.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
