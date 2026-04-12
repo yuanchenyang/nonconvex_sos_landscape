@@ -3247,6 +3247,47 @@ private theorem homQuadBasis_eq_sum_inv_mul_of_matrix
           rw [hmul]
           simp [Matrix.one_apply]
 
+private theorem homQuadBasis_linearIndependent :
+    LinearIndependent ℝ homQuadBasis := by
+  rw [Fintype.linearIndependent_iff]
+  intro g hg i
+  fin_cases i
+  · have hcoeff := congrArg (MvPolynomial.coeff m20) hg
+    simpa [homQuadBasis, Fin.sum_univ_three, MvPolynomial.coeff_add,
+      MvPolynomial.coeff_smul, coeff_m20_x0sq, coeff_m20_x0x1, coeff_m20_x1sq] using hcoeff
+  · have hcoeff := congrArg (MvPolynomial.coeff m11) hg
+    simpa [homQuadBasis, Fin.sum_univ_three, MvPolynomial.coeff_add,
+      MvPolynomial.coeff_smul, coeff_m11_x0sq, coeff_m11_x0x1, coeff_m11_x1sq] using hcoeff
+  · have hcoeff := congrArg (MvPolynomial.coeff m02) hg
+    simpa [homQuadBasis, Fin.sum_univ_three, MvPolynomial.coeff_add,
+      MvPolynomial.coeff_smul, coeff_m02_x0sq, coeff_m02_x0x1, coeff_m02_x1sq] using hcoeff
+
+private def rowToHomQuad : (Fin 3 → ℝ) →ₗ[ℝ] Poly where
+  toFun v := ∑ k : Fin 3, v k • homQuadBasis k
+  map_add' x y := by
+    simp [Finset.sum_add_distrib, add_smul]
+  map_smul' a v := by
+    dsimp
+    rw [Finset.smul_sum]
+    refine Finset.sum_congr rfl ?_
+    intro k hk
+    rw [smul_smul]
+
+private theorem rowToHomQuad_injective :
+    Function.Injective rowToHomQuad := by
+  intro v w hvw
+  ext i
+  fin_cases i
+  · have hcoeff := congrArg (MvPolynomial.coeff m20) hvw
+    simpa [rowToHomQuad, homQuadBasis, Fin.sum_univ_three, MvPolynomial.coeff_add,
+      MvPolynomial.coeff_smul, coeff_m20_x0sq, coeff_m20_x0x1, coeff_m20_x1sq] using hcoeff
+  · have hcoeff := congrArg (MvPolynomial.coeff m11) hvw
+    simpa [rowToHomQuad, homQuadBasis, Fin.sum_univ_three, MvPolynomial.coeff_add,
+      MvPolynomial.coeff_smul, coeff_m11_x0sq, coeff_m11_x0x1, coeff_m11_x1sq] using hcoeff
+  · have hcoeff := congrArg (MvPolynomial.coeff m02) hvw
+    simpa [rowToHomQuad, homQuadBasis, Fin.sum_univ_three, MvPolynomial.coeff_add,
+      MvPolynomial.coeff_smul, coeff_m02_x0sq, coeff_m02_x0x1, coeff_m02_x1sq] using hcoeff
+
 namespace X0TailConstX1HomBasisMatrixData
 
 /-- Tail-stripped homogeneous basis returned by the tail-rank `2` extractor. -/
@@ -3284,6 +3325,150 @@ private theorem hd1split
     relationPoly u D.d1 = D.q 1 + x1 := by
   dsimp [q]
   abel
+
+/-- The tail-stripped homogeneous triple packaged by the tail-rank `2`
+extractor is linearly independent. Equivalently, the extracted homogeneous
+matrix data really is a basis of the three-dimensional homogeneous quadratic
+space. -/
+theorem q_linearIndependent
+    {u : RankFourVec} (D : X0TailConstX1HomBasisMatrixData u) :
+    LinearIndependent ℝ D.q := by
+  have hrows : LinearIndependent ℝ (fun i : Fin 3 => D.A i) :=
+    Matrix.linearIndependent_rows_of_det_ne_zero D.hdet
+  have hmap :
+      LinearIndependent ℝ
+        (fun i : Fin 3 => rowToHomQuad (D.A i)) := by
+    exact hrows.map' rowToHomQuad (LinearMap.ker_eq_bot.mpr rowToHomQuad_injective)
+  have hqeq : (fun i : Fin 3 => rowToHomQuad (D.A i)) = D.q := by
+    funext i
+    simp [rowToHomQuad, D.q_eq_sum_homQuadBasis]
+  simpa [hqeq] using hmap
+
+/-- The pure pair `(q₀,q₂)` extracted from the normalized range-two data is
+linearly independent. -/
+theorem q02_linearIndependent
+    {u : RankFourVec} (D : X0TailConstX1HomBasisMatrixData u) :
+    LinearIndependent ℝ ![D.q 0, D.q 2] := by
+  have hli := Fintype.linearIndependent_iff.mp D.q_linearIndependent
+  rw [linearIndependent_fin2]
+  constructor
+  · exact (D.q_linearIndependent.ne_zero 2)
+  · intro a ha
+    have ha' : a • D.q 2 = D.q 0 := by
+      simpa using ha
+    have hzero :
+        ∑ j : Fin 3, (![-1, 0, a] : Fin 3 → ℝ) j • D.q j = 0 := by
+      have : (-1 : ℝ) • D.q 0 + a • D.q 2 = 0 := by
+        rw [ha']
+        simp
+      simpa [Fin.sum_univ_three, add_assoc] using this
+    have hcoeffs := hli (![-1, 0, a]) hzero
+    have h0 := hcoeffs 0
+    norm_num at h0
+
+/-- The pure pair `(q₁,q₂)` extracted from the normalized range-two data is
+linearly independent. -/
+theorem q12_linearIndependent
+    {u : RankFourVec} (D : X0TailConstX1HomBasisMatrixData u) :
+    LinearIndependent ℝ ![D.q 1, D.q 2] := by
+  have hli := Fintype.linearIndependent_iff.mp D.q_linearIndependent
+  rw [linearIndependent_fin2]
+  constructor
+  · exact (D.q_linearIndependent.ne_zero 2)
+  · intro a ha
+    have ha' : a • D.q 2 = D.q 1 := by
+      simpa using ha
+    have hzero :
+        ∑ j : Fin 3, (![0, -1, a] : Fin 3 → ℝ) j • D.q j = 0 := by
+      have : (-1 : ℝ) • D.q 1 + a • D.q 2 = 0 := by
+        rw [ha']
+        simp
+      simpa [Fin.sum_univ_three, add_assoc] using this
+    have hcoeffs := hli (![0, -1, a]) hzero
+    have h1 := hcoeffs 1
+    norm_num at h1
+
+/-- The pure pair `(q₀,q₂)` spans a genuine low-homogeneous plane. This is the
+constant-tail range-two plane that will later feed the affine-rank-one
+classifier routing. -/
+theorem q02_plane_nontrivial
+    {u : RankFourVec} (hu : IsAdmissiblePoint u) (D : X0TailConstX1HomBasisMatrixData u) :
+    lowHomQuadPlaneA (D.q 0) (D.q 2) ≠ 0 ∨
+      lowHomQuadPlaneB (D.q 0) (D.q 2) ≠ 0 ∨
+        lowHomQuadPlaneC (D.q 0) (D.q 2) ≠ 0 := by
+  have hq0 : IsQuadratic (D.q 0) := by
+    dsimp [q]
+    simpa [sub_eq_add_neg] using
+      isQuadratic_linearCombination_local
+        (isQuadratic_relationPoly hu D.d0) isQuadratic_one_local 1 (-1)
+  have hq2 : IsQuadratic (D.q 2) := by
+    simpa [q] using isQuadratic_relationPoly hu D.d2
+  have hq0_00 : MvPolynomial.coeff m00 (D.q 0) = 0 := by
+    dsimp [q]
+    rw [MvPolynomial.coeff_sub]
+    simp [D.h00_d0]
+  have hq0_10 : MvPolynomial.coeff m10 (D.q 0) = 0 := by
+    dsimp [q]
+    have hd0_10 : MvPolynomial.coeff m10 (relationPoly u D.d0) = 0 := by
+      change x0CoeffMap u D.d0 = 0
+      exact D.hd0K
+    rw [MvPolynomial.coeff_sub]
+    simp [hd0_10, coeff_m10_one]
+  have hq0_01 : MvPolynomial.coeff m01 (D.q 0) = 0 := by
+    dsimp [q]
+    rw [MvPolynomial.coeff_sub]
+    simp [D.h01_d0, coeff_m01_one]
+  have hq2_00 : MvPolynomial.coeff m00 (D.q 2) = 0 := by
+    simpa [q] using D.h00_d2
+  have hq2_10 : MvPolynomial.coeff m10 (D.q 2) = 0 := by
+    dsimp [q]
+    change x0CoeffMap u D.d2 = 0
+    exact D.hd2K
+  have hq2_01 : MvPolynomial.coeff m01 (D.q 2) = 0 := by
+    simpa [q] using D.h01_d2
+  exact lowHomQuadPlane_nontrivial_of_independent_pair
+    hq0 hq2 hq0_00 hq0_10 hq0_01 hq2_00 hq2_10 hq2_01 D.q02_linearIndependent
+
+/-- The pure pair `(q₁,q₂)` spans a genuine low-homogeneous plane. This is the
+`x₁`-tail range-two plane that will later feed the affine-rank-one classifier
+routing. -/
+theorem q12_plane_nontrivial
+    {u : RankFourVec} (hu : IsAdmissiblePoint u) (D : X0TailConstX1HomBasisMatrixData u) :
+    lowHomQuadPlaneA (D.q 1) (D.q 2) ≠ 0 ∨
+      lowHomQuadPlaneB (D.q 1) (D.q 2) ≠ 0 ∨
+        lowHomQuadPlaneC (D.q 1) (D.q 2) ≠ 0 := by
+  have hq1 : IsQuadratic (D.q 1) := by
+    dsimp [q]
+    simpa [sub_eq_add_neg] using
+      isQuadratic_linearCombination_local
+        (isQuadratic_relationPoly hu D.d1) isQuadratic_x1_local 1 (-1)
+  have hq2 : IsQuadratic (D.q 2) := by
+    simpa [q] using isQuadratic_relationPoly hu D.d2
+  have hq1_00 : MvPolynomial.coeff m00 (D.q 1) = 0 := by
+    dsimp [q]
+    rw [MvPolynomial.coeff_sub]
+    simp [D.h00_d1, coeff_m00_x1]
+  have hq1_10 : MvPolynomial.coeff m10 (D.q 1) = 0 := by
+    dsimp [q]
+    have hd1_10 : MvPolynomial.coeff m10 (relationPoly u D.d1) = 0 := by
+      change x0CoeffMap u D.d1 = 0
+      exact D.hd1K
+    rw [MvPolynomial.coeff_sub]
+    simp [hd1_10, coeff_m10_x1]
+  have hq1_01 : MvPolynomial.coeff m01 (D.q 1) = 0 := by
+    dsimp [q]
+    rw [MvPolynomial.coeff_sub]
+    simp [D.h01_d1, coeff_m01_x1]
+  have hq2_00 : MvPolynomial.coeff m00 (D.q 2) = 0 := by
+    simpa [q] using D.h00_d2
+  have hq2_10 : MvPolynomial.coeff m10 (D.q 2) = 0 := by
+    dsimp [q]
+    change x0CoeffMap u D.d2 = 0
+    exact D.hd2K
+  have hq2_01 : MvPolynomial.coeff m01 (D.q 2) = 0 := by
+    simpa [q] using D.h01_d2
+  exact lowHomQuadPlane_nontrivial_of_independent_pair
+    hq1 hq2 hq1_00 hq1_10 hq1_01 hq2_00 hq2_10 hq2_01 D.q12_linearIndependent
 
 /-- The canonical reconstructed `x₀²` relation has homogeneous part exactly
 `x₀²`, and its affine tail is read directly from the first two inverse-matrix

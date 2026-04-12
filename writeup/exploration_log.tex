@@ -3619,11 +3619,15 @@ namespace, Lean reconstructs the canonical quadratic directions explicitly:
   \alpha_{11} + \beta_{11} x_1 + x_0x_1,\qquad
   \alpha_{02} + \beta_{02} x_1 + x_1^2.
 \]
-So the remaining range-two gap is no longer the raw linear algebra of
-extracting canonical quadratics from the homogeneous basis matrix. What still
-remains is the final classifier routing that normalizes these three tailed
-canonical relations into one of the existing affine-rank-one representative
-theorem surfaces.
+I then tightened that range-two package further. The same namespace now proves
+that the stripped homogeneous triple \((q_0,q_1,q_2)\) is linearly
+independent, and that the pure pairs \((q_0,q_2)\) and \((q_1,q_2)\) already
+span genuine low-homogeneous planes. So the remaining range-two gap is no
+longer the raw linear algebra of extracting canonical quadratics from the
+homogeneous basis matrix, nor the separate plane-nondegeneracy check for the
+obvious pure pairs. What still remains is the final classifier routing that
+normalizes this basis-and-plane data into one of the existing affine-rank-one
+representative theorem surfaces.
 
 \section*{Open Subgoals}
 \begin{itemize}
@@ -3633,7 +3637,7 @@ constant-containing \(\dim=2\) mixed-affine branch no longer needs external
 quadratic-pair extraction, the exact-affine \(\dim=2\) low-affine branch is
 closed, and the exact-affine \(\dim=1\), tail-rank \(1\) branch is fully
 closed as well. What remains is the last range-two normalization/classifier
-layer above the bundled basis data
+layer above the bundled basis-and-plane data
 \texttt{exactAffineDimOneRangeTwoData}.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
