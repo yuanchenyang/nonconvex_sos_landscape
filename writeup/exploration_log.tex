@@ -3448,6 +3448,54 @@ the whole explicit \(h_{20}=0\) slice from the remaining exact-affine
 \(\dim=1\), tail-rank \(1\) work. The live gap is now only the complementary
 diagonal/basis-routing branch above the extracted pure homogeneous plane.
 
+I then checked whether that live branch still wants more chart transport, or
+whether it is better modeled as a direct shared-tail endpoint. The new probe
+\texttt{julia/affine\_dim\_one\_shared\_tail\_2026\_04\_12.jl} samples the
+families
+\[
+  x_0,\qquad x_1+a x_0^2,\qquad x_1+b x_0x_1,\qquad x_1+c x_1^2
+\]
+and
+\[
+  x_0,\qquad 1+\beta x_1+a x_0^2,\qquad 1+\beta x_1+b x_0x_1,\qquad
+  1+\beta x_1+c x_1^2.
+\]
+The retained summary is
+\[
+  \texttt{affine\_dim\_one\_shared\_tail\_probe}
+  = (\texttt{samples}=20,\ \texttt{pure\_tail.ranks}=[14],\
+     \texttt{pure\_tail.missing}=[[(0,0)]],\
+     \texttt{mixed\_tail.ranks}=[15],\
+     \texttt{mixed\_tail.missing}=[[]]).
+\]
+So the complementary mixed-support branch already behaves exactly like two
+endpoint families: the pure \(x_1\)-tail version misses only the constant
+quartic, and the mixed \(1+\beta x_1\) version looks surjective.
+
+I then checked the diagonal slice directly with
+\texttt{julia/affine\_dim\_one\_diag\_shared\_tail\_2026\_04\_12.jl}, namely
+\[
+  x_0,\qquad x_1+a x_0^2,\qquad x_0x_1,\qquad x_1+c x_1^2
+\]
+and
+\[
+  x_0,\qquad 1+\beta x_1+a x_0^2,\qquad x_0x_1,\qquad
+  1+\beta x_1+c x_1^2.
+\]
+The retained summary is
+\[
+  \texttt{affine\_dim\_one\_diag\_shared\_tail\_probe}
+  = (\texttt{samples}=20,\ \texttt{pure\_tail.ranks}=[14],\
+     \texttt{pure\_tail.missing}=[[(0,0)]],\
+     \texttt{mixed\_tail.ranks}=[15],\
+     \texttt{mixed\_tail.missing}=[[]]).
+\]
+So the same pattern survives on the diagonal slice itself. This changes the
+proof target in a useful way: the remaining exact-affine \(\dim=1\),
+tail-rank \(1\) work no longer looks like ``one more chart normalization''.
+It now looks like proving direct affine-rank-one shared-tail endpoint theorems
+and then routing the basis extractor into those endpoints.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine

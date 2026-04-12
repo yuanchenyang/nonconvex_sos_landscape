@@ -3377,6 +3377,36 @@ complementary diagonal/basis-routing branch above the extracted pure
 homogeneous plane, before the final assembly in
 \texttt{TernaryQuarticProof.lean}.
 
+The numerical picture on that complementary branch is now clearer too. The new
+probes \texttt{julia/affine\_dim\_one\_shared\_tail\_2026\_04\_12.jl} and
+\texttt{julia/affine\_dim\_one\_diag\_shared\_tail\_2026\_04\_12.jl} test the
+direct shared-tail families
+\[
+  x_0,\qquad x_1+a x_0^2,\qquad x_1+b x_0x_1,\qquad x_1+c x_1^2
+\]
+and
+\[
+  x_0,\qquad 1+\beta x_1+a x_0^2,\qquad 1+\beta x_1+b x_0x_1,\qquad
+  1+\beta x_1+c x_1^2,
+\]
+together with their diagonal slice
+\[
+  x_0,\qquad x_1+a x_0^2,\qquad x_0x_1,\qquad x_1+c x_1^2
+\]
+and
+\[
+  x_0,\qquad 1+\beta x_1+a x_0^2,\qquad x_0x_1,\qquad
+  1+\beta x_1+c x_1^2.
+\]
+Across the retained samples, the pure \(x_1\)-tail shared family always has
+image rank \(14\), missing only the constant monomial \((0,0)\), while the
+mixed \(1+\beta x_1\) shared family always has full image rank \(15\). The
+same behavior persists on the diagonal slice. So the remaining Lean target is
+best viewed not as ``one more affine-rank-one chart transport'', but as direct
+shared-tail endpoint theorems above the basis extractor: one pure \(x_1\) family
+with the same codimension-one constant obstruction, and one mixed
+\(1+\beta x_1\) family that looks fully surjective.
+
 \section*{Planned File Map}
 \begin{itemize}
 \item \texttt{TernaryQuarticProof/Socp.lean}: abstract SOCP consequences.
