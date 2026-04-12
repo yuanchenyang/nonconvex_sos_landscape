@@ -2368,6 +2368,12 @@ show that Lean now closes the whole support-one mixed tail family, not just the
 \(x_1^2\) repeated-line slice. So once the extracted tail is supported on
 exactly one canonical homogeneous direction, the classifier no longer has to
 split any mixed constant-plus-\(x_1\) subcase by hand.
+The same file now also contains the transport wrappers
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_homQuadBasis\_tailOnX1sq},
+\texttt{...tailOnX0sq}, and \texttt{...tailOnX0x1}. So later exact-affine
+\(\dim=1\) classification can first normalize an arbitrary exact affine line by
+an affine equivalence and then reuse the same three support-one tail theorems,
+rather than re-proving those support splits after transport.
 The updated Julia file
 \texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl} now also records
 \texttt{affine\_dim\_one\_support\_one\_mixed\_probe}. On the retained scalar

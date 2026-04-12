@@ -3368,6 +3368,47 @@ theorem residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX1sq
     · exact residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x1sq
         (B := B) (u := u) hu h0 h20 h11 h02 ha20 hb20 ha11 hb11 ha02 hb02 hp hsocp
 
+theorem residual_eq_zero_of_equiv_relations_x0_homQuadBasis_tailOnX1sq
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c20 c11 c02 : Fin 4 → ℝ}
+    {a20 b20 a11 b11 a02 b02 : ℝ}
+    (h0 : relationPoly (mapVec e.toAlgHom u) c0 = x0)
+    (h20 : relationPoly (mapVec e.toAlgHom u) c20 = a20 • (1 : Poly) + b20 • x1 + x0 ^ 2)
+    (h11 : relationPoly (mapVec e.toAlgHom u) c11 = a11 • (1 : Poly) + b11 • x1 + (x0 * x1 : Poly))
+    (h02 : relationPoly (mapVec e.toAlgHom u) c02 = a02 • (1 : Poly) + b02 • x1 + x1 ^ 2)
+    (ha20 : a20 = 0) (hb20 : b20 = 0)
+    (ha11 : a11 = 0) (hb11 : b11 = 0)
+    (htail : a02 ≠ 0 ∨ b02 ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := fun {_} hpq => heQuad hpq)
+      (heQuartic := fun {_} hpq => heQuartic hpq)
+      hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX1sq
+      (B := B0) (u := mapVec e.toAlgHom u) hu0
+      h0 h20 h11 h02 ha20 hb20 ha11 hb11 htail hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
 /-- In the exact-affine `dim = 1` branch, if only the `x₀²`-direction carries
 tails, Lean now closes the pure constant-tail, pure `x₁`-tail, and mixed
 repeated-line subcases internally. -/
@@ -3421,6 +3462,47 @@ theorem residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX0sq
     · exact residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x0sq
         (B := B) (u := u) hu h0 h20 h11 h02 ha20 hb20 ha11 hb11 ha02 hb02 hp hsocp
 
+theorem residual_eq_zero_of_equiv_relations_x0_homQuadBasis_tailOnX0sq
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c20 c11 c02 : Fin 4 → ℝ}
+    {a20 b20 a11 b11 a02 b02 : ℝ}
+    (h0 : relationPoly (mapVec e.toAlgHom u) c0 = x0)
+    (h20 : relationPoly (mapVec e.toAlgHom u) c20 = a20 • (1 : Poly) + b20 • x1 + x0 ^ 2)
+    (h11 : relationPoly (mapVec e.toAlgHom u) c11 = a11 • (1 : Poly) + b11 • x1 + (x0 * x1 : Poly))
+    (h02 : relationPoly (mapVec e.toAlgHom u) c02 = a02 • (1 : Poly) + b02 • x1 + x1 ^ 2)
+    (ha11 : a11 = 0) (hb11 : b11 = 0)
+    (ha02 : a02 = 0) (hb02 : b02 = 0)
+    (htail : a20 ≠ 0 ∨ b20 ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := fun {_} hpq => heQuad hpq)
+      (heQuartic := fun {_} hpq => heQuartic hpq)
+      hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX0sq
+      (B := B0) (u := mapVec e.toAlgHom u) hu0
+      h0 h20 h11 h02 ha11 hb11 ha02 hb02 htail hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
 /-- In the exact-affine `dim = 1` branch, if only the `x₀x₁`-direction carries
 tails, Lean now closes the pure constant-tail, pure `x₁`-tail, and mixed cross
 subcases internally. -/
@@ -3473,6 +3555,47 @@ theorem residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX0x1
         (Or.inr <| Or.inl ⟨rfl, ha11, rfl⟩) hp hsocp
     · exact residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x0x1
         (B := B) (u := u) hu h0 h20 h11 h02 ha20 hb20 ha11 hb11 ha02 hb02 hp hsocp
+
+theorem residual_eq_zero_of_equiv_relations_x0_homQuadBasis_tailOnX0x1
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c20 c11 c02 : Fin 4 → ℝ}
+    {a20 b20 a11 b11 a02 b02 : ℝ}
+    (h0 : relationPoly (mapVec e.toAlgHom u) c0 = x0)
+    (h20 : relationPoly (mapVec e.toAlgHom u) c20 = a20 • (1 : Poly) + b20 • x1 + x0 ^ 2)
+    (h11 : relationPoly (mapVec e.toAlgHom u) c11 = a11 • (1 : Poly) + b11 • x1 + (x0 * x1 : Poly))
+    (h02 : relationPoly (mapVec e.toAlgHom u) c02 = a02 • (1 : Poly) + b02 • x1 + x1 ^ 2)
+    (ha20 : a20 = 0) (hb20 : b20 = 0)
+    (ha02 : a02 = 0) (hb02 : b02 = 0)
+    (htail : a11 ≠ 0 ∨ b11 ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := fun {_} hpq => heQuad hpq)
+      (heQuartic := fun {_} hpq => heQuartic hpq)
+      hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX0x1
+      (B := B0) (u := mapVec e.toAlgHom u) hu0
+      h0 h20 h11 h02 ha20 hb20 ha02 hb02 htail hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
 /-- If the exact affine relation space has dimension one and contains no exact
 constant relation, then it contains a genuine nonconstant affine line. -/

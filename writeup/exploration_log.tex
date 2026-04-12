@@ -2960,6 +2960,15 @@ and
 the whole support-one mixed tail family is now formalized, not just the
 \(x_1^2\) repeated-line slice.
 
+I then added the matching transport layer in
+\texttt{ExactAffineClassification.lean}:
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_homQuadBasis\_tailOnX1sq},
+\texttt{...tailOnX0sq}, and \texttt{...tailOnX0x1}. These do not change the
+local classifier content, but they remove one more assembly chore from the
+final exact-affine \(\dim=1\) argument: after normalizing an arbitrary exact
+affine line by an affine equivalence, Lean can now reuse the same three
+support-one tail closures directly.
+
 I also recorded the matching scalar sweep in
 \texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl}. Its new retained
 output is
