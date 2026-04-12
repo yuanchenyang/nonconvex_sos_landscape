@@ -3265,6 +3265,24 @@ def c11 {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Fin 4 → ℝ :=
 def c02 {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Fin 4 → ℝ :=
   fun i => (D.A⁻¹ 2 0) * D.d0 i + (D.A⁻¹ 2 1) * D.d1 i + (D.A⁻¹ 2 2) * D.d2 i
 
+/-- Common affine-tail scale obtained by pairing the first inverse column with
+itself. -/
+def tailScale {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : ℝ :=
+  (D.A⁻¹ 0 0) ^ 2 + (D.A⁻¹ 1 0) ^ 2 + (D.A⁻¹ 2 0) ^ 2
+
+/-- Tailed annihilator quadratic built from the first inverse-matrix column. -/
+def ann {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Fin 4 → ℝ :=
+  fun i =>
+    (D.A⁻¹ 0 0) * D.c20 i + (D.A⁻¹ 1 0) * D.c11 i + (D.A⁻¹ 2 0) * D.c02 i
+
+/-- First pure homogeneous complement to the annihilator quadratic. -/
+def comp11 {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Fin 4 → ℝ :=
+  fun i => (D.A⁻¹ 1 0) * D.c20 i - (D.A⁻¹ 0 0) * D.c11 i
+
+/-- Second pure homogeneous complement to the annihilator quadratic. -/
+def comp02 {u : RankFourVec} (D : X0TailHomBasisMatrixData u) : Fin 4 → ℝ :=
+  fun i => (D.A⁻¹ 2 0) * D.c20 i - (D.A⁻¹ 0 0) * D.c02 i
+
 private theorem q_eq_sum_homQuadBasis
     {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
     ∀ j : Fin 3, D.q j = ∑ k : Fin 3, D.A j k • homQuadBasis k := by
@@ -3357,6 +3375,50 @@ theorem relation_c02
             congrArg (fun z : Poly => (D.A⁻¹ 2 0) • affineLinePoly D.r0 0 D.b0 + z) (hhom 2).symm
     _ = (D.A⁻¹ 2 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 2 0 * D.b0) • x1 + x1 ^ 2 := by
           simp [affineLinePoly, MvPolynomial.smul_eq_C_mul, mul_comm, mul_left_comm, add_assoc]
+
+/-- The first complementary relation is pure homogeneous in the plane
+`span(x₀²,x₀x₁)`. -/
+theorem relation_comp11
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    relationPoly u D.comp11 =
+      (D.A⁻¹ 1 0) • (x0 ^ 2 : Poly) - (D.A⁻¹ 0 0) • (x0 * x1 : Poly) := by
+  calc
+    relationPoly u D.comp11
+        = (D.A⁻¹ 1 0) • relationPoly u D.c20 + (-(D.A⁻¹ 0 0)) • relationPoly u D.c11 := by
+            rw [show D.comp11 = (D.A⁻¹ 1 0) • D.c20 + (-(D.A⁻¹ 0 0)) • D.c11 by
+                funext i
+                simp [comp11, sub_eq_add_neg]
+              , relationPoly_add, relationPoly_smul, relationPoly_smul]
+    _ =
+        (D.A⁻¹ 1 0) • ((D.A⁻¹ 0 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 0 0 * D.b0) • x1 + x0 ^ 2) +
+          (-(D.A⁻¹ 0 0)) •
+            ((D.A⁻¹ 1 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 1 0 * D.b0) • x1 + (x0 * x1 : Poly)) := by
+          rw [relation_c20, relation_c11]
+    _ = (D.A⁻¹ 1 0) • (x0 ^ 2 : Poly) - (D.A⁻¹ 0 0) • (x0 * x1 : Poly) := by
+          simp [smul_add, smul_smul, sub_eq_add_neg, mul_left_comm, add_assoc,
+            add_left_comm, add_comm]
+
+/-- The second complementary relation is pure homogeneous in the plane
+`span(x₀²,x₁²)`. -/
+theorem relation_comp02
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    relationPoly u D.comp02 =
+      (D.A⁻¹ 2 0) • (x0 ^ 2 : Poly) - (D.A⁻¹ 0 0) • (x1 ^ 2 : Poly) := by
+  calc
+    relationPoly u D.comp02
+        = (D.A⁻¹ 2 0) • relationPoly u D.c20 + (-(D.A⁻¹ 0 0)) • relationPoly u D.c02 := by
+            rw [show D.comp02 = (D.A⁻¹ 2 0) • D.c20 + (-(D.A⁻¹ 0 0)) • D.c02 by
+                funext i
+                simp [comp02, sub_eq_add_neg]
+              , relationPoly_add, relationPoly_smul, relationPoly_smul]
+    _ =
+        (D.A⁻¹ 2 0) • ((D.A⁻¹ 0 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 0 0 * D.b0) • x1 + x0 ^ 2) +
+          (-(D.A⁻¹ 0 0)) •
+            ((D.A⁻¹ 2 0 * D.r0) • (1 : Poly) + (D.A⁻¹ 2 0 * D.b0) • x1 + x1 ^ 2) := by
+          rw [relation_c20, relation_c02]
+    _ = (D.A⁻¹ 2 0) • (x0 ^ 2 : Poly) - (D.A⁻¹ 0 0) • (x1 ^ 2 : Poly) := by
+          simp [smul_add, smul_smul, sub_eq_add_neg, mul_left_comm, add_assoc,
+            add_left_comm, add_comm]
 
 end X0TailHomBasisMatrixData
 

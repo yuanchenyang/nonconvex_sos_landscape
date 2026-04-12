@@ -3287,7 +3287,17 @@ while all three affine tails lie on the same extracted line determined by the
 tailed basis vector \(d_0\). So the open \((A^{-1})_{00}\neq 0\) branch is now
 cleaner than before: the missing step is not basis recovery but basis
 normalization of an already explicit common-tail triple into one of the solved
-affine-rank-one repeated-line or diagonal chart surfaces.
+affine-rank-one repeated-line or diagonal chart surfaces. I then added the next
+piece of that same package: the complementary pure homogeneous relations
+\texttt{comp11} and \texttt{comp02}. Lean now proves that these are exactly
+\[
+  \lambda_1 x_0^2 - \lambda_0 x_0x_1,\qquad
+  \lambda_2 x_0^2 - \lambda_0 x_1^2,
+\]
+where \((\lambda_0,\lambda_1,\lambda_2)\) is the first inverse column of the
+extracted homogeneous-basis matrix. So the remaining mixed-support branch is
+now concretely packaged as ``one common-tail direction plus a pure complementary
+plane'' rather than as three unrelated reconstructed relations.
 
 \section*{Open Subgoals}
 \begin{itemize}

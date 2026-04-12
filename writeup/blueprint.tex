@@ -2634,7 +2634,18 @@ affine tails on the same extracted line
 So the remaining tail-rank \(1\) gap is no longer to recover a canonical
 tailed triple from the inverse matrix; Lean now does that. What remains is only
 to normalize that common-tail triple into one of the solved repeated-line or
-diagonal affine-rank-one chart surfaces. One additional piece of the affine-rank-one
+diagonal affine-rank-one chart surfaces. The next basis package is now explicit
+too: the same namespace defines the complementary pure homogeneous relations
+\texttt{comp11} and \texttt{comp02}, and Lean proves that they are exactly
+\[
+  \lambda_1 x_0^2 - \lambda_0 x_0x_1,\qquad
+  \lambda_2 x_0^2 - \lambda_0 x_1^2,
+\]
+with \((\lambda_0,\lambda_1,\lambda_2)\) the first inverse-matrix column. So
+the open mixed-support branch is now concretely in the expected ``annihilator
+quadratic plus complementary plane'' form; the missing step is to normalize
+that pair by discriminant into the already-solved common-factor or diagonal
+surfaces. One additional piece of the affine-rank-one
 surface is now closed on the constant side: in
 \texttt{RepresentativeAffineRankOne.lean} the new theorems
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_x0x1\_diffsqPlane}
