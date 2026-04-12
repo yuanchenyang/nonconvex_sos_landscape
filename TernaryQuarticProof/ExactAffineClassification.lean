@@ -3705,6 +3705,50 @@ theorem relation_ann_normalized_onePlusBX1
               _ = D.b0 / D.r0 := by rw [div_eq_mul_inv, mul_comm]
           rw [hconst, hlin]
 
+/-- Specialization of `mixedAffineAnnihilator_normal_form_cases` to the first
+inverse homogeneous column of the exact-affine tail-rank `1` extractor, with
+the already-solved pure `x₀²` support removed. This is the remaining normal
+form split for the mixed-support `A⁻¹₀₀ ≠ 0` branch. -/
+theorem mixedAffineAnnihilator_normal_form_cases_of_h00_ne_hmixed
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
+    (_h00_ne : D.A⁻¹ 0 0 ≠ 0)
+    (hmixed : D.A⁻¹ 1 0 ≠ 0 ∨ D.A⁻¹ 2 0 ≠ 0) :
+    (D.A⁻¹ 2 0 = 0 ∧ D.A⁻¹ 1 0 ≠ 0 ∧
+      affineHom (x1ShearMatrix (-(D.A⁻¹ 0 0 / D.A⁻¹ 1 0))) 0
+        (mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0)) =
+          mixedAffineAnnihilator 0 (D.A⁻¹ 1 0) 0) ∨
+    (D.A⁻¹ 2 0 ≠ 0 ∧
+      let d := D.A⁻¹ 0 0 - (D.A⁻¹ 1 0) ^ 2 / (4 * D.A⁻¹ 2 0)
+      (d = 0 ∧
+        affineHom (x1ShearMatrix (-(D.A⁻¹ 1 0 / (2 * D.A⁻¹ 2 0)))) 0
+          (mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0)) =
+            mixedAffineAnnihilator 0 0 (D.A⁻¹ 2 0)) ∨
+      (0 < d / D.A⁻¹ 2 0 ∧
+        affineHom (x1ScaleMatrix (Real.sqrt (d / D.A⁻¹ 2 0))) 0
+          (affineHom (x1ShearMatrix (-(D.A⁻¹ 1 0 / (2 * D.A⁻¹ 2 0)))) 0
+            (mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0))) =
+              mixedAffineAnnihilator d 0 d) ∨
+      (0 < (-d) / D.A⁻¹ 2 0 ∧
+        affineHom (x1ScaleMatrix (Real.sqrt ((-d) / D.A⁻¹ 2 0))) 0
+          (affineHom (x1ShearMatrix (-(D.A⁻¹ 1 0 / (2 * D.A⁻¹ 2 0)))) 0
+            (mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0))) =
+              mixedAffineAnnihilator d 0 (-d))) := by
+  rcases mixedAffineAnnihilator_normal_form_cases
+      (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0) with
+    hsingle | hrest
+  · rcases hsingle with ⟨h20, h11, _⟩
+    exfalso
+    rcases hmixed with h10_ne | h20_ne
+    · exact h10_ne h11
+    · exact h20_ne h20
+  · rcases hrest with hcross | hdiag
+    · left
+      rcases hcross with ⟨h20, h10_ne, hcross⟩
+      exact ⟨h20, h10_ne, hcross⟩
+    · right
+      rcases hdiag with ⟨h20_ne, hdiag⟩
+      exact ⟨h20_ne, hdiag⟩
+
 end X0TailHomBasisMatrixData
 
 /-- Canonical choice of the tail-rank `1` homogeneous basis matrix data in the

@@ -3369,7 +3369,14 @@ multiple of \texttt{ann} already has one of the two exact tail shapes
 depending only on whether the extracted constant coefficient vanishes. So the
 remaining \((A^{-1})_{00}\neq 0\), discriminant-nonzero branch is now missing
 only the matching pure-plane normalization and routing, not the tailed
-coordinate itself.
+coordinate itself. I then packaged the next reduction step explicitly in Lean:
+\texttt{mixedAffineAnnihilator\_normal\_form\_cases\_of\_h00\_ne\_hmixed}
+specializes the general binary-quadratic normal-form split to that same first
+inverse column, with the already-closed pure \(x_0^2\) support case removed.
+So the remaining branch is no longer open because the classifier lacks a
+named cross / repeated-line / diagonal split for the extracted annihilator.
+The remaining work is narrower: above that split, choose the compatible pure
+homogeneous basis that feeds the existing affine-rank-one chart theorems.
 
 \section*{Open Subgoals}
 \begin{itemize}

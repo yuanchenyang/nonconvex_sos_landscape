@@ -2688,6 +2688,17 @@ with post-shear diagonal term exactly
 \(\lambda_0\lambda_2-\lambda_1^2\). So the remaining diagonal-complement
 branch no longer needs any ad hoc coefficient expansion inside the classifier;
 those identities are now available as named lemmas.
+One more structural reduction is now packaged too: the theorem
+\texttt{mixedAffineAnnihilator\_normal\_form\_cases\_of\_h00\_ne\_hmixed}
+specializes the general binary-quadratic normal-form split directly to the
+first inverse column \((\lambda_0,\lambda_1,\lambda_2)\), with the already
+resolved pure \(x_0^2\) support excluded. So the open mixed-support branch is
+no longer blocked on discovering whether the annihilator is cross, repeated
+line, or diagonal after an \(x_1\)-shear/scale; Lean now returns that split as
+a named theorem. What still remains is the basis-level affine-rank-one routing
+above that split: feed the normalized tailed annihilator together with
+compatible pure-plane data into the already-solved cross/common-factor/diagonal
+surfaces.
 So the repeated-line/common-factor half of that discriminant split is now
 internal too: \texttt{ExactAffineClassification.lean} proves
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_commonFactorComplement}
