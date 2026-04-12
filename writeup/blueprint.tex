@@ -2359,6 +2359,20 @@ grid \(a,b \in \{-2,-1,1,2\}\), it returns
 \]
 So numerically the two newly formalized support-one mixed slices are uniformly
 surjective across that test grid, matching the new Lean theorems.
+The affine-rank-one plane layer now absorbs the same mixed normalization step.
+In \texttt{RepresentativeAffineRankOne.lean}, the new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_x0x1\_x1sqPlane},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_x0sq\_x1sqPlane},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_x0sq\_x0x1Plane}
+show that once the classifier has produced exact \(x_0\), one quadratic with
+affine part \(1 + b x_1\), and a determinant-nondegenerate basis of one
+canonical homogeneous plane, Lean now cancels the in-plane homogeneous terms
+internally and dispatches directly to the already solved mixed endpoints. So
+the remaining exact-affine \(\dim=1\) gap is no longer mixed-tail cleanup on a
+known plane chart; it is the upstream routing of the extracted tail-rank \(1\)
+and tail-rank \(2\) outputs into those plane charts or an equivalent generic
+surjective theorem.
 
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor

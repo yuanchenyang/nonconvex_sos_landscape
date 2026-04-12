@@ -2881,6 +2881,20 @@ output is
 So the two newly formalized support-one mixed slices are uniformly surjective
 on that retained test grid, exactly as the new Lean endpoints assert.
 
+I then widened the affine-rank-one plane surface in the same mixed direction.
+In \texttt{RepresentativeAffineRankOne.lean} I added
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_x0x1\_x1sqPlane},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_x0sq\_x1sqPlane},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_x0sq\_x0x1Plane}.
+These are the mixed constant-plus-\(x_1\) analogues of the older
+\texttt{onePlus\_homQuadratics\_\dots Plane} wrappers: once the classifier has
+exact \(x_0\), a quadratic with affine part \(1 + b x_1\), and a
+determinant-nondegenerate basis of one canonical homogeneous plane, Lean now
+subtracts the in-plane homogeneous directions internally and reduces to the
+already formalized mixed endpoints. No new Julia data was needed for this
+round; the change is purely on the theorem-surface side.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
