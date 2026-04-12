@@ -3204,6 +3204,100 @@ theorem residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x1sq
     (by simpa [relationPoly] using h11')
     hp hsocp
 
+/-- In the exact-affine `dim = 1` branch, if only the `x₀²`-direction carries
+both constant and `x₁` tails, the branch closes by the mixed constant
+repeated-line affine-rank-one theorem. -/
+theorem residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x0sq
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c20 c11 c02 : Fin 4 → ℝ}
+    {a20 b20 a11 b11 a02 b02 : ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (h20 : relationPoly u c20 = a20 • (1 : Poly) + b20 • x1 + x0 ^ 2)
+    (h11 : relationPoly u c11 = a11 • (1 : Poly) + b11 • x1 + (x0 * x1 : Poly))
+    (h02 : relationPoly u c02 = a02 • (1 : Poly) + b02 • x1 + x1 ^ 2)
+    (ha20 : a20 ≠ 0) (hb20 : b20 ≠ 0)
+    (ha11 : a11 = 0) (hb11 : b11 = 0)
+    (ha02 : a02 = 0) (hb02 : b02 = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have _ : b20 ≠ 0 := hb20
+  have h20' :
+      relationPoly u (a20⁻¹ • c20) =
+        (1 : Poly) + (b20 / a20) • x1 + a20⁻¹ • (x0 ^ 2 : Poly) := by
+    calc
+      relationPoly u (a20⁻¹ • c20) = a20⁻¹ • relationPoly u c20 := by
+        rw [relationPoly_smul]
+      _ = a20⁻¹ • (a20 • (1 : Poly) + b20 • x1 + x0 ^ 2) := by
+        rw [h20]
+      _ = (a20⁻¹ * a20) • (1 : Poly) + (a20⁻¹ * b20) • x1 + a20⁻¹ • (x0 ^ 2 : Poly) := by
+        rw [smul_add, smul_add, smul_smul, smul_smul]
+      _ = (1 : Poly) + (b20 / a20) • x1 + a20⁻¹ • (x0 ^ 2 : Poly) := by
+        simp [ha20, div_eq_mul_inv, mul_comm, add_assoc]
+  have h11' : relationPoly u c11 = (x0 * x1 : Poly) := by
+    simpa [ha11, hb11] using h11
+  have h02' : relationPoly u c02 = x1 ^ 2 := by
+    simpa [ha02, hb02] using h02
+  exact residual_eq_zero_of_relations_x0_onePlusBX1PlusAX0sq_x0x1_x1sq
+    (B := B) (u := u) hu (a := a20⁻¹) (b := b20 / a20) (inv_ne_zero ha20)
+    (by simpa [relationPoly] using h0)
+    (by simpa [relationPoly] using h20')
+    (by simpa [relationPoly] using h11')
+    (by simpa [relationPoly] using h02')
+    hp hsocp
+
+/-- In the exact-affine `dim = 1` branch, if only the `x₀x₁`-direction carries
+both constant and `x₁` tails, the branch closes by the mixed cross affine-rank-one
+theorem. -/
+theorem residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x0x1
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c20 c11 c02 : Fin 4 → ℝ}
+    {a20 b20 a11 b11 a02 b02 : ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (h20 : relationPoly u c20 = a20 • (1 : Poly) + b20 • x1 + x0 ^ 2)
+    (h11 : relationPoly u c11 = a11 • (1 : Poly) + b11 • x1 + (x0 * x1 : Poly))
+    (h02 : relationPoly u c02 = a02 • (1 : Poly) + b02 • x1 + x1 ^ 2)
+    (ha20 : a20 = 0) (hb20 : b20 = 0)
+    (ha11 : a11 ≠ 0) (hb11 : b11 ≠ 0)
+    (ha02 : a02 = 0) (hb02 : b02 = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have _ : b11 ≠ 0 := hb11
+  have h20' : relationPoly u c20 = x0 ^ 2 := by
+    simpa [ha20, hb20] using h20
+  have h11' :
+      relationPoly u (a11⁻¹ • c11) =
+        (1 : Poly) + (b11 / a11) • x1 + a11⁻¹ • (x0 * x1 : Poly) := by
+    calc
+      relationPoly u (a11⁻¹ • c11) = a11⁻¹ • relationPoly u c11 := by
+        rw [relationPoly_smul]
+      _ = a11⁻¹ • (a11 • (1 : Poly) + b11 • x1 + (x0 * x1 : Poly)) := by
+        rw [h11]
+      _ = (1 : Poly) + (b11 / a11) • x1 + a11⁻¹ • (x0 * x1 : Poly) := by
+        rw [smul_add, smul_add, smul_smul, smul_smul]
+        have hconst : (a11⁻¹ * a11) • (1 : Poly) = (1 : Poly) := by
+          rw [inv_mul_cancel₀ ha11, one_smul]
+        have hlin : (a11⁻¹ * b11) • x1 = (b11 / a11) • x1 := by
+          congr 1
+          simp [div_eq_mul_inv, mul_comm]
+        rw [hconst, hlin]
+  have h02' : relationPoly u c02 = x1 ^ 2 := by
+    simpa [ha02, hb02] using h02
+  exact residual_eq_zero_of_relations_x0_onePlusBX1PlusAX0x1_x0sq_x1sq
+    (B := B) (u := u) hu (a := a11⁻¹) (b := b11 / a11)
+    (by simpa [relationPoly] using h0)
+    (by simpa [relationPoly] using h11')
+    (by simpa [relationPoly] using h20')
+    (by simpa [relationPoly] using h02')
+    hp hsocp
+
 /-- In the exact-affine `dim = 1` branch, if only the `x₁²`-direction carries
 tails, then all pure-constant, pure-`x₁`, and mixed repeated-line subcases are
 already covered. -/
@@ -3272,6 +3366,112 @@ theorem residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX1sq
         (by simpa [relationPoly] using h11')
         hp hsocp
     · exact residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x1sq
+        (B := B) (u := u) hu h0 h20 h11 h02 ha20 hb20 ha11 hb11 ha02 hb02 hp hsocp
+
+/-- In the exact-affine `dim = 1` branch, if only the `x₀²`-direction carries
+tails, Lean now closes the pure constant-tail, pure `x₁`-tail, and mixed
+repeated-line subcases internally. -/
+theorem residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX0sq
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c20 c11 c02 : Fin 4 → ℝ}
+    {a20 b20 a11 b11 a02 b02 : ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (h20 : relationPoly u c20 = a20 • (1 : Poly) + b20 • x1 + x0 ^ 2)
+    (h11 : relationPoly u c11 = a11 • (1 : Poly) + b11 • x1 + (x0 * x1 : Poly))
+    (h02 : relationPoly u c02 = a02 • (1 : Poly) + b02 • x1 + x1 ^ 2)
+    (ha11 : a11 = 0) (hb11 : b11 = 0)
+    (ha02 : a02 = 0) (hb02 : b02 = 0)
+    (htail : a20 ≠ 0 ∨ b20 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  by_cases ha20 : a20 = 0
+  · have hb20 : b20 ≠ 0 := by
+      rcases htail with ha | hb
+      · exact False.elim (ha ha20)
+      · exact hb
+    have h20' : relationPoly u c20 = b20 • x1 + x0 ^ 2 := by
+      simpa [ha20] using h20
+    have h11' : relationPoly u c11 = (0 : ℝ) • x1 + (x0 * x1 : Poly) := by
+      simpa [ha11, hb11] using h11
+    have h02' : relationPoly u c02 = (0 : ℝ) • x1 + x1 ^ 2 := by
+      simpa [ha02, hb02] using h02
+    exact residual_eq_zero_of_relations_x0_homQuadBasis_singleX1Tail
+      (B := B) (u := u)
+      (c0 := c0) (c20 := c20) (c11 := c11) (c02 := c02)
+      (b20 := b20) (b11 := 0) (b02 := 0)
+      hu h0 h20' h11' h02'
+      (Or.inl ⟨hb20, rfl, rfl⟩) hp hsocp
+  · by_cases hb20 : b20 = 0
+    · have h20' : relationPoly u c20 = a20 • (1 : Poly) + x0 ^ 2 := by
+        simpa [hb20] using h20
+      have h11' : relationPoly u c11 = (0 : ℝ) • (1 : Poly) + (x0 * x1 : Poly) := by
+        simpa [ha11, hb11] using h11
+      have h02' : relationPoly u c02 = (0 : ℝ) • (1 : Poly) + x1 ^ 2 := by
+        simpa [ha02, hb02] using h02
+      exact residual_eq_zero_of_relations_x0_homQuadBasis_singleConstTail
+        (B := B) (u := u)
+        (c0 := c0) (c20 := c20) (c11 := c11) (c02 := c02)
+        (a20 := a20) (a11 := 0) (a02 := 0)
+        hu h0 h20' h11' h02'
+        (Or.inl ⟨ha20, rfl, rfl⟩) hp hsocp
+    · exact residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x0sq
+        (B := B) (u := u) hu h0 h20 h11 h02 ha20 hb20 ha11 hb11 ha02 hb02 hp hsocp
+
+/-- In the exact-affine `dim = 1` branch, if only the `x₀x₁`-direction carries
+tails, Lean now closes the pure constant-tail, pure `x₁`-tail, and mixed cross
+subcases internally. -/
+theorem residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX0x1
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c20 c11 c02 : Fin 4 → ℝ}
+    {a20 b20 a11 b11 a02 b02 : ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (h20 : relationPoly u c20 = a20 • (1 : Poly) + b20 • x1 + x0 ^ 2)
+    (h11 : relationPoly u c11 = a11 • (1 : Poly) + b11 • x1 + (x0 * x1 : Poly))
+    (h02 : relationPoly u c02 = a02 • (1 : Poly) + b02 • x1 + x1 ^ 2)
+    (ha20 : a20 = 0) (hb20 : b20 = 0)
+    (ha02 : a02 = 0) (hb02 : b02 = 0)
+    (htail : a11 ≠ 0 ∨ b11 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  by_cases ha11 : a11 = 0
+  · have hb11 : b11 ≠ 0 := by
+      rcases htail with ha | hb
+      · exact False.elim (ha ha11)
+      · exact hb
+    have h20' : relationPoly u c20 = (0 : ℝ) • x1 + x0 ^ 2 := by
+      simpa [ha20, hb20] using h20
+    have h11' : relationPoly u c11 = b11 • x1 + (x0 * x1 : Poly) := by
+      simpa [ha11] using h11
+    have h02' : relationPoly u c02 = (0 : ℝ) • x1 + x1 ^ 2 := by
+      simpa [ha02, hb02] using h02
+    exact residual_eq_zero_of_relations_x0_homQuadBasis_singleX1Tail
+      (B := B) (u := u)
+      (c0 := c0) (c20 := c20) (c11 := c11) (c02 := c02)
+      (b20 := 0) (b11 := b11) (b02 := 0)
+      hu h0 h20' h11' h02'
+      (Or.inr <| Or.inl ⟨rfl, hb11, rfl⟩) hp hsocp
+  · by_cases hb11 : b11 = 0
+    · have h20' : relationPoly u c20 = (0 : ℝ) • (1 : Poly) + x0 ^ 2 := by
+        simpa [ha20, hb20] using h20
+      have h11' : relationPoly u c11 = a11 • (1 : Poly) + (x0 * x1 : Poly) := by
+        simpa [hb11] using h11
+      have h02' : relationPoly u c02 = (0 : ℝ) • (1 : Poly) + x1 ^ 2 := by
+        simpa [ha02, hb02] using h02
+      exact residual_eq_zero_of_relations_x0_homQuadBasis_singleConstTail
+        (B := B) (u := u)
+        (c0 := c0) (c20 := c20) (c11 := c11) (c02 := c02)
+        (a20 := 0) (a11 := a11) (a02 := 0)
+        hu h0 h20' h11' h02'
+        (Or.inr <| Or.inl ⟨rfl, ha11, rfl⟩) hp hsocp
+    · exact residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x0x1
         (B := B) (u := u) hu h0 h20 h11 h02 ha20 hb20 ha11 hb11 ha02 hb02 hp hsocp
 
 /-- If the exact affine relation space has dimension one and contains no exact

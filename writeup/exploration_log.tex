@@ -2843,6 +2843,44 @@ and mixed repeated-line theorems respectively. So the exact-affine
 \(\dim=1\), tail-rank \(1\) classifier is one support test simpler on that
 canonical slice.
 
+I then closed the remaining support-one mixed slices too. In
+\texttt{RepresentativeAffineRankOne.lean} I added the exact endpoints
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1PlusAX0sq\_x0x1\_x1sq}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1PlusAX0x1\_x0sq\_x1sq}.
+These cover the two missing mixed constant-plus-\(x_1\) support-one families:
+\[
+  x_0,\qquad 1 + b x_1 + a x_0^2,\qquad x_0x_1,\qquad x_1^2,
+\]
+and
+\[
+  x_0,\qquad 1 + b x_1 + a x_0x_1,\qquad x_0^2,\qquad x_1^2.
+\]
+On top of those, \texttt{ExactAffineClassification.lean} now proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_homQuadBasis\_singleMixedTail\_x0sq},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_homQuadBasis\_singleMixedTail\_x0x1},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_homQuadBasis\_tailOnX0sq},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_homQuadBasis\_tailOnX0x1}. So
+the whole support-one mixed tail family is now formalized, not just the
+\(x_1^2\) repeated-line slice.
+
+I also recorded the matching scalar sweep in
+\texttt{julia/affine\_dim\_one\_tailed\_2026\_04\_11.jl}. Its new retained
+output is
+\[
+  \texttt{affine\_dim\_one\_support\_one\_mixed\_probe} =
+  (\texttt{vals}=[-2,-1,1,2],\ 
+   \texttt{mixed\_x0sq\_ranks}=[15],\ 
+   \texttt{mixed\_x0sq\_missing}=[\varnothing],\ 
+   \texttt{mixed\_x0sq\_exact\_affine\_dims}=[1],\ 
+   \texttt{mixed\_x0x1\_ranks}=[15],\ 
+   \texttt{mixed\_x0x1\_missing}=[\varnothing],\ 
+   \texttt{mixed\_x0x1\_exact\_affine\_dims}=[1]).
+\]
+So the two newly formalized support-one mixed slices are uniformly surjective
+on that retained test grid, exactly as the new Lean endpoints assert.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine

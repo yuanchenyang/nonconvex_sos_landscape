@@ -196,6 +196,40 @@ function affine_dim_one_constant_linear_probe()
     result
 end
 
+function affine_dim_one_support_one_mixed_probe()
+    vals = [-2.0, -1.0, 1.0, 2.0]
+    x0 = quad_coeffs(a10 = 1.0)
+    x0sq = quad_coeffs(a20 = 1.0)
+    x0x1 = quad_coeffs(a11 = 1.0)
+    x1sq = quad_coeffs(a02 = 1.0)
+
+    mixed_x0sq = NamedTuple[]
+    mixed_x0x1 = NamedTuple[]
+
+    for a in vals, b in vals
+        u_x0sq = [x0, quad_coeffs(a00 = 1.0, a01 = b, a20 = a), x0x1, x1sq]
+        push!(mixed_x0sq, (; a, b, exact_affine_dim = exact_affine_dim(u_x0sq), image_rank_missing(u_x0sq)...))
+
+        u_x0x1 = [x0, quad_coeffs(a00 = 1.0, a01 = b, a11 = a), x0sq, x1sq]
+        push!(mixed_x0x1, (; a, b, exact_affine_dim = exact_affine_dim(u_x0x1), image_rank_missing(u_x0x1)...))
+    end
+
+    result = (
+        vals = vals,
+        mixed_x0sq = mixed_x0sq,
+        mixed_x0x1 = mixed_x0x1,
+        mixed_x0sq_ranks = sort(unique(x.rank for x in mixed_x0sq)),
+        mixed_x0sq_missing = sort(unique(x.missing for x in mixed_x0sq)),
+        mixed_x0sq_exact_affine_dims = sort(unique(x.exact_affine_dim for x in mixed_x0sq)),
+        mixed_x0x1_ranks = sort(unique(x.rank for x in mixed_x0x1)),
+        mixed_x0x1_missing = sort(unique(x.missing for x in mixed_x0x1)),
+        mixed_x0x1_exact_affine_dims = sort(unique(x.exact_affine_dim for x in mixed_x0x1)),
+    )
+    println("affine_dim_one_support_one_mixed_probe = ", result)
+    result
+end
+
 affine_dim_one_tailed_probe()
 affine_dim_one_constant_probe()
 affine_dim_one_constant_linear_probe()
+affine_dim_one_support_one_mixed_probe()
