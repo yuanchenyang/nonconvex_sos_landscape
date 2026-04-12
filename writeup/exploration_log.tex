@@ -2758,6 +2758,23 @@ for this round. The practical effect is that one more tailed exact-affine
 \(\dim=1\) output now closes directly at representative level instead of
 needing an extra plane reduction.
 
+I then returned to the exact-affine \(\dim=1\), tail-rank \(1\) classifier
+surface and strengthened the affine-rank-one plane layer in
+\texttt{RepresentativeAffineRankOne.lean}. The new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_x0sq\_x1sqPlane},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_x0x1\_x1sqPlane},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_x0sq\_x0x1Plane},
+with their equivariant wrappers, no longer require the classifier to hand back
+an already normalized tailed coordinate. Instead, once the affine part is
+normalized to \(x_1\) and the homogeneous part is known to lie in one of the
+three canonical determinant-nondegenerate planes, Lean reconstructs the exact
+plane basis internally by Cramer's rule, subtracts the homogeneous part of the
+tailed relation, and dispatches to the previously solved exact linear-tail
+endpoint. No new Julia computation was needed for this round. The remaining
+exact-affine \(\dim=1\) work is therefore pushed further upward into the final
+classifier, not the local affine-rank-one plane algebra.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine

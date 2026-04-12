@@ -2177,6 +2177,22 @@ their repeated-line planes. So the exact-affine \(\dim=1\) classifier no
 longer has to reconstruct exact \((x_0x_1,x_1^2)\) or exact
 \((x_0^2,x_0x_1)\) before entering those linear-tail branches.
 
+The same file now also lifts the pure \(x_1\)-tail branches one step above
+their already normalized homogeneous planes. The new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_x0sq\_x1sqPlane},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_x0x1\_x1sqPlane},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_x0sq\_x0x1Plane},
+again with equivariant wrappers, now accept an exact \(x_0\)-relation, one
+exact quadratic relation whose affine part is exactly \(x_1\), and an arbitrary
+determinant-nondegenerate basis of the relevant homogeneous plane. Lean
+internally reconstructs the canonical homogeneous basis by Cramer's rule,
+subtracts the in-plane homogeneous part of the tailed relation, and dispatches
+to the already solved exact linear-tail endpoints. So in the tail-rank \(1\)
+exact-affine \(\dim=1\) branch, the classifier no longer has to manufacture a
+separately normalized tailed coordinate once the homogeneous plane type is
+known.
+
 The remaining exact-affine \(\dim=1\) gap is therefore no longer a missing
 constant-tail endpoint; it is the classifier that packages a general
 rank-\(2\) affine-image tailed branch into one of the already solved
