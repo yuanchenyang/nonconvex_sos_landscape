@@ -2327,6 +2327,11 @@ relations untouched, and dispatches directly to the already-formalized
 translated repeated-line affine-rank-one theorem. So the remaining tail-rank
 \(1\) classifier is no longer missing the mixed repeated-line support slice
 either.
+I then packaged the whole support-on-\(x_1^2\) family into the single theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_homQuadBasis\_tailOnX1sq}. So
+the classifier no longer has to split the \(x_1^2\)-supported tail case into
+pure-constant, pure-\(x_1\), and mixed repeated-line subbranches before
+entering the affine-rank-one layer: that one support test is now enough.
 
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor

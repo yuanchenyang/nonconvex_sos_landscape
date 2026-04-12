@@ -2826,6 +2826,22 @@ the tailed \(x_1^2\)-relation to \(1 + b' x_1 + a' x_1^2\), leaves the exact
 repeated-line theorem in \texttt{RepresentativeAffineRankOne.lean}. So the
 support-one repeated-line mixed slice is no longer open either. No new Julia
 computation was needed for this round.
+I then added the wrapper
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_homQuadBasis\_tailOnX1sq}. This
+collapses the three \(x_1^2\)-supported support-one possibilities into one
+classifier-facing theorem:
+\[
+  x_0,\qquad x_0^2,\qquad x_0x_1,\qquad a + b x_1 + x_1^2,
+\]
+with the only assumption \(a \neq 0 \vee b \neq 0\). Lean now does the
+remaining split internally:
+\[
+  a = 0,\ b \neq 0,\qquad a \neq 0,\ b = 0,\qquad a \neq 0,\ b \neq 0,
+\]
+and dispatches to the already proved pure \(x_1\)-tail, pure constant-tail,
+and mixed repeated-line theorems respectively. So the exact-affine
+\(\dim=1\), tail-rank \(1\) classifier is one support test simpler on that
+canonical slice.
 
 \section*{Open Subgoals}
 \begin{itemize}
