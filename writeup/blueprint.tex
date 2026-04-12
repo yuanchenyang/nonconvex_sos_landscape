@@ -2668,7 +2668,26 @@ multiple has exact form \(1+b x_1+s(\lambda_0 x_0^2+\lambda_1 x_0x_1+\lambda_2
 x_1^2)\). So the complementary branch no longer lacks a canonical tailed
 coordinate; what remains is to choose the matching pure homogeneous plane data
 that feeds the already-formalized repeated-line or diagonal affine-rank-one
-surfaces.
+surfaces. The same namespace now also packages the coefficient algebra of that
+complementary plane itself: \texttt{coeff\_m20\_relation\_comp11},
+\texttt{coeff\_m11\_relation\_comp11},
+\texttt{coeff\_m02\_relation\_comp11},
+\texttt{coeff\_m20\_relation\_comp02},
+\texttt{coeff\_m11\_relation\_comp02},
+and \texttt{coeff\_m02\_relation\_comp02} expose the exact homogeneous
+coefficients of \texttt{comp11} and \texttt{comp02}, while
+\texttt{lowHomQuadPlaneA\_comp11\_comp02},
+\texttt{lowHomQuadPlaneB\_comp11\_comp02},
+\texttt{lowHomQuadPlaneC\_comp11\_comp02}, and
+\texttt{comp11\_comp02\_diagTerm\_eq} show that the corresponding
+\texttt{lowHomQuadPlane} invariants are
+\[
+  \lambda_0^2,\qquad -\lambda_0\lambda_1,\qquad \lambda_0\lambda_2,
+\]
+with post-shear diagonal term exactly
+\(\lambda_0\lambda_2-\lambda_1^2\). So the remaining diagonal-complement
+branch no longer needs any ad hoc coefficient expansion inside the classifier;
+those identities are now available as named lemmas.
 So the repeated-line/common-factor half of that discriminant split is now
 internal too: \texttt{ExactAffineClassification.lean} proves
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_commonFactorComplement}

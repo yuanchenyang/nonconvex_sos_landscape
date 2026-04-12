@@ -3420,6 +3420,93 @@ theorem relation_comp02
           simp [smul_add, smul_smul, sub_eq_add_neg, mul_left_comm, add_assoc,
             add_left_comm, add_comm]
 
+theorem coeff_m20_relation_comp11
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    MvPolynomial.coeff m20 (relationPoly u D.comp11) = D.A⁻¹ 1 0 := by
+  rw [relation_comp11, MvPolynomial.coeff_sub, MvPolynomial.coeff_smul,
+    MvPolynomial.coeff_smul, coeff_m20_x0sq, coeff_m20_x0x1]
+  simp
+
+theorem coeff_m11_relation_comp11
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    MvPolynomial.coeff m11 (relationPoly u D.comp11) = -D.A⁻¹ 0 0 := by
+  rw [relation_comp11, MvPolynomial.coeff_sub, MvPolynomial.coeff_smul,
+    MvPolynomial.coeff_smul, coeff_m11_x0sq, coeff_m11_x0x1]
+  simp
+
+theorem coeff_m02_relation_comp11
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    MvPolynomial.coeff m02 (relationPoly u D.comp11) = 0 := by
+  rw [relation_comp11, MvPolynomial.coeff_sub, MvPolynomial.coeff_smul,
+    MvPolynomial.coeff_smul, coeff_m02_x0sq, coeff_m02_x0x1]
+  simp
+
+theorem coeff_m20_relation_comp02
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    MvPolynomial.coeff m20 (relationPoly u D.comp02) = D.A⁻¹ 2 0 := by
+  rw [relation_comp02, MvPolynomial.coeff_sub, MvPolynomial.coeff_smul,
+    MvPolynomial.coeff_smul, coeff_m20_x0sq, coeff_m20_x1sq]
+  simp
+
+theorem coeff_m11_relation_comp02
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    MvPolynomial.coeff m11 (relationPoly u D.comp02) = 0 := by
+  rw [relation_comp02, MvPolynomial.coeff_sub, MvPolynomial.coeff_smul,
+    MvPolynomial.coeff_smul, coeff_m11_x0sq, coeff_m11_x1sq]
+  simp
+
+theorem coeff_m02_relation_comp02
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    MvPolynomial.coeff m02 (relationPoly u D.comp02) = -D.A⁻¹ 0 0 := by
+  rw [relation_comp02, MvPolynomial.coeff_sub, MvPolynomial.coeff_smul,
+    MvPolynomial.coeff_smul, coeff_m02_x0sq, coeff_m02_x1sq]
+  simp
+
+theorem lowHomQuadPlaneA_comp11_comp02
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    lowHomQuadPlaneA (relationPoly u D.comp11) (relationPoly u D.comp02) =
+      (D.A⁻¹ 0 0) ^ 2 := by
+  rw [lowHomQuadPlaneA, coeff_m11_relation_comp11, coeff_m02_relation_comp02,
+    coeff_m02_relation_comp11, coeff_m11_relation_comp02]
+  ring
+
+theorem lowHomQuadPlaneB_comp11_comp02
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    lowHomQuadPlaneB (relationPoly u D.comp11) (relationPoly u D.comp02) =
+      -(D.A⁻¹ 0 0) * D.A⁻¹ 1 0 := by
+  rw [lowHomQuadPlaneB, coeff_m20_relation_comp11, coeff_m02_relation_comp02,
+    coeff_m02_relation_comp11, coeff_m20_relation_comp02]
+  ring
+
+theorem lowHomQuadPlaneC_comp11_comp02
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u) :
+    lowHomQuadPlaneC (relationPoly u D.comp11) (relationPoly u D.comp02) =
+      D.A⁻¹ 0 0 * D.A⁻¹ 2 0 := by
+  rw [lowHomQuadPlaneC, coeff_m20_relation_comp11, coeff_m11_relation_comp02,
+    coeff_m11_relation_comp11, coeff_m20_relation_comp02]
+  ring
+
+theorem lowHomQuadPlaneA_comp11_comp02_ne_zero_of_h00_ne
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
+    (h00_ne : D.A⁻¹ 0 0 ≠ 0) :
+    lowHomQuadPlaneA (relationPoly u D.comp11) (relationPoly u D.comp02) ≠ 0 := by
+  rw [lowHomQuadPlaneA_comp11_comp02]
+  exact pow_ne_zero 2 h00_ne
+
+theorem comp11_comp02_diagTerm_eq
+    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
+    (h00_ne : D.A⁻¹ 0 0 ≠ 0) :
+    lowHomQuadPlaneC (relationPoly u D.comp11) (relationPoly u D.comp02) -
+        lowHomQuadPlaneB (relationPoly u D.comp11) (relationPoly u D.comp02) ^ 2 /
+          lowHomQuadPlaneA (relationPoly u D.comp11) (relationPoly u D.comp02) =
+      D.A⁻¹ 0 0 * D.A⁻¹ 2 0 - (D.A⁻¹ 1 0) ^ 2 := by
+  have hfrac :
+      (-(D.A⁻¹ 0 0) * D.A⁻¹ 1 0) ^ 2 / (D.A⁻¹ 0 0) ^ 2 = (D.A⁻¹ 1 0) ^ 2 := by
+    apply (div_eq_iff (pow_ne_zero 2 h00_ne)).2
+    ring
+  rw [lowHomQuadPlaneC_comp11_comp02, lowHomQuadPlaneB_comp11_comp02,
+    lowHomQuadPlaneA_comp11_comp02, hfrac]
+
 /-- The annihilator quadratic built from the first inverse homogeneous column
 has homogeneous part exactly `mixedAffineAnnihilator`, with the common affine
 tail scaled by the squared column norm. -/
