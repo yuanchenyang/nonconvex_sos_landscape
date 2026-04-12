@@ -3568,18 +3568,48 @@ So the extracted subcase
   (A^{-1})_{00}\neq 0,\qquad (A^{-1})_{10}=0,\qquad (A^{-1})_{20}\neq 0,\qquad
   r_0=0
 \]
-is no longer open. The remaining exact-affine \(\dim=1\), tail-rank \(1\)
-work is now the constant-tailed companion \(r_0\neq 0\) of that diagonal
-slice, plus the separate tail-rank \(2\) closure.
+is no longer open. The next Lean round closes the constant-tailed companion as
+well. In \texttt{RepresentativeAffineRankOne.lean} I added
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1PlusAX0sq\_x0x1\_onePlusBX1PlusDX1sq},
+which handles
+\[
+  x_0,\qquad 1+b x_1+a x_0^2,\qquad x_0x_1,\qquad 1+b x_1+d x_1^2
+\]
+for \(a,d\neq 0\). The proof recovers \(x_1^2\), then \(x_1\) and \(1\), and
+hands the resulting ten basic monomial images to the generic quartic image
+lemma. I lifted that endpoint into \texttt{ExactAffineClassification.lean} via
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_h10\_zero\_h20\_ne\_r0\_ne\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_h10\_zero\_h20\_ne\_r0\_ne\_zero}.
+So the whole diagonal slice
+\[
+  (A^{-1})_{00}\neq 0,\qquad (A^{-1})_{10}=0,\qquad (A^{-1})_{20}\neq 0
+\]
+is now closed, both for \(r_0=0\) and \(r_0\neq 0\).
+
+I then replaced the old partial ``resolved region'' statement by the genuine
+full range-one closure theorem
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne}. Its proof is
+just the finite case split that is now available in Lean: first branch on
+\texttt{SimpleBranch}, then on whether \((A^{-1})_{20}=0\), then on whether
+\((A^{-1})_{10}=0\), and finally on whether \(r_0=0\). Every resulting case
+routes to one of the already-formalized endpoint theorems. The older theorem
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_resolvedRegion}
+is now only kept as a backward-compatible corollary.
+
+So the exact-affine \(\dim=1\), tail-rank \(1\) branch is now fully closed.
+The remaining exact-affine \(\dim=1\) work is the separate tail-rank \(2\)
+closure, plus the final theorem assembly.
 
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
-\(\dim=1\) data. The constant-containing \(\dim=2\) mixed-affine branch no
-longer needs external quadratic-pair extraction, and the exact-affine
-\(\dim=2\) low-affine branch is now closed. What remains is the upstream
-classification step that either excludes or normalizes the newly observed
-tailed \(\dim=1\) families, not merely the pure affine-rank-one image.
+\(\dim=1\) tail-rank \(2\) data. The constant-containing \(\dim=2\)
+mixed-affine branch no longer needs external quadratic-pair extraction, the
+exact-affine \(\dim=2\) low-affine branch is closed, and the exact-affine
+\(\dim=1\), tail-rank \(1\) branch is now fully closed as well. What remains
+is the upstream range-two classification/routing layer above the already
+extracted normalized \(x_0\)-tail package.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}
