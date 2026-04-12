@@ -2937,6 +2937,53 @@ already solved \((x_0^2,x_1^2)\)-plane wrapper. So the exact-affine
 \(\dim=1\) classifier no longer needs to hand back an explicitly diagonalized
 homogeneous pair for that constant-tail chart; chart data alone is enough.
 
+I then probed the remaining affine-rank-one repeated-line/common-factor chart
+directly in the new file
+\texttt{julia/affine\_dim\_one\_common\_factor\_chart\_2026\_04\_12.jl}. The
+retained output is
+\[
+  \texttt{affine\_dim\_one\_common\_factor\_chart\_probe} =
+  (\texttt{samples}=30,\ \texttt{vals}=[-2,-1,0,1,2],\ \dots).
+\]
+The important split is:
+\[
+  \texttt{const\_m20\_nonzero.ranks}=[15],\quad
+  \texttt{const\_m20\_nonzero.exact\_affine\_dims}=[1],
+\]
+\[
+  \texttt{mixed\_m20\_nonzero.ranks}=[15],\quad
+  \texttt{mixed\_m20\_nonzero.exact\_affine\_dims}=[1],
+\]
+while the complementary \(\texttt{m20}=0\) slices only occur with
+\(\texttt{exact\_affine\_dims}=[2]\). For the pure \(x_1\)-tail family, the
+same pattern appears one rank lower:
+\[
+  \texttt{x1\_m20\_nonzero.ranks}=[14],\quad
+  \texttt{x1\_m20\_nonzero.exact\_affine\_dims}=[1],
+\]
+whereas \(\texttt{x1\_m20\_zero}\) again only appears with
+\(\texttt{exact\_affine\_dims}=[2]\). So numerically the exact-affine
+\(\dim=1\) common-factor chart seems to force the tailed relation's transformed
+\(x_0^2\)-coefficient to stay nonzero; the visible \(\texttt{m20}=0\) slice is
+not actually part of the one-dimensional exact-affine branch.
+
+I then formalized the mixed/constant side of that chart in
+\texttt{RepresentativeAffineRankOne.lean}. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_commonFactorChart}
+performs the internal common-factor \(x_1\)-shear, proves that the homogeneous
+pair lands in \(\operatorname{span}(x_0x_1,x_1^2)\), repairs the induced
+\(x_0\)-linear term in the tailed relation by subtracting the exact \(x_0\)
+relation, and dispatches to the existing
+\texttt{onePlusBX1Plus\_homQuadratics\_x0x1\_x1sqPlane} theorem. Because the
+tail parameter \(b\) is arbitrary, this also covers the pure constant-tail
+common-factor chart as the special case \(b=0\). I then added the pure
+\(x_1\)-tail companion
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_commonFactorChart},
+which performs the same common-factor shear and the same subtraction of the
+induced \(x_0\)-term. So the repeated-line/common-factor chart is now fully
+internal on the affine-rank-one side; what remains there is the diagonal
+complements and the outer exact-affine \(\dim=1\) routing theorem.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine

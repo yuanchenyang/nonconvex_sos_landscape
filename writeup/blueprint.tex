@@ -2405,6 +2405,28 @@ expected one: after that shear, the tailed quadratic must still have nonzero
 \(x_0x_1\)-coefficient so that Lean can dispatch to the solved
 \texttt{x1Plus\_homQuadratics\_x0sq\_x1sqPlane} surface.
 
+The next repeated-line/common-factor chart has now also narrowed sharply. The
+new Julia probe
+\texttt{julia/affine\_dim\_one\_common\_factor\_chart\_2026\_04\_12.jl} shows
+that in the affine-rank-one common-factor family, the transformed tailed
+relation's \(x_0^2\)-coefficient behaves as a real classifier boundary:
+\(\texttt{m20}\neq 0\) is the only behavior seen in the retained
+exact-affine \(\dim=1\) samples, while the apparent \(\texttt{m20}=0\) slice
+appears only when the exact-affine dimension jumps to \(2\). On the formal
+side, \texttt{RepresentativeAffineRankOne.lean} now proves
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1Plus\_homQuadratics\_commonFactorChart},
+which performs the common-factor \(x_1\)-shear internally, reconstructs the
+\((x_0x_1,x_1^2)\)-plane, repairs the induced \(x_0\)-term in the tailed
+relation, and dispatches to the existing mixed repeated-line plane theorem.
+Because \(b\) is arbitrary, this single theorem also covers the pure
+constant-tail common-factor chart as the case \(b=0\).
+The same file now also proves the pure \(x_1\)-tail companion
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_commonFactorChart},
+with the same internal common-factor shear and the same \(x_0\)-term repair.
+So the repeated-line/common-factor chart is no longer open on the
+affine-rank-one side: constant, mixed, and pure \(x_1\) tails all reduce
+internally to the existing \((x_0x_1,x_1^2)\)-plane surfaces.
+
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
 theorems, and the genuinely open classifier work is the formal routing of
