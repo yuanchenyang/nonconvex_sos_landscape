@@ -3051,9 +3051,12 @@ pair lands in \(\operatorname{span}(x_0x_1,x_1^2)\), repairs the induced
 \(x_0\)-linear term in the tailed relation by subtracting the exact \(x_0\)
 relation, and dispatches to the existing
 \texttt{onePlusBX1Plus\_homQuadratics\_x0x1\_x1sqPlane} theorem. Because the
-tail parameter \(b\) is arbitrary, this also covers the pure constant-tail
-common-factor chart as the special case \(b=0\). I then added the pure
-\(x_1\)-tail companion
+tail parameter \(b\) is arbitrary, this already covered the pure constant-tail
+chart as the special case \(b=0\). I then added the dedicated pure constant
+companion
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_commonFactorChart},
+which removes that specialization and puts the constant common-factor slice on
+its own theorem surface. I then added the pure \(x_1\)-tail companion
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_commonFactorChart},
 which performs the same common-factor shear and the same subtraction of the
 induced \(x_0\)-term. So the repeated-line/common-factor chart is now fully

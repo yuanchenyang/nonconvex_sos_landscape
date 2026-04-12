@@ -3017,6 +3017,17 @@ branch no longer needs a classifier that pre-normalizes the homogeneous pair all
 the way down to explicit \((x_0^2,x_1^2)\) coordinates before entering the
 endpoint layer.
 
+The repeated-line/common-factor chart is now internal on the same pure
+constant surface. The new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_commonFactorChart}
+performs the internal \(x_1\)-shear when
+\(\texttt{lowHomQuadPlaneA}(q_2,q_3)\neq 0\) and the post-shear diagonal term
+vanishes, rewrites the homogeneous pair into
+\(\operatorname{span}(x_0x_1,x_1^2)\), and dispatches to the already solved
+\texttt{onePlus\_homQuadratics\_x0x1\_x1sqPlane} theorem. So the pure
+constant affine-rank-one layer is now internal on both the coprime cross and
+common-factor charts; the remaining diagonal-complement work is separate.
+
 On top of that, \texttt{ExactAffineClassification.lean} now proves
 \texttt{residual\_eq\_zero\_of\_relations\_affinePair\_translatedKernel\_constSplit\_independent}
 and the global classifier theorem
