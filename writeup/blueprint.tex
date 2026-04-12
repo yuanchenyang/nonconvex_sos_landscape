@@ -2288,6 +2288,19 @@ the mixed and constant directions, while the pure \(x_1\)-tail direction still
 shows the codimension-one missing constant monomial pattern already visible in
 the normalized affine-rank-one endpoint theorems.
 
+The affine-rank-one plane layer has also been widened on the constant side.
+In \texttt{RepresentativeAffineRankOne.lean}, the new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_x0x1\_x1sqPlane},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_x0sq\_x1sqPlane},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_x0sq\_x0x1Plane}
+show that the classifier no longer needs to reconstruct an exact normalized
+constant-tailed relation before entering the affine-rank-one endpoint layer.
+Once it produces exact \(x_0\), a quadratic with affine part \(1\), and a
+determinant-nondegenerate basis of one canonical homogeneous plane, Lean now
+recovers the exact plane basis internally and reduces to the already solved
+constant affine-rank-one endpoints.
+
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
 theorems, and the genuinely open classifier work is the formal routing of

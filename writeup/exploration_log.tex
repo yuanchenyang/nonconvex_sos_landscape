@@ -2775,6 +2775,20 @@ endpoint. No new Julia computation was needed for this round. The remaining
 exact-affine \(\dim=1\) work is therefore pushed further upward into the final
 classifier, not the local affine-rank-one plane algebra.
 
+I then added the constant-tail companions in the same file:
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_x0x1\_x1sqPlane},
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_x0sq\_x1sqPlane},
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_x0sq\_x0x1Plane}.
+These are the exact same Cramer's-rule upgrades on the constant side: once the
+classifier can produce \(x_0\), one quadratic whose affine part is exactly
+\(1\), and a determinant-nondegenerate basis of one canonical homogeneous
+plane, Lean rebuilds the exact plane basis internally and reduces to the
+already solved constant affine-rank-one endpoints. So both the pure \(x_1\)
+tail and pure \(1\) tail branches now have coarse plane wrappers above the
+exact normalized representative layer. No new Julia experiment was needed for
+this round either.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
