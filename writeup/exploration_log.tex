@@ -3046,6 +3046,15 @@ So the affine-rank-one diagonal complement is no longer open on the scaling
 side; what remains is the outer shear/chart layer that produces these diagonal
 relations from a general normalized homogeneous pair.
 
+I then added the corresponding transport wrappers
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1Plus\_homQuadratics\_diag\_sum\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1Plus\_homQuadratics\_diag\_diff\_zero}
+in \texttt{RepresentativeAffineRankOne.lean}. This is a smaller checkpoint than
+the attempted outer diagonal-chart theorem, but it is the right stable theorem
+surface: the future chart proof only needs to supply the normalized diagonal
+relation data and can then hand the rest to the existing equivariant wrapper.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine

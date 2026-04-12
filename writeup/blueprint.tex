@@ -2481,6 +2481,14 @@ complement is no longer missing its scaling algebra either; what remains is the
 outer shear/chart layer that produces these diagonal-relation hypotheses from a
 general homogeneous pair.
 
+In the next round the same file was lifted to the transport surface via
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1Plus\_homQuadratics\_diag\_sum\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_equiv\_relations\_x0\_x1Plus\_homQuadratics\_diag\_diff\_zero}.
+So later classifier code no longer has to rebuild the \texttt{dotTransport} and
+\texttt{mapVec} bookkeeping by hand once it has normalized into these
+diagonal-scaling hypotheses.
+
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
 theorems, and the genuinely open classifier work is the formal routing of

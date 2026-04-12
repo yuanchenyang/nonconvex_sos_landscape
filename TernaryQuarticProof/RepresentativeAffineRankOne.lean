@@ -4692,6 +4692,72 @@ theorem residual_eq_zero_of_relations_x0_x1Plus_homQuadratics_diag_sum_zero
       h2'' h3'' hdet' hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
+theorem residual_eq_zero_of_equiv_relations_x0_x1Plus_homQuadratics_diag_sum_zero
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0)
+    {q1 q2 q3 : Poly}
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = q1)
+    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = q3)
+    (hq1 : IsQuadratic q1)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq1_00 : MvPolynomial.coeff m00 q1 = 0)
+    (hq1_10 : MvPolynomial.coeff m10 q1 = 0)
+    (hq1_01 : MvPolynomial.coeff m01 q1 = 1)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    {a d : ℝ}
+    (ha : a ≠ 0)
+    (hrel1 :
+      a * MvPolynomial.coeff m20 q1 +
+        d * MvPolynomial.coeff m02 q1 = 0)
+    (hrel2 :
+      a * MvPolynomial.coeff m20 q2 +
+        d * MvPolynomial.coeff m02 q2 = 0)
+    (hrel3 :
+      a * MvPolynomial.coeff m20 q3 +
+        d * MvPolynomial.coeff m02 q3 = 0)
+    (hpos : 0 < d / a)
+    (hdet :
+      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 -
+        MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := fun {_} hpq => heQuad hpq)
+      (heQuartic := fun {_} hpq => heQuartic hpq)
+      hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_x1Plus_homQuadratics_diag_sum_zero
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3
+      hq1 hq2 hq3 hq1_00 hq1_10 hq1_01 hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+      ha hrel1 hrel2 hrel3 hpos hdet hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
 theorem residual_eq_zero_of_relations_x0_x1Plus_homQuadratics_diag_diff_zero
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}
@@ -4874,6 +4940,72 @@ theorem residual_eq_zero_of_relations_x0_x1Plus_homQuadratics_diag_diff_zero
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0'
       (c1 := c1') (q1 := (1 / s) • (e q1)) h1' hq1s hq1_00' hq1_10' hq1_01' hq1_diag'
       h2'' h3'' hdet' hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+theorem residual_eq_zero_of_equiv_relations_x0_x1Plus_homQuadratics_diag_diff_zero
+    (e : Poly ≃ₐ[ℝ] Poly)
+    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
+    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
+    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
+    {B : DotForm} {p : Poly} {u : RankFourVec}
+    (hB : IsPositiveDefinite B)
+    (hp : IsSOSQuartic p)
+    (hu : IsAdmissiblePoint u)
+    (hsocp : IsSOCP B p u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0)
+    {q1 q2 q3 : Poly}
+    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = q1)
+    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = q3)
+    (hq1 : IsQuadratic q1)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq1_00 : MvPolynomial.coeff m00 q1 = 0)
+    (hq1_10 : MvPolynomial.coeff m10 q1 = 0)
+    (hq1_01 : MvPolynomial.coeff m01 q1 = 1)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    {a d : ℝ}
+    (ha : a ≠ 0)
+    (hrel1 :
+      a * MvPolynomial.coeff m20 q1 +
+        d * MvPolynomial.coeff m02 q1 = 0)
+    (hrel2 :
+      a * MvPolynomial.coeff m20 q2 +
+        d * MvPolynomial.coeff m02 q2 = 0)
+    (hrel3 :
+      a * MvPolynomial.coeff m20 q3 +
+        d * MvPolynomial.coeff m02 q3 = 0)
+    (hpos : 0 < (-d) / a)
+    (hdet :
+      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m20 q3 -
+        MvPolynomial.coeff m20 q2 * MvPolynomial.coeff m11 q3 ≠ 0) :
+    residual p u = 0 := by
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := fun {_} hpq => heQuad hpq)
+      (heQuartic := fun {_} hpq => heQuartic hpq)
+      hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_x1Plus_homQuadratics_diag_diff_zero
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3
+      hq1 hq2 hq3 hq1_00 hq1_10 hq1_01 hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
+      ha hrel1 hrel2 hrel3 hpos hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
 private theorem coeff_m02_sq_of_quadratic
