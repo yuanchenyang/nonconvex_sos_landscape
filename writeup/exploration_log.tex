@@ -3513,6 +3513,19 @@ gap is therefore narrower than the Julia evidence first suggested: the open
 work is the pure \(x_1\)-tail shared family together with the basis-level
 classifier routing into these exact endpoints.
 
+I then pushed that endpoint one layer upward into
+\texttt{ExactAffineClassification.lean}. The new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_h10\_ne\_h20\_ne\_r0\_ne\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeOne\_h10\_ne\_h20\_ne\_r0\_ne\_zero}
+show that once the extracted inverse homogeneous column has all three entries
+nonzero and the common tail has \(r_0\neq 0\), Lean scales the canonical
+\(c_{20},c_{11},c_{02}\) relations to a shared
+\(1+\beta x_1\) tail and closes immediately through the exact endpoint above.
+So that mixed-support subcase is no longer part of the remaining classifier
+gap; what remains is the genuinely pure-\(x_1\)-tail shared family and the
+complementary diagonal/basis-routing residue.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
