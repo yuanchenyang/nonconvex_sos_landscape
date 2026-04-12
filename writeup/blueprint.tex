@@ -2554,6 +2554,21 @@ constant diagonal work is no longer the shear algebra itself; it is the
 basis-level classifier step that must supply the corresponding \(q_1\) diagonal
 relation from the extracted homogeneous-basis package.
 
+The pure \(x_1\) branch now has the same partial outer-chart layer. The new
+theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_diagSumChart}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x1Plus\_homQuadratics\_diagDiffChart}
+start from unsheared chart data for the homogeneous pair \((q_2,q_3)\), again
+with one explicit diagonal relation for the tailed coordinate \(q_1\). Lean
+performs the internal \(x_1\)-shear, repairs the induced \(x_0\) term in the
+tailed relation, converts the determinant statement automatically, and then
+dispatches to the already formalized pure-\(x_1\) diagonal-scaling theorems.
+So the remaining affine-rank-one diagonal work is no longer split between the
+constant and pure-\(x_1\) branches at the shear level; in both cases the
+missing input is the basis-level classifier data that supplies the required
+\(q_1\) diagonal relation.
+
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
 theorems, and the genuinely open classifier work is the basis-level routing of
@@ -2573,11 +2588,13 @@ quadratic \(q_1\) with affine part exactly \(1\), and an invertible basis of
 corresponding homogeneous part from \(q_1\) to recover an exact constant
 relation, and then dispatches to the existing mixed-affine plane theorems. So
 the exact constant diagonal-complement slice is no longer merely numerical; the
-remaining affine-rank-one diagonal work is concentrated in the pure \(x_1\)
-and mixed \(1+b x_1\) outputs above the final classifier layer.
-Those outputs still need basis-level routing into the already solved endpoint
-or generic-surjective surfaces, with the diagonal charts now reduced to a
-concrete Lean target rather than an unclassified numerical branch.
+remaining affine-rank-one diagonal work is now concentrated in the mixed
+\(1+b x_1\) outputs, together with the classifier step that must provide the
+explicit \(q_1\) diagonal relation needed to invoke the constant and pure
+\(x_1\) partial chart theorems. Those outputs still need basis-level routing
+into the already solved endpoint or generic-surjective surfaces, with the
+diagonal charts now reduced to concrete Lean interfaces rather than
+unclassified numerical branches.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and
