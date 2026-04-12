@@ -3101,6 +3101,17 @@ the attempted outer diagonal-chart theorem, but it is the right stable theorem
 surface: the future chart proof only needs to supply the normalized diagonal
 relation data and can then hand the rest to the existing equivariant wrapper.
 
+I then added the pure constant analogues in the same file:
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_diag\_sum\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_diag\_diff\_zero},
+again with equivariant wrappers. The proof is the same internal
+\(x_1\)-scaling-and-rewrite pattern as in the pure \(x_1\)-tail case, except
+that there is no need to renormalize an \(x_1\)-coefficient afterward. So the
+constant affine-rank-one diagonal complement is now also closed at the
+diagonal-scaling layer; the remaining diagonal gap is the outer chart theorem,
+especially for the mixed \(1+b x_1\) output.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine

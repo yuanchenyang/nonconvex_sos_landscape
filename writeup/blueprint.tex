@@ -2517,6 +2517,22 @@ So later classifier code no longer has to rebuild the \texttt{dotTransport} and
 \texttt{mapVec} bookkeeping by hand once it has normalized into these
 diagonal-scaling hypotheses.
 
+The pure constant diagonal-complement branch now has the same scaling layer.
+The new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_diag\_sum\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_diag\_diff\_zero},
+again with matching equivariant wrappers, start from exact relations to
+\(x_0\), a quadratic \(q_1\) with affine part exactly \(1\), and a homogeneous
+pair satisfying the same diagonal coefficient relation
+\(a\,\operatorname{coeff}_{20}+d\,\operatorname{coeff}_{02}=0\). Lean now
+performs the internal \(x_1\)-scaling, converts the homogeneous pair to the
+\((x_0x_1,\ x_0^2-x_1^2)\) or \((x_0x_1,\ x_0^2+x_1^2)\) plane by Cramer's
+rule, and dispatches directly to the already solved pure-constant diagonal
+plane theorems. So the constant affine-rank-one diagonal complement is no
+longer blocked on scaling algebra either; what remains there is the outer chart
+reduction and the mixed \(1+b x_1\) companion.
+
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
 theorems, and the genuinely open classifier work is the formal routing of
