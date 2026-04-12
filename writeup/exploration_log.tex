@@ -3496,6 +3496,23 @@ tail-rank \(1\) work no longer looks like ``one more chart normalization''.
 It now looks like proving direct affine-rank-one shared-tail endpoint theorems
 and then routing the basis extractor into those endpoints.
 
+I then added the mixed exact shared-tail endpoint itself in
+\texttt{RepresentativeAffineRankOne.lean}:
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlusBX1PlusAX0sq\_onePlusBX1PlusCX0x1\_onePlusBX1PlusDX1sq}.
+It closes exact relations
+\[
+  x_0,\qquad 1+b x_1+a x_0^2,\qquad 1+b x_1+c x_0x_1,\qquad
+  1+b x_1+d x_1^2
+\]
+for \(a,c,d\neq 0\). The proof is again a direct image argument: Lean
+recovers \(x_0x_1\) and \(x_1^2\) from differences of the shared-tail
+relations, then generates \(x_1\), \(1\), and the remaining quartic monomials.
+So the mixed shared-tail half of the probe is no longer only numerical; it is
+an exact representative theorem. The remaining \(\dim=1\), tail-rank \(1\)
+gap is therefore narrower than the Julia evidence first suggested: the open
+work is the pure \(x_1\)-tail shared family together with the basis-level
+classifier routing into these exact endpoints.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
