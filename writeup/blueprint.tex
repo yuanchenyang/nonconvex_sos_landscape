@@ -2591,8 +2591,19 @@ linear-independence packages to explicit invertible \(3\times 3\) coefficient
 matrices against \((x_0^2,x_0x_1,x_1^2)\). So the remaining gap is no longer
 ``extract a homogeneous basis''; Lean already does that. The missing step is
 to normalize the returned basis-level matrix data into one of the solved
-affine-rank-one chart surfaces. One additional piece of that surface is now
-closed on the constant side: in
+affine-rank-one chart surfaces. One substantial support-one piece of that
+matrix normalization is now internal too: the new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_tailOnX0sq},
+\texttt{\dots\_tailOnX0x1}, and
+\texttt{\dots\_tailOnX1sq}, together with the dispatcher
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_singleSupport},
+show that if the inverse coefficient matrix sends the unique tailed direction
+to exactly one of the three canonical homogeneous coordinates, Lean already
+reconstructs the corresponding exact tailed basis and closes through the
+existing support-one affine-rank-one endpoints. So the tail-rank \(1\) matrix
+output is no longer open on any one-support pattern; the remaining gap there is
+the genuinely mixed-support routing. One additional piece of the affine-rank-one
+surface is now closed on the constant side: in
 \texttt{RepresentativeAffineRankOne.lean} the new theorems
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_x0x1\_diffsqPlane}
 and

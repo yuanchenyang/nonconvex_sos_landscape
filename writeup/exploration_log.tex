@@ -3244,6 +3244,21 @@ homogeneous basis.'' Lean already returns the basis and its matrix. What is
 still missing is the next normalization layer that turns that matrix-valued
 output into one of the solved affine-rank-one chart inputs.
 
+I then internalized the first nontrivial part of exactly that matrix
+normalization. In \texttt{ExactAffineClassification.lean} the new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_tailOnX0sq},
+\texttt{\dots\_tailOnX0x1}, and
+\texttt{\dots\_tailOnX1sq}, together with the small dispatcher
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_hom\_basis\_matrix\_singleSupport},
+show that the tail-rank \(1\) classifier is already closed whenever the first
+column of the inverse homogeneous basis matrix is supported on exactly one of
+the canonical directions \(x_0^2\), \(x_0x_1\), or \(x_1^2\). Lean
+reconstructs the exact tailed coordinate in that direction, recovers the other
+two pure homogeneous coordinates from the same inverse matrix, and then
+dispatches to the existing support-one affine-rank-one endpoints. So the
+remaining tail-rank \(1\) gap is now strictly the genuinely mixed-support
+matrix outputs, not the one-support cases.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine
