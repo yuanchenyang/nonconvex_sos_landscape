@@ -3116,6 +3116,20 @@ constant affine-rank-one diagonal complement is now also closed at the
 diagonal-scaling layer; the remaining diagonal gap is the outer chart theorem,
 especially for the mixed \(1+b x_1\) output.
 
+I next tried to add the full constant outer diagonal chart theorem directly in
+\texttt{RepresentativeAffineRankOne.lean}. That first attempt was too strong:
+the shear of the homogeneous pair \((q_2,q_3)\) is automatic, but the
+constant-tailed coordinate \(q_1\) does not inherit the corresponding diagonal
+relation for free from the plane data alone. I replaced that version with the
+valid partial transport surface
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_diagSumChart}
+and its \texttt{diagDiffChart} companion. These theorems now package the
+internal \(x_1\)-shear and determinant conversion, but they explicitly assume
+the needed diagonal relation for \(q_1\). So the remaining blocker is no
+longer the outer chart algebra itself; it is the exact-affine \(\dim=1\)
+classifier step that must recover that \(q_1\) relation from the extracted
+homogeneous-basis data.
+
 \section*{Open Subgoals}
 \begin{itemize}
 \item Extract from a general admissible factor the remaining exact-affine

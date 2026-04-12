@@ -2540,6 +2540,20 @@ plane theorems. So the constant affine-rank-one diagonal complement is no
 longer blocked on scaling algebra either; what remains there is the outer chart
 reduction and the mixed \(1+b x_1\) companion.
 
+We then added a first valid outer-chart transport layer for this constant
+branch. The new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_diagSumChart}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_onePlus\_homQuadratics\_diagDiffChart}
+start from the unsheared chart data determined by the pure homogeneous pair
+\((q_2,q_3)\), but still require one explicit diagonal relation for the
+constant-tailed coordinate \(q_1\). Lean performs the internal \(x_1\)-shear,
+converts the resulting determinant statement automatically, and then dispatches
+to the existing diagonal-scaling theorems. So the remaining affine-rank-one
+constant diagonal work is no longer the shear algebra itself; it is the
+basis-level classifier step that must supply the corresponding \(q_1\) diagonal
+relation from the extracted homogeneous-basis package.
+
 So the remaining \(\dim=1\) work is now sharply split: tail-rank \(0\) is
 proved, tail-rank \(1\) and tail-rank \(2\) both have structural extractor
 theorems, and the genuinely open classifier work is the basis-level routing of
@@ -2561,9 +2575,9 @@ relation, and then dispatches to the existing mixed-affine plane theorems. So
 the exact constant diagonal-complement slice is no longer merely numerical; the
 remaining affine-rank-one diagonal work is concentrated in the pure \(x_1\)
 and mixed \(1+b x_1\) outputs above the final classifier layer.
-those outputs into the already solved endpoint or generic-surjective surfaces,
-with the diagonal charts now reduced to a concrete Lean target rather than an
-unclassified numerical branch.
+Those outputs still need basis-level routing into the already solved endpoint
+or generic-surjective surfaces, with the diagonal charts now reduced to a
+concrete Lean target rather than an unclassified numerical branch.
 
 \section*{Pending Step}
 To finish the theorem, it remains to formalize the remaining normalization and

@@ -8348,6 +8348,31 @@ private theorem lowHomQuadPlane_relation_right_affineRankOne (q2 q3 : Poly) :
   simp [lowHomQuadPlaneA, lowHomQuadPlaneB, lowHomQuadPlaneC]
   ring
 
+private theorem det_x0x1_x0sq_affineHom_x1Shear_kill_cross_affineRankOne
+    {q2 q3 : Poly}
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hA : lowHomQuadPlaneA q2 q3 ≠ 0) :
+    MvPolynomial.coeff m11
+        (affineHom
+          (x1ShearMatrix (-lowHomQuadPlaneB q2 q3 / lowHomQuadPlaneA q2 q3)) 0 q2) *
+        MvPolynomial.coeff m20
+          (affineHom
+            (x1ShearMatrix (-lowHomQuadPlaneB q2 q3 / lowHomQuadPlaneA q2 q3)) 0 q3) -
+      MvPolynomial.coeff m20
+          (affineHom
+            (x1ShearMatrix (-lowHomQuadPlaneB q2 q3 / lowHomQuadPlaneA q2 q3)) 0 q2) *
+        MvPolynomial.coeff m11
+          (affineHom
+            (x1ShearMatrix (-lowHomQuadPlaneB q2 q3 / lowHomQuadPlaneA q2 q3)) 0 q3) =
+      -(lowHomQuadPlaneC q2 q3 -
+          lowHomQuadPlaneB q2 q3 ^ 2 / lowHomQuadPlaneA q2 q3) := by
+  rw [coeff_m11_affineHom_x1Shear hq2, coeff_m20_affineHom_x1Shear hq2,
+    coeff_m11_affineHom_x1Shear hq3, coeff_m20_affineHom_x1Shear hq3]
+  field_simp [hA]
+  simp [lowHomQuadPlaneA, lowHomQuadPlaneB, lowHomQuadPlaneC]
+  ring
+
 private theorem coeff_m11_affineHom_x1Shear_lowHomQuadPlaneA_zero_affineRankOne
     {q2 q3 : Poly}
     (hq2 : IsQuadratic q2)
@@ -9171,6 +9196,354 @@ theorem residual_eq_zero_of_equiv_relations_x0_onePlus_homQuadratics_commonFacto
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3
       hq1 hq2 hq3 hq1_00 hq1_10 hq1_01 hq2_00 hq2_10 hq2_01 hq3_00 hq3_10 hq3_01
       hA hdiag0 htail hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+/-- Pure constant affine-rank-one diagonal-sum chart: after the internal
+`x₁`-shear kills the cross term of the pure homogeneous pair, the remaining
+positive diagonal relation is handled by the existing diagonal scaling theorem.
+-/
+theorem residual_eq_zero_of_relations_x0_onePlus_homQuadratics_diagSumChart
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    {q1 q2 q3 : Poly}
+    (h1 : ∑ i : Fin 4, c1 i • u i = q1)
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq1 : IsQuadratic q1)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq1_00 : MvPolynomial.coeff m00 q1 = 1)
+    (hq1_10 : MvPolynomial.coeff m10 q1 = 0)
+    (hq1_01 : MvPolynomial.coeff m01 q1 = 0)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hA : lowHomQuadPlaneA q2 q3 ≠ 0)
+    (hrel1 :
+      lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 q1 +
+        (-lowHomQuadPlaneB q2 q3) * MvPolynomial.coeff m11 q1 +
+          lowHomQuadPlaneC q2 q3 * MvPolynomial.coeff m02 q1 = 0)
+    (hpos :
+      0 <
+        (lowHomQuadPlaneC q2 q3 -
+            lowHomQuadPlaneB q2 q3 ^ 2 / lowHomQuadPlaneA q2 q3) /
+          lowHomQuadPlaneA q2 q3)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let d : ℝ :=
+    lowHomQuadPlaneC q2 q3 -
+      lowHomQuadPlaneB q2 q3 ^ 2 / lowHomQuadPlaneA q2 q3
+  let t : ℝ := -lowHomQuadPlaneB q2 q3 / lowHomQuadPlaneA q2 q3
+  let e : Poly ≃ₐ[ℝ] Poly := x1ShearEquiv t
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  have heQuad : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv (x1ShearMatrix t) (x1ShearInvMatrix t) 0 0
+      (x1Shear_mul_inv t) (x1Shear_inv_mul t) (by intro i; simp) (by intro i; simp) hq
+  have heQuadSymm : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e.symm q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv_symm (x1ShearMatrix t) (x1ShearInvMatrix t) 0 0
+      (x1Shear_mul_inv t) (x1Shear_inv_mul t) (by intro i; simp) (by intro i; simp) hq
+  have heQuartic : ∀ {q : Poly}, IsQuartic q → IsQuartic (e q) := by
+    intro q hq
+    exact isQuartic_affineEquiv (x1ShearMatrix t) (x1ShearInvMatrix t) 0 0
+      (x1Shear_mul_inv t) (x1Shear_inv_mul t) (by intro i; simp) (by intro i; simp) hq
+  have h0' : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0 := by
+    simpa [e] using (relation_map e.toAlgHom h0).trans (affineHom_x1Shear_x0 t)
+  have h1' : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = e q1 := by
+    simpa [e] using relation_map e.toAlgHom h1
+  have h2' : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = e q2 := by
+    simpa [e] using relation_map e.toAlgHom h2
+  have h3' : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = e q3 := by
+    simpa [e] using relation_map e.toAlgHom h3
+  have hrel2 :
+      lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 q2 +
+        (-lowHomQuadPlaneB q2 q3) * MvPolynomial.coeff m11 q2 +
+          lowHomQuadPlaneC q2 q3 * MvPolynomial.coeff m02 q2 = 0 := by
+    exact lowHomQuadPlane_relation_left_affineRankOne q2 q3
+  have hrel3 :
+      lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 q3 +
+        (-lowHomQuadPlaneB q2 q3) * MvPolynomial.coeff m11 q3 +
+          lowHomQuadPlaneC q2 q3 * MvPolynomial.coeff m02 q3 = 0 := by
+    exact lowHomQuadPlane_relation_right_affineRankOne q2 q3
+  have hq1' : IsQuadratic (e q1) := heQuad hq1
+  have hq2' : IsQuadratic (e q2) := heQuad hq2
+  have hq3' : IsQuadratic (e q3) := heQuad hq3
+  have hq1_00' : MvPolynomial.coeff m00 (e q1) = 1 := by
+    rw [show e q1 = affineHom (x1ShearMatrix t) 0 q1 by rfl,
+      coeff_m00_affineHom_x1Shear hq1]
+    simpa using hq1_00
+  have hq1_10' : MvPolynomial.coeff m10 (e q1) = 0 := by
+    rw [show e q1 = affineHom (x1ShearMatrix t) 0 q1 by rfl,
+      coeff_m10_affineHom_x1Shear hq1]
+    simp [hq1_10, hq1_01]
+  have hq1_01' : MvPolynomial.coeff m01 (e q1) = 0 := by
+    rw [show e q1 = affineHom (x1ShearMatrix t) 0 q1 by rfl,
+      coeff_m01_affineHom_x1Shear hq1]
+    simpa using hq1_01
+  have hq2_00' : MvPolynomial.coeff m00 (e q2) = 0 := by
+    rw [show e q2 = affineHom (x1ShearMatrix t) 0 q2 by rfl,
+      coeff_m00_affineHom_x1Shear hq2]
+    simpa using hq2_00
+  have hq2_10' : MvPolynomial.coeff m10 (e q2) = 0 := by
+    rw [show e q2 = affineHom (x1ShearMatrix t) 0 q2 by rfl,
+      coeff_m10_affineHom_x1Shear hq2]
+    simp [hq2_10, hq2_01]
+  have hq2_01' : MvPolynomial.coeff m01 (e q2) = 0 := by
+    rw [show e q2 = affineHom (x1ShearMatrix t) 0 q2 by rfl,
+      coeff_m01_affineHom_x1Shear hq2]
+    simpa using hq2_01
+  have hq3_00' : MvPolynomial.coeff m00 (e q3) = 0 := by
+    rw [show e q3 = affineHom (x1ShearMatrix t) 0 q3 by rfl,
+      coeff_m00_affineHom_x1Shear hq3]
+    simpa using hq3_00
+  have hq3_10' : MvPolynomial.coeff m10 (e q3) = 0 := by
+    rw [show e q3 = affineHom (x1ShearMatrix t) 0 q3 by rfl,
+      coeff_m10_affineHom_x1Shear hq3]
+    simp [hq3_10, hq3_01]
+  have hq3_01' : MvPolynomial.coeff m01 (e q3) = 0 := by
+    rw [show e q3 = affineHom (x1ShearMatrix t) 0 q3 by rfl,
+      coeff_m01_affineHom_x1Shear hq3]
+    simpa using hq3_01
+  have hq1_diag :
+      lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 (e q1) +
+        d * MvPolynomial.coeff m02 (e q1) = 0 := by
+    simpa [e, t, d, pow_two, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using
+      coeff_relation_affineHom_x1Shear_dual_kill_cross
+        hq1 (a := lowHomQuadPlaneA q2 q3) (b := -lowHomQuadPlaneB q2 q3)
+        (c := lowHomQuadPlaneC q2 q3) hA hrel1
+  have hq2_diag :
+      lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 (e q2) +
+        d * MvPolynomial.coeff m02 (e q2) = 0 := by
+    simpa [e, t, d, pow_two, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using
+      coeff_relation_affineHom_x1Shear_dual_kill_cross
+        hq2 (a := lowHomQuadPlaneA q2 q3) (b := -lowHomQuadPlaneB q2 q3)
+        (c := lowHomQuadPlaneC q2 q3) hA hrel2
+  have hq3_diag :
+      lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 (e q3) +
+        d * MvPolynomial.coeff m02 (e q3) = 0 := by
+    simpa [e, t, d, pow_two, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using
+      coeff_relation_affineHom_x1Shear_dual_kill_cross
+        hq3 (a := lowHomQuadPlaneA q2 q3) (b := -lowHomQuadPlaneB q2 q3)
+        (c := lowHomQuadPlaneC q2 q3) hA hrel3
+  have hd : d ≠ 0 := by
+    intro hd0
+    have : d / lowHomQuadPlaneA q2 q3 = 0 := by
+      simp [d, hd0]
+    exact (ne_of_gt hpos) this
+  have hdet' :
+      MvPolynomial.coeff m11 (e q2) * MvPolynomial.coeff m20 (e q3) -
+        MvPolynomial.coeff m20 (e q2) * MvPolynomial.coeff m11 (e q3) ≠ 0 := by
+    have hdetEq :
+        MvPolynomial.coeff m11 (e q2) * MvPolynomial.coeff m20 (e q3) -
+          MvPolynomial.coeff m20 (e q2) * MvPolynomial.coeff m11 (e q3) =
+        -d := by
+      simpa [e, d] using
+        det_x0x1_x0sq_affineHom_x1Shear_kill_cross_affineRankOne hq2 hq3 hA
+    intro hz
+    apply hd
+    linarith [hdetEq, hz]
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_onePlus_homQuadratics_diag_sum_zero
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0' h1' h2' h3'
+      hq1' hq2' hq3' hq1_00' hq1_10' hq1_01'
+      hq2_00' hq2_10' hq2_01' hq3_00' hq3_10' hq3_01'
+      hA hq1_diag hq2_diag hq3_diag hpos hdet' hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+/-- Pure constant affine-rank-one diagonal-difference chart: after the internal
+`x₁`-shear kills the cross term of the pure homogeneous pair, the remaining
+negative diagonal relation is handled by the existing diagonal scaling theorem.
+-/
+theorem residual_eq_zero_of_relations_x0_onePlus_homQuadratics_diagDiffChart
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 c1 c2 c3 : Fin 4 → ℝ}
+    (h0 : ∑ i : Fin 4, c0 i • u i = x0)
+    {q1 q2 q3 : Poly}
+    (h1 : ∑ i : Fin 4, c1 i • u i = q1)
+    (h2 : ∑ i : Fin 4, c2 i • u i = q2)
+    (h3 : ∑ i : Fin 4, c3 i • u i = q3)
+    (hq1 : IsQuadratic q1)
+    (hq2 : IsQuadratic q2)
+    (hq3 : IsQuadratic q3)
+    (hq1_00 : MvPolynomial.coeff m00 q1 = 1)
+    (hq1_10 : MvPolynomial.coeff m10 q1 = 0)
+    (hq1_01 : MvPolynomial.coeff m01 q1 = 0)
+    (hq2_00 : MvPolynomial.coeff m00 q2 = 0)
+    (hq2_10 : MvPolynomial.coeff m10 q2 = 0)
+    (hq2_01 : MvPolynomial.coeff m01 q2 = 0)
+    (hq3_00 : MvPolynomial.coeff m00 q3 = 0)
+    (hq3_10 : MvPolynomial.coeff m10 q3 = 0)
+    (hq3_01 : MvPolynomial.coeff m01 q3 = 0)
+    (hA : lowHomQuadPlaneA q2 q3 ≠ 0)
+    (hrel1 :
+      lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 q1 +
+        (-lowHomQuadPlaneB q2 q3) * MvPolynomial.coeff m11 q1 +
+          lowHomQuadPlaneC q2 q3 * MvPolynomial.coeff m02 q1 = 0)
+    (hpos :
+      0 <
+        (-(lowHomQuadPlaneC q2 q3 -
+            lowHomQuadPlaneB q2 q3 ^ 2 / lowHomQuadPlaneA q2 q3)) /
+          lowHomQuadPlaneA q2 q3)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let d : ℝ :=
+    lowHomQuadPlaneC q2 q3 -
+      lowHomQuadPlaneB q2 q3 ^ 2 / lowHomQuadPlaneA q2 q3
+  let t : ℝ := -lowHomQuadPlaneB q2 q3 / lowHomQuadPlaneA q2 q3
+  let e : Poly ≃ₐ[ℝ] Poly := x1ShearEquiv t
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  have heQuad : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv (x1ShearMatrix t) (x1ShearInvMatrix t) 0 0
+      (x1Shear_mul_inv t) (x1Shear_inv_mul t) (by intro i; simp) (by intro i; simp) hq
+  have heQuadSymm : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e.symm q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv_symm (x1ShearMatrix t) (x1ShearInvMatrix t) 0 0
+      (x1Shear_mul_inv t) (x1Shear_inv_mul t) (by intro i; simp) (by intro i; simp) hq
+  have heQuartic : ∀ {q : Poly}, IsQuartic q → IsQuartic (e q) := by
+    intro q hq
+    exact isQuartic_affineEquiv (x1ShearMatrix t) (x1ShearInvMatrix t) 0 0
+      (x1Shear_mul_inv t) (x1Shear_inv_mul t) (by intro i; simp) (by intro i; simp) hq
+  have h0' : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = x0 := by
+    simpa [e] using (relation_map e.toAlgHom h0).trans (affineHom_x1Shear_x0 t)
+  have h1' : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = e q1 := by
+    simpa [e] using relation_map e.toAlgHom h1
+  have h2' : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = e q2 := by
+    simpa [e] using relation_map e.toAlgHom h2
+  have h3' : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = e q3 := by
+    simpa [e] using relation_map e.toAlgHom h3
+  have hrel2 :
+      lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 q2 +
+        (-lowHomQuadPlaneB q2 q3) * MvPolynomial.coeff m11 q2 +
+          lowHomQuadPlaneC q2 q3 * MvPolynomial.coeff m02 q2 = 0 := by
+    exact lowHomQuadPlane_relation_left_affineRankOne q2 q3
+  have hrel3 :
+      lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 q3 +
+        (-lowHomQuadPlaneB q2 q3) * MvPolynomial.coeff m11 q3 +
+          lowHomQuadPlaneC q2 q3 * MvPolynomial.coeff m02 q3 = 0 := by
+    exact lowHomQuadPlane_relation_right_affineRankOne q2 q3
+  have hq1' : IsQuadratic (e q1) := heQuad hq1
+  have hq2' : IsQuadratic (e q2) := heQuad hq2
+  have hq3' : IsQuadratic (e q3) := heQuad hq3
+  have hq1_00' : MvPolynomial.coeff m00 (e q1) = 1 := by
+    rw [show e q1 = affineHom (x1ShearMatrix t) 0 q1 by rfl,
+      coeff_m00_affineHom_x1Shear hq1]
+    simpa using hq1_00
+  have hq1_10' : MvPolynomial.coeff m10 (e q1) = 0 := by
+    rw [show e q1 = affineHom (x1ShearMatrix t) 0 q1 by rfl,
+      coeff_m10_affineHom_x1Shear hq1]
+    simp [hq1_10, hq1_01]
+  have hq1_01' : MvPolynomial.coeff m01 (e q1) = 0 := by
+    rw [show e q1 = affineHom (x1ShearMatrix t) 0 q1 by rfl,
+      coeff_m01_affineHom_x1Shear hq1]
+    simpa using hq1_01
+  have hq2_00' : MvPolynomial.coeff m00 (e q2) = 0 := by
+    rw [show e q2 = affineHom (x1ShearMatrix t) 0 q2 by rfl,
+      coeff_m00_affineHom_x1Shear hq2]
+    simpa using hq2_00
+  have hq2_10' : MvPolynomial.coeff m10 (e q2) = 0 := by
+    rw [show e q2 = affineHom (x1ShearMatrix t) 0 q2 by rfl,
+      coeff_m10_affineHom_x1Shear hq2]
+    simp [hq2_10, hq2_01]
+  have hq2_01' : MvPolynomial.coeff m01 (e q2) = 0 := by
+    rw [show e q2 = affineHom (x1ShearMatrix t) 0 q2 by rfl,
+      coeff_m01_affineHom_x1Shear hq2]
+    simpa using hq2_01
+  have hq3_00' : MvPolynomial.coeff m00 (e q3) = 0 := by
+    rw [show e q3 = affineHom (x1ShearMatrix t) 0 q3 by rfl,
+      coeff_m00_affineHom_x1Shear hq3]
+    simpa using hq3_00
+  have hq3_10' : MvPolynomial.coeff m10 (e q3) = 0 := by
+    rw [show e q3 = affineHom (x1ShearMatrix t) 0 q3 by rfl,
+      coeff_m10_affineHom_x1Shear hq3]
+    simp [hq3_10, hq3_01]
+  have hq3_01' : MvPolynomial.coeff m01 (e q3) = 0 := by
+    rw [show e q3 = affineHom (x1ShearMatrix t) 0 q3 by rfl,
+      coeff_m01_affineHom_x1Shear hq3]
+    simpa using hq3_01
+  have hq1_diag :
+      lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 (e q1) +
+        d * MvPolynomial.coeff m02 (e q1) = 0 := by
+    simpa [e, t, d, pow_two, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using
+      coeff_relation_affineHom_x1Shear_dual_kill_cross
+        hq1 (a := lowHomQuadPlaneA q2 q3) (b := -lowHomQuadPlaneB q2 q3)
+        (c := lowHomQuadPlaneC q2 q3) hA hrel1
+  have hq2_diag :
+      lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 (e q2) +
+        d * MvPolynomial.coeff m02 (e q2) = 0 := by
+    simpa [e, t, d, pow_two, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using
+      coeff_relation_affineHom_x1Shear_dual_kill_cross
+        hq2 (a := lowHomQuadPlaneA q2 q3) (b := -lowHomQuadPlaneB q2 q3)
+        (c := lowHomQuadPlaneC q2 q3) hA hrel2
+  have hq3_diag :
+      lowHomQuadPlaneA q2 q3 * MvPolynomial.coeff m20 (e q3) +
+        d * MvPolynomial.coeff m02 (e q3) = 0 := by
+    simpa [e, t, d, pow_two, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using
+      coeff_relation_affineHom_x1Shear_dual_kill_cross
+        hq3 (a := lowHomQuadPlaneA q2 q3) (b := -lowHomQuadPlaneB q2 q3)
+        (c := lowHomQuadPlaneC q2 q3) hA hrel3
+  have hd : d ≠ 0 := by
+    intro hd0
+    have : (-d) / lowHomQuadPlaneA q2 q3 = 0 := by
+      simp [d, hd0]
+    exact (ne_of_gt hpos) this
+  have hdet' :
+      MvPolynomial.coeff m11 (e q2) * MvPolynomial.coeff m20 (e q3) -
+        MvPolynomial.coeff m20 (e q2) * MvPolynomial.coeff m11 (e q3) ≠ 0 := by
+    have hdetEq :
+        MvPolynomial.coeff m11 (e q2) * MvPolynomial.coeff m20 (e q3) -
+          MvPolynomial.coeff m20 (e q2) * MvPolynomial.coeff m11 (e q3) =
+        -d := by
+      simpa [e, d] using
+        det_x0x1_x0sq_affineHom_x1Shear_kill_cross_affineRankOne hq2 hq3 hA
+    intro hz
+    apply hd
+    linarith [hdetEq, hz]
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact residual_eq_zero_of_relations_x0_onePlus_homQuadratics_diag_diff_zero
+      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0' h1' h2' h3'
+      hq1' hq2' hq3' hq1_00' hq1_10' hq1_01'
+      hq2_00' hq2_10' hq2_01' hq3_00' hq3_10' hq3_01'
+      hA hq1_diag hq2_diag hq3_diag hpos hdet' hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
 /-- Mixed constant-plus-`x₁` affine-rank-one common-factor chart: if the pure
