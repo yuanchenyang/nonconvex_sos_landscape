@@ -26,7 +26,10 @@ EOF
 lake env lean "$DECL_CHECK"
 
 echo "[4/5] Checking theorem is defined in TernaryQuarticProof.lean"
-rg -n '^theorem ternaryQuartic_rankFour_no_spurious_socp\b' TernaryQuarticProof.lean
+if ! grep -n '^theorem ternaryQuartic_rankFour_no_spurious_socp\b' TernaryQuarticProof.lean; then
+  echo "verification failed: theorem ternaryQuartic_rankFour_no_spurious_socp not found in TernaryQuarticProof.lean" >&2
+  exit 1
+fi
 
 echo "[5/5] Checking theorem depends on exactly the allowed axioms"
 AXIOM_CHECK="$(mktemp /tmp/tq_check_axioms.XXXXXX.lean)"
