@@ -3700,10 +3700,47 @@ entirely into the \(x_1^2\)-relation:
 So the determinant-zero range-two branch now has a retained representative
 normalization theorem, not just numerical evidence.
 
-So the determinant-zero range-two slice is not uniformly singular. Both
-\(\Delta<0\) and \(\Delta>0\) still look generically surjective, while the
-rank-\(14\) obstruction only appears on the codimension-one discriminant-zero
-subfamily, with exactly the pure \(x_1\)-axis tower missing.
+I then closed the whole \(\Delta \neq 0\) side of that normalized family in
+Lean. In \texttt{RepresentativeAffineRankOne.lean}, the new theorems
+\texttt{quartic\_in\_image\_of\_relations\_x0\_affineTail\_x0sq\_x0x1\_affineTail\_x1sq\_disc\_ne\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_affineTail\_x0sq\_x0x1\_affineTail\_x1sq\_disc\_ne\_zero}
+show that the normalized determinant-zero family is fully surjective whenever
+\[
+  \Delta = a^2-a b f+b^2 e \neq 0.
+\]
+The proof stays entirely inside the representative family. It first produces
+five pure-\(x_1\) image polynomials
+\[
+  a+b x_1,\quad a x_1+b x_1^2,\quad e+f x_1+x_1^2,\quad
+  e x_1+f x_1^2+x_1^3,\quad e x_1^2+f x_1^3+x_1^4,
+\]
+then extracts \(1\) and \(x_1\) from the two equations
+\[
+  a+b x_1,\qquad (a f-b e)+a x_1,
+\]
+whose determinant is exactly \(\Delta\), and finally recovers
+\(x_1^2,x_1^3,x_1^4\) recursively from the exact \(x_1^2\)-type relation.
+
+I then lifted that representative result through the exact-affine range-two
+extractor in \texttt{ExactAffineClassification.lean}. The new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_const\_x1\_hom\_basis\_matrix\_sharedTail\_disc\_ne\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeTwo\_sharedTail\_disc\_ne\_zero}
+combine the bundled matrix data, the internal shared-tail shear normalization,
+and the new representative theorem. I then closed the codimension-one
+representative discriminant-zero family itself in
+\texttt{RepresentativeAffineRankOne.lean} via
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_affineTail\_x0sq\_x0x1\_affineTail\_x1sq\_disc\_zero},
+and lifted that closure back into the classifier as the proof-serving lemmas
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_const\_x1\_hom\_basis\_matrix\_sharedTail\_disc\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeTwo\_sharedTail\_disc\_zero}.
+That last lift still needs the explicit shared-tail hypothesis
+\((A^{-1})_{00}\neq 0 \vee (A^{-1})_{01}\neq 0\), so the remaining
+determinant-zero range-two gap is now only the complementary subcase
+\((A^{-1})_{00}=(A^{-1})_{01}=0\), not the full codimension-one
+discriminant-zero family.
 
 \section*{Open Subgoals}
 \begin{itemize}
@@ -3712,8 +3749,8 @@ package into the solved affine-rank-one theorem surfaces. The
 constant-containing \(\dim=2\) mixed-affine branch no longer needs external
 quadratic-pair extraction, the exact-affine \(\dim=2\) low-affine branch is
 closed, and the exact-affine \(\dim=1\), tail-rank \(1\) branch is fully
-closed as well. What remains is the last determinant-zero range-two
-normalization/classifier layer above the bundled basis-and-plane data
+closed as well. What remains is only the determinant-zero range-two layer with
+\((A^{-1})_{00}=(A^{-1})_{01}=0\) above the bundled basis-and-plane data
 \texttt{exactAffineDimOneRangeTwoData}.
 \item After that branch is settled, assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.

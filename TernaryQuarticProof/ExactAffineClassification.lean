@@ -4417,6 +4417,302 @@ theorem residual_eq_zero_of_exactAffineDimOne_tailRangeTwo_generic
   exact residual_eq_zero_of_relations_x0_tail_const_x1_hom_basis_matrix_generic
     (B := B) (u := u) hu h0 D hdetTail hp hsocp
 
+/-- In the complementary determinant-zero tail-rank `2` branch, if the
+reconstructed `x₀²` tail is nontrivial, the bundled matrix data already yields
+an exact shared-tail representative family after an internal `x₁`-shear. This
+packages the representative normalization theorem at the extractor level. -/
+theorem exists_relations_x0_tail_const_x1_hom_basis_matrix_sharedTail_shear_normalized
+    {u : RankFourVec}
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (D : X0TailConstX1HomBasisMatrixData u)
+    (hdetTail : D.A⁻¹ 0 0 * D.A⁻¹ 1 1 - D.A⁻¹ 0 1 * D.A⁻¹ 1 0 = 0)
+    (htail : D.A⁻¹ 0 0 ≠ 0 ∨ D.A⁻¹ 0 1 ≠ 0) :
+    ∃ g : ℝ, ∃ c20' c11' c02' : Fin 4 → ℝ,
+      relationPoly (mapVec (x1ShearEquiv g).toAlgHom u) c0 = x0 ∧
+      relationPoly (mapVec (x1ShearEquiv g).toAlgHom u) c20' =
+        (D.A⁻¹ 0 0) • (1 : Poly) + (D.A⁻¹ 0 1) • x1 + x0 ^ 2 ∧
+      relationPoly (mapVec (x1ShearEquiv g).toAlgHom u) c11' = x0 * x1 ∧
+      relationPoly (mapVec (x1ShearEquiv g).toAlgHom u) c02' =
+        (D.A⁻¹ 2 0 - g ^ 2 * D.A⁻¹ 0 0) • (1 : Poly) +
+          (D.A⁻¹ 2 1 - g ^ 2 * D.A⁻¹ 0 1) • x1 + x1 ^ 2 := by
+  rcases htail with h00 | h01
+  · let g : ℝ := D.A⁻¹ 1 0 / D.A⁻¹ 0 0
+    have hg10 : D.A⁻¹ 1 0 = g * D.A⁻¹ 0 0 := by
+      dsimp [g]
+      field_simp [h00]
+    have hg11 : D.A⁻¹ 1 1 = g * D.A⁻¹ 0 1 := by
+      apply mul_right_cancel₀ h00
+      dsimp [g]
+      field_simp [h00]
+      nlinarith [hdetTail]
+    rcases
+        relations_x0_affineTail_x0sq_sharedTail_x0x1_affineTail_x1sq_shear_normalized
+          (u := u) (c0 := c0) (c1 := D.c20) (c2 := D.c11) (c3 := D.c02)
+          (a := D.A⁻¹ 0 0) (b := D.A⁻¹ 0 1) (e := D.A⁻¹ 2 0) (f := D.A⁻¹ 2 1) (g := g)
+          (by simpa [relationPoly] using h0)
+          (by simpa [relationPoly] using X0TailConstX1HomBasisMatrixData.relation_c20 D)
+          (by simpa [hg10, hg11, relationPoly] using
+            X0TailConstX1HomBasisMatrixData.relation_c11 D)
+          (by simpa [relationPoly] using X0TailConstX1HomBasisMatrixData.relation_c02 D)
+      with ⟨c20', c11', c02', h0', h20', h11', h02'⟩
+    exact ⟨g, c20', c11', c02', h0', h20', h11', h02'⟩
+  · let g : ℝ := D.A⁻¹ 1 1 / D.A⁻¹ 0 1
+    have hg11 : D.A⁻¹ 1 1 = g * D.A⁻¹ 0 1 := by
+      dsimp [g]
+      field_simp [h01]
+    have hg10 : D.A⁻¹ 1 0 = g * D.A⁻¹ 0 0 := by
+      apply mul_right_cancel₀ h01
+      dsimp [g]
+      field_simp [h01]
+      nlinarith [hdetTail]
+    rcases
+        relations_x0_affineTail_x0sq_sharedTail_x0x1_affineTail_x1sq_shear_normalized
+          (u := u) (c0 := c0) (c1 := D.c20) (c2 := D.c11) (c3 := D.c02)
+          (a := D.A⁻¹ 0 0) (b := D.A⁻¹ 0 1) (e := D.A⁻¹ 2 0) (f := D.A⁻¹ 2 1) (g := g)
+          (by simpa [relationPoly] using h0)
+          (by simpa [relationPoly] using X0TailConstX1HomBasisMatrixData.relation_c20 D)
+          (by simpa [hg10, hg11, relationPoly] using
+            X0TailConstX1HomBasisMatrixData.relation_c11 D)
+          (by simpa [relationPoly] using X0TailConstX1HomBasisMatrixData.relation_c02 D)
+      with ⟨c20', c11', c02', h0', h20', h11', h02'⟩
+    exact ⟨g, c20', c11', c02', h0', h20', h11', h02'⟩
+
+/-- In the exact-affine `dim = 1`, tail-rank `2` determinant-zero branch, if
+the normalized discriminant
+\[
+  a^2 - a b f + b^2 e
+\]
+is nonzero, the shared-tail normalization theorem reduces directly to the new
+representative full-image theorem for
+\[
+  x_0,\ a+b x_1+x_0^2,\ x_0x_1,\ e+f x_1+x_1^2.
+\]
+-/
+theorem residual_eq_zero_of_relations_x0_tail_const_x1_hom_basis_matrix_sharedTail_disc_ne_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (D : X0TailConstX1HomBasisMatrixData u)
+    (hdetTail : D.A⁻¹ 0 0 * D.A⁻¹ 1 1 - D.A⁻¹ 0 1 * D.A⁻¹ 1 0 = 0)
+    (hdisc :
+      D.A⁻¹ 0 0 ^ 2 - D.A⁻¹ 0 0 * D.A⁻¹ 0 1 * D.A⁻¹ 2 1 + D.A⁻¹ 0 1 ^ 2 * D.A⁻¹ 2 0 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have htail : D.A⁻¹ 0 0 ≠ 0 ∨ D.A⁻¹ 0 1 ≠ 0 := by
+    by_contra htail
+    have htail' := not_or.mp htail
+    have h00 : D.A⁻¹ 0 0 = 0 := not_not.mp htail'.1
+    have h01 : D.A⁻¹ 0 1 = 0 := not_not.mp htail'.2
+    apply hdisc
+    simp [h00, h01]
+  rcases
+      exists_relations_x0_tail_const_x1_hom_basis_matrix_sharedTail_shear_normalized
+        (u := u) (c0 := c0) h0 D hdetTail htail
+    with ⟨g, c20', c11', c02', h0', h20', h11', h02'⟩
+  let e : Poly ≃ₐ[ℝ] Poly := x1ShearEquiv g
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have heQuad : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv (x1ShearMatrix g) (x1ShearInvMatrix g) 0 0
+      (x1Shear_mul_inv g) (x1Shear_inv_mul g) (by intro i; simp) (by intro i; simp) hq
+  have heQuadSymm : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e.symm q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv_symm (x1ShearMatrix g) (x1ShearInvMatrix g) 0 0
+      (x1Shear_mul_inv g) (x1Shear_inv_mul g) (by intro i; simp) (by intro i; simp) hq
+  have heQuartic : ∀ {q : Poly}, IsQuartic q → IsQuartic (e q) := by
+    intro q hq
+    exact isQuartic_affineEquiv (x1ShearMatrix g) (x1ShearInvMatrix g) 0 0
+      (x1Shear_mul_inv g) (x1Shear_inv_mul g) (by intro i; simp) (by intro i; simp) hq
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hdisc0 :
+      D.A⁻¹ 0 0 ^ 2 -
+          D.A⁻¹ 0 0 * D.A⁻¹ 0 1 * (D.A⁻¹ 2 1 - g ^ 2 * D.A⁻¹ 0 1) +
+            D.A⁻¹ 0 1 ^ 2 * (D.A⁻¹ 2 0 - g ^ 2 * D.A⁻¹ 0 0) ≠ 0 := by
+    have hEq :
+        D.A⁻¹ 0 0 ^ 2 -
+            D.A⁻¹ 0 0 * D.A⁻¹ 0 1 * (D.A⁻¹ 2 1 - g ^ 2 * D.A⁻¹ 0 1) +
+              D.A⁻¹ 0 1 ^ 2 * (D.A⁻¹ 2 0 - g ^ 2 * D.A⁻¹ 0 0) =
+          D.A⁻¹ 0 0 ^ 2 -
+            D.A⁻¹ 0 0 * D.A⁻¹ 0 1 * D.A⁻¹ 2 1 +
+              D.A⁻¹ 0 1 ^ 2 * D.A⁻¹ 2 0 := by
+      ring
+    exact hEq.symm ▸ hdisc
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact
+      residual_eq_zero_of_relations_x0_affineTail_x0sq_x0x1_affineTail_x1sq_disc_ne_zero
+        (B := B0) (u := mapVec e.toAlgHom u) hu0
+        (a := D.A⁻¹ 0 0) (b := D.A⁻¹ 0 1)
+        (e := D.A⁻¹ 2 0 - g ^ 2 * D.A⁻¹ 0 0) (f := D.A⁻¹ 2 1 - g ^ 2 * D.A⁻¹ 0 1)
+        hdisc0 h0' h20' h11' h02' hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+/-- Classifier-facing wrapper for the determinant-zero, nonzero-discriminant
+range-two exact-affine branch. Once the normalized tail matrix satisfies
+\[
+  \alpha_{20}\beta_{11}-\beta_{20}\alpha_{11}=0,\qquad
+  \alpha_{20}^2-\alpha_{20}\beta_{20}\beta_{02}+\beta_{20}^2\alpha_{02}\neq 0,
+\]
+Lean normalizes internally to the exact representative family and closes by the
+new direct image theorem. -/
+theorem residual_eq_zero_of_exactAffineDimOne_tailRangeTwo_sharedTail_disc_ne_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    (hnoConst : ¬ ∃ c ∈ exactAffineSubmodule u, relationPoly u c = (1 : Poly))
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange2 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 2)
+    (hdetTail :
+      (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 0 *
+          (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 1 1 -
+        (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 1 *
+          (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 1 0 = 0)
+    (hdisc :
+      (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 0 ^ 2 -
+          (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 0 *
+            (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 1 *
+            (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 2 1 +
+        (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 1 ^ 2 *
+          (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 2 0 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let D := exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2
+  exact
+    residual_eq_zero_of_relations_x0_tail_const_x1_hom_basis_matrix_sharedTail_disc_ne_zero
+      (B := B) (u := u) hu h0 D hdetTail hdisc hp hsocp
+
+/-- In the exact-affine `dim = 1`, tail-rank `2` determinant-zero branch, the
+codimension-one discriminant-zero shared-tail slice also reduces directly to
+the representative family
+\[
+  x_0,\ a+b x_1+x_0^2,\ x_0x_1,\ e+f x_1+x_1^2
+\]
+after the same internal `x₁`-shear normalization. -/
+theorem residual_eq_zero_of_relations_x0_tail_const_x1_hom_basis_matrix_sharedTail_disc_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (D : X0TailConstX1HomBasisMatrixData u)
+    (hdetTail : D.A⁻¹ 0 0 * D.A⁻¹ 1 1 - D.A⁻¹ 0 1 * D.A⁻¹ 1 0 = 0)
+    (htail : D.A⁻¹ 0 0 ≠ 0 ∨ D.A⁻¹ 0 1 ≠ 0)
+    (hdisc :
+      D.A⁻¹ 0 0 ^ 2 - D.A⁻¹ 0 0 * D.A⁻¹ 0 1 * D.A⁻¹ 2 1 + D.A⁻¹ 0 1 ^ 2 * D.A⁻¹ 2 0 = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  rcases
+      exists_relations_x0_tail_const_x1_hom_basis_matrix_sharedTail_shear_normalized
+        (u := u) (c0 := c0) h0 D hdetTail htail
+    with ⟨g, c20', c11', c02', h0', h20', h11', h02'⟩
+  let e : Poly ≃ₐ[ℝ] Poly := x1ShearEquiv g
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  let B0 : DotForm := dotTransport e B
+  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
+  have heQuad : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv (x1ShearMatrix g) (x1ShearInvMatrix g) 0 0
+      (x1Shear_mul_inv g) (x1Shear_inv_mul g) (by intro i; simp) (by intro i; simp) hq
+  have heQuadSymm : ∀ {q : Poly}, IsQuadratic q → IsQuadratic (e.symm q) := by
+    intro q hq
+    exact isQuadratic_affineEquiv_symm (x1ShearMatrix g) (x1ShearInvMatrix g) 0 0
+      (x1Shear_mul_inv g) (x1Shear_inv_mul g) (by intro i; simp) (by intro i; simp) hq
+  have heQuartic : ∀ {q : Poly}, IsQuartic q → IsQuartic (e q) := by
+    intro q hq
+    exact isQuartic_affineEquiv (x1ShearMatrix g) (x1ShearInvMatrix g) 0 0
+      (x1Shear_mul_inv g) (x1Shear_inv_mul g) (by intro i; simp) (by intro i; simp) hq
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
+  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
+    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
+  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
+    dsimp [B0]
+    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
+  have hdisc0 :
+      D.A⁻¹ 0 0 ^ 2 -
+          D.A⁻¹ 0 0 * D.A⁻¹ 0 1 * (D.A⁻¹ 2 1 - g ^ 2 * D.A⁻¹ 0 1) +
+            D.A⁻¹ 0 1 ^ 2 * (D.A⁻¹ 2 0 - g ^ 2 * D.A⁻¹ 0 0) = 0 := by
+    have hEq :
+        D.A⁻¹ 0 0 ^ 2 -
+            D.A⁻¹ 0 0 * D.A⁻¹ 0 1 * (D.A⁻¹ 2 1 - g ^ 2 * D.A⁻¹ 0 1) +
+              D.A⁻¹ 0 1 ^ 2 * (D.A⁻¹ 2 0 - g ^ 2 * D.A⁻¹ 0 0) =
+          D.A⁻¹ 0 0 ^ 2 -
+            D.A⁻¹ 0 0 * D.A⁻¹ 0 1 * D.A⁻¹ 2 1 +
+              D.A⁻¹ 0 1 ^ 2 * D.A⁻¹ 2 0 := by
+      ring
+    exact hEq.trans hdisc
+  have hres0 :
+      residual (e p) (mapVec e.toAlgHom u) = 0 := by
+    exact
+      residual_eq_zero_of_relations_x0_affineTail_x0sq_x0x1_affineTail_x1sq_disc_zero
+        (B := B0) (u := mapVec e.toAlgHom u) hu0
+        (a := D.A⁻¹ 0 0) (b := D.A⁻¹ 0 1)
+        (e := D.A⁻¹ 2 0 - g ^ 2 * D.A⁻¹ 0 0) (f := D.A⁻¹ 2 1 - g ^ 2 * D.A⁻¹ 0 1)
+        hdisc0 h0' h20' h11' h02' hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+/-- Classifier-facing wrapper for the determinant-zero, discriminant-zero
+shared-tail range-two exact-affine branch. -/
+theorem residual_eq_zero_of_exactAffineDimOne_tailRangeTwo_sharedTail_disc_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    (hnoConst : ¬ ∃ c ∈ exactAffineSubmodule u, relationPoly u c = (1 : Poly))
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange2 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 2)
+    (hdetTail :
+      (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 0 *
+          (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 1 1 -
+        (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 1 *
+          (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 1 0 = 0)
+    (htail :
+      (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 0 ≠ 0 ∨
+        (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 1 ≠ 0)
+    (hdisc :
+      (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 0 ^ 2 -
+          (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 0 *
+            (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 1 *
+            (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 2 1 +
+        (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 1 ^ 2 *
+          (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 2 0 = 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let D := exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2
+  exact
+    residual_eq_zero_of_relations_x0_tail_const_x1_hom_basis_matrix_sharedTail_disc_zero
+      (B := B) (u := u) hu h0 D hdetTail htail hdisc hp hsocp
+
 /-- Canonical choice of the tail-rank `1` homogeneous basis matrix data in the
 normalized `x₀` exact-affine `dim = 1` branch. -/
 noncomputable def exactAffineDimOneRangeOneData

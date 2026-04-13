@@ -3577,14 +3577,60 @@ affine tail on both the \(x_0^2\)- and \(x_0x_1\)-relations; one exact
 relation can now be normalized to pure \(x_0x_1\) before the final
 determinant-zero routing.
 
-So inside the determinant-zero range-two branch, the only visible rank-drop
-subfamily is the codimension-one discriminant-zero slice, and its missing
-direction is again exactly the pure \(x_1\)-axis tower. This is now the right
-formal split to target next.
+The next Lean round closes the whole \(\Delta\neq 0\) side of that normalized
+family. In \texttt{RepresentativeAffineRankOne.lean}, the new theorems
+\texttt{quartic\_in\_image\_of\_relations\_x0\_affineTail\_x0sq\_x0x1\_affineTail\_x1sq\_disc\_ne\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_affineTail\_x0sq\_x0x1\_affineTail\_x1sq\_disc\_ne\_zero}
+prove that once
+\[
+  \Delta = a^2-a b f+b^2 e
+\]
+is nonzero, the normalized family is already fully surjective. The proof does
+not route through another affine-rank-one plane chart. Instead it constructs
+five pure-\(x_1\) image polynomials
+\[
+  a+b x_1,\quad a x_1+b x_1^2,\quad e+f x_1+x_1^2,\quad
+  e x_1+f x_1^2+x_1^3,\quad e x_1^2+f x_1^3+x_1^4,
+\]
+then recovers \(1\) and \(x_1\) from the \(2\times2\) system
+\[
+  a+b x_1,\qquad (a f-b e)+a x_1,
+\]
+whose determinant is exactly \(\Delta\), and finally bootstraps \(x_1^2\),
+\(x_1^3\), and \(x_1^4\) recursively from the exact \(x_1^2\)-type relation.
+The codimension-one slice \(\Delta=0\) is now also closed formally by the new
+theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_affineTail\_x0sq\_x0x1\_affineTail\_x1sq\_disc\_zero},
+which splits into the \(a=0\) repeated-line boundary and the \(a\neq 0\)
+translated exact \(\texttt{x1PlusAX0sq/x0x1/x1sq}\) surface. So the whole
+representative determinant-zero range-two family is now closed.
+
+That reduction is now lifted all the way back to the exact-affine classifier.
+In \texttt{ExactAffineClassification.lean}, the new theorems
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_const\_x1\_hom\_basis\_matrix\_sharedTail\_disc\_ne\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeTwo\_sharedTail\_disc\_ne\_zero}
+combine the extractor package, the internal shear normalization, and the new
+representative full-image theorem. The discriminant-zero companion is now also
+available as the proof-serving lemmas
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_const\_x1\_hom\_basis\_matrix\_sharedTail\_disc\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeTwo\_sharedTail\_disc\_zero},
+but there the classifier still needs the explicit shared-tail hypothesis
+\[
+  (A^{-1})_{00}\neq 0 \;\vee\; (A^{-1})_{01}\neq 0.
+\]
+So inside the determinant-zero range-two branch, the remaining gap is no
+longer the whole codimension-one \(\Delta=0\) slice; it is only the
+complementary subcase where both normalized tail entries vanish before the
+shared-tail shear normalization can start.
 
 So the remaining exact-affine \(\dim=1\) gap is no longer on the tail-rank
-\(1\) side at all. What remains is the still-separate tail-rank \(2\) closure,
-followed by the final assembly in \texttt{TernaryQuarticProof.lean}.
+\(1\) side at all. What remains is only the separate tail-rank \(2\),
+\((A^{-1})_{00}=(A^{-1})_{01}=0\) determinant-zero range-two routing, followed
+by the final assembly in
+\texttt{TernaryQuarticProof.lean}.
 
 \section*{Planned File Map}
 \begin{itemize}
