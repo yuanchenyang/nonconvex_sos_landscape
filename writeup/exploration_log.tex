@@ -3775,27 +3775,23 @@ extractor as
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_const\_x1\_hom\_basis\_matrix\_x0sq\_disc\_ne\_zero}
 and
 \texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeTwo\_x0sq\_disc\_ne\_zero}.
-So the remaining range-two gap is now strictly the codimension-one
-complementary slice
-\[
-  (A^{-1})_{00}=(A^{-1})_{01}=0,\qquad
-  (A^{-1})_{10}^2-(A^{-1})_{10}(A^{-1})_{11}(A^{-1})_{21}+
-    (A^{-1})_{11}^2(A^{-1})_{20}=0.
-\]
+I then closed that codimension-one complementary slice itself. In
+\texttt{RepresentativeAffineRankOne.lean} the new theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x0sq\_affineTail\_x0x1\_affineTail\_x1sq\_disc\_zero}
+dispatches the exact-\(x_0^2\) family either to the repeated-line boundary
+\(d=0\) or, after an internal \(x_1\)-translation, to the exact shared-tail
+surface already solved earlier. In \texttt{ExactAffineClassification.lean} I
+lifted that through
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_const\_x1\_hom\_basis\_matrix\_x0sq\_disc\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeTwo\_x0sq\_disc\_zero},
+then bundled the full matrix-data split into
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeTwo}.
+So the exact-affine \(\dim=1\), tail-rank \(2\) branch is now fully closed.
 
 \section*{Open Subgoals}
 \begin{itemize}
-\item Route the already extracted exact-affine \(\dim=1\) tail-rank \(2\)
-package into the solved affine-rank-one theorem surfaces. The
-constant-containing \(\dim=2\) mixed-affine branch no longer needs external
-quadratic-pair extraction, the exact-affine \(\dim=2\) low-affine branch is
-closed, and the exact-affine \(\dim=1\), tail-rank \(1\) branch is fully
-closed as well. What remains is only the codimension-one determinant-zero
-range-two layer with \((A^{-1})_{00}=(A^{-1})_{01}=0\) and
-\((A^{-1})_{10}^2-(A^{-1})_{10}(A^{-1})_{11}(A^{-1})_{21}+
-  (A^{-1})_{11}^2(A^{-1})_{20}=0\) above the bundled basis-and-plane data
-\texttt{exactAffineDimOneRangeTwoData}.
-\item After that branch is settled, assemble the final theorem in
+\item Assemble the final theorem in
 \texttt{TernaryQuarticProof.lean} and rerun the verification harness.
 \end{itemize}
 

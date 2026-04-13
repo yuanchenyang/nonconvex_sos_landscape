@@ -3656,17 +3656,21 @@ level by
 \texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_const\_x1\_hom\_basis\_matrix\_x0sq\_disc\_ne\_zero}
 and
 \texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeTwo\_x0sq\_disc\_ne\_zero}.
+The complementary discriminant-zero half is now formalized too. The new
+representative theorem
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x0sq\_affineTail\_x0x1\_affineTail\_x1sq\_disc\_zero}
+closes the codimension-one exact-\(x_0^2\) family, and
+\texttt{ExactAffineClassification.lean} lifts it through
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_const\_x1\_hom\_basis\_matrix\_x0sq\_disc\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeTwo\_x0sq\_disc\_zero}.
+With the new dispatcher
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeTwo}, the whole
+normalized exact-affine \(\dim=1\), tail-rank \(2\) branch is now closed.
 
-So the remaining exact-affine \(\dim=1\) gap is no longer on the tail-rank
-\(1\) side at all, and no longer on the nonzero-discriminant part of the
-tail-rank \(2\) complement either. What remains is only the codimension-one
-tail-rank \(2\) slice
-\[
-  (A^{-1})_{00}=(A^{-1})_{01}=0,\qquad
-  (A^{-1})_{10}^2-(A^{-1})_{10}(A^{-1})_{11}(A^{-1})_{21}+
-    (A^{-1})_{11}^2(A^{-1})_{20}=0,
-\]
-followed by the final assembly in \texttt{TernaryQuarticProof.lean}.
+So the remaining exact-affine \(\dim=1\) work is no longer on either the
+tail-rank \(1\) or tail-rank \(2\) side. What remains is the final global
+assembly in \texttt{TernaryQuarticProof.lean}.
 
 \section*{Planned File Map}
 \begin{itemize}
