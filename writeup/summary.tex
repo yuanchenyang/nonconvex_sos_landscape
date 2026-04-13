@@ -1,0 +1,205 @@
+\documentclass[10pt]{article}
+\usepackage{amsmath,amssymb,array}
+\usepackage[margin=1in]{geometry}
+
+\title{Summary of the Ternary Quartic Rank-4 Proof Process}
+\date{2026-04-13}
+
+\begin{document}
+\maketitle
+
+\section*{Scope}
+This note summarizes how the theorem
+\[
+  \texttt{TernaryQuartic.ternaryQuartic\_rankFour\_no\_spurious\_socp}
+\]
+was found and formalized on the branch
+\texttt{autoproof-tq-r4/2026-04-09}. I reviewed the full branch history from
+the merge-base \texttt{0c5c820} through the proof-completing commit
+\texttt{7d4f423}; the later head \texttt{091ce22} only tweaks scripts. The
+branch contains many transport wrappers, coefficient lemmas, and bookkeeping
+commits; the list below isolates the ones that changed the proof plan or closed
+an open mathematical branch.
+
+\section*{How the Proof Evolved}
+The starting point was the abstract SOCP certificate. For a rank-$4$ factor
+$u=(u_0,u_1,u_2,u_3)$ and quartic target $p$, the residual is
+$r(u,p)=\sigma(u)-p$ with $\sigma(u)=\sum_i u_i^2$. The first decisive idea was
+to avoid searching directly for a full quartic identity and instead prove the
+vanishing of the residual whenever every SOS square $q^2$ can be decomposed
+into an admissible image term plus admissible kernel squares for the linearized
+map $A_u(v)=\sum_i u_i v_i$. Commit \texttt{2c3fa6a} introduced exactly this
+certificate layer in Lean.
+
+The first Julia pass then changed the proof search from ``look for a counterexample''
+to ``classify the only possible quotient obstructions.'' The script
+\texttt{julia/tq\_r4\_exploration\_2026\_04\_09.jl} found no numerical
+counterexample in random fixed-$u$ searches or in the $15$ monomial-basis
+subspaces, and it showed that representative image ranks were always
+$13$, $14$, or $15$. More importantly, it displayed the missing monomials and
+explicit kernel directions in the mixed-affine models. This is what turned the
+project into a branch classification problem rather than a direct dual-certificate
+translation.
+
+The next stage solved representative branches one by one. The surjective
+constant model $(1,x_0^2,x_0x_1,x_1^2)$ was easy because every quartic monomial
+lies in the image. The mixed-affine models of ranks $13$, $14$, and $15$ were
+then closed by identifying the missing quotient monomials and matching them
+with explicit kernel squares. The crucial proof-serving input was the
+six-monomial quadratic normal form from
+\texttt{QuadraticNormalForm.lean}, which let Lean read off the required
+quartic coefficients of $q^2$ exactly.
+
+At that point the proof was still only representative-level. The branch would
+not close without a way to move an arbitrary admissible factor to those solved
+models. This is why the transport layer was added next. The files
+\texttt{AffineTransform.lean}, \texttt{AffineSocpTransform.lean}, and
+\texttt{RepresentativeTransport.lean} formalized two invariances: affine
+changes of variables on the polynomial side and orthogonal mixing of the four
+factor coordinates on the coefficient-vector side. The point of this layer was
+not aesthetic. It separated the actual mathematics into a clean statement:
+produce normalization data taking $u$ to a solved representative or solved
+plane configuration, and the residual vanishes automatically.
+
+The main middle-period change in strategy was the move from rigid
+representatives to basis-invariant plane theorems. The mixed-affine branch
+showed that exact representative normalization was often unnecessarily rigid.
+Julia experiments on determinant-zero and constant-containing mixed-affine
+families indicated that the real invariant was the quadratic plane, or
+equivalently the binary quadratic annihilator of that plane. This led to the
+completion-of-squares normal forms formalized in
+\texttt{MixedAffineNormalization.lean} and then to
+\texttt{RepresentativeMixedAffinePlane.lean}, where the representative proofs
+were lifted from specific coordinates to orthonormal in-plane relation data.
+An analogous move happened for the low-affine branch in
+\texttt{RepresentativeLowAffine.lean}. This was the structural step that kept
+the final argument manageable.
+
+The last and longest phase was the exact-affine classifier in
+\texttt{ExactAffineClassification.lean}. Here the key object is the submodule
+of coefficient vectors whose relations have no homogeneous quadratic part:
+\[
+  \texttt{exactAffineSubmodule}(u)
+  = \ker(\texttt{homCoeffMap}(u)).
+\]
+Once \texttt{relationPolyLin u} is injective, rank-nullity forces the exact
+affine relation space to have dimension $1$, $2$, or $3$. Each value leads to
+a different geometric model. Dimension $3$ is the span-three branch, where one
+can reconstruct $1,x_0,x_1$ and use the abstract span-three theorem. Dimension
+$2$ splits into low-affine and mixed-affine branches depending on whether a
+constant relation exists. Dimension $1$ is the difficult affine-rank-one
+regime, where one normalizes the unique exact affine line and then studies the
+remaining quadratic plane by range, discriminant, and support.
+
+The final proof found is therefore not ``decode one SDP dual certificate and
+push it into Lean.'' It is a symbolic classification proof guided by Julia but
+closed entirely by exact affine and quadratic normal forms in Lean.
+
+\section*{Final Proof Structure}
+The root theorem in \texttt{TernaryQuarticProof.lean} has a short statement
+because all of the work is hidden in the classifier.
+
+\begin{enumerate}
+\item If \texttt{relationPolyLin u} has nontrivial kernel, then the four
+coordinates of $u$ satisfy a nontrivial scalar relation
+$\sum_i c_i u_i = 0$. For every quadratic factor $q$ in an SOS decomposition of
+$p$, the direction $w_i=c_i q$ lies in $\ker A_u$, and the abstract
+image-plus-kernel-square certificate gives $r(u,p)=0$. This closes the
+dependent case immediately.
+\item Assume now that \texttt{relationPolyLin u} is injective. Then the proof
+works with \texttt{exactAffineSubmodule(u)}.
+\item If the exact-affine dimension is $3$, Lean reconstructs exact relations
+for $1,x_0,x_1$. The span-three theorem then shows that every square $q^2$ is
+an admissible image term plus a kernel square correction of degree at most $3$,
+so the residual vanishes.
+\item If the exact-affine dimension is $2$, Lean splits according to whether
+the exact affine space contains the constant $1$. Without a constant one lands
+in the low-affine plane theorems. With a constant one lands in the mixed-affine
+plane theorems. In both cases the image ranks are $13$, $14$, or $15$, and the
+missing quotient monomials are matched by explicit kernel families already
+formalized at the plane level.
+\item If the exact-affine dimension is $1$, Lean normalizes the unique affine
+line and analyzes the complementary quadratic plane. This produces the long
+affine-rank-one branch decomposition: repeated-line, common-tail, diagonal,
+shared-tail, determinant-zero, and range-two subcases. These were resolved
+through the combined infrastructure in
+\texttt{RepresentativeAffineRankOne.lean} and
+\texttt{ExactAffineClassification.lean}.
+\item The last unresolved subcase was the constant-containing exact-affine
+dimension-$1$ branch. Commit \texttt{7d4f423} closed it by proving that once
+the complementary quadratic tail matrix is invertible, one can reconstruct
+exact relations for $x_0^2$, $x_0x_1$, and $x_1^2$ from arbitrary independent
+quadratic relations. That reduces the branch to the surjective theorem in
+\texttt{RepresentativeSurjective.lean}.
+\end{enumerate}
+
+This is why the final root proof is short: first split on whether
+\texttt{relationPolyLin u} has kernel, and in the injective case call the exact
+affine classifier.
+
+\section*{Proof-Defining Commits}
+The following commits are the ones that materially advanced the proof. I omit
+cleanup commits, documentation-only tweaks, and the many local wrapper commits
+whose purpose was to make an already chosen strategy formalizable.
+
+\small
+\begin{itemize}
+\item \texttt{2c3fa6a}, \texttt{6201318}, \texttt{402ec5f}: created the
+abstract certificate layer, recorded the first dual infeasibility evidence, and
+closed the dependent case while revealing the first rank-based split.
+\item \texttt{bc0a23e}: formalized orthogonal factor mixing and opened the
+mixed-affine representative program.
+\item \texttt{b45442a}, \texttt{47b10fc}, and the representative cluster ending
+at \texttt{2c74558}: supplied the surjective constant branch, the six-monomial
+quadratic normal form, and the rank-$13/14/15$ mixed-affine representatives.
+\item \texttt{a702d77} and \texttt{86368c4}: solved the span-three branch first
+at a representative and then in basis-free form. This removed one whole
+normalization problem from the final proof.
+\item \texttt{db938e8}, \texttt{1840fb1}, \texttt{355b7ff}: built the affine
+transport and representative pullback layer.
+\item \texttt{b5b6e37}: turned the mixed-affine Julia evidence into exact
+completion-of-squares normal forms.
+\item \texttt{c69c9b2} and \texttt{9c92cff}: replaced rigid representatives by
+basis-invariant plane theorems for the mixed-affine and low-affine branches.
+\item \texttt{0965a6f}: introduced the exact-affine classifier, which became
+the backbone of the final theorem.
+\item \texttt{77eed41}, \texttt{7d08f55}, and \texttt{50364e9}: closed the
+dimension-$2$ no-constant branch and reduced the dimension-$1$ branch to a
+short list of affine-rank-one and range-two endpoints.
+\item \texttt{7d4f423}: closed the last constant-containing dimension-$1$ gap,
+added the final surjective reconstruction lemmas, and assembled the root
+theorem.
+\end{itemize}
+\normalsize
+
+\section*{Role of the Julia Scripts}
+The Julia code was useful, but useful in a specific way. It did \emph{not}
+produce a numerical certificate that was later imported or rationalized inside
+Lean. The final proof is exact and symbolic. What the scripts provided was:
+
+\begin{enumerate}
+\item early negative evidence against counterexamples;
+\item image-rank and missing-monomial data that exposed the correct quotient
+obstructions;
+\item explicit candidate kernel families in the representative branches;
+\item branch pruning for mixed-affine and exact-affine normal forms.
+\end{enumerate}
+
+The main script, \texttt{tq\_r4\_exploration\_2026\_04\_09.jl}, changed the
+strategy outright: it showed that all monomial-basis cases looked infeasible,
+that the representative image ranks were only $13$, $14$, or $15$, and that
+the mixed-affine missing classes were exactly the monomials corrected later by
+Lean kernel families. The 2026-04-10 scripts were the next most useful. They
+tested determinant-zero and constant-perturbed families using exact coefficient
+linear algebra and showed that only a small number of annihilator normal forms
+were genuinely nonsurjective. The 2026-04-11 and 2026-04-12 scripts for the
+affine-dimension-$1$ branch were still valuable, but mainly as branch-pruning
+tools rather than sources of directly formalizable certificates.
+
+So the correct assessment is that Julia supplied strong strategic guidance,
+especially in identifying the right invariants, normal forms, and kernel
+families, but not the final proof artifact. The final theorem is an exact Lean
+classification whose shape was suggested, rather than certified, by the
+experiments.
+
+\end{document}
