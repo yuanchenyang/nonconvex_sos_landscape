@@ -23,14 +23,6 @@ private theorem monomial_fin2_eq (s : Fin 2 →₀ ℕ) (a : ℝ) :
     MvPolynomial.monomial s a = (MvPolynomial.C a * x0 ^ s 0) * x1 ^ s 1 := by
   simp [x0, x1, MvPolynomial.monomial_eq, mul_assoc]
 
-private theorem relation_map
-    (φ : Poly →ₐ[ℝ] Poly)
-    {u : RankFourVec} {c : Fin 4 → ℝ} {r : Poly}
-    (hc : ∑ i : Fin 4, c i • u i = r) :
-    ∑ i : Fin 4, c i • mapVec φ u i = φ r := by
-  have hmap := congrArg φ hc
-  simpa [mapVec, Fin.sum_univ_four] using hmap
-
 private theorem isQuadratic_C_mul_pow_pow (a : ℝ) (m n : ℕ) (h : m + n ≤ 2) :
     IsQuadratic ((MvPolynomial.C a * x0 ^ m) * x1 ^ n) := by
   calc
@@ -78,7 +70,8 @@ theorem inAdmissibleImage_of_relation_mul_low
     (hq : IsQuadratic q) :
     InAdmissibleImage u (r * q) := by
   refine ⟨relationDirection c q, relationDirection_admissible c hq, ?_⟩
-  rw [A_relationDirection, hc]
+  rw [A_relationDirection, relationPoly]
+  rw [hc]
 
 private theorem relation_linearCombination_low
     {u : RankFourVec} {c d : Fin 4 → ℝ} {r s : Poly}
@@ -496,10 +489,14 @@ private theorem coprimeAffineConstKer_inKer
     (h0 : ∑ i : Fin 4, c0 i • u i = x0)
     (h2 : ∑ i : Fin 4, c2 i • u i = x0 ^ 2) :
     InAdmissibleKer u (coprimeAffineConstKer c0 c2 t) := by
+  have h0poly : relationPoly u c0 = x0 := relationPoly_eq_of_sum h0
+  have h0neg : relationPoly u (-c0) = -x0 := by
+    rw [relationPoly_neg, h0poly]
+  have h2poly : relationPoly u c2 = x0 ^ 2 := relationPoly_eq_of_sum h2
   refine ⟨coprimeAffineConstKer_admissible c0 c2 t, ?_⟩
   rw [coprimeAffineConstKer, A_add_right_local, A_relationDirection, A_relationDirection]
-  simp [Pi.neg_apply, h0, h2]
-  ring_nf
+  rw [h0neg, h2poly]
+  simp [MvPolynomial.smul_eq_C_mul, pow_two, mul_assoc, mul_left_comm, mul_comm]
 
 private theorem coeff_m00_sigma_coprimeAffineConstKer
     (c0 c2 : Fin 4 → ℝ) (t : ℝ) :
@@ -2424,9 +2421,14 @@ private theorem diffSqAffineConstKer_inKer
     (h0 : ∑ i : Fin 4, c0 i • u i = x0)
     (h2 : ∑ i : Fin 4, c2 i • u i = x0 * x1) :
     InAdmissibleKer u (diffSqAffineConstKer c0 c2 t) := by
+  have h0poly : relationPoly u c0 = x0 := relationPoly_eq_of_sum h0
+  have h0neg : relationPoly u (-c0) = -x0 := by
+    rw [relationPoly_neg, h0poly]
+  have h2poly : relationPoly u c2 = x0 * x1 := relationPoly_eq_of_sum h2
   refine ⟨diffSqAffineConstKer_admissible c0 c2 t, ?_⟩
   rw [diffSqAffineConstKer, A_add_right_local, A_relationDirection, A_relationDirection]
-  simp [Pi.neg_apply, h0, h2]
+  rw [h0neg, h2poly]
+  simp [MvPolynomial.smul_eq_C_mul, mul_assoc, mul_left_comm, mul_comm]
 
 private theorem coeff_m00_sigma_diffSqAffineConstKer
     (c0 c2 : Fin 4 → ℝ) (t : ℝ) :
@@ -3763,10 +3765,15 @@ private theorem commonFactorAffineConstKer_inKer
           = - ∑ i : Fin 4, ((2 : ℝ) * c0 i) • u i := by
               simp
       _ = -((2 : ℝ) • x0) := by rw [h0two]
+  have h0negpoly :
+      relationPoly u (fun i => -((2 : ℝ) * c0 i)) = -((2 : ℝ) • x0) := by
+    simpa [relationPoly] using h0neg
+  have h1poly : relationPoly u c1 = x1 := relationPoly_eq_of_sum h1
+  have h3poly : relationPoly u c3 = x0 * x1 := relationPoly_eq_of_sum h3
   refine ⟨commonFactorAffineConstKer_admissible c0 c1 c3 t, ?_⟩
   rw [commonFactorAffineConstKer, A_add_right_local, A_add_right_local,
     A_relationDirection, A_relationDirection, A_relationDirection]
-  rw [h0neg, h1, h3]
+  rw [h0negpoly, h1poly, h3poly]
   have hgoal :
       -(((2 : ℝ) • x0) * (t • x1)) + (x1 * (t • x0) + (x1 * x0) * (t • (1 : Poly))) = 0 := by
     have hmul0 : ((2 : ℝ) • x0) * (t • x1) = (2 : ℝ) • (t • (x0 * x1)) := by
@@ -3863,10 +3870,14 @@ private theorem commonFactorAffineQuarticKer_inKer
     (h0 : ∑ i : Fin 4, c0 i • u i = x0)
     (h1 : ∑ i : Fin 4, c1 i • u i = x1) :
     InAdmissibleKer u (commonFactorAffineQuarticKer c0 c1 t) := by
+  have h0poly : relationPoly u c0 = x0 := relationPoly_eq_of_sum h0
+  have h0neg : relationPoly u (-c0) = -x0 := by
+    rw [relationPoly_neg, h0poly]
+  have h1poly : relationPoly u c1 = x1 := relationPoly_eq_of_sum h1
   refine ⟨commonFactorAffineQuarticKer_admissible c0 c1 t, ?_⟩
   rw [commonFactorAffineQuarticKer, A_add_right_local, A_relationDirection, A_relationDirection]
-  simp [Pi.neg_apply, h0, h1]
-  ring_nf
+  rw [h0neg, h1poly]
+  simp [MvPolynomial.smul_eq_C_mul, pow_two, mul_assoc, mul_left_comm, mul_comm]
 
 private theorem coeff_m00_sigma_commonFactorAffineQuarticKer
     (c0 c1 : Fin 4 → ℝ) (t : ℝ) :
@@ -4765,10 +4776,14 @@ private theorem commonFactorAffineQuarticKerLeft_inKer
     (h0 : ∑ i : Fin 4, c0 i • u i = x0)
     (h1 : ∑ i : Fin 4, c1 i • u i = x1) :
     InAdmissibleKer u (commonFactorAffineQuarticKerLeft c0 c1 t) := by
+  have h0poly : relationPoly u c0 = x0 := relationPoly_eq_of_sum h0
+  have h1poly : relationPoly u c1 = x1 := relationPoly_eq_of_sum h1
+  have h1neg : relationPoly u (-c1) = -x1 := by
+    rw [relationPoly_neg, h1poly]
   refine ⟨commonFactorAffineQuarticKerLeft_admissible c0 c1 t, ?_⟩
   rw [commonFactorAffineQuarticKerLeft, A_add_right_local, A_relationDirection, A_relationDirection]
-  simp [Pi.neg_apply, h0, h1]
-  ring_nf
+  rw [h1neg, h0poly]
+  simp [MvPolynomial.smul_eq_C_mul, pow_two, mul_assoc, mul_left_comm, mul_comm]
 
 private theorem coeff_m40_sigma_commonFactorAffineQuarticKerLeft
     (c0 c1 : Fin 4 → ℝ) (t : ℝ) :
@@ -10653,9 +10668,13 @@ private theorem relationLinearAffineKerLine_inKer
     (h0 : ∑ i : Fin 4, c0 i • u i = x0)
     (h2 : ∑ i : Fin 4, c2 i • u i = x0 * x1) :
     InAdmissibleKer u (relationLinearAffineKerLine c0 c2 c d) := by
+  have h0poly : relationPoly u c0 = x0 := relationPoly_eq_of_sum h0
+  have h0neg : relationPoly u (-c0) = -x0 := by
+    rw [relationPoly_neg, h0poly]
+  have h2poly : relationPoly u c2 = x0 * x1 := relationPoly_eq_of_sum h2
   refine ⟨relationLinearAffineKerLine_admissible c0 c2 c d, ?_⟩
   rw [relationLinearAffineKerLine, A_add_right_local, A_relationDirection, A_relationDirection]
-  simp [Pi.neg_apply, h0, h2]
+  rw [h0neg, h2poly]
   ring_nf
 
 private theorem coeff_m00_relationLinearAffineKerLine

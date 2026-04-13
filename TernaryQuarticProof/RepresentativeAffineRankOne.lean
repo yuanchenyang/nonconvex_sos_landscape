@@ -14,30 +14,6 @@ namespace TernaryQuartic
 
 open scoped BigOperators
 
-/-- Map an exact scalar relation through an algebra equivalence coordinatewise on
-the factor tuple. -/
-private theorem relation_map
-    (φ : Poly →ₐ[ℝ] Poly)
-    {u : RankFourVec} {c : Fin 4 → ℝ} {r : Poly}
-    (hc : ∑ i : Fin 4, c i • u i = r) :
-    ∑ i : Fin 4, c i • mapVec φ u i = φ r := by
-  have hmap := congrArg φ hc
-  simpa [mapVec, Fin.sum_univ_four] using hmap
-
-/-- The polynomial obtained from a scalar relation vector. -/
-private def relationPoly (u : RankFourVec) (c : Fin 4 → ℝ) : Poly :=
-  ∑ i : Fin 4, c i • u i
-
-private theorem relationPoly_add
-    (u : RankFourVec) (c d : Fin 4 → ℝ) :
-    relationPoly u (c + d) = relationPoly u c + relationPoly u d := by
-  simp [relationPoly, Fin.sum_univ_four, add_smul, add_assoc, add_left_comm]
-
-private theorem relationPoly_smul
-    (u : RankFourVec) (a : ℝ) (c : Fin 4 → ℝ) :
-    relationPoly u (a • c) = a • relationPoly u c := by
-  simp [relationPoly, Fin.sum_univ_four, smul_smul]
-
 private theorem relation_linearCombination_local
     {u : RankFourVec} {c d : Fin 4 → ℝ} {r s : Poly}
     (hc : relationPoly u c = r)
@@ -51,48 +27,6 @@ private theorem relation_linearCombination_local
     _ = a • relationPoly u c + b • relationPoly u d := by
           rw [relationPoly_smul, relationPoly_smul]
     _ = a • r + b • s := by rw [hc, hd]
-
-/-- The linear map sending a scalar relation vector to the corresponding
-quadratic polynomial. -/
-private def relationPolyLin (u : RankFourVec) : (Fin 4 → ℝ) →ₗ[ℝ] Poly where
-  toFun := relationPoly u
-  map_add' := relationPoly_add u
-  map_smul' := relationPoly_smul u
-
-private theorem isQuadratic_relationPoly
-    {u : RankFourVec} (hu : IsAdmissiblePoint u) (c : Fin 4 → ℝ) :
-    IsQuadratic (relationPoly u c) := by
-  have h0 : IsQuadratic (c 0 • u 0) := by
-    exact (MvPolynomial.totalDegree_smul_le (c 0) (u 0)).trans (hu 0)
-  have h1 : IsQuadratic (c 1 • u 1) := by
-    exact (MvPolynomial.totalDegree_smul_le (c 1) (u 1)).trans (hu 1)
-  have h2 : IsQuadratic (c 2 • u 2) := by
-    exact (MvPolynomial.totalDegree_smul_le (c 2) (u 2)).trans (hu 2)
-  have h3 : IsQuadratic (c 3 • u 3) := by
-    exact (MvPolynomial.totalDegree_smul_le (c 3) (u 3)).trans (hu 3)
-  have h01 : IsQuadratic (c 0 • u 0 + c 1 • u 1) := by
-    calc
-      (c 0 • u 0 + c 1 • u 1).totalDegree ≤
-          max (c 0 • u 0).totalDegree (c 1 • u 1).totalDegree :=
-        MvPolynomial.totalDegree_add _ _
-      _ ≤ 2 := max_le h0 h1
-  have h23 : IsQuadratic (c 2 • u 2 + c 3 • u 3) := by
-    calc
-      (c 2 • u 2 + c 3 • u 3).totalDegree ≤
-          max (c 2 • u 2).totalDegree (c 3 • u 3).totalDegree :=
-        MvPolynomial.totalDegree_add _ _
-      _ ≤ 2 := max_le h2 h3
-  have hsplit :
-      relationPoly u c =
-        (c 0 • u 0 + c 1 • u 1) + (c 2 • u 2 + c 3 • u 3) := by
-    simp [relationPoly, Fin.sum_univ_four, add_assoc]
-  calc
-    (relationPoly u c).totalDegree
-        ≤ max (c 0 • u 0 + c 1 • u 1).totalDegree
-            (c 2 • u 2 + c 3 • u 3).totalDegree := by
-              rw [hsplit]
-              exact MvPolynomial.totalDegree_add _ _
-    _ ≤ 2 := max_le h01 h23
 
 private theorem quadratic_eq_x1_plus_homogeneous_local
     {q : Poly}
@@ -7434,10 +7368,14 @@ private theorem affineDimOneCrossKer_inKer
     (h0 : ∑ i : Fin 4, c0 i • u i = x0)
     (h2 : ∑ i : Fin 4, c2 i • u i = x0 ^ 2) :
     InAdmissibleKer u (affineDimOneCrossKer c0 c2 t) := by
+  have h0poly : relationPoly u c0 = x0 := relationPoly_eq_of_sum h0
+  have h0neg : relationPoly u (-c0) = -x0 := by
+    rw [relationPoly_neg, h0poly]
+  have h2poly : relationPoly u c2 = x0 ^ 2 := relationPoly_eq_of_sum h2
   refine ⟨affineDimOneCrossKer_admissible c0 c2 t, ?_⟩
   rw [affineDimOneCrossKer, A_add_right_local, A_relationDirection, A_relationDirection]
-  simp [Pi.neg_apply, h0, h2]
-  ring_nf
+  rw [h0neg, h2poly]
+  simp [MvPolynomial.smul_eq_C_mul, pow_two, mul_assoc, mul_left_comm, mul_comm]
 
 private theorem coeff_m00_sigma_affineDimOneCrossKer
     (c0 c2 : Fin 4 → ℝ) (t : ℝ) :
@@ -8510,9 +8448,14 @@ private theorem affineDimOneX0sqTailKer_inKer
     (h0 : ∑ i : Fin 4, c0 i • u i = x0)
     (h2 : ∑ i : Fin 4, c2 i • u i = x0 * x1) :
     InAdmissibleKer u (affineDimOneX0sqTailKer c0 c2 t) := by
+  have h0poly : relationPoly u c0 = x0 := relationPoly_eq_of_sum h0
+  have h0neg : relationPoly u (-c0) = -x0 := by
+    rw [relationPoly_neg, h0poly]
+  have h2poly : relationPoly u c2 = x0 * x1 := relationPoly_eq_of_sum h2
   refine ⟨affineDimOneX0sqTailKer_admissible c0 c2 t, ?_⟩
   rw [affineDimOneX0sqTailKer, A_add_right_local, A_relationDirection, A_relationDirection]
-  simp [Pi.neg_apply, h0, h2]
+  rw [h0neg, h2poly]
+  simp [MvPolynomial.smul_eq_C_mul, mul_assoc, mul_left_comm, mul_comm]
 
 private theorem coeff_m00_sigma_affineDimOneX0sqTailKer
     (c0 c2 : Fin 4 → ℝ) (t : ℝ) :
@@ -9447,12 +9390,14 @@ private theorem affineDimOneSharedX1TailKer_inKer
     (h1 : ∑ i : Fin 4, c1 i • u i = x1 + a • (x0 ^ 2 : Poly))
     (h2 : ∑ i : Fin 4, c2 i • u i = x1 + b • (x0 * x1 : Poly)) :
     InAdmissibleKer u (affineDimOneSharedX1TailKer c0 c1 c2 a b t) := by
+  have h0poly : relationPoly u c0 = x0 := relationPoly_eq_of_sum h0
+  have h1poly : relationPoly u c1 = x1 + a • (x0 ^ 2 : Poly) := relationPoly_eq_of_sum h1
+  have h2negpoly : relationPoly u (-c2) = -(x1 + b • (x0 * x1 : Poly)) := by
+    rw [relationPoly_neg, relationPoly_eq_of_sum h2]
   refine ⟨affineDimOneSharedX1TailKer_admissible c0 c1 c2 a b t, ?_⟩
   rw [affineDimOneSharedX1TailKer, A_add_right_local, A_add_right_local,
     A_relationDirection, A_relationDirection, A_relationDirection]
-  have h2neg : ∑ i : Fin 4, (-c2) i • u i = -(x1 + b • (x0 * x1 : Poly)) := by
-    simpa [Pi.neg_apply] using congrArg Neg.neg h2
-  rw [h0, h1, h2neg]
+  rw [h0poly, h1poly, h2negpoly]
   simp [sub_eq_add_neg, smul_add,
     MvPolynomial.smul_eq_C_mul, mul_add, add_assoc, add_left_comm, add_comm,
     mul_assoc, mul_left_comm, mul_comm]
@@ -12268,13 +12213,13 @@ private theorem affineDimOneX1sqTailKer_inKer
     (h0 : ∑ i : Fin 4, c0 i • u i = x0)
     (h2 : ∑ i : Fin 4, c2 i • u i = x0 ^ 2) :
     InAdmissibleKer u (affineDimOneX1sqTailKer c0 c2 β γ) := by
+  have h0poly : relationPoly u c0 = x0 := relationPoly_eq_of_sum h0
+  have h0neg : relationPoly u (-c0) = -(x0 : Poly) := by
+    rw [relationPoly_neg, h0poly]
+  have h2poly : relationPoly u c2 = x0 ^ 2 := relationPoly_eq_of_sum h2
   refine ⟨affineDimOneX1sqTailKer_admissible c0 c2 β γ, ?_⟩
   rw [affineDimOneX1sqTailKer, A_add_right_local, A_relationDirection, A_relationDirection]
-  have h0neg : ∑ i : Fin 4, (-c0 i) • u i = -(x0 : Poly) := by
-    simpa using congrArg (fun q : Poly => -q) h0
-  have h0neg' : ∑ i : Fin 4, (-c0) i • u i = -(x0 : Poly) := by
-    simpa using h0neg
-  rw [h0neg', h2]
+  rw [h0neg, h2poly]
   simp [MvPolynomial.smul_eq_C_mul]
   ring_nf
 
@@ -13246,13 +13191,12 @@ private theorem affineDimOneConstX1sqKer_inKer
     (h2 : ∑ i : Fin 4, c2 i • u i = x0 ^ 2)
     (h3 : ∑ i : Fin 4, c3 i • u i = x0 * x1) :
     InAdmissibleKer u (affineDimOneConstX1sqKer c2 c3 β γ) := by
+  have h2poly : relationPoly u c2 = x0 ^ 2 := relationPoly_eq_of_sum h2
+  have h3neg : relationPoly u (-c3) = -(x0 * x1 : Poly) := by
+    rw [relationPoly_neg, relationPoly_eq_of_sum h3]
   refine ⟨affineDimOneConstX1sqKer_admissible c2 c3 β γ, ?_⟩
   rw [affineDimOneConstX1sqKer, A_add_right_local, A_relationDirection, A_relationDirection]
-  have h3neg : ∑ i : Fin 4, (-c3 i) • u i = -(x0 * x1 : Poly) := by
-    simpa using congrArg (fun q : Poly => -q) h3
-  have h3neg' : ∑ i : Fin 4, (-c3) i • u i = -(x0 * x1 : Poly) := by
-    simpa using h3neg
-  rw [h3neg', h2]
+  rw [h3neg, h2poly]
   simp [MvPolynomial.smul_eq_C_mul]
   ring_nf
 

@@ -132,6 +132,22 @@ def mapVec (φ : Poly →ₐ[ℝ] Poly) (u : RankFourVec) : RankFourVec :=
     mapVec φ u i = φ (u i) :=
   rfl
 
+/-- Map an exact scalar relation through an algebra homomorphism coordinatewise
+on the factor tuple. -/
+theorem relation_map
+    (φ : Poly →ₐ[ℝ] Poly)
+    {u : RankFourVec} {c : Fin 4 → ℝ} {r : Poly}
+    (hc : ∑ i : Fin 4, c i • u i = r) :
+    ∑ i : Fin 4, c i • mapVec φ u i = φ r := by
+  have hmap := congrArg φ hc
+  simpa [mapVec, Fin.sum_univ_four] using hmap
+
+theorem relationPoly_map
+    (φ : Poly →ₐ[ℝ] Poly) (u : RankFourVec) (c : Fin 4 → ℝ) :
+    relationPoly (mapVec φ u) c = φ (relationPoly u c) := by
+  rw [relationPoly]
+  exact relation_map φ (u := u) (c := c) (r := relationPoly u c) rfl
+
 theorem isAdmissiblePoint_mapVec_affineHom
     (A : Matrix (Fin 2) (Fin 2) ℝ) (b : Fin 2 → ℝ) {u : RankFourVec}
     (hu : IsAdmissiblePoint u) :

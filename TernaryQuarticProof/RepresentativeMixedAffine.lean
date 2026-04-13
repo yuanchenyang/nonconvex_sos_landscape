@@ -3019,7 +3019,9 @@ private theorem relationCrossTailKer_inKer
     _ = (1 : Poly) * (t • (x1 ^ 2 : Poly)) +
           (x0 * x1) * ((a * t) • (x0 : Poly)) +
             (x1 + a • (x0 ^ 2 : Poly)) * ((-t) • (x1 : Poly)) := by
-              rw [A_relationDirection, h0, A_relationDirection, h2, A_relationDirection, h3]
+              rw [A_relationDirection, relationPoly, h0,
+                A_relationDirection, relationPoly, h2,
+                A_relationDirection, relationPoly, h3]
     _ = 0 := by
           simp [MvPolynomial.smul_eq_C_mul]
           ring_nf

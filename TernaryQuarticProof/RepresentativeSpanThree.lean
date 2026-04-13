@@ -28,14 +28,6 @@ private theorem monomial_fin2_eq (s : Fin 2 →₀ ℕ) (a : ℝ) :
     MvPolynomial.monomial s a = (MvPolynomial.C a * x0 ^ s 0) * x1 ^ s 1 := by
   simp [x0, x1, MvPolynomial.monomial_eq, mul_assoc]
 
-private theorem relation_map
-    (φ : Poly →ₐ[ℝ] Poly)
-    {u : RankFourVec} {c : Fin 4 → ℝ} {r : Poly}
-    (hc : ∑ i : Fin 4, c i • u i = r) :
-    ∑ i : Fin 4, c i • mapVec φ u i = φ r := by
-  have hmap := congrArg φ hc
-  simpa [mapVec, Fin.sum_univ_four] using hmap
-
 private theorem isQuadratic_C_mul_pow_pow (a : ℝ) (m n : ℕ) (h : m + n ≤ 2) :
     IsQuadratic ((MvPolynomial.C a * x0 ^ m) * x1 ^ n) := by
   calc
@@ -657,13 +649,13 @@ private theorem monomial_image_of_contains_aff1
   by_cases hsmall : e0 + e1 ≤ 2
   · refine ⟨relationDirection c0 ((MvPolynomial.C a * x0 ^ e0) * x1 ^ e1),
       relationDirection_admissible c0 (isQuadratic_C_mul_pow_pow a e0 e1 hsmall), ?_⟩
-    rw [A_relationDirection, h0, monomial_fin2_eq]
+    rw [A_relationDirection, relationPoly, h0, monomial_fin2_eq]
     simp [e0, e1]
   · by_cases hx1 : 1 ≤ e0
     · refine ⟨relationDirection c1 ((MvPolynomial.C a * x0 ^ (e0 - 1)) * x1 ^ e1),
         relationDirection_admissible c1
           (isQuadratic_C_mul_pow_pow a (e0 - 1) e1 (by omega)), ?_⟩
-      rw [A_relationDirection, h1, monomial_fin2_eq]
+      rw [A_relationDirection, relationPoly, h1, monomial_fin2_eq]
       simp [e0, e1]
       calc
         x0 * ((MvPolynomial.C a * x0 ^ (e0 - 1)) * x1 ^ e1)
@@ -677,7 +669,7 @@ private theorem monomial_image_of_contains_aff1
       refine ⟨relationDirection c2 ((MvPolynomial.C a * x0 ^ e0) * x1 ^ (e1 - 1)),
         relationDirection_admissible c2
           (isQuadratic_C_mul_pow_pow a e0 (e1 - 1) (by omega)), ?_⟩
-      rw [A_relationDirection, h2, monomial_fin2_eq]
+      rw [A_relationDirection, relationPoly, h2, monomial_fin2_eq]
       simp [e0, e1]
       calc
         x1 * ((MvPolynomial.C a * x0 ^ e0) * x1 ^ (e1 - 1))
@@ -748,10 +740,22 @@ private theorem spanThreeAff1KerRaw_inKer
     (h1 : ∑ i : Fin 4, c1 i • u i = x0)
     (h2 : ∑ i : Fin 4, c2 i • u i = x1) :
     InAdmissibleKer u (spanThreeAff1KerRaw c0 c1 c2 q) := by
+  have h0poly : relationPoly u c0 = (1 : Poly) := by
+    simpa [relationPoly] using h0
+  have h0neg : relationPoly u (-c0) = (-1 : Poly) := by
+    calc
+      relationPoly u (-c0) = relationPoly u ((-1 : ℝ) • c0) := by simp
+      _ = (-1 : ℝ) • relationPoly u c0 := relationPoly_smul u (-1) c0
+      _ = (-1 : Poly) := by rw [h0poly]; simp
+  have h1poly : relationPoly u c1 = x0 := by
+    simpa [relationPoly] using h1
+  have h2poly : relationPoly u c2 = x1 := by
+    simpa [relationPoly] using h2
   refine ⟨spanThreeAff1KerRaw_admissible c0 c1 c2 q, ?_⟩
   rw [spanThreeAff1KerRaw, A_add_right_local, A_add_right_local,
     A_relationDirection, A_relationDirection, A_relationDirection]
-  simp [Pi.neg_apply, h0, h1, h2, homPart_eq_x0_mul_A_add_x1_mul_B]
+  rw [h0neg, h1poly, h2poly, homPart_eq_x0_mul_A_add_x1_mul_B]
+  ring
 
 private theorem spanThreeAff1Ker_component_remainder_totalDegree_le_three
     (c0 c1 c2 : Fin 4 → ℝ) (q : Poly) (i : Fin 4) :

@@ -13,25 +13,6 @@ namespace TernaryQuartic
 
 open scoped BigOperators
 
-/-- The polynomial corresponding to a scalar relation vector on a rank-4 point. -/
-def relationPoly (u : RankFourVec) (c : Fin 4 → ℝ) : Poly :=
-  ∑ i : Fin 4, c i • u i
-
-private theorem relationPoly_add
-    (u : RankFourVec) (c d : Fin 4 → ℝ) :
-    relationPoly u (c + d) = relationPoly u c + relationPoly u d := by
-  simp [relationPoly, Fin.sum_univ_four, add_smul, add_assoc, add_left_comm]
-
-private theorem relationPoly_smul
-    (u : RankFourVec) (a : ℝ) (c : Fin 4 → ℝ) :
-    relationPoly u (a • c) = a • relationPoly u c := by
-  simp [relationPoly, Fin.sum_univ_four, smul_smul]
-
-private theorem relationPoly_map
-    (φ : Poly →ₐ[ℝ] Poly) (u : RankFourVec) (c : Fin 4 → ℝ) :
-    relationPoly (mapVec φ u) c = φ (relationPoly u c) := by
-  simp [relationPoly, mapVec, Fin.sum_univ_four]
-
 private theorem affineHom_translate_affineLine_left
     (r0 r1 : ℝ) :
     affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1] (affineLinePoly r0 1 0) = x0 := by
@@ -41,47 +22,6 @@ private theorem affineHom_translate_affineLine_right
     (r0 r1 : ℝ) :
     affineHom (1 : Matrix (Fin 2) (Fin 2) ℝ) ![-r0, -r1] (affineLinePoly r1 0 1) = x1 := by
   simp [affineLinePoly, affineHom, affineImage, x0, x1, Fin.sum_univ_two]
-
-/-- Linear map version of `relationPoly`. -/
-def relationPolyLin (u : RankFourVec) : (Fin 4 → ℝ) →ₗ[ℝ] Poly where
-  toFun := relationPoly u
-  map_add' := relationPoly_add u
-  map_smul' := relationPoly_smul u
-
-private theorem isQuadratic_relationPoly
-    {u : RankFourVec} (hu : IsAdmissiblePoint u) (c : Fin 4 → ℝ) :
-    IsQuadratic (relationPoly u c) := by
-  have h0 : IsQuadratic (c 0 • u 0) := by
-    exact (MvPolynomial.totalDegree_smul_le (c 0) (u 0)).trans (hu 0)
-  have h1 : IsQuadratic (c 1 • u 1) := by
-    exact (MvPolynomial.totalDegree_smul_le (c 1) (u 1)).trans (hu 1)
-  have h2 : IsQuadratic (c 2 • u 2) := by
-    exact (MvPolynomial.totalDegree_smul_le (c 2) (u 2)).trans (hu 2)
-  have h3 : IsQuadratic (c 3 • u 3) := by
-    exact (MvPolynomial.totalDegree_smul_le (c 3) (u 3)).trans (hu 3)
-  have h01 : IsQuadratic (c 0 • u 0 + c 1 • u 1) := by
-    calc
-      (c 0 • u 0 + c 1 • u 1).totalDegree ≤
-          max (c 0 • u 0).totalDegree (c 1 • u 1).totalDegree := by
-            exact MvPolynomial.totalDegree_add _ _
-      _ ≤ 2 := max_le h0 h1
-  have h23 : IsQuadratic (c 2 • u 2 + c 3 • u 3) := by
-    calc
-      (c 2 • u 2 + c 3 • u 3).totalDegree ≤
-          max (c 2 • u 2).totalDegree (c 3 • u 3).totalDegree := by
-            exact MvPolynomial.totalDegree_add _ _
-      _ ≤ 2 := max_le h2 h3
-  have hsplit :
-      relationPoly u c =
-        (c 0 • u 0 + c 1 • u 1) + (c 2 • u 2 + c 3 • u 3) := by
-    simp [relationPoly, Fin.sum_univ_four, add_assoc]
-  calc
-    (relationPoly u c).totalDegree ≤
-        max (c 0 • u 0 + c 1 • u 1).totalDegree
-          (c 2 • u 2 + c 3 • u 3).totalDegree := by
-            rw [hsplit]
-            exact MvPolynomial.totalDegree_add _ _
-    _ ≤ 2 := max_le h01 h23
 
 private theorem isQuadratic_linearCombination_local
     {p q : Poly} (hp : IsQuadratic p) (hq : IsQuadratic q) (a b : ℝ) :

@@ -50,16 +50,6 @@ private theorem isQuadratic_linearCombination_local
         ((MvPolynomial.totalDegree_smul_le a p).trans hp)
         ((MvPolynomial.totalDegree_smul_le b q).trans hq)
 
-/-- Turn any explicit scalar relation `∑ cᵢ uᵢ = r` into an admissible image
-statement for `r * q`. -/
-theorem inAdmissibleImage_of_relation_mul
-    {u : RankFourVec} {c : Fin 4 → ℝ} {r q : Poly}
-    (hc : ∑ i : Fin 4, c i • u i = r)
-    (hq : IsQuadratic q) :
-    InAdmissibleImage u (r * q) := by
-  refine ⟨relationDirection c q, relationDirection_admissible c hq, ?_⟩
-  rw [A_relationDirection, hc]
-
 /-- Linear combination of two explicit scalar relations. -/
 private theorem relation_linearCombination
     {u : RankFourVec} {c d : Fin 4 → ℝ} {r s : Poly}
@@ -85,15 +75,6 @@ private theorem relation_smul
     ∑ i : Fin 4, (a * c i) • u i = a • (∑ i : Fin 4, c i • u i) := by
       simp [Finset.smul_sum, smul_smul]
     _ = a • r := by rw [hc]
-
-/-- Transport an explicit scalar relation through an algebra homomorphism. -/
-private theorem relation_map
-    (φ : Poly →ₐ[ℝ] Poly)
-    {u : RankFourVec} {c : Fin 4 → ℝ} {r : Poly}
-    (hc : ∑ i : Fin 4, c i • u i = r) :
-    ∑ i : Fin 4, c i • mapVec φ u i = φ r := by
-  have hmap := congrArg φ hc
-  simpa [mapVec, Fin.sum_univ_four] using hmap
 
 /-- Correct a quadratic relation by subtracting its affine `1,x0` tail. -/
 private theorem relation_sub_const_x0
@@ -127,36 +108,6 @@ theorem relation_mixedAffineTailHomLine
   simpa [mixedAffineTailHomLine, sub_eq_add_neg, smul_smul, mul_comm, mul_left_comm, mul_assoc]
     using relation_linearCombination h2 h3
       (MvPolynomial.coeff m01 q3) (-MvPolynomial.coeff m01 q2)
-
-/-- The polynomial obtained from a coefficient-space relation vector. -/
-private def relationPoly (u : RankFourVec) (c : Fin 4 → ℝ) : Poly :=
-  ∑ i : Fin 4, c i • u i
-
-private theorem relationPoly_add
-    (u : RankFourVec) (c d : Fin 4 → ℝ) :
-    relationPoly u (c + d) = relationPoly u c + relationPoly u d := by
-  simp [relationPoly, Fin.sum_univ_four, add_smul, add_assoc, add_left_comm]
-
-private theorem relationPoly_smul
-    (u : RankFourVec) (a : ℝ) (c : Fin 4 → ℝ) :
-    relationPoly u (a • c) = a • relationPoly u c := by
-  simp [relationPoly, Fin.sum_univ_four, smul_smul]
-
-private theorem isQuadratic_relationPoly
-    {u : RankFourVec} (hu : IsAdmissiblePoint u) (c : Fin 4 → ℝ) :
-    IsQuadratic (relationPoly u c) := by
-  have h0 : IsQuadratic (c 0 • u 0) := isQuadratic_smul_local (c 0) (hu 0)
-  have h1 : IsQuadratic (c 1 • u 1) := isQuadratic_smul_local (c 1) (hu 1)
-  have h2 : IsQuadratic (c 2 • u 2) := isQuadratic_smul_local (c 2) (hu 2)
-  have h3 : IsQuadratic (c 3 • u 3) := isQuadratic_smul_local (c 3) (hu 3)
-  have h01 : IsQuadratic (c 0 • u 0 + c 1 • u 1) :=
-    by
-      simpa using isQuadratic_linearCombination_local h0 h1 1 1
-  have h23 : IsQuadratic (c 2 • u 2 + c 3 • u 3) :=
-    by
-      simpa using isQuadratic_linearCombination_local h2 h3 1 1
-  simpa [relationPoly, Fin.sum_univ_four, add_assoc, add_left_comm, add_comm] using
-    isQuadratic_linearCombination_local h01 h23 1 1
 
 /-- The pair of normalized constant and `x₀` coefficients of a relation. -/
 private def constX0CoeffMap (u : RankFourVec) :
@@ -4898,9 +4849,15 @@ private theorem rank14PlaneKerDet_inKer
       _ = x1 * (MvPolynomial.C c * x0) + x1 * (MvPolynomial.C d * x1) := by
             ring
       _ = x1 * (MvPolynomial.C c * x0 + MvPolynomial.C d * x1) := by ring
+  have h2poly : relationPoly u c2 = x1 * homLine a b := by
+    rw [relationPoly_eq_of_sum h2, hh2]
+  have h2neg : relationPoly u (-c2) = -(x1 * homLine a b) := by
+    rw [relationPoly_neg, h2poly]
+  have h3poly : relationPoly u c3 = x1 * homLine c d := by
+    rw [relationPoly_eq_of_sum h3, hh3]
   rw [rank14PlaneKerDet, A_add_right_local, A_relationDirection, A_relationDirection]
-  simp [Pi.neg_apply, h2, h3, hh2, hh3, homLine, mul_assoc, mul_left_comm,
-    mul_comm]
+  rw [h2neg, h3poly]
+  simp [homLine, mul_assoc, mul_left_comm, mul_comm]
 
 private theorem coeff_m40_sigma_rank14PlaneKerDet
     (c2 c3 : Fin 4 → ℝ) (a b c d t : ℝ)
@@ -4939,10 +4896,14 @@ private theorem rank14PlaneKer_inKer
     (h2 : ∑ i : Fin 4, c2 i • u i = x0 * x1)
     (h3 : ∑ i : Fin 4, c3 i • u i = x1 ^ 2) :
     InAdmissibleKer u (rank14PlaneKer c2 c3 t) := by
+  have h2poly : relationPoly u c2 = x0 * x1 := relationPoly_eq_of_sum h2
+  have h2neg : relationPoly u (-c2) = -(x0 * x1) := by
+    rw [relationPoly_neg, h2poly]
+  have h3poly : relationPoly u c3 = x1 ^ 2 := relationPoly_eq_of_sum h3
   refine ⟨rank14PlaneKer_admissible c2 c3 t, ?_⟩
   rw [rank14PlaneKer, A_add_right_local, A_relationDirection, A_relationDirection]
-  simp [Pi.neg_apply, h2, h3]
-  ring_nf
+  rw [h2neg, h3poly]
+  simp [MvPolynomial.smul_eq_C_mul, pow_two, mul_assoc, mul_left_comm, mul_comm]
 
 private theorem coeff_m40_sigma_rank14PlaneKer
     (c2 c3 : Fin 4 → ℝ) (t : ℝ)
@@ -5777,9 +5738,15 @@ private theorem rank13PlaneKerDet_inKer
       _ = x0 * (MvPolynomial.C c * x0) + x0 * (MvPolynomial.C d * x1) := by
             ring
       _ = x0 * (MvPolynomial.C c * x0 + MvPolynomial.C d * x1) := by ring
+  have h2poly : relationPoly u c2 = x0 * homLine a b := by
+    rw [relationPoly_eq_of_sum h2, hh2]
+  have h2neg : relationPoly u (-c2) = -(x0 * homLine a b) := by
+    rw [relationPoly_neg, h2poly]
+  have h3poly : relationPoly u c3 = x0 * homLine c d := by
+    rw [relationPoly_eq_of_sum h3, hh3]
   rw [rank13PlaneKerDet, A_add_right_local, A_relationDirection, A_relationDirection]
-  simp [Pi.neg_apply, h2, h3, hh2, hh3, homLine, mixedAffineRank13Line, mul_assoc,
-    mul_left_comm, mul_comm]
+  rw [h2neg, h3poly]
+  simp [homLine, mixedAffineRank13Line, mul_assoc, mul_left_comm, mul_comm]
 
 private theorem coeff_m03_sigma_rank13PlaneKerDet
     (c2 c3 : Fin 4 → ℝ) (a b c d beta gamma : ℝ)
@@ -5854,10 +5821,14 @@ private theorem rank13PlaneKer_inKer
     (h2 : ∑ i : Fin 4, c2 i • u i = x0 ^ 2)
     (h3 : ∑ i : Fin 4, c3 i • u i = x0 * x1) :
     InAdmissibleKer u (rank13PlaneKer c2 c3 b c) := by
+  have h2poly : relationPoly u c2 = x0 ^ 2 := relationPoly_eq_of_sum h2
+  have h2neg : relationPoly u (-c2) = -(x0 ^ 2) := by
+    rw [relationPoly_neg, h2poly]
+  have h3poly : relationPoly u c3 = x0 * x1 := relationPoly_eq_of_sum h3
   refine ⟨rank13PlaneKer_admissible c2 c3 b c, ?_⟩
   rw [rank13PlaneKer, A_add_right_local, A_relationDirection, A_relationDirection]
-  simp [Pi.neg_apply, h2, h3]
-  ring_nf
+  rw [h2neg, h3poly]
+  simp [pow_two, mul_assoc, mul_left_comm]
 
 private theorem coeff_m03_sigma_rank13PlaneKer
     (c2 c3 : Fin 4 → ℝ) (b c : ℝ)

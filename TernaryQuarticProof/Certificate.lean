@@ -36,6 +36,75 @@ dependent case. -/
 def relationDirection (c : Fin 4 → ℝ) (q : Poly) : RankFourVec :=
   fun i => c i • q
 
+/-- The polynomial produced by a scalar relation vector on a rank-4 point. -/
+def relationPoly (u : RankFourVec) (c : Fin 4 → ℝ) : Poly :=
+  ∑ i : Fin 4, c i • u i
+
+theorem relationPoly_add
+    (u : RankFourVec) (c d : Fin 4 → ℝ) :
+    relationPoly u (c + d) = relationPoly u c + relationPoly u d := by
+  simp [relationPoly, Fin.sum_univ_four, add_smul, add_assoc, add_left_comm]
+
+theorem relationPoly_smul
+    (u : RankFourVec) (a : ℝ) (c : Fin 4 → ℝ) :
+    relationPoly u (a • c) = a • relationPoly u c := by
+  simp [relationPoly, Fin.sum_univ_four, smul_smul]
+
+theorem relationPoly_eq_of_sum
+    {u : RankFourVec} {c : Fin 4 → ℝ} {r : Poly}
+    (hc : ∑ i : Fin 4, c i • u i = r) :
+    relationPoly u c = r := by
+  simpa [relationPoly] using hc
+
+theorem relationPoly_neg
+    (u : RankFourVec) (c : Fin 4 → ℝ) :
+    relationPoly u (-c) = -relationPoly u c := by
+  calc
+    relationPoly u (-c) = relationPoly u ((-1 : ℝ) • c) := by simp
+    _ = (-1 : ℝ) • relationPoly u c := relationPoly_smul u (-1) c
+    _ = -relationPoly u c := by simp
+
+/-- Linear map version of `relationPoly`. -/
+def relationPolyLin (u : RankFourVec) : (Fin 4 → ℝ) →ₗ[ℝ] Poly where
+  toFun := relationPoly u
+  map_add' := relationPoly_add u
+  map_smul' := relationPoly_smul u
+
+theorem isQuadratic_relationPoly
+    {u : RankFourVec} (hu : IsAdmissiblePoint u) (c : Fin 4 → ℝ) :
+    IsQuadratic (relationPoly u c) := by
+  have h0 : IsQuadratic (c 0 • u 0) := by
+    exact (MvPolynomial.totalDegree_smul_le (c 0) (u 0)).trans (hu 0)
+  have h1 : IsQuadratic (c 1 • u 1) := by
+    exact (MvPolynomial.totalDegree_smul_le (c 1) (u 1)).trans (hu 1)
+  have h2 : IsQuadratic (c 2 • u 2) := by
+    exact (MvPolynomial.totalDegree_smul_le (c 2) (u 2)).trans (hu 2)
+  have h3 : IsQuadratic (c 3 • u 3) := by
+    exact (MvPolynomial.totalDegree_smul_le (c 3) (u 3)).trans (hu 3)
+  have h01 : IsQuadratic (c 0 • u 0 + c 1 • u 1) := by
+    calc
+      (c 0 • u 0 + c 1 • u 1).totalDegree ≤
+          max (c 0 • u 0).totalDegree (c 1 • u 1).totalDegree :=
+        MvPolynomial.totalDegree_add _ _
+      _ ≤ 2 := max_le h0 h1
+  have h23 : IsQuadratic (c 2 • u 2 + c 3 • u 3) := by
+    calc
+      (c 2 • u 2 + c 3 • u 3).totalDegree ≤
+          max (c 2 • u 2).totalDegree (c 3 • u 3).totalDegree :=
+        MvPolynomial.totalDegree_add _ _
+      _ ≤ 2 := max_le h2 h3
+  have hsplit :
+      relationPoly u c =
+        (c 0 • u 0 + c 1 • u 1) + (c 2 • u 2 + c 3 • u 3) := by
+    simp [relationPoly, Fin.sum_univ_four, add_assoc]
+  calc
+    (relationPoly u c).totalDegree
+        ≤ max (c 0 • u 0 + c 1 • u 1).totalDegree
+            (c 2 • u 2 + c 3 • u 3).totalDegree := by
+              rw [hsplit]
+              exact MvPolynomial.totalDegree_add _ _
+    _ ≤ 2 := max_le h01 h23
+
 private theorem dot_sum_left {B : DotForm} (ws : Finset RankFourVec) (p : Poly) :
     B (ws.sum sigma) p = ws.sum (fun w => B (sigma w) p) := by
   classical
@@ -307,18 +376,28 @@ theorem relationDirection_admissible (c : Fin 4 → ℝ) {q : Poly}
   exact (MvPolynomial.totalDegree_smul_le (c i) q).trans hq
 
 theorem A_relationDirection (u : RankFourVec) (c : Fin 4 → ℝ) (q : Poly) :
-    A u (relationDirection c q) = (∑ i : Fin 4, c i • u i) * q := by
+    A u (relationDirection c q) = relationPoly u c * q := by
   calc
     A u (relationDirection c q) = ∑ i : Fin 4, (c i • u i) * q := by
       simp [A, relationDirection, mul_comm]
-    _ = (∑ i : Fin 4, c i • u i) * q := by
+    _ = relationPoly u c * q := by
+      rw [relationPoly]
       rw [Finset.sum_mul]
 
 theorem A_relationDirection_eq_zero (u : RankFourVec) (c : Fin 4 → ℝ) (q : Poly)
-    (hrel : ∑ i : Fin 4, c i • u i = 0) :
+    (hrel : relationPoly u c = 0) :
     A u (relationDirection c q) = 0 := by
   rw [A_relationDirection, hrel]
   simp
+
+theorem inAdmissibleImage_of_relation_mul
+    {u : RankFourVec} {c : Fin 4 → ℝ} {r q : Poly}
+    (hc : ∑ i : Fin 4, c i • u i = r)
+    (hq : IsQuadratic q) :
+    InAdmissibleImage u (r * q) := by
+  refine ⟨relationDirection c q, relationDirection_admissible c hq, ?_⟩
+  rw [A_relationDirection, relationPoly]
+  rw [hc]
 
 theorem sigma_relationDirection (c : Fin 4 → ℝ) (q : Poly) :
     sigma (relationDirection c q) = (∑ i : Fin 4, (c i)^2) • (q ^ 2) := by

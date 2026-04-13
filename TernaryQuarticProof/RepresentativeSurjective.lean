@@ -34,7 +34,8 @@ theorem inAdmissibleImage_of_relation_mul_const
     (hq : IsQuadratic q) :
     InAdmissibleImage u (r * q) := by
   refine ⟨relationDirection c q, relationDirection_admissible c hq, ?_⟩
-  rw [A_relationDirection, hc]
+  rw [A_relationDirection, relationPoly]
+  rw [hc]
 
 private theorem relation_linearCombination_three
     {u : RankFourVec} {c : Fin 3 → Fin 4 → ℝ} {q : Fin 3 → Poly}
