@@ -17,15 +17,6 @@ def InAdmissibleImage (u : RankFourVec) (q : Poly) : Prop :=
 def InAdmissibleKer (u w : RankFourVec) : Prop :=
   IsAdmissibleDirection w ∧ A u w = 0
 
-/-- The admissible image-plus-cone condition needed by the SOCP certificate
-argument. Unlike the univariate reference, every witness here must remain
-quadratic. -/
-def InAdmissibleImagePlusSigmaKerCone (u : RankFourVec) (q : Poly) : Prop :=
-  ∃ v : RankFourVec, ∃ ws : Finset RankFourVec,
-    IsAdmissibleDirection v ∧
-      (∀ w ∈ ws, InAdmissibleKer u w) ∧
-      q = A u v + ws.sum sigma
-
 /-- The residual at `u` is orthogonal to the admissible image of `uImg`. -/
 def ImageOrthogonalResidual (B : DotForm) (p : Poly) (u uImg : RankFourVec) : Prop :=
   ∀ q : Poly, InAdmissibleImage uImg q → B q (residual p u) = 0
@@ -363,11 +354,6 @@ theorem inAdmissibleKer_neg (u : RankFourVec) {w : RankFourVec}
     (hw : InAdmissibleKer u w) :
     InAdmissibleKer u (-w) := by
   simpa using inAdmissibleKer_smul u (-1) hw
-
-theorem inAdmissibleKer_sub (u : RankFourVec) {w z : RankFourVec}
-    (hw : InAdmissibleKer u w) (hz : InAdmissibleKer u z) :
-    InAdmissibleKer u (w - z) := by
-  simpa [sub_eq_add_neg] using inAdmissibleKer_add u hw (inAdmissibleKer_neg u hz)
 
 theorem relationDirection_admissible (c : Fin 4 → ℝ) {q : Poly}
     (hq : IsQuadratic q) :

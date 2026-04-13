@@ -7571,30 +7571,6 @@ theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne
       · exact residual_eq_zero_of_exactAffineDimOne_tailRangeOne_h10_ne_h20_ne_r0_ne_zero
           (B := B) (u := u) hu hrelker hdim h0 hrange1 h00_ne h10 h20 hr0 hp hsocp
 
-/-- Backward-compatible corollary of the full tail-rank `1` exact-affine
-closure theorem. -/
-theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne_resolvedRegion
-    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
-    {u : RankFourVec}
-    (hu : IsAdmissiblePoint u)
-    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
-    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
-    {c0 : Fin 4 → ℝ}
-    (h0 : relationPoly u c0 = x0)
-    (hrange1 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 1)
-    (_hresolved :
-      (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).SimpleBranch ∨
-        ((exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 0 0 ≠ 0 ∧
-          (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 0 0 *
-              (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 2 0 -
-            ((exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 1 0) ^ 2 = 0))
-    {p : Poly}
-    (hp : IsSOSQuartic p)
-    (hsocp : IsSOCP B p u) :
-    residual p u = 0 := by
-  exact residual_eq_zero_of_exactAffineDimOne_tailRangeOne
-    (B := B) (u := u) hu hrelker hdim h0 hrange1 hp hsocp
-
 /-- If the exact affine relation space has dimension one and contains no exact
 constant relation, then it contains a genuine nonconstant affine line. -/
 theorem exists_exactAffine_affineLine_of_dimOne_noConst

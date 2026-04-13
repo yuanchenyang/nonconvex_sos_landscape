@@ -43,12 +43,6 @@ theorem isPositiveDefinite_dotTransport
   ext i
   simp [mapVec]
 
-theorem mapVec_comp
-    (φ ψ : Poly →ₐ[ℝ] Poly) (u : RankFourVec) :
-    mapVec φ (mapVec ψ u) = mapVec (φ.comp ψ) u := by
-  ext i
-  rfl
-
 @[simp] theorem mapVec_symm_mapVec (e : Poly ≃ₐ[ℝ] Poly) (u : RankFourVec) :
     mapVec e.symm.toAlgHom (mapVec e.toAlgHom u) = u := by
   ext i

@@ -148,13 +148,6 @@ theorem relationPoly_map
   rw [relationPoly]
   exact relation_map φ (u := u) (c := c) (r := relationPoly u c) rfl
 
-theorem isAdmissiblePoint_mapVec_affineHom
-    (A : Matrix (Fin 2) (Fin 2) ℝ) (b : Fin 2 → ℝ) {u : RankFourVec}
-    (hu : IsAdmissiblePoint u) :
-    IsAdmissiblePoint (mapVec (affineHom A b) u) := by
-  intro i
-  exact isQuadratic_affineHom A b (hu i)
-
 theorem A_mapVec
     (φ : Poly →ₐ[ℝ] Poly) (u v : RankFourVec) :
     A (mapVec φ u) (mapVec φ v) = φ (A u v) := by

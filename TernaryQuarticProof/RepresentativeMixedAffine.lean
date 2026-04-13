@@ -132,16 +132,6 @@ theorem mixedAffineRank15Rep_admissible : IsAdmissiblePoint mixedAffineRank15Rep
   · simp [mixedAffineRank15Rep, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
   · simp [mixedAffineRank15Rep, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
 
-theorem residual_eq_zero_mixedAffineRank15Rep
-    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
-    {p : Poly}
-    (hp : IsSOSQuartic p)
-    (hsocp : IsSOCP B p mixedAffineRank15Rep) :
-    residual p mixedAffineRank15Rep = 0 := by
-  exact residual_eq_zero_of_in_admissible_image
-    (B := B) mixedAffineRank15Rep_admissible hsocp
-    (quartic_in_image_mixedAffineRank15Rep hp.1)
-
 /-- A determinant-zero tailed mixed-affine representative whose image is still
 surjective as soon as the `x₀²` tail is nonzero. -/
 def mixedAffineTailX1SqRep (a : ℝ) : RankFourVec :=
@@ -1435,55 +1425,6 @@ private theorem isQuartic_sigma_of_admissible_local {u : RankFourVec}
     simpa using MvPolynomial.totalDegree_pow (u i) 2
   have hi2 : (u i).totalDegree ≤ 2 := hu i
   omega
-
-theorem residual_eq_zero_mixedAffineRank14Rep
-    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
-    {p : Poly}
-    (hp : IsSOSQuartic p)
-    (hsocp : IsSOCP B p mixedAffineRank14Rep) :
-    residual p mixedAffineRank14Rep = 0 := by
-  rcases hp with ⟨hpquartic, k, qs, hqdeg, hpq⟩
-  let s : ℝ := ∑ i : Fin k, (MvPolynomial.coeff m20 (qs i)) ^ 2
-  let t : ℝ := Real.sqrt s
-  let w : RankFourVec := t • mixedAffineRank14KerBase
-  have hsnonneg : 0 ≤ s := by
-    dsimp [s]
-    positivity
-  have hp40 : MvPolynomial.coeff m40 p = s := by
-    rw [hpq, MvPolynomial.coeff_sum]
-    refine Finset.sum_congr rfl ?_
-    intro i hi
-    exact coeff_m40_sq_of_quadratic (qs i) (hqdeg i)
-  have hwker : InAdmissibleKer mixedAffineRank14Rep w := mixedAffineRank14Ker_scaled_inKer t
-  have hw40 : MvPolynomial.coeff m40 (sigma w) = s := by
-    change MvPolynomial.coeff m40 (sigma (t • mixedAffineRank14KerBase)) = s
-    calc
-      MvPolynomial.coeff m40 (sigma (t • mixedAffineRank14KerBase)) = t ^ 2 := by
-        exact coeff_m40_sigma_mixedAffineRank14KerScaled t
-      _ = s := by
-        dsimp [t]
-        rw [Real.sq_sqrt hsnonneg]
-  have hquartic_sub : IsQuartic (p - sigma w) := by
-    calc
-      (p - sigma w).totalDegree ≤ max p.totalDegree (sigma w).totalDegree := by
-        exact MvPolynomial.totalDegree_sub _ _
-      _ ≤ 4 := by
-        exact max_le hpquartic (isQuartic_sigma_of_admissible_local hwker.1)
-  have h40_sub : MvPolynomial.coeff m40 (p - sigma w) = 0 := by
-    rw [MvPolynomial.coeff_sub, hp40, hw40]
-    ring
-  have himg : InAdmissibleImage mixedAffineRank14Rep (p - sigma w) :=
-    quartic_in_image_mixedAffineRank14Rep_of_coeff_m40_zero hquartic_sub h40_sub
-  refine admissible_image_plus_cone_residual_eq_zero (B := B)
-    (u := mixedAffineRank14Rep) (uImg := mixedAffineRank14Rep)
-    mixedAffineRank14Rep_admissible hsocp
-    (imageOrthogonalResidual_self (B := B) hsocp.1) ?_
-  refine ⟨p - sigma w, {w}, himg, ?_, ?_⟩
-  · intro w' hw'
-    have hw' : w' = w := by simpa using hw'
-    subst hw'
-    exact hwker
-  · simp [w, sub_eq_add_neg]
 
 /-- The quartic monomials `x₁³` and `x₁⁴` in the `(x₀,x₁)` coordinates. -/
 abbrev m03 : Fin 2 →₀ ℕ := Finsupp.single 1 3

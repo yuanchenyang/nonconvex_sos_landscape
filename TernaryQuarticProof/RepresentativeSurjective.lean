@@ -297,26 +297,6 @@ theorem quartic_in_image_of_relations_const_x0sq_x0x1_x1sq
         exact hsub t (by simp [ht])
   exact hP (fun s hs => hs)
 
-theorem residual_eq_zero_constQuadRep
-    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
-    {p : Poly}
-    (hp : IsSOSQuartic p)
-    (hsocp : IsSOCP B p constQuadRep) :
-    residual p constQuadRep = 0 := by
-  refine residual_eq_zero_of_in_admissible_image (B := B)
-    (u := constQuadRep) ?_ hsocp ?_
-  · intro i
-    fin_cases i
-    · simp [constQuadRep, x0, x1, IsQuadratic]
-    · simp [constQuadRep, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
-    ·
-      calc
-        (x0 * x1).totalDegree ≤ x0.totalDegree + x1.totalDegree := by
-          exact MvPolynomial.totalDegree_mul _ _
-        _ = 2 := by simp [x0, x1]
-    · simp [constQuadRep, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
-  · exact quartic_in_image_constQuadRep hp.1
-
 theorem residual_eq_zero_of_relations_const_x0sq_x0x1_x1sq
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}
