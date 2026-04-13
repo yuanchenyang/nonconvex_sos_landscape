@@ -4713,6 +4713,76 @@ theorem residual_eq_zero_of_exactAffineDimOne_tailRangeTwo_sharedTail_disc_zero
     residual_eq_zero_of_relations_x0_tail_const_x1_hom_basis_matrix_sharedTail_disc_zero
       (B := B) (u := u) hu h0 D hdetTail htail hdisc hp hsocp
 
+/-- In the determinant-zero tail-rank `2` branch, if the reconstructed `x₀²`
+tail vanishes entirely, then `c20` is already an exact `x₀²` relation. The
+remaining affine tails live only on the reconstructed `x₀x₁` and `x₁²`
+relations, so a nonzero discriminant reduces directly to the exact-`x₀²`
+representative family. -/
+theorem residual_eq_zero_of_relations_x0_tail_const_x1_hom_basis_matrix_x0sq_disc_ne_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (D : X0TailConstX1HomBasisMatrixData u)
+    (h00 : D.A⁻¹ 0 0 = 0)
+    (h01 : D.A⁻¹ 0 1 = 0)
+    (hdisc :
+      D.A⁻¹ 1 0 ^ 2 - D.A⁻¹ 1 0 * D.A⁻¹ 1 1 * D.A⁻¹ 2 1 + D.A⁻¹ 1 1 ^ 2 * D.A⁻¹ 2 0 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have h20 : relationPoly u D.c20 = x0 ^ 2 := by
+    rw [X0TailConstX1HomBasisMatrixData.relation_c20]
+    simp [h00, h01]
+  exact
+    residual_eq_zero_of_relations_x0_x0sq_affineTail_x0x1_affineTail_x1sq_disc_ne_zero
+      (B := B) (u := u) hu
+      (c0 := c0) (c1 := D.c20) (c2 := D.c11) (c3 := D.c02)
+      (c := D.A⁻¹ 1 0) (d := D.A⁻¹ 1 1) (e := D.A⁻¹ 2 0) (f := D.A⁻¹ 2 1)
+      hdisc
+      (by simpa [relationPoly] using h0)
+      (by simpa [relationPoly] using h20)
+      (by simpa [relationPoly] using X0TailConstX1HomBasisMatrixData.relation_c11 D)
+      (by simpa [relationPoly] using X0TailConstX1HomBasisMatrixData.relation_c02 D)
+      hp hsocp
+
+/-- Classifier-facing wrapper for the determinant-zero range-two branch with
+`(A^{-1})_{00} = (A^{-1})_{01} = 0`. In this chart the extracted `c20`
+relation is already exact `x₀²`, so a nonzero discriminant on the remaining
+two affine tails closes directly by the new exact-`x₀²` representative
+theorem. -/
+theorem residual_eq_zero_of_exactAffineDimOne_tailRangeTwo_x0sq_disc_ne_zero
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    (hnoConst : ¬ ∃ c ∈ exactAffineSubmodule u, relationPoly u c = (1 : Poly))
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange2 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 2)
+    (h00 :
+      (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 0 = 0)
+    (h01 :
+      (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 0 1 = 0)
+    (hdisc :
+      (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 1 0 ^ 2 -
+          (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 1 0 *
+            (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 1 1 *
+            (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 2 1 +
+        (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 1 1 ^ 2 *
+          (exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2).A⁻¹ 2 0 ≠ 0)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let D := exactAffineDimOneRangeTwoData hu hrelker hdim hnoConst h0 hrange2
+  exact
+    residual_eq_zero_of_relations_x0_tail_const_x1_hom_basis_matrix_x0sq_disc_ne_zero
+      (B := B) (u := u) hu h0 D h00 h01 hdisc hp hsocp
+
 /-- Canonical choice of the tail-rank `1` homogeneous basis matrix data in the
 normalized `x₀` exact-affine `dim = 1` branch. -/
 noncomputable def exactAffineDimOneRangeOneData

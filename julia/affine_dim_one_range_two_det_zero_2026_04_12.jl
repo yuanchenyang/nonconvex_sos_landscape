@@ -135,4 +135,43 @@ function affine_dim_one_range_two_det_zero_probe(; samples = 200)
     result
 end
 
+function affine_dim_one_range_two_x0sq_probe()
+    vals = [-3.0, -2.0, -1.0, -0.5, 0.5, 1.0, 2.0, 3.0]
+
+    x0 = quad_coeffs(a10 = 1.0)
+    x0sq = quad_coeffs(a20 = 1.0)
+    nonzero_disc = NamedTuple[]
+    zero_disc = NamedTuple[]
+
+    for c in vals, d in vals, e in vals, f in vals
+        u = [
+            x0,
+            x0sq,
+            quad_coeffs(a00 = c, a01 = d, a11 = 1.0),
+            quad_coeffs(a00 = e, a01 = f, a02 = 1.0),
+        ]
+
+        exact_dim = exact_affine_dim(u)
+        exact_dim == 1 || continue
+
+        disc = c^2 - c * d * f + d^2 * e
+        record = (; c, d, e, f, disc, exact_affine_dim = exact_dim, image_rank_missing(u)...)
+
+        if abs(disc) < 1e-8
+            push!(zero_disc, record)
+        else
+            push!(nonzero_disc, record)
+        end
+    end
+
+    result = (
+        vals = vals,
+        nonzero_disc = summarize(nonzero_disc),
+        zero_disc = summarize(zero_disc),
+    )
+    println("affine_dim_one_range_two_x0sq_probe = ", result)
+    result
+end
+
 affine_dim_one_range_two_det_zero_probe()
+affine_dim_one_range_two_x0sq_probe()

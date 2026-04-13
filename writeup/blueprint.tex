@@ -3621,16 +3621,52 @@ but there the classifier still needs the explicit shared-tail hypothesis
 \[
   (A^{-1})_{00}\neq 0 \;\vee\; (A^{-1})_{01}\neq 0.
 \]
-So inside the determinant-zero range-two branch, the remaining gap is no
-longer the whole codimension-one \(\Delta=0\) slice; it is only the
-complementary subcase where both normalized tail entries vanish before the
-shared-tail shear normalization can start.
+The complementary chart with
+\[
+  (A^{-1})_{00}=(A^{-1})_{01}=0
+\]
+is now pinned down numerically too. The same script
+\texttt{julia/affine\_dim\_one\_range\_two\_det\_zero\_2026\_04\_12.jl} also
+records the exact-\(x_0^2\) family
+\[
+  x_0,\qquad x_0^2,\qquad c+d x_1+x_0x_1,\qquad e+f x_1+x_1^2,
+\]
+with discriminant
+\[
+  \Delta' = c^2-c d f+d^2 e.
+\]
+The retained output is
+\[
+\texttt{nonzero\_disc}=(\texttt{count}=3976,\ \texttt{ranks}=[15],\
+  \texttt{missing}=[[]]),\qquad
+\texttt{zero\_disc}=(\texttt{count}=120,\ \texttt{ranks}=[14],\
+  \texttt{missing}=[[(0,0),(0,1),(0,2),(0,3),(0,4)]]).
+\]
+So the complementary range-two chart shows the same codimension-one constants
+defect only on the discriminant-zero slice.
+
+That nonzero-discriminant complementary branch is now formalized as well. In
+\texttt{RepresentativeAffineRankOne.lean}, the new theorems
+\texttt{quartic\_in\_image\_of\_relations\_x0\_x0sq\_affineTail\_x0x1\_affineTail\_x1sq\_disc\_ne\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_x0sq\_affineTail\_x0x1\_affineTail\_x1sq\_disc\_ne\_zero}
+close the exact representative family above \(\Delta' \neq 0\). In
+\texttt{ExactAffineClassification.lean}, this is lifted back to the extractor
+level by
+\texttt{residual\_eq\_zero\_of\_relations\_x0\_tail\_const\_x1\_hom\_basis\_matrix\_x0sq\_disc\_ne\_zero}
+and
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeTwo\_x0sq\_disc\_ne\_zero}.
 
 So the remaining exact-affine \(\dim=1\) gap is no longer on the tail-rank
-\(1\) side at all. What remains is only the separate tail-rank \(2\),
-\((A^{-1})_{00}=(A^{-1})_{01}=0\) determinant-zero range-two routing, followed
-by the final assembly in
-\texttt{TernaryQuarticProof.lean}.
+\(1\) side at all, and no longer on the nonzero-discriminant part of the
+tail-rank \(2\) complement either. What remains is only the codimension-one
+tail-rank \(2\) slice
+\[
+  (A^{-1})_{00}=(A^{-1})_{01}=0,\qquad
+  (A^{-1})_{10}^2-(A^{-1})_{10}(A^{-1})_{11}(A^{-1})_{21}+
+    (A^{-1})_{11}^2(A^{-1})_{20}=0,
+\]
+followed by the final assembly in \texttt{TernaryQuarticProof.lean}.
 
 \section*{Planned File Map}
 \begin{itemize}
