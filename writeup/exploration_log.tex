@@ -3791,8 +3791,28 @@ So the exact-affine \(\dim=1\), tail-rank \(2\) branch is now fully closed.
 
 \section*{Open Subgoals}
 \begin{itemize}
-\item Assemble the final theorem in
-\texttt{TernaryQuarticProof.lean} and rerun the verification harness.
+\item None. The last remaining exact-affine \(\dim=1\) branch was the case that
+already contains an exact constant relation. I closed it in
+\texttt{RepresentativeSurjective.lean} with
+\texttt{quartic\_in\_image\_of\_relations\_const\_affineTail\_x0sq\_affineTail\_x0x1\_affineTail\_x1sq}
+and its residual corollary, then lifted it in
+\texttt{ExactAffineClassification.lean} via
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_contains\_one}. After that I
+bundled the whole independent-coordinate case into
+\texttt{residual\_eq\_zero\_of\_relationPolyLin\_ker\_eq\_bot}, which splits on
+\(\dim(\texttt{exactAffineSubmodule}\;u)\in\{1,2,3\}\) and on whether an exact
+constant relation is present in the lower-dimensional cases.
+\item I then added the final theorem
+\texttt{ternaryQuartic\_rankFour\_no\_spurious\_socp} to
+\texttt{TernaryQuarticProof.lean}. Its proof is the minimal top-level split:
+if \(\ker(\texttt{relationPolyLin}\;u)\neq \bot\), extract a nonzero exact
+zero relation and apply
+\texttt{residual\_eq\_zero\_of\_constant\_relation}; otherwise use
+\texttt{residual\_eq\_zero\_of\_relationPolyLin\_ker\_eq\_bot}.
+\item The verification harness now succeeds:
+\texttt{./scripts/verify\_formalization.sh} exposes
+\texttt{TernaryQuartic.ternaryQuartic\_rankFour\_no\_spurious\_socp} and reports
+axioms \([\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound}]\).
 \end{itemize}
 
 \end{document}

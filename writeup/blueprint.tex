@@ -3668,9 +3668,36 @@ With the new dispatcher
 \texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_tailRangeTwo}, the whole
 normalized exact-affine \(\dim=1\), tail-rank \(2\) branch is now closed.
 
-So the remaining exact-affine \(\dim=1\) work is no longer on either the
-tail-rank \(1\) or tail-rank \(2\) side. What remains is the final global
-assembly in \texttt{TernaryQuarticProof.lean}.
+The only remaining exact-affine \(\dim=1\) surface after that is the branch
+which already contains an exact constant relation. This is now closed by a
+direct surjectivity theorem in \texttt{RepresentativeSurjective.lean}:
+\texttt{quartic\_in\_image\_of\_relations\_const\_affineTail\_x0sq\_affineTail\_x0x1\_affineTail\_x1sq}
+and its residual corollary prove that
+\[
+  1,\qquad a_{20}x_0+b_{20}x_1+x_0^2,\qquad
+  a_{11}x_0+b_{11}x_1+x_0x_1,\qquad
+  a_{02}x_0+b_{02}x_1+x_1^2
+\]
+already span every quartic monomial. In
+\texttt{ExactAffineClassification.lean}, the theorem
+\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_contains\_one} recovers this
+normal form from the exact-affine line by taking the kernel of the constant
+coefficient functional, proving that its homogeneous coefficient map is an
+isomorphism onto \((x_0^2,x_0x_1,x_1^2)\), and dispatching to the surjective
+representative theorem.
+
+The independent-coordinate side is then bundled by the new theorem
+\texttt{residual\_eq\_zero\_of\_relationPolyLin\_ker\_eq\_bot}. It splits on
+\(\dim(\texttt{exactAffineSubmodule}\;u)\in\{1,2,3\}\), and in dimensions \(1\)
+and \(2\) it further splits on whether an exact constant relation is present.
+Every resulting branch now routes to an already-formalized theorem surface.
+Finally \texttt{TernaryQuarticProof.lean} proves
+\texttt{ternaryQuartic\_rankFour\_no\_spurious\_socp} by the top-level split:
+if \(\ker(\texttt{relationPolyLin}\;u)\neq \bot\), then an exact zero relation
+exists and \texttt{residual\_eq\_zero\_of\_constant\_relation} applies; if the
+kernel is trivial, the new bundling theorem handles the full independent case.
+So the formal proof is complete, and
+\texttt{./scripts/verify\_formalization.sh} now succeeds.
 
 \section*{Planned File Map}
 \begin{itemize}
@@ -3681,8 +3708,12 @@ image-plus-cone certificate.
 factor-coordinate invariance.
 \item \texttt{TernaryQuarticProof/QuadraticNormalForm.lean}: finite-support
 normal form for two-variable quadratics;
-\item one future algebra module for the remaining representative image and
-image-plus-kernel decompositions;
+\item \texttt{TernaryQuarticProof/RepresentativeSurjective.lean}: the fully
+surjective representative families, including the exact constant branch;
+\item \texttt{TernaryQuarticProof/RepresentativeAffineRankOne.lean}: the
+affine-rank-one endpoint surfaces and chart reducers;
+\item \texttt{TernaryQuarticProof/ExactAffineClassification.lean}: the exact
+affine classifier and its final global independent-case dispatcher;
 \item \texttt{TernaryQuarticProof.lean}: final theorem assembly.
 \end{itemize}
 

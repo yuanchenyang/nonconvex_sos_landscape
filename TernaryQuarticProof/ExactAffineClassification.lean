@@ -173,6 +173,14 @@ private def x0CoeffMap (u : RankFourVec) : (Fin 4 → ℝ) →ₗ[ℝ] ℝ where
   map_smul' a c := by
     simp [relationPoly_smul, MvPolynomial.coeff_smul]
 
+/-- The constant coefficient of a scalar relation. -/
+private def constCoeffMap (u : RankFourVec) : (Fin 4 → ℝ) →ₗ[ℝ] ℝ where
+  toFun c := MvPolynomial.coeff m00 (relationPoly u c)
+  map_add' c d := by
+    simp [relationPoly_add, MvPolynomial.coeff_add]
+  map_smul' a c := by
+    simp [relationPoly_smul, MvPolynomial.coeff_smul]
+
 /-- Constant and `x₁` tail coefficients inside the kernel of the `x₀`-coefficient
 map. -/
 private def x0TailCoeffMap (u : RankFourVec) :
@@ -714,6 +722,209 @@ theorem residual_eq_zero_of_exactAffineDimTwo_contains_one
   exact residual_eq_zero_of_relations_const_affineLine
     (B := B) (u := u) (c0 := c0) (c1 := c1)
     hu (by simpa [relationPoly] using h0) (by simpa [relationPoly] using h1) hs hp hsocp
+
+/-- If the exact affine relation space has dimension one and contains `1`, then
+the zero-constant relations supply a full homogeneous quadratic basis with only
+linear tails. The surjective-image certificate closes this branch directly. -/
+theorem residual_eq_zero_of_exactAffineDimOne_contains_one
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (_hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    (hc0 : c0 ∈ exactAffineSubmodule u)
+    (h0 : relationPoly u c0 = (1 : Poly))
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  have hc0ne : c0 ≠ 0 := by
+    intro hc0zero
+    have hcoeff := congrArg (MvPolynomial.coeff m00) h0
+    simp [relationPoly, hc0zero] at hcoeff
+  let c0E : exactAffineSubmodule u := ⟨c0, hc0⟩
+  have hc0E_ne : c0E ≠ 0 := by
+    intro hc0E
+    exact hc0ne (Subtype.ext_iff.mp hc0E)
+  let K : Submodule ℝ (Fin 4 → ℝ) := LinearMap.ker (constCoeffMap u)
+  have hsurjConst : Function.Surjective (constCoeffMap u) := by
+    intro t
+    refine ⟨t • c0, ?_⟩
+    have hc000 : constCoeffMap u c0 = 1 := by
+      simpa [constCoeffMap] using congrArg (MvPolynomial.coeff m00) h0
+    rw [LinearMap.map_smul, hc000]
+    simp
+  have hrangeTopConst : LinearMap.range (constCoeffMap u) = ⊤ :=
+    LinearMap.range_eq_top.mpr hsurjConst
+  have hdom4 : Module.finrank ℝ (Fin 4 → ℝ) = 4 := by
+    calc
+      Module.finrank ℝ (Fin 4 → ℝ) = Fintype.card (Fin 4) :=
+        Module.finrank_fintype_fun_eq_card (R := ℝ) (η := Fin 4)
+      _ = 4 := by decide
+  have hrangeConst : Module.finrank ℝ (LinearMap.range (constCoeffMap u)) = 1 := by
+    rw [hrangeTopConst, finrank_top]
+    simp
+  have hKdim : Module.finrank ℝ K = 3 := by
+    have hsum := LinearMap.finrank_range_add_finrank_ker (constCoeffMap u)
+    have hsum' : 1 + Module.finrank ℝ K = 4 := by
+      simpa [K, hrangeConst, hdom4] using hsum
+    omega
+  let homK : K →ₗ[ℝ] (Fin 3 → ℝ) := (homCoeffMap u).comp K.subtype
+  have hhomKBot : LinearMap.ker homK = ⊥ := by
+    ext x
+    constructor
+    · intro hx
+      rw [Submodule.mem_bot]
+      have hxHom : homCoeffMap u ((x : K) : Fin 4 → ℝ) = 0 := by
+        simpa [homK] using hx
+      have hxAff : ((x : K) : Fin 4 → ℝ) ∈ exactAffineSubmodule u := by
+        simpa [exactAffineSubmodule] using hxHom
+      obtain ⟨t, ht⟩ :=
+        exists_smul_eq_of_finrank_eq_one hdim hc0E_ne ⟨((x : K) : Fin 4 → ℝ), hxAff⟩
+      have htvec : t • c0 = ((x : K) : Fin 4 → ℝ) := by
+        simpa using congrArg Subtype.val ht
+      have hc000 : constCoeffMap u c0 = 1 := by
+        simpa [constCoeffMap] using congrArg (MvPolynomial.coeff m00) h0
+      have hxconstzero : constCoeffMap u ((x : K) : Fin 4 → ℝ) = 0 := by
+        change ((x : K) : Fin 4 → ℝ) ∈ LinearMap.ker (constCoeffMap u)
+        exact (x : K).2
+      have htzero : t = 0 := by
+        have htcoeff :
+            constCoeffMap u (t • c0) = constCoeffMap u ((x : K) : Fin 4 → ℝ) := by
+          exact congrArg (constCoeffMap u) htvec
+        rw [LinearMap.map_smul, hc000] at htcoeff
+        simp [hxconstzero] at htcoeff
+        exact htcoeff
+      apply Subtype.ext
+      calc
+        ((x : K) : Fin 4 → ℝ) = t • c0 := by simpa using htvec.symm
+        _ = 0 := by simp [htzero]
+    · intro hx
+      rw [Submodule.mem_bot] at hx
+      subst x
+      simp [homK]
+  have hhomKinj : Function.Injective homK := LinearMap.ker_eq_bot.mp hhomKBot
+  have hrangeHomK : Module.finrank ℝ (LinearMap.range homK) = 3 := by
+    simpa [hKdim] using LinearMap.finrank_range_of_inj hhomKinj
+  have hcodom3 : Module.finrank ℝ (Fin 3 → ℝ) = 3 := by
+    calc
+      Module.finrank ℝ (Fin 3 → ℝ) = Fintype.card (Fin 3) :=
+        Module.finrank_fintype_fun_eq_card (R := ℝ) (η := Fin 3)
+      _ = 3 := by decide
+  have hrangeTopHomK : LinearMap.range homK = ⊤ := by
+    have hEq :
+        Module.finrank ℝ (LinearMap.range homK) = Module.finrank ℝ (Fin 3 → ℝ) := by
+      calc
+        Module.finrank ℝ (LinearMap.range homK) = 3 := hrangeHomK
+        _ = Module.finrank ℝ (Fin 3 → ℝ) := hcodom3.symm
+    exact Submodule.eq_top_of_finrank_eq hEq
+  obtain ⟨d20K, hd20K⟩ := LinearMap.range_eq_top.mp hrangeTopHomK ![1, 0, 0]
+  obtain ⟨d11K, hd11K⟩ := LinearMap.range_eq_top.mp hrangeTopHomK ![0, 1, 0]
+  obtain ⟨d02K, hd02K⟩ := LinearMap.range_eq_top.mp hrangeTopHomK ![0, 0, 1]
+  let q20 : Poly := relationPoly u (d20K : Fin 4 → ℝ)
+  let q11 : Poly := relationPoly u (d11K : Fin 4 → ℝ)
+  let q02 : Poly := relationPoly u (d02K : Fin 4 → ℝ)
+  let a20 : ℝ := MvPolynomial.coeff m10 q20
+  let b20 : ℝ := MvPolynomial.coeff m01 q20
+  let a11 : ℝ := MvPolynomial.coeff m10 q11
+  let b11 : ℝ := MvPolynomial.coeff m01 q11
+  let a02 : ℝ := MvPolynomial.coeff m10 q02
+  let b02 : ℝ := MvPolynomial.coeff m01 q02
+  have hq20 : IsQuadratic q20 := isQuadratic_relationPoly hu (d20K : Fin 4 → ℝ)
+  have hq11 : IsQuadratic q11 := isQuadratic_relationPoly hu (d11K : Fin 4 → ℝ)
+  have hq02 : IsQuadratic q02 := isQuadratic_relationPoly hu (d02K : Fin 4 → ℝ)
+  have h20_00 : MvPolynomial.coeff m00 q20 = 0 := by
+    change constCoeffMap u ((d20K : K) : Fin 4 → ℝ) = 0
+    exact d20K.2
+  have h20_20 : MvPolynomial.coeff m20 q20 = 1 := by
+    have h := congrArg (fun z : Fin 3 → ℝ => z 0) hd20K
+    simpa [homK, q20] using h
+  have h20_11 : MvPolynomial.coeff m11 q20 = 0 := by
+    have h := congrArg (fun z : Fin 3 → ℝ => z 1) hd20K
+    simpa [homK, q20] using h
+  have h20_02 : MvPolynomial.coeff m02 q20 = 0 := by
+    have h := congrArg (fun z : Fin 3 → ℝ => z 2) hd20K
+    simpa [homK, q20] using h
+  have h11_00 : MvPolynomial.coeff m00 q11 = 0 := by
+    change constCoeffMap u ((d11K : K) : Fin 4 → ℝ) = 0
+    exact d11K.2
+  have h11_20 : MvPolynomial.coeff m20 q11 = 0 := by
+    have h := congrArg (fun z : Fin 3 → ℝ => z 0) hd11K
+    simpa [homK, q11] using h
+  have h11_11 : MvPolynomial.coeff m11 q11 = 1 := by
+    have h := congrArg (fun z : Fin 3 → ℝ => z 1) hd11K
+    simpa [homK, q11] using h
+  have h11_02 : MvPolynomial.coeff m02 q11 = 0 := by
+    have h := congrArg (fun z : Fin 3 → ℝ => z 2) hd11K
+    simpa [homK, q11] using h
+  have h02_00 : MvPolynomial.coeff m00 q02 = 0 := by
+    change constCoeffMap u ((d02K : K) : Fin 4 → ℝ) = 0
+    exact d02K.2
+  have h02_20 : MvPolynomial.coeff m20 q02 = 0 := by
+    have h := congrArg (fun z : Fin 3 → ℝ => z 0) hd02K
+    simpa [homK, q02] using h
+  have h02_11 : MvPolynomial.coeff m11 q02 = 0 := by
+    have h := congrArg (fun z : Fin 3 → ℝ => z 1) hd02K
+    simpa [homK, q02] using h
+  have h02_02 : MvPolynomial.coeff m02 q02 = 1 := by
+    have h := congrArg (fun z : Fin 3 → ℝ => z 2) hd02K
+    simpa [homK, q02] using h
+  have h20 :
+      relationPoly u (d20K : Fin 4 → ℝ) = a20 • x0 + b20 • x1 + x0 ^ 2 := by
+    calc
+      relationPoly u (d20K : Fin 4 → ℝ)
+          =
+            quadForm
+              (MvPolynomial.coeff m00 q20)
+              (MvPolynomial.coeff m10 q20)
+              (MvPolynomial.coeff m01 q20)
+              (MvPolynomial.coeff m20 q20)
+              (MvPolynomial.coeff m11 q20)
+              (MvPolynomial.coeff m02 q20) := by
+                exact quadratic_eq_quadForm hq20
+      _ = a20 • x0 + b20 • x1 + x0 ^ 2 := by
+            rw [quadForm_eq_explicit, h20_00, h20_20, h20_11, h20_02]
+            simp [a20, b20, x0, x1, MvPolynomial.smul_eq_C_mul]
+  have h11 :
+      relationPoly u (d11K : Fin 4 → ℝ) = a11 • x0 + b11 • x1 + (x0 * x1 : Poly) := by
+    calc
+      relationPoly u (d11K : Fin 4 → ℝ)
+          =
+            quadForm
+              (MvPolynomial.coeff m00 q11)
+              (MvPolynomial.coeff m10 q11)
+              (MvPolynomial.coeff m01 q11)
+              (MvPolynomial.coeff m20 q11)
+              (MvPolynomial.coeff m11 q11)
+              (MvPolynomial.coeff m02 q11) := by
+                exact quadratic_eq_quadForm hq11
+      _ = a11 • x0 + b11 • x1 + (x0 * x1 : Poly) := by
+            rw [quadForm_eq_explicit, h11_00, h11_20, h11_11, h11_02]
+            simp [a11, b11, x0, x1, MvPolynomial.smul_eq_C_mul]
+  have h02 :
+      relationPoly u (d02K : Fin 4 → ℝ) = a02 • x0 + b02 • x1 + x1 ^ 2 := by
+    calc
+      relationPoly u (d02K : Fin 4 → ℝ)
+          =
+            quadForm
+              (MvPolynomial.coeff m00 q02)
+              (MvPolynomial.coeff m10 q02)
+              (MvPolynomial.coeff m01 q02)
+              (MvPolynomial.coeff m20 q02)
+              (MvPolynomial.coeff m11 q02)
+              (MvPolynomial.coeff m02 q02) := by
+                exact quadratic_eq_quadForm hq02
+      _ = a02 • x0 + b02 • x1 + x1 ^ 2 := by
+            rw [quadForm_eq_explicit, h02_00, h02_20, h02_11, h02_02]
+            simp [a02, b02, x0, x1, MvPolynomial.smul_eq_C_mul]
+  exact residual_eq_zero_of_relations_const_affineTail_x0sq_affineTail_x0x1_affineTail_x1sq
+    (B := B) (u := u) hu
+    (by simpa [relationPoly] using h0)
+    (by simpa [relationPoly] using h20)
+    (by simpa [relationPoly] using h11)
+    (by simpa [relationPoly] using h02)
+    hp hsocp
 
 /-- If the exact affine relation space has dimension two and contains no exact
 constant relation, then it canonically supplies an affine pair with linear
@@ -7602,6 +7813,33 @@ private theorem exactAffineDimOne_mapVec_affineLineEquiv
     exact Nat.succ_le_of_lt (Nat.pos_of_ne_zero hfin_ne_zero)
   exact le_antisymm hle hge
 
+private theorem relationPolyLin_ker_eq_bot_mapVec_affineLineEquiv
+    {u : RankFourVec}
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    {c a b : ℝ}
+    (hs : a ^ 2 + b ^ 2 ≠ 0) :
+    LinearMap.ker
+        (relationPolyLin
+          (mapVec (affineLineEquiv c a b hs).toAlgHom u)) = ⊥ := by
+  let e : Poly ≃ₐ[ℝ] Poly := affineLineEquiv c a b hs
+  ext x
+  constructor
+  · intro hx
+    rw [Submodule.mem_bot]
+    have hx0' :
+        relationPoly (mapVec e.toAlgHom u) x = 0 := by
+      simpa [relationPolyLin, relationPoly] using hx
+    have hx0 : relationPoly u x = 0 := by
+      apply e.injective
+      simpa [e, relationPoly_map] using hx0'
+    have hrelInj : Function.Injective (relationPolyLin u) :=
+      LinearMap.ker_eq_bot.mp hrelker
+    exact hrelInj (by simpa [relationPolyLin, relationPoly] using hx0)
+  · intro hx
+    rw [Submodule.mem_bot] at hx
+    subst x
+    simp [relationPolyLin]
+
 /-- The tail-rank `0` exact-affine `dim = 1` branch now closes from an
 arbitrary exact affine line, not only after the classifier has already
 normalized that line to `x₀`. -/
@@ -7686,5 +7924,298 @@ theorem residual_eq_zero_of_exactAffineDimOne_affineLine_tailRangeZero
     exact residual_eq_zero_of_exactAffineDimOne_tailRangeZero
       (B := B0) (u := u') hu0 hdim0 h0' hrange0 hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+/-- The tail-rank `1` exact-affine `dim = 1` branch also transports from an
+arbitrary exact affine line to normalized `x₀` coordinates. -/
+theorem residual_eq_zero_of_exactAffineDimOne_affineLine_tailRangeOne
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    {r a b : ℝ}
+    (h0 : relationPoly u c0 = affineLinePoly r a b)
+    (hs : a ^ 2 + b ^ 2 ≠ 0)
+    (hrange1 :
+      Module.finrank ℝ
+        (LinearMap.range
+          (x0TailCoeffMap
+            (mapVec (affineLineEquiv r a b hs).toAlgHom u))) = 1)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let e : Poly ≃ₐ[ℝ] Poly := affineLineEquiv r a b hs
+  let u' : RankFourVec := mapVec e.toAlgHom u
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  let B0 : DotForm := dotTransport e B
+  have hB0pos : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0pos⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := by
+        intro q hq
+        exact isQuadratic_affineEquiv
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec r a b) (affineLineInvVec r)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs)
+          hq)
+      (heQuartic := by
+        intro q hq
+        exact isQuartic_affineEquiv
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec r a b) (affineLineInvVec r)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs)
+          hq)
+      hp
+  have hu0 : IsAdmissiblePoint u' := by
+    exact isAdmissiblePoint_mapVec_of_equiv
+      (e := e)
+      (he := by
+        intro q hq
+        exact isQuadratic_affineEquiv
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec r a b) (affineLineInvVec r)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs)
+          hq)
+      hu
+  have hsocp0 : IsSOCP B0 (e p) u' := by
+    dsimp [B0, u']
+    exact isSOCP_mapVec_of_equiv
+      (e := e)
+      (heSymm := by
+        intro q hq
+        exact isQuadratic_affineEquiv_symm
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec r a b) (affineLineInvVec r)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs)
+          hq)
+      hsocp
+  have hrelker0 :
+      LinearMap.ker (relationPolyLin u') = ⊥ := by
+    simpa [u', e] using relationPolyLin_ker_eq_bot_mapVec_affineLineEquiv hrelker hs
+  have h0' : relationPoly u' c0 = x0 := by
+    rw [relationPoly_map]
+    rw [h0]
+    simpa [e] using affineHom_affineLinePoly r a b hs
+  have hdim0 :
+      Module.finrank ℝ (exactAffineSubmodule u') = 1 := by
+    exact exactAffineDimOne_mapVec_affineLineEquiv hu hdim h0 hs
+  have hres0 : residual (e p) u' = 0 := by
+    exact residual_eq_zero_of_exactAffineDimOne_tailRangeOne
+      (B := B0) (u := u') hu0 hrelker0 hdim0 h0' hrange1 hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+/-- The tail-rank `2` exact-affine `dim = 1` branch transports from an
+arbitrary exact affine line to normalized `x₀` coordinates. -/
+theorem residual_eq_zero_of_exactAffineDimOne_affineLine_tailRangeTwo
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    (hnoConst : ¬ ∃ c ∈ exactAffineSubmodule u, relationPoly u c = (1 : Poly))
+    {c0 : Fin 4 → ℝ}
+    {r a b : ℝ}
+    (h0 : relationPoly u c0 = affineLinePoly r a b)
+    (hs : a ^ 2 + b ^ 2 ≠ 0)
+    (hrange2 :
+      Module.finrank ℝ
+        (LinearMap.range
+          (x0TailCoeffMap
+            (mapVec (affineLineEquiv r a b hs).toAlgHom u))) = 2)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let e : Poly ≃ₐ[ℝ] Poly := affineLineEquiv r a b hs
+  let u' : RankFourVec := mapVec e.toAlgHom u
+  have hB : IsPositiveDefinite B := by
+    simpa [IsPositiveDefinite] using (show B.toQuadraticMap.PosDef from Fact.out)
+  let B0 : DotForm := dotTransport e B
+  have hB0pos : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
+  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0pos⟩
+  have hp0 : IsSOSQuartic (e p) := by
+    exact isSOSQuartic_map_of_equiv
+      (e := e)
+      (heQuad := by
+        intro q hq
+        exact isQuadratic_affineEquiv
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec r a b) (affineLineInvVec r)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs)
+          hq)
+      (heQuartic := by
+        intro q hq
+        exact isQuartic_affineEquiv
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec r a b) (affineLineInvVec r)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs)
+          hq)
+      hp
+  have hu0 : IsAdmissiblePoint u' := by
+    exact isAdmissiblePoint_mapVec_of_equiv
+      (e := e)
+      (he := by
+        intro q hq
+        exact isQuadratic_affineEquiv
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec r a b) (affineLineInvVec r)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs)
+          hq)
+      hu
+  have hsocp0 : IsSOCP B0 (e p) u' := by
+    dsimp [B0, u']
+    exact isSOCP_mapVec_of_equiv
+      (e := e)
+      (heSymm := by
+        intro q hq
+        exact isQuadratic_affineEquiv_symm
+          (affineLineMatrix a b) (affineLineInvMatrix a b)
+          (affineLineVec r a b) (affineLineInvVec r)
+          (affineLine_mul_inv a b hs) (affineLine_inv_mul a b hs)
+          (affineLineInv_add_mulVec r a b hs) (affineLine_add_mulVec_inv r a b hs)
+          hq)
+      hsocp
+  have hrelker0 :
+      LinearMap.ker (relationPolyLin u') = ⊥ := by
+    simpa [u', e] using relationPolyLin_ker_eq_bot_mapVec_affineLineEquiv hrelker hs
+  have h0' : relationPoly u' c0 = x0 := by
+    rw [relationPoly_map]
+    rw [h0]
+    simpa [e] using affineHom_affineLinePoly r a b hs
+  have hdim0 :
+      Module.finrank ℝ (exactAffineSubmodule u') = 1 := by
+    exact exactAffineDimOne_mapVec_affineLineEquiv hu hdim h0 hs
+  have hnoConst0 :
+      ¬ ∃ c ∈ exactAffineSubmodule u', relationPoly u' c = (1 : Poly) := by
+    intro hconst0
+    rcases hconst0 with ⟨c, hc, hc1⟩
+    have hc' : c ∈ exactAffineSubmodule u :=
+      mem_exactAffineSubmodule_of_mem_mapVec_affineLineEquiv hu hs hc
+    have hc1' : relationPoly u c = (1 : Poly) := by
+      calc
+        relationPoly u c = e.symm (relationPoly u' c) := by
+          rw [relationPoly_map]
+          simp [e]
+        _ = (1 : Poly) := by simp [hc1]
+    exact hnoConst ⟨c, hc', hc1'⟩
+  have hres0 : residual (e p) u' = 0 := by
+    exact residual_eq_zero_of_exactAffineDimOne_tailRangeTwo
+      (B := B0) (u := u') hu0 hrelker0 hdim0 hnoConst0 h0' hrange2 hp0 hsocp0
+  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
+
+/-- The whole exact-affine `dim = 1`, no-constant branch closes once one
+nonconstant affine line is extracted and the transformed tail map is split by
+its only possible ranks `0`, `1`, or `2`. -/
+theorem residual_eq_zero_of_exactAffineDimOne_noConst
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    (hnoConst : ¬ ∃ c ∈ exactAffineSubmodule u, relationPoly u c = (1 : Poly))
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  obtain ⟨c0, r, a, b, _, h0, hs⟩ :=
+    exists_exactAffine_affineLine_of_dimOne_noConst hu hrelker hdim hnoConst
+  let u' := mapVec (affineLineEquiv r a b hs).toAlgHom u
+  have hrange_le :
+      Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u')) ≤ 2 := by
+    simpa [u', finrank_top, Module.finrank_fintype_fun_eq_card] using
+      (Submodule.finrank_le (LinearMap.range (x0TailCoeffMap u')))
+  let n := Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u'))
+  have hn_le : n ≤ 2 := hrange_le
+  have hn_lt_two_or_eq : n < 2 ∨ n = 2 := Nat.lt_or_eq_of_le hn_le
+  rcases hn_lt_two_or_eq with hn_lt_two | hn_two
+  · have hn_le_one : n ≤ 1 := Nat.le_of_lt_succ hn_lt_two
+    have hn_lt_one_or_eq : n < 1 ∨ n = 1 := Nat.lt_or_eq_of_le hn_le_one
+    rcases hn_lt_one_or_eq with hn_lt_one | hn_one
+    · have hn_zero : n = 0 := by
+        exact Nat.eq_zero_of_not_pos (by
+          intro hn_pos
+          exact Nat.not_lt_of_ge (Nat.succ_le_of_lt hn_pos) hn_lt_one)
+      exact residual_eq_zero_of_exactAffineDimOne_affineLine_tailRangeZero
+        (B := B) (u := u) hu hdim h0 hs (by simpa only [n] using hn_zero) hp hsocp
+    · exact residual_eq_zero_of_exactAffineDimOne_affineLine_tailRangeOne
+        (B := B) (u := u) hu hrelker hdim h0 hs (by simpa only [n] using hn_one) hp hsocp
+  · exact residual_eq_zero_of_exactAffineDimOne_affineLine_tailRangeTwo
+      (B := B) (u := u) hu hrelker hdim hnoConst h0 hs (by simpa only [n] using hn_two) hp hsocp
+
+/-- Once the four coordinates are linearly independent, the exact-affine
+relation space has dimension `1`, `2`, or `3`; the previously formalized
+exact-affine branches cover every case. -/
+theorem residual_eq_zero_of_relationPolyLin_ker_eq_bot
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  let affExact : exactAffineSubmodule u →ₗ[ℝ] (Fin 3 → ℝ) :=
+    (affineCoeffMap u).comp (exactAffineSubmodule u).subtype
+  have hAffInj : Function.Injective affExact :=
+    exactAffineCoeffMap_injective hu hrelker
+  have hdom4 : Module.finrank ℝ (Fin 4 → ℝ) = 4 := by
+    calc
+      Module.finrank ℝ (Fin 4 → ℝ) = Fintype.card (Fin 4) :=
+        Module.finrank_fintype_fun_eq_card (R := ℝ) (η := Fin 4)
+      _ = 4 := by decide
+  let n := Module.finrank ℝ (exactAffineSubmodule u)
+  have hn_ge : 1 ≤ n := by
+    have hsum := LinearMap.finrank_range_add_finrank_ker (homCoeffMap u)
+    have hrange_le :
+        Module.finrank ℝ (LinearMap.range (homCoeffMap u)) ≤ 3 := by
+      calc
+        Module.finrank ℝ (LinearMap.range (homCoeffMap u)) ≤ Module.finrank ℝ (Fin 3 → ℝ) :=
+          Submodule.finrank_le (LinearMap.range (homCoeffMap u))
+        _ = 3 := by
+          rw [Module.finrank_fintype_fun_eq_card]
+          decide
+    have hsum' :
+        Module.finrank ℝ (LinearMap.range (homCoeffMap u)) + n = 4 := by
+      simpa [n, exactAffineSubmodule, hdom4] using hsum
+    omega
+  have hn_le : n ≤ 3 := by
+    have hrange :
+        Module.finrank ℝ (LinearMap.range affExact) = n := by
+      simpa [n] using LinearMap.finrank_range_of_inj hAffInj
+    calc
+      n = Module.finrank ℝ (LinearMap.range affExact) := hrange.symm
+      _ ≤ Module.finrank ℝ (Fin 3 → ℝ) := Submodule.finrank_le (LinearMap.range affExact)
+      _ = 3 := by
+        rw [Module.finrank_fintype_fun_eq_card]
+        decide
+  have hn_cases : n = 1 ∨ n = 2 ∨ n = 3 := by
+    omega
+  rcases hn_cases with hn_one | hn_two | hn_three
+  · by_cases hconst : ∃ c ∈ exactAffineSubmodule u, relationPoly u c = (1 : Poly)
+    · rcases hconst with ⟨c0, hc0, hc0rel⟩
+      exact residual_eq_zero_of_exactAffineDimOne_contains_one
+        (B := B) (u := u) hu hrelker (by simpa only [n] using hn_one) hc0 hc0rel hp hsocp
+    · exact residual_eq_zero_of_exactAffineDimOne_noConst
+        (B := B) (u := u) hu hrelker (by simpa only [n] using hn_one) hconst hp hsocp
+  · by_cases hconst : ∃ c ∈ exactAffineSubmodule u, relationPoly u c = (1 : Poly)
+    · rcases hconst with ⟨c0, hc0, hc0rel⟩
+      exact residual_eq_zero_of_exactAffineDimTwo_contains_one
+        (B := B) (u := u) hu hrelker (by simpa only [n] using hn_two) hc0 hc0rel hp hsocp
+    · exact residual_eq_zero_of_exactAffineDimTwo_noConst
+        (B := B) (u := u) hu hrelker (by simpa only [n] using hn_two) hconst hp hsocp
+  · exact residual_eq_zero_of_exactAffineDimThree
+      (B := B) (u := u) hu hrelker (by simpa only [n] using hn_three) hp hsocp
 
 end TernaryQuartic
