@@ -9,7 +9,7 @@ namespace TernaryQuartic
 
 /-
 This root file must keep the final theorem declaration so that
-`scripts/verify_formalization.sh` passes. All helper lemmas and proof
+`scripts/verify_ternary_quartic.sh` passes. All helper lemmas and proof
 development should go in the `TernaryQuarticProof/` folder.
 
 The final proof should complete:

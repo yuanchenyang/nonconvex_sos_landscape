@@ -20,10 +20,13 @@ The methodology combines:
 TernaryQuartic.lean              - Immutable statement file (read-only)
 TernaryQuarticProof.lean         - Root import file for the proof
 TernaryQuarticProof/             - All new Lean proof code goes here
-scripts/                         - Helper scripts (verification harness, agent launcher)
+prompts/                         - Task prompts and agent instructions
+scripts/                         - Helper scripts (verification harnesses, Vagrant helpers, agent launcher)
 julia/                           - Computational search code (Julia)
+julia/ternary_quartic_explorations/ - Saved ternary-quartic Julia experiment scripts
 low_rank_univariate_sos/         - Lean 4 + mathlib reference formalization (reference only; do not build it in this workspace)
 writeup/                         - Mathematical proofs and writeups (LaTeX sources)
+writeup/ternary_quartic/         - Ternary-quartic blueprint, summary, and exploration log
 docs/                            - Guides and supporting documentation
 ```
 

@@ -12,22 +12,43 @@ univariate submodule.
 - `TernaryQuarticProof.lean` — Root import file; must keep the final theorem
   declaration.
 - `TernaryQuarticProof/` — All helper lemmas and proof development go here.
+- `prompts/ternary_quartic.md` — Ternary-quartic task prompt and workflow.
+- `scripts/verify_formalization.sh` — Generic theorem/proof verification
+  harness.
+- `scripts/verify_ternary_quartic.sh` — Ternary-quartic wrapper around the
+  generic verification harness.
 - `lakefile.toml` — Lake build configuration (pinned mathlib `v4.29.0`).
 
 ### Build and Verify
 
 ```bash
 lake build
-./scripts/verify_formalization.sh
+./scripts/verify_ternary_quartic.sh
 ```
 
 ### Verification Harness Details
 
-The script `scripts/verify_formalization.sh` is the root verification harness.
-Treat it as stable infrastructure and modify it only when explicitly requested.
-The formalization counts as successful only if all of the following hold:
+For the root ternary-quartic development, use
+`scripts/verify_ternary_quartic.sh`. It calls the generic
+`scripts/verify_formalization.sh` with the ternary-quartic theorem, proof
+import, proof file, and expected axiom list.
 
-- `./scripts/verify_formalization.sh` exits successfully;
+The generic harness can also be used directly for other theorem/proof pairs:
+
+```bash
+./scripts/verify_formalization.sh \
+  --theorem TernaryQuartic.ternaryQuartic_rankFour_no_spurious_socp \
+  --proof-import TernaryQuarticProof \
+  --proof-file TernaryQuarticProof.lean \
+  --build-target TernaryQuartic \
+  --build-target TernaryQuarticProof \
+  --expected-axioms '[propext, Classical.choice, Quot.sound]'
+```
+
+The ternary-quartic formalization counts as successful only if all of the
+following hold:
+
+- `./scripts/verify_ternary_quartic.sh` exits successfully;
 - equivalently, commands 1, 2, 3, and 4 must succeed;
 - command 5 must report exactly these axioms and no others:
   `propext`, `Classical.choice`, `Quot.sound`.
@@ -41,7 +62,9 @@ Both `TernaryQuartic.lean` and `TernaryQuarticProof.lean` set
 - You may modify `TernaryQuarticProof.lean` (root import file that must keep the
   final theorem declaration).
 - You may **not** modify `TernaryQuartic.lean`.
-- Do not modify `scripts/verify_formalization.sh` unless explicitly requested.
+- Treat `scripts/verify_formalization.sh` and
+  `scripts/verify_ternary_quartic.sh` as stable verification infrastructure
+  unless explicitly requested to change them.
 - Add `import TernaryQuarticProof.<Module>` lines to the root
   `TernaryQuarticProof.lean` as needed.
 
@@ -82,8 +105,11 @@ structure.
 
 The `writeup/` folder contains the project LaTeX sources:
 
-- `writeup.tex`: General hidden convexity methodology
-- `paper.tex`: Paper containing proof for univariate case
+- `writeup.tex` — General hidden convexity methodology
+- `univariate_paper.tex` — Univariate SOS paper draft
+- `ternary_quartic/blueprint.tex` — Ternary-quartic proof blueprint
+- `ternary_quartic/exploration_log.tex` — Ternary-quartic experiment log
+- `ternary_quartic/summary.tex` — Ternary-quartic proof summary
 
 The Vagrant VM provisions `rubber` together with a lightweight TeX Live install
 that is sufficient for `writeup.tex`:
@@ -94,6 +120,16 @@ make
 make clean
 ```
 
-`paper.tex` is not part of the default VM build flow in the current repo
-snapshot: it expects `siamart220329.cls`, `iterations.pdf`, and a bibliography
-resource path that are not available in this VM/worktree layout.
+`writeup/Makefile` currently builds only `writeup.tex`. To build the
+ternary-quartic blueprint directly, run:
+
+```bash
+cd writeup/ternary_quartic
+rubber --pdf blueprint
+rubber --clean blueprint
+```
+
+`univariate_paper.tex` is not part of the default VM build flow in the current
+repo snapshot: it expects external paper resources such as
+`siamart220329.cls`, `geometric_fig.tex`, `results_table.tex`, `r_table.tex`,
+and `iterations.pdf` that are not vendored in this worktree.

@@ -1,46 +1,133 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# This script is part of the root verification harness for the Lean project.
-# Treat it as stable infrastructure and modify it only when explicitly
-# requested.
+# Generic verification harness for a Lean theorem/proof pair. Use the
+# project-specific wrapper scripts for routine workflows when available.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$ROOT_DIR"
 
-THEOREM_NAME="TernaryQuartic.ternaryQuartic_rankFour_no_spurious_socp"
+usage() {
+  cat <<'EOF'
+Usage:
+  ./scripts/verify_formalization.sh \
+    --theorem <Namespace.theorem_name> \
+    --proof-import <Import.Module> \
+    --proof-file <path/to/Proof.lean> \
+    [--build-target <LakeTarget>]... \
+    [--declaration-name <local_theorem_name>] \
+    [--expected-axioms '[propext, Classical.choice, Quot.sound]']
 
-echo "[1/5] Building root Lean project"
-lake build TernaryQuartic TernaryQuarticProof
+Checks that:
+  1. the selected Lake targets build;
+  2. the proof file typechecks;
+  3. the theorem is available from the proof import;
+  4. the proof file contains the theorem declaration; and
+  5. '#print axioms' matches the expected axiom list exactly.
+
+If '--build-target' is omitted, the script builds '--proof-import'.
+EOF
+}
+
+THEOREM_NAME=""
+PROOF_IMPORT=""
+PROOF_FILE=""
+DECLARATION_NAME=""
+EXPECTED_AXIOMS='[propext, Classical.choice, Quot.sound]'
+BUILD_TARGETS=()
+
+while (($# > 0)); do
+  case "$1" in
+    --theorem)
+      THEOREM_NAME="$2"
+      shift 2
+      ;;
+    --proof-import)
+      PROOF_IMPORT="$2"
+      shift 2
+      ;;
+    --proof-file)
+      PROOF_FILE="$2"
+      shift 2
+      ;;
+    --declaration-name)
+      DECLARATION_NAME="$2"
+      shift 2
+      ;;
+    --expected-axioms)
+      EXPECTED_AXIOMS="$2"
+      shift 2
+      ;;
+    --build-target)
+      BUILD_TARGETS+=("$2")
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "verification failed: unknown argument '$1'" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z "$THEOREM_NAME" ] || [ -z "$PROOF_IMPORT" ] || [ -z "$PROOF_FILE" ]; then
+  echo "verification failed: --theorem, --proof-import, and --proof-file are required" >&2
+  usage >&2
+  exit 1
+fi
+
+if [ ! -f "$PROOF_FILE" ]; then
+  echo "verification failed: proof file '$PROOF_FILE' does not exist" >&2
+  exit 1
+fi
+
+if [ "${#BUILD_TARGETS[@]}" -eq 0 ]; then
+  BUILD_TARGETS=("$PROOF_IMPORT")
+fi
+
+if [ -z "$DECLARATION_NAME" ]; then
+  DECLARATION_NAME="${THEOREM_NAME##*.}"
+fi
+
+DECL_CHECK="$(mktemp /tmp/verify_decl.XXXXXX.lean)"
+AXIOM_CHECK="$(mktemp /tmp/verify_axioms.XXXXXX.lean)"
+AXIOM_OUTPUT="$(mktemp /tmp/verify_axioms_output.XXXXXX.txt)"
+cleanup() {
+  rm -f "$DECL_CHECK" "$AXIOM_CHECK" "$AXIOM_OUTPUT"
+}
+trap cleanup EXIT
+
+echo "[1/5] Building selected Lean targets"
+lake build "${BUILD_TARGETS[@]}"
 
 echo "[2/5] Typechecking editable proof file"
-lake env lean TernaryQuarticProof.lean
+lake env lean "$PROOF_FILE"
 
 echo "[3/5] Checking theorem declaration is available from proof import"
-DECL_CHECK="$(mktemp /tmp/tq_check_decl.XXXXXX.lean)"
-cat > "$DECL_CHECK" <<'EOF'
-import TernaryQuarticProof
-#check TernaryQuartic.ternaryQuartic_rankFour_no_spurious_socp
+cat > "$DECL_CHECK" <<EOF
+import $PROOF_IMPORT
+#check $THEOREM_NAME
 EOF
 lake env lean "$DECL_CHECK"
 
-echo "[4/5] Checking theorem is defined in TernaryQuarticProof.lean"
-if ! grep -n '^theorem ternaryQuartic_rankFour_no_spurious_socp\b' TernaryQuarticProof.lean; then
-  echo "verification failed: theorem ternaryQuartic_rankFour_no_spurious_socp not found in TernaryQuarticProof.lean" >&2
+echo "[4/5] Checking theorem is defined in $PROOF_FILE"
+if ! grep -n -E "^[[:space:]]*theorem[[:space:]]+$DECLARATION_NAME\\b" "$PROOF_FILE"; then
+  echo "verification failed: theorem $DECLARATION_NAME not found in $PROOF_FILE" >&2
   exit 1
 fi
 
 echo "[5/5] Checking theorem depends on exactly the allowed axioms"
-AXIOM_CHECK="$(mktemp /tmp/tq_check_axioms.XXXXXX.lean)"
-cat > "$AXIOM_CHECK" <<'EOF'
-import TernaryQuarticProof
-#print axioms TernaryQuartic.ternaryQuartic_rankFour_no_spurious_socp
+cat > "$AXIOM_CHECK" <<EOF
+import $PROOF_IMPORT
+#print axioms $THEOREM_NAME
 EOF
-AXIOM_OUTPUT="$(mktemp /tmp/tq_axioms_output.XXXXXX.txt)"
 lake env lean "$AXIOM_CHECK" >"$AXIOM_OUTPUT" 2>&1
 cat "$AXIOM_OUTPUT"
-EXPECTED_AXIOMS='[propext, Classical.choice, Quot.sound]'
 AXIOM_LINE="$(grep -F "'$THEOREM_NAME' depends on axioms:" "$AXIOM_OUTPUT" || true)"
 ACTUAL_AXIOMS="$(printf '%s\n' "$AXIOM_LINE" | sed -E "s/^'.*' depends on axioms: //")"
 if [ -z "$AXIOM_LINE" ]; then

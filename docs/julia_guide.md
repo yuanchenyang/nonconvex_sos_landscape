@@ -67,8 +67,9 @@ Use Julia in this order:
 1. Run a cheap smoke test.
 2. Test candidate `u` with `find_counter`.
 3. If needed, switch to `counter_homogeneous` and inspect dual variables.
-4. Record every serious numerical claim in a `.jl` file in the `julia` folder
-   with exact commands, and refer to it in the `.tex` file.
+4. Record every serious ternary-quartic numerical claim in a `.jl` file under
+   `julia/ternary_quartic_explorations/` with exact commands, and refer to it
+   in the `.tex` file.
 
 ## Interpreting Solver Results
 
