@@ -1,5 +1,6 @@
 \documentclass[10pt]{article}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{array,longtable}
 \usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
 \usepackage[nameinlink,noabbrev]{cleveref}
@@ -21,20 +22,29 @@
 \crefname{section}{Section}{Sections}
 
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\vecp}[1]{\boldsymbol{\mathbf{#1}}}
 \newcommand{\Poly}{\R[x_0,x_1]}
 \newcommand{\Quad}{\Poly_{\le 2}}
+\newcommand{\Cubic}{\Poly_{\le 3}}
 \newcommand{\Quart}{\Poly_{\le 4}}
 \newcommand{\Aff}{\Poly_{\le 1}}
 \newcommand{\HomQ}{\operatorname{span}_{\R}\{x_0^2,x_0x_1,x_1^2\}}
-\newcommand{\Span}{\operatorname{span}}
-\newcommand{\im}{\operatorname{im}}
-\newcommand{\Ker}{\operatorname{ker}}
+\DeclareMathOperator{\mspan}{span}
+\DeclareMathOperator{\imag}{Im}
+\DeclareMathOperator{\kernel}{Ker}
+\DeclareMathOperator{\dimension}{dim}
+\DeclareMathOperator{\rank}{rank}
+\newcommand{\Span}{\mspan}
+\newcommand{\im}{\imag}
+\newcommand{\Ker}{\kernel}
 \newcommand{\SOCP}{\operatorname{SOCP}}
 \newcommand{\FOCP}{\operatorname{FOCP}}
 \newcommand{\sig}{\sigma}
 \newcommand{\rel}{\rho}
 \newcommand{\Exact}{\mathcal{E}}
 \newcommand{\Tail}{\mathcal{T}}
+\newcommand{\lean}[1]{\nolinkurl{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 
 \title{Blueprint for the Ternary Quartic Rank-4 Proof}
 \date{2026-04-13}
@@ -44,14 +54,27 @@
 
 \section{Statement and setup}\label{sec:setup}
 We work in dehomogenized coordinates: a ternary quartic is viewed as a quartic
-polynomial in two affine variables \(x_0,x_1\). The optimization variable is a
-rank-$4$ Burer--Monteiro factor
+polynomial in two affine variables \(x_0,x_1\). We use $\R[x_0,x_1]_{\le k}$ to
+denote polynomials in these variables with degree at most $k$, and
+\[
+  \HomQ=\mspan_{\R}\{x_0^2,x_0x_1,x_1^2\}\subset \Quad
+\]
+for the homogeneous quadratic subspace. The optimization variable is a rank-$4$
+Burer--Monteiro factor
 \[
   u=(u_0,u_1,u_2,u_3)\in \Quad^4.
 \]
-All tangent directions are subject to the same quadratic degree bound.
+This is the same kind of vector-valued polynomial object written as
+\(\vecp{u}\) in the paper; here we suppress the boldface to keep the formulas
+short. All tangent directions are subject to the same quadratic degree bound.
 
-\begin{definition}[Basic maps; Lean: \texttt{sigma}, \texttt{A}, \texttt{residual}, \texttt{IsSOCP}]
+\begin{definition}[Admissibility]
+\label{def:admissible}
+An \emph{admissible point} or \emph{admissible direction} is simply an element
+of \(\Quad^4\).
+\end{definition}
+
+\begin{definition}[Basic maps]
 \label{def:basic-maps}
 For \(u,v\in \Quad^4\) and \(p\in \Quart\), define
 \[
@@ -72,7 +95,7 @@ and a second-order critical point if, in addition,
 \]
 \end{definition}
 
-\begin{definition}[SOS quartic target; Lean: \texttt{IsSOSQuartic}]
+\begin{definition}[SOS quartic target]
 \label{def:sos}
 An \emph{SOS quartic} is a polynomial \(p\in \Quart\) admitting a finite
 representation
@@ -81,15 +104,14 @@ representation
 \]
 \end{definition}
 
-\begin{definition}[Relation map and exact affine relations; Lean: \texttt{relationPoly},
-\texttt{relationPolyLin}, \texttt{exactAffineSubmodule}]
+\begin{definition}[Relation map and exact affine relations]
 \label{def:relation-poly-lin}
 For fixed \(u\in \Quad^4\), define the relation map
 \[
   \rel_u:\R^4\to \Poly,\qquad \rel_u(c)=\sum_{i=0}^3 c_i u_i.
 \]
-This is the linear map called \texttt{relationPolyLin} in Lean. Its kernel is
-the space of scalar linear dependences among the four coordinates of \(u\).
+Its kernel is the space of scalar linear dependences among the four coordinates
+of \(u\).
 
 Define the \emph{exact affine relation space}
 \[
@@ -99,9 +121,38 @@ Equivalently, \(\Exact(u)\) is the kernel of the map taking
 \(\rel_u(c)\) to its homogeneous quadratic coefficients.
 \end{definition}
 
+\begin{definition}[Auxiliary notation]
+\label{def:aux-notation}
+For \(q\in \Quad\), write
+\[
+  q=q_{\le 1}+q_{\mathrm{hom}}
+  \qquad\text{with }q_{\le 1}\in \Aff,\ q_{\mathrm{hom}}\in \HomQ
+\]
+for its affine part and homogeneous quadratic part.
+
+For \(c\in \R^4\) and a polynomial \(h\), write
+\[
+  c\odot h=(c_0h,\dots,c_3h)
+\]
+whenever this vector belongs to \(\Quad^4\).
+
+For \(f\in \Poly\), write
+\[
+  f=\sum_{a,b\ge 0} f_{ab}\,x_0^a x_1^b.
+\]
+Thus \(f_{ab}\) denotes the coefficient of \(x_0^a x_1^b\) in \(f\).
+
+If \(x_0\in \rel_u(\Exact(u))\), define \(\Tail(u)\subseteq \mspan\{1,x_1\}\)
+to be the set of affine tails \(\alpha+\beta x_1\) for which there exists
+\(c\in \Exact(u)\) such that \(\rel_u(c)\) has \(x_0\)-coefficient \(0\) and
+\[
+  \rel_u(c)-(\alpha+\beta x_1)\in \HomQ.
+\]
+\end{definition}
+
 \begin{remark}\label{rem:goal}
-The theorem proved in Lean is the statement that every admissible rank-$4$
-\(\SOCP\) over an SOS quartic has zero residual:
+The main theorem is that every admissible rank-$4$ \(\SOCP\) over an SOS
+quartic has zero residual:
 \[
   r(u,p)=0.
 \]
@@ -110,29 +161,31 @@ rank-$4$ ternary quartic problem.
 \end{remark}
 
 \section{The certificate mechanism}\label{sec:certificate}
-The proof follows the certificate philosophy already used in the univariate
-writeup: one shows that every SOS square \(q^2\) can be written as an image term
-for \(A_u\) plus kernel-square corrections. The \(\SOCP\) inequalities then
-force the residual to vanish.
+The proof uses the same basic certificate as in the univariate case. For each
+square \(q^2\) in an SOS decomposition, we write \(q^2\) as a term in the image
+of a linearized map together with sums of squares of directions in
+\(\Ker(A_u)\). The \(\SOCP\) inequalities make every kernel square pair
+nonnegatively with the residual, and this leaves only the zero residual.
 
-\begin{lemma}[Abstract image-plus-kernel-square certificate; Lean:
-\texttt{admissible\_image\_plus\_cone\_residual\_eq\_zero}]
+\begin{lemma}[Abstract image-plus-kernel-square certificate]
 \label{lem:certificate}
 Let \(u\in \Quad^4\) be a \(\SOCP\) for an SOS quartic \(p\). Assume that
 \[
   p=q_{\mathrm{img}}+\sum_{m=1}^N \sig(w^{(m)}),
 \]
-where \(q_{\mathrm{img}}\in \im(A_{u_{\mathrm{img}}})\) for some admissible
-\(u_{\mathrm{img}}\), each \(w^{(m)}\in \Quad^4\) satisfies
-\(A_u(w^{(m)})=0\), and \(r(u,p)\) is orthogonal to
-\(\im(A_{u_{\mathrm{img}}})\). Then \(r(u,p)=0\).
+where there is an admissible point \(u_{\mathrm{img}}\) such that
+\(q_{\mathrm{img}}\in \im(A_{u_{\mathrm{img}}})\), each
+\(w^{(m)}\in \Quad^4\) satisfies \(A_u(w^{(m)})=0\), and \(r(u,p)\) is
+orthogonal to \(\im(A_{u_{\mathrm{img}}})\). Then \(r(u,p)=0\).
 \end{lemma}
 
 \begin{proof}
-Set \(r=r(u,p)\). By first-order criticality, the image term pairs to zero:
+Set \(r=r(u,p)\). The image term pairs to zero:
 \[
   B(q_{\mathrm{img}},r)=0.
 \]
+Indeed, this is part of the hypothesis: \(q_{\mathrm{img}}\) lies in
+\(\im(A_{u_{\mathrm{img}}})\), and \(r\) is orthogonal to that image.
 For each kernel direction \(w=w^{(m)}\), the Hessian inequality gives
 \[
   B(\sig(w),r)+2B(A_u(w),A_u(w))\ge 0.
@@ -140,7 +193,7 @@ For each kernel direction \(w=w^{(m)}\), the Hessian inequality gives
 Since \(A_u(w)=0\), this reduces to \(B(\sig(w),r)\ge 0\). Summing over
 \(m\) yields
 \[
-  B(p,r)\ge 0.
+  B(p,r)=B(q_{\mathrm{img}},r)+\sum_{m=1}^N B(\sig(w^{(m)}),r)\ge 0.
 \]
 On the other hand, first-order criticality with \(v=u\) gives
 \[
@@ -159,12 +212,12 @@ If \(p\in \im(A_u)\), then \(r(u,p)=0\).
 \end{corollary}
 
 \begin{proof}
-Apply \cref{lem:certificate} with no kernel-square terms and
-\(u_{\mathrm{img}}=u\).
+Apply \cref{lem:certificate} with \(u_{\mathrm{img}}=u\) and no kernel-square
+terms. The first-order condition says exactly that \(r(u,p)\) is orthogonal to
+\(\im(A_u)\).
 \end{proof}
 
-\begin{corollary}[Constant scalar relation; Lean:
-\texttt{residual\_eq\_zero\_of\_constant\_relation}]
+\begin{corollary}[Constant scalar relation]
 \label{cor:constant-relation}
 If there exists \(0\neq c\in \R^4\) such that \(\rel_u(c)=0\), then
 \(r(u,p)=0\) for every SOS quartic \(p\).
@@ -179,14 +232,16 @@ Then \(A_u(w^{(j)})=q_j\rel_u(c)=0\), while
 \[
   \sig(w^{(j)})=\Bigl(\sum_{i=0}^3 c_i^2\Bigr)q_j^2.
 \]
-Since \(\sum_i c_i^2>0\), each \(q_j^2\) is a positive scalar multiple of a
-kernel square. Summing over \(j\) produces the decomposition required by
-\cref{lem:certificate}.
+Set \(\lambda=\sum_i c_i^2>0\) and \(\widetilde w^{(j)}=\lambda^{-1/2}w^{(j)}\).
+Then \(A_u(\widetilde w^{(j)})=0\) and \(\sig(\widetilde w^{(j)})=q_j^2\).
+Therefore
+\[
+  p=\sum_j \sig(\widetilde w^{(j)}),
+\]
+so \cref{lem:certificate} applies with no image term.
 \end{proof}
 
-\begin{proposition}[Equivariance under affine changes and orthogonal mixing;
-Lean families in \texttt{AffineSocpTransform.lean} and
-\texttt{FactorTransform.lean}]
+\begin{proposition}[Equivariance under affine changes and orthogonal mixing]
 \label{prop:equivariance}
 The properties of being admissible, being an SOS quartic, being a \(\SOCP\),
 and having vanishing residual are preserved by
@@ -198,18 +253,40 @@ the factor coordinates.
 \end{proposition}
 
 \begin{proof}
-Both operations preserve the quadratic degree bound, commute with
-\(\sig\), transport \(A_u\) to the corresponding linearized map in the new
-coordinates, and transport the bilinear form by pullback. Hence they preserve
-the first- and second-order criticality conditions and the equality
-\(r(u,p)=0\).
+For an invertible affine change of variables \(e\) in \(x_0,x_1\), set
+\(u'_i=e(u_i)\), \(p'=e(p)\), and transport the bilinear form by
+\[
+  B'(f,g)=B(e^{-1}f,e^{-1}g).
+\]
+Because \(e\) preserves polynomial degree, \(u'\in \Quad^4\) whenever
+\(u\in \Quad^4\). Moreover
+\[
+  \sig(u')=e(\sig(u)),\qquad
+  A_{u'}(v')=e(A_u(v)),\qquad
+  r(u',p')=e(r(u,p)).
+\]
+Applying \(e^{-1}\) to the first- and second-order conditions shows that
+\((u,p,B)\) is a \(\SOCP\) exactly when \((u',p',B')\) is. Since \(e\) is
+invertible, \(r(u,p)=0\) if and only if \(r(u',p')=0\).
+
+For an orthogonal matrix \(M\in O(4)\), let \(u'=Mu\) and \(v'=Mv\). Then
+orthogonality gives
+\[
+  \sig(u')=\sig(u),\qquad A_{u'}(v')=A_u(v),
+\]
+so the criticality inequalities are unchanged. The residual is literally the
+same polynomial:
+\[
+  r(u',p)=\sig(u')-p=\sig(u)-p=r(u,p).
+\]
+Thus admissibility, the \(\SOCP\) conditions, SOS-ness of \(p\), and the
+equation \(r(u,p)=0\) are preserved under both operations.
 \end{proof}
 
-\section{Three global closure mechanisms}\label{sec:global-closures}
-The full proof uses three conceptual closure results.
+\section{Structural closure theorems}\label{sec:global-closures}
+The full proof uses five structural results.
 
-\begin{theorem}[Span-three certificate; Lean:
-\texttt{residual\_eq\_zero\_of\_contains\_aff1}]
+\begin{theorem}[Span-three certificate]
 \label{thm:contains-aff1}
 Assume there exist \(c^{(0)},c^{(1)},c^{(2)}\in \R^4\) such that
 \[
@@ -226,89 +303,120 @@ Fix a quadratic \(q\in \Quad\). Write
   q=q_{\le 1}+q_{\mathrm{hom}},\qquad
   q_{\mathrm{hom}}=x_0 a+x_1 b
 \]
-with \(a,b\in \Aff\). Define the raw kernel direction
+with \(a,b\in \Aff\). Then
+\[
+  A_u(c\odot h)=h\,\rel_u(c).
+\]
+Define the raw kernel direction
 \[
   w_{\mathrm{raw}}
-  =\rel(-c^{(0)},q_{\mathrm{hom}})
-   +\rel(c^{(1)},a)
-   +\rel(c^{(2)},b),
+  =(-c^{(0)})\odot q_{\mathrm{hom}}
+   +c^{(1)}\odot a
+   +c^{(2)}\odot b.
 \]
-where \(\rel(c,h)\) means the admissible direction with \(i\)-th coordinate
-\(c_i h\). By construction,
+By construction,
 \[
   A_u(w_{\mathrm{raw}})
   =-q_{\mathrm{hom}}+x_0 a+x_1 b
   =0.
 \]
-Now expand \(\sig(w_{\mathrm{raw}})\). The quartic contribution comes entirely
+Now expand \(\sig(w_{\mathrm{raw}})\). The only degree-\(4\) contribution comes
 from the square of the first summand:
 \[
   \sig(w_{\mathrm{raw}})_{\deg 4}
   =\Bigl(\sum_{i=0}^3 (c_i^{(0)})^2\Bigr) q_{\mathrm{hom}}^2.
 \]
-Every other term contains at least one factor \(a\) or \(b\), hence has degree
-at most \(3\). After scaling \(w_{\mathrm{raw}}\) by
+All other squares or cross terms contain at least one factor \(a\) or \(b\),
+hence have degree at most \(3\). Set
 \[
-  \alpha=\Bigl(\sum_i (c_i^{(0)})^2\Bigr)^{-1/2},
+  \lambda=\sum_i (c_i^{(0)})^2>0,\qquad
+  w=\lambda^{-1/2}w_{\mathrm{raw}}.
 \]
-we obtain a kernel direction \(w\) such that
+Then \(A_u(w)=0\) and
 \[
-  q^2-\sig(w)\in \Poly_{\le 3}.
+  \sig(w)=q_{\mathrm{hom}}^2+h_3
+  \qquad\text{for some }h_3\in \Cubic.
 \]
-Since \(1,x_0,x_1\in W(u):=\Span_\R\{u_0,u_1,u_2,u_3\}\), every cubic lies in
-\(\im(A_u)\): multiply the exact relations for \(1,x_0,x_1\) by suitable
-linear polynomials. Thus \(q^2\) is an image term plus one kernel square.
+Also,
+\[
+  q^2-q_{\mathrm{hom}}^2=(q_{\le 1}+q_{\mathrm{hom}})^2-q_{\mathrm{hom}}^2
+  =q_{\le 1}(2q_{\mathrm{hom}}+q_{\le 1})\in \Cubic,
+\]
+so \(q^2-\sig(w)\in \Cubic\).
+
+Every cubic polynomial lies in \(\im(A_u)\). Indeed, if \(g\in \Cubic\),
+write
+\[
+  g=h_0+x_0h_1+x_1h_2
+  \qquad\text{with }h_0\in \Quad,\ h_1,h_2\in \Aff.
+\]
+Then
+\[
+  g=A_u\bigl(c^{(0)}\odot h_0+c^{(1)}\odot h_1+c^{(2)}\odot h_2\bigr)
+\]
+because \(\rel_u(c^{(0)})=1\), \(\rel_u(c^{(1)})=x_0\), and
+\(\rel_u(c^{(2)})=x_1\). Therefore \(q^2\) is a term in \(\im(A_u)\) plus one
+kernel square.
 
 Applying this construction to each quadratic summand in an SOS decomposition of
 \(p\) and summing gives the decomposition in \cref{lem:certificate}. Hence
 \(r(u,p)=0\).
 \end{proof}
 
-\begin{theorem}[Mixed-affine coarse theorem; Lean:
-\texttt{residual\_eq\_zero\_of\_relations\_const\_affineLine}]
+\begin{theorem}[Mixed-affine theorem]
 \label{thm:const-affine-line}
 Assume there exist \(c^{(0)},c^{(1)}\in \R^4\) such that
 \[
   \rel_u(c^{(0)})=1,\qquad
-  \rel_u(c^{(1)})=r+a x_0+b x_1,
+  \rel_u(c^{(1)})=t+a x_0+b x_1,
 \]
 with \(a^2+b^2\neq 0\). Then \(r(u,p)=0\) for every SOS quartic \(p\).
 \end{theorem}
 
 \begin{proof}
 By \cref{prop:equivariance}, we may apply an affine change of variables sending
-\(r+a x_0+b x_1\) to \(x_0\). Thus it is enough to treat the normalized case
-where \(1\) and \(x_0\) are exact relations.
+\(t+a x_0+b x_1\) to \(x_0\). Thus it is enough to treat the normalized case
+with exact relations for \(1\) and \(x_0\).
 
-The remaining two coordinates then define a quadratic plane in \(\HomQ\). There
-are only three possibilities.
+Choose two further relations whose homogeneous quadratic parts span the
+complementary two-dimensional subspace \(P\subset \HomQ\). The plane
+normalization argument reduces \(P\), after orthogonal mixing in the last two
+factor coordinates and a linear change in \(x_1\), to one of the following
+normal forms.
 \begin{enumerate}
-\item The plane is surjective: an invertible basis of either
+\item The surjective case: \(P\) is an invertible basis of either
 \(\Span\{x_0^2,x_1^2\}\) or \(\Span\{x_0x_1,x_0^2-x_1^2\}\). Then every quartic
-lies in \(\im(A_u)\), so \cref{cor:image} applies.
-\item The plane is of rank \(14\), equivalently an invertible basis of
-\(\Span\{x_0x_1,x_1^2\}\). Then the only missing quotient class is \(x_0^4\),
-and it is supplied by the explicit kernel square
+monomial lies in \(\im(A_u)\): the relation \(1\) gives all monomials of degree
+\(\le 2\), the relation \(x_0\) gives the missing cubic monomials with one
+\(x_0\) factor, and the two quadratic relations give the remaining cubic and
+quartic monomials. Hence \(\Quart\subseteq \im(A_u)\), so \cref{cor:image}
+applies.
+\item The rank-\(14\) case: \(P\) is an invertible basis of
+\(\Span\{x_0x_1,x_1^2\}\). Then the quotient \(\Quart/\im(A_u)\) is
+one-dimensional, generated by \(x_0^4\). An explicit kernel direction
 \[
-  \sig\!\bigl(\rel(-c_2,t x_0x_1)+\rel(c_3,t x_0^2)\bigr)
+  w=(-c_2)\odot (x_0x_1)+c_3\odot (x_0^2)
 \]
-for the two plane relations \(c_2,c_3\).
-\item The plane is of rank \(13\), equivalently an invertible basis of
+from the two plane relations \(c_2,c_3\). Its square is congruent, modulo
+\(\im(A_u)\), to a nonzero multiple of \(x_0^4\). So the missing class is
+supplied by one kernel square.
+\item The rank-\(13\) case: \(P\) is an invertible basis of
 \(\Span\{x_0^2,x_0x_1\}\). Then the only missing quotient classes are
-\(x_1^3\) and \(x_1^4\), and both are supplied by the kernel family
+\(x_1^3\) and \(x_1^4\). They are supplied by the kernel family
 \[
-  \rel(-c_2,x_1\ell)+\rel(c_3,x_0\ell),
-  \qquad \ell=b+c x_1 .
+  w_\ell=(-c_2)\odot (x_1\ell)+c_3\odot (x_0\ell),
+  \qquad \ell=\mu+\nu x_1 .
 \]
+Varying \(\ell\in \Span\{1,x_1\}\) gives two independent corrections modulo
+\(\im(A_u)\), one for each missing quotient class.
 \end{enumerate}
-In every case, each SOS square is an image term plus kernel-square corrections,
-so \cref{lem:certificate} yields \(r(u,p)=0\). Transport back by
-\cref{prop:equivariance}.
+In each normal form, every square \(q^2\) is therefore a term in \(\im(A_u)\)
+plus finitely many kernel squares. Summing over an SOS decomposition of \(p\)
+and applying \cref{lem:certificate} gives \(r(u,p)=0\). Finally, transport this
+back through the affine change of variables using \cref{prop:equivariance}.
 \end{proof}
 
-\begin{theorem}[Surjective homogeneous-basis theorem; Lean:
-\texttt{exact\_relations\_of\_homQuadBasis\_det} and
-\texttt{residual\_eq\_zero\_of\_relations\_const\_homQuadBasis\_det}]
+\begin{theorem}[Surjective homogeneous-basis theorem]
 \label{thm:surjective-basis}
 Assume there exists \(c^{(0)}\in \R^4\) with \(\rel_u(c^{(0)})=1\), and three
 further relations \(d^{(0)},d^{(1)},d^{(2)}\in \R^4\) whose homogeneous
@@ -332,30 +440,112 @@ a quadratic monomial.
 Thus every quartic \(p\) belongs to \(\im(A_u)\), and \cref{cor:image} applies.
 \end{proof}
 
-\begin{theorem}[Low-affine plane theorem; Lean families in
-\texttt{RepresentativeLowAffine.lean}]
+\begin{theorem}[Low-affine plane theorem]
 \label{thm:low-affine}
 Assume there are exact relations for \(x_0\) and \(x_1\), together with two
-more quadratic relations whose homogeneous parts span a nonzero plane in
-\(\HomQ\). Then every SOS quartic \(p\) satisfies \(r(u,p)=0\).
+more quadratic relations whose homogeneous parts span a two-dimensional
+subspace of \(\HomQ\). Then every SOS quartic \(p\) satisfies \(r(u,p)=0\).
 \end{theorem}
 
 \begin{proof}
-The homogeneous plane is classified by the three $2\times 2$ minors of its
-coefficient matrix. If the cross determinant vanishes, the plane has a common
-factor and reduces to the common-factor charts. If the completed-square
-discriminant vanishes, it reduces to the cross chart. Otherwise it reduces,
-after shear and scaling, to either the diagonal-sum or diagonal-difference
-chart. In each chart the image is explicitly described and the missing quotient
-classes are supplied by equally explicit kernel-square families. This is
-exactly the low-affine analogue of the rank-$13$ and rank-$14$ mixed-affine
-arguments. Applying \cref{lem:certificate} in each normal form proves the
-theorem.
+Fix exact relation vectors \(c^{(0)},c^{(1)}\in \R^4\) with
+\(\rel_u(c^{(0)})=x_0\) and \(\rel_u(c^{(1)})=x_1\). Let \(d^{(2)},d^{(3)}\in
+\R^4\) be the two additional quadratic relations. After subtracting suitable
+multiples of \(x_0\) and \(x_1\), we may assume
+\[
+  \rel_u(d^{(2)})=q_2,\qquad \rel_u(d^{(3)})=q_3,\qquad
+  q_\nu=a_\nu x_0^2+b_\nu x_0x_1+c_\nu x_1^2.
+\]
+Set \(A=b_2c_3-c_2b_3\), \(B=a_2c_3-c_2a_3\), and \(C=a_2b_3-b_2a_3\). Since
+\(q_2\) and \(q_3\) are linearly independent, \((A,B,C)\neq(0,0,0)\). By
+\cref{prop:equivariance}, it is enough to classify the plane
+\(P=\Span\{q_2,q_3\}\subseteq \HomQ\) after invertible linear changes of
+\((x_0,x_1)\).
+
+\smallskip
+\noindent\textbf{Step 1: normal forms for \(P\).}
+
+Assume first that \(A=0\), so \(b_2c_3-c_2b_3=0\). If \(B\neq 0\), shear
+\((x_0,x_1)\mapsto (x_0,x_1+t x_0)\) with \(t=-C/(2B)\). The new \(x_0x_1\)
+coefficient is \(b_\nu'=b_\nu+2t c_\nu\). When \(c_\nu\neq 0\), the identity
+\(A=0\) gives \(b_2/c_2=b_3/c_3\), hence \(C=(b_\nu/c_\nu)B\), so
+\(b_\nu'=b_\nu-c_\nu C/B=0\). When \(c_\nu=0\), \(A=0\) already forces
+\(b_\nu=0\), so again \(b_\nu'=0\). Thus both transformed quadratics have no
+\(x_0x_1\) term, hence the transformed plane is \(\Span\{x_0^2,x_1^2\}\).
+
+If instead \(B=0\), then \(C\neq 0\). We claim that \(c_2=c_3=0\). Indeed, if
+\(c_2\neq 0\), then \(A=0\) and \(B=0\) imply
+\(b_3=(c_3/c_2)b_2\) and \(a_3=(c_3/c_2)a_2\), so
+\(C=a_2b_3-b_2a_3=0\), a contradiction. The same argument rules out
+\(c_3\neq 0\). Therefore \(q_2,q_3\in \Span\{x_0^2,x_0x_1\}\), and
+\(C\neq 0\) says that their coefficient matrix in the basis
+\((x_0^2,x_0x_1)\) is invertible. So \(P=\Span\{x_0^2,x_0x_1\}\), which becomes
+\(\Span\{x_0x_1,x_1^2\}\) after exchanging \(x_0\) and \(x_1\).
+
+Now assume \(A\neq 0\). Shearing by \(t=-B/A\) gives new coefficients
+\(a_\nu',b_\nu',c_\nu'\) satisfying
+\[
+  A a_\nu'+\Bigl(C-\frac{B^2}{A}\Bigr)c_\nu'=0 \qquad (\nu=2,3).
+\]
+Write \(D=C-B^2/A\). If \(D=0\), then \(a_\nu'=0\) for both \(\nu\), so
+\(P'=\Span\{x_0x_1,x_1^2\}\). If \(D/A>0\), scale \(x_1\mapsto s x_1\) with
+\(s=\sqrt{D/A}\); then the relation above becomes \(a_\nu''+c_\nu''=0\), so
+every transformed quadratic has the form
+\(b_\nu''x_0x_1+a_\nu''(x_0^2-x_1^2)\), and
+\(P''=\Span\{x_0x_1,x_0^2-x_1^2\}\). If \(D/A<0\), scale \(x_1\mapsto s x_1\)
+with \(s=\sqrt{(-D)/A}\); then \(a_\nu''-c_\nu''=0\), so every transformed
+quadratic has the form \(b_\nu''x_0x_1+a_\nu''(x_0^2+x_1^2)\), and
+\(P''=\Span\{x_0x_1,x_0^2+x_1^2\}\).
+
+Thus, after an invertible linear change, \(P\) is one of
+\[
+  \Span\{x_0^2,x_1^2\},\quad
+  \Span\{x_0x_1,x_1^2\},\quad
+  \Span\{x_0x_1,x_0^2+x_1^2\},\quad
+  \Span\{x_0x_1,x_0^2-x_1^2\}.
+\]
+
+\smallskip
+\noindent\textbf{Step 2: all nonconstant monomials lie in \(\im(A_u)\).}
+
+In every normal form we still have exact relations for \(x_0\) and \(x_1\), so
+\(x_0=A_u(c^{(0)}\odot 1)\) and \(x_1=A_u(c^{(1)}\odot 1)\). Hence
+\(x_0^2=A_u(c^{(0)}\odot x_0)\) and
+\(x_0x_1=A_u(c^{(0)}\odot x_1)=A_u(c^{(1)}\odot x_0)\). In the first two normal
+forms, \(x_1^2\) is already an exact relation. In the last two normal forms, we
+have an exact relation for \(x_0^2\pm x_1^2\), and since \(x_0^2\in \im(A_u)\),
+we also get \(x_1^2\in \im(A_u)\). So every quadratic monomial lies in
+\(\im(A_u)\). Multiplying the exact relations \(x_0\), \(x_1\), and the exact
+quadratic relations by linear or quadratic polynomials shows that every
+monomial of degree \(1,2,3,\) or \(4\) lies in \(\im(A_u)\). The only possible
+missing quotient class is therefore the constant class.
+
+\smallskip
+\noindent\textbf{Step 3: a kernel square produces the constant class.}
+
+Each normal form contains a nonzero exact quadratic divisible by \(x_1\): this
+is \(x_1^2\) in the first two normal forms and \(x_0x_1\) in the last two.
+Write that relation as \(\rel_u(d)=x_1\ell\), where \(\ell=x_1\) or
+\(\ell=x_0\), and define
+\[
+  w_t=-c^{(1)}\odot (t\ell)+d\odot t.
+\]
+Then \(A_u(w_t)=-t\ell\,\rel_u(c^{(1)})+t\,\rel_u(d)=0\), so \(w_t\in \Ker(A_u)\).
+Its constant term comes only from the second summand, because every component of
+\(-c^{(1)}\odot (t\ell)\) has positive degree. Thus
+\(\sig(w_t)_{00}=\alpha t^2\), where \(\alpha=\sum_i d_i^2>0\).
+
+If \(p=\sum_j h_j^2\), then \(p_{00}=\sum_j (h_j)_{00}^2\ge 0\). Choosing
+\(t=\sqrt{p_{00}/\alpha}\) makes \((p-\sig(w_t))_{00}=0\). Every other monomial
+of \(p-\sig(w_t)\) has positive degree, so Step 2 gives
+\(p-\sig(w_t)\in \im(A_u)\). Therefore
+\(p=(p-\sig(w_t))+\sig(w_t)\) is exactly an image term plus a kernel square, and
+\cref{lem:certificate} gives \(r(u,p)=0\). Finally,
+\cref{prop:equivariance} transports the conclusion back to the original
+coordinates.
 \end{proof}
 
-\begin{theorem}[Affine-rank-one closure after line normalization; Lean families
-\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_affineLine\_tailRangeZero},
-\texttt{...tailRangeOne}, \texttt{...tailRangeTwo}]
+\begin{theorem}[Affine-rank-one theorem after line normalization]
 \label{thm:affine-rank-one}
 Assume \(\dim \Exact(u)=1\), that \(\Exact(u)\) contains a nonconstant affine
 line but no constant relation, and normalize that line to \(x_0\). Let
@@ -366,23 +556,234 @@ satisfies \(r(u,p)=0\).
 \end{theorem}
 
 \begin{proof}
-If \(\dim \Tail(u)=0\), all complementary relations are homogeneous, giving the
-linear low-affine endpoint.
+After normalizing the unique exact affine line to \(x_0\), we can choose exact
+relations
+\[
+  r_{20}=\alpha_{20}+\beta_{20}x_1+x_0^2,\qquad
+  r_{11}=\alpha_{11}+\beta_{11}x_1+x_0x_1,\qquad
+  r_{02}=\alpha_{02}+\beta_{02}x_1+x_1^2.
+\]
+Let
+\[
+  T=
+  \begin{pmatrix}
+    \alpha_{20} & \beta_{20}\\
+    \alpha_{11} & \beta_{11}\\
+    \alpha_{02} & \beta_{02}
+  \end{pmatrix}.
+\]
+By definition,
+\[
+  \Tail(u)=\Span\{\alpha_{20}+\beta_{20}x_1,\alpha_{11}+\beta_{11}x_1,
+  \alpha_{02}+\beta_{02}x_1\},
+\]
+so \(\dim \Tail(u)=\rank T\in \{0,1,2\}\). We treat the three possibilities.
 
-If \(\dim \Tail(u)=1\), there is a common one-dimensional affine tail. After
-normalization one reaches a finite list of affine-rank-one charts: repeated
-line, shared-tail, common-factor, and diagonal endpoints. Each endpoint has an
-explicit quartic image theorem and an explicit kernel-square correction for the
-missing quotient classes.
+\smallskip
+\noindent\textbf{Case 1: \(\dim \Tail(u)=0\).}
 
-If \(\dim \Tail(u)=2\), the tails span \(\Span\{1,x_1\}\). The corresponding
-tail matrix either has nonzero determinant, which is the generic range-two
-case, or determinant zero. In the determinant-zero regime, a shear reduction
-produces either the shared-tail family or the \(x_0^2\)-tail family; a
-discriminant then splits each of these into the zero and nonzero subcases.
-Every one of these finitely many endpoints is solved by an explicit
-image-plus-kernel-square certificate. Hence \(r(u,p)=0\) in all three tail
-ranks.
+Here \(T=0\), so \(r_{20}=x_0^2\), \(r_{11}=x_0x_1\), and \(r_{02}=x_1^2\).
+Hence we have exact relations for \(x_0\), \(x_0^2\), \(x_0x_1\), and
+\(x_1^2\). Every quartic monomial except \(1\) and \(x_1\) therefore lies in
+\(\im(A_u)\): any monomial with an \(x_0\)-factor is obtained by multiplying
+the exact relation \(x_0\) or one of the exact quadratic relations by a
+low-degree polynomial, and the pure \(x_1\)-monomials \(x_1^2,x_1^3,x_1^4\) are
+handled the same way.
+
+So only the constant and \(x_1\) coefficients of \(p\) remain. Write
+\(p=\sum_j h_j^2\), and set \(s_0=\sum_j (h_j)_{00}^2\) and
+\(s_1=\sum_j (h_j)_{00}(h_j)_{01}\), so \(p_{00}=s_0\) and \(p_{01}=2s_1\).
+Choose \(c_0,c_{11}\in \R^4\) with \(\rel_u(c_0)=x_0\) and
+\(\rel_u(c_{11})=x_0x_1\), and for \(\ell=c+d x_1\) define
+\[
+  w_\ell=-c_0\odot (x_1\ell)+c_{11}\odot \ell.
+\]
+Then \(A_u(w_\ell)=-x_0(x_1\ell)+(x_0x_1)\ell=0\), so \(w_\ell\in \Ker(A_u)\).
+If \(\alpha=\sum_i c_{11,i}^2>0\) and \(\beta=\sum_i c_{0,i}c_{11,i}\), then a
+direct coefficient check gives
+\[
+  \sig(w_\ell)_{00}=\alpha c^2,\qquad
+  \sig(w_\ell)_{01}=2c(\alpha d-\beta c).
+\]
+Choose \(c=\sqrt{s_0/\alpha}\). If \(c\neq 0\), let
+\(d=s_1/(\alpha c)+\beta c/\alpha\); if \(c=0\), then \(s_0=0\), hence
+\(s_1=0\), so we take \(d=0\). With this choice,
+\(\sig(w_\ell)_{00}=p_{00}\) and \(\sig(w_\ell)_{01}=p_{01}\). Thus
+\((p-\sig(w_\ell))_{00}=(p-\sig(w_\ell))_{01}=0\), and every remaining quartic
+monomial already lies in \(\im(A_u)\). Hence \(p-\sig(w_\ell)\in \im(A_u)\),
+and \cref{lem:certificate} gives \(r(u,p)=0\).
+
+\smallskip
+\noindent\textbf{Case 2: \(\dim \Tail(u)=1\).}
+
+Let \(\tau=\rho+\eta x_1\) span \(\Tail(u)\). Then there are scalars
+\(\lambda_{20},\lambda_{11},\lambda_{02}\), not all zero, such that
+\[
+  r_{20}=\lambda_{20}\tau+x_0^2,\qquad
+  r_{11}=\lambda_{11}\tau+x_0x_1,\qquad
+  r_{02}=\lambda_{02}\tau+x_1^2.
+\]
+
+\emph{Pure \(x_1\)-tail.} Suppose \(\rho=0\), and scale so that \(\tau=x_1\).
+Then \(r_{20}=\lambda_{20}x_1+x_0^2\),
+\(r_{11}=\lambda_{11}x_1+x_0x_1\), and
+\(r_{02}=\lambda_{02}x_1+x_1^2\).
+
+If \(\lambda_{20}\neq 0\) or \(\lambda_{11}\neq 0\), then
+\(x_1=\lambda_{20}^{-1}(r_{20}-x_0^2)\) or
+\(x_1=\lambda_{11}^{-1}(r_{11}-x_0x_1)\), so \(x_1\in \im(A_u)\). Hence every
+positive-degree monomial lies in \(\im(A_u)\). To handle the constant class, we
+need one nonzero exact quadratic divisible by \(x_0\). If \(\lambda_{20}=0\),
+we can take \(x_0^2\); if \(\lambda_{11}=0\), we can take \(x_0x_1\); and if
+\(\lambda_{20}\lambda_{11}\neq 0\), then
+\[
+  \lambda_{11}r_{20}-\lambda_{20}r_{11}
+  =x_0(\lambda_{11}x_0-\lambda_{20}x_1)
+\]
+is such a relation. Writing \(\rel_u(d)=x_0\ell\), the vector
+\(w_t=-c_0\odot (t\ell)+d\odot t\) satisfies \(A_u(w_t)=0\) and
+\(\sig(w_t)_{00}=\gamma t^2\) with \(\gamma=\sum_i d_i^2>0\). Choosing
+\(t=\sqrt{p_{00}/\gamma}\) removes the constant coefficient. Since every other
+monomial has positive degree, we get \(p-\sig(w_t)\in \im(A_u)\), and
+\cref{lem:certificate} applies.
+
+If \(\lambda_{20}=\lambda_{11}=0\), then \(\lambda_{02}\neq 0\), so
+\(r_{20}=x_0^2\), \(r_{11}=x_0x_1\), and
+\(r_{02}=\lambda_{02}x_1+x_1^2\). Every monomial with an \(x_0\)-factor lies in
+\(\im(A_u)\), and modulo \(\im(A_u)\) we have
+\(x_1^2\equiv -\lambda_{02}x_1\), hence
+\(x_1^3\equiv \lambda_{02}^2x_1\) and
+\(x_1^4\equiv -\lambda_{02}^3x_1\). So every quartic is congruent modulo
+\(\im(A_u)\) to a linear combination of \(1\) and \(x_1\). The same kernel
+family \(w_\ell=-c_0\odot(x_1\ell)+c_{11}\odot \ell\) from Case 1 still
+satisfies \(\sig(w_\ell)_{00}=\alpha c^2\) and
+\(\sig(w_\ell)_{01}=2c(\alpha d-\beta c)\), so the same choice of \(c,d\) makes
+\((p-\sig(w_\ell))_{00}=(p-\sig(w_\ell))_{01}=0\). Since only the \(1\) and
+\(x_1\) classes can remain, this implies \(p-\sig(w_\ell)\in \im(A_u)\), and
+\cref{lem:certificate} again gives \(r(u,p)=0\).
+
+\emph{Mixed constant-plus-\(x_1\) tail.} Suppose \(\rho\neq 0\), and scale so
+that \(\tau=1+b x_1\). Then
+\[
+  r_{20}=\lambda_{20}(1+b x_1)+x_0^2,\quad
+  r_{11}=\lambda_{11}(1+b x_1)+x_0x_1,\quad
+  r_{02}=\lambda_{02}(1+b x_1)+x_1^2.
+\]
+If \(\lambda_{20}\neq 0\) or \(\lambda_{11}\neq 0\), then \(1+b x_1\in
+\im(A_u)\). Multiplying by \(x_1\) gives
+\(x_1+b x_1^2=(1+b x_1)x_1\in \im(A_u)\), while
+\(x_1^2=r_{02}-\lambda_{02}(1+b x_1)\in \im(A_u)\). Subtracting \(b x_1^2\)
+shows \(x_1\in \im(A_u)\), and then \(1=(1+b x_1)-b x_1\in \im(A_u)\). So every
+quartic monomial lies in \(\im(A_u)\), hence \(p\in \im(A_u)\), and
+\cref{cor:image} applies.
+
+If \(\lambda_{20}=\lambda_{11}=0\), then \(\lambda_{02}\neq 0\), so
+\(r_{20}=x_0^2\), \(r_{11}=x_0x_1\), and
+\(r_{02}=\lambda_{02}(1+b x_1)+x_1^2\). Again every monomial with an
+\(x_0\)-factor lies in \(\im(A_u)\), and now
+\(x_1^2\equiv -\lambda_{02}(1+b x_1)\pmod{\im(A_u)}\). Reducing once more gives
+\[
+  x_1^3\equiv \lambda_{02}^2 b+(\lambda_{02}^2 b^2-\lambda_{02})x_1,
+\]
+and reducing \(x_1^4=x_1^2\cdot x_1^2\) the same way shows that \(x_1^4\) is
+also congruent to a linear combination of \(1\) and \(x_1\). Hence every
+quartic is congruent modulo \(\im(A_u)\) to a combination of \(1\) and \(x_1\),
+and the Case 1 kernel family again matches the coefficients \(p_{00}\) and
+\(p_{01}\). Therefore \(p-\sig(w_\ell)\in \im(A_u)\), and
+\cref{lem:certificate} gives \(r(u,p)=0\).
+
+\smallskip
+\noindent\textbf{Case 3: \(\dim \Tail(u)=2\).}
+
+Now the tail rows span \(\Span\{1,x_1\}\). After reordering if necessary, we may
+write
+\[
+  r_{20}=a+b x_1+x_0^2,\qquad
+  r_{11}=c+d x_1+x_0x_1,\qquad
+  r_{02}=e+f x_1+x_1^2,
+\]
+with either \(ad-bc\neq 0\) or \(ad-bc=0\) and one of the other \(2\times2\)
+minors nonzero.
+
+If \(ad-bc\neq 0\), then \(x_0^2,x_0x_1\in \im(A_u)\), so
+\(a+b x_1=r_{20}-x_0^2\in \im(A_u)\) and
+\(c+d x_1=r_{11}-x_0x_1\in \im(A_u)\). The linear combinations
+\[
+  d(a+b x_1)-b(c+d x_1)=(ad-bc)\cdot 1,
+\]
+\[
+  c(a+b x_1)-a(c+d x_1)=(bc-ad)\cdot x_1
+\]
+show that \(1,x_1\in \im(A_u)\), and then
+\(x_1^2=r_{02}-e\cdot 1-f x_1\in \im(A_u)\). So every quadratic monomial lies
+in \(\im(A_u)\), hence every quartic monomial does too, and \cref{cor:image}
+gives \(r(u,p)=0\).
+
+It remains to treat \(ad-bc=0\). First suppose \((a,b)\neq (0,0)\). Then
+\((c,d)=g(a,b)\) for some \(g\in \R\). Shearing by
+\((x_0,x_1)\mapsto (x_0,x_1+g x_0)\) and replacing \(r_{11}\) by
+\(r_{11}-g r_{20}\) gives
+\[
+  r_{20}'=a+b x_1+x_0^2,\qquad r_{11}'=x_0x_1,\qquad
+  r_{02}'=e'+f' x_1+x_1^2,
+\]
+where \(e'=e-g^2a\) and \(f'=f-g^2b\). Set
+\(\Delta=a^2-a b f'+b^2 e'=a^2-a b f+b^2 e\).
+
+If \(\Delta\neq 0\), then \(a+b x_1=r_{20}'-x_0^2\in \im(A_u)\), and
+\(a x_1+b x_1^2=r_{20}'x_1-x_0^2x_1\in \im(A_u)\). Also
+\[
+  (b e'-a f')\cdot 1+b x_1^2=b r_{02}'-f' r_{20}'+f' x_0^2\in \im(A_u),
+\]
+so subtracting gives \((a f'-b e')\cdot 1+a x_1\in \im(A_u)\). Combining this
+with \(a+b x_1\) yields \(\Delta\cdot 1\in \im(A_u)\) and
+\(\Delta\cdot x_1\in \im(A_u)\). Since \(\Delta\neq 0\), we conclude
+\(1,x_1\in \im(A_u)\), so all quartics lie in \(\im(A_u)\).
+
+If \(\Delta=0\) and \(a\neq 0\), then \(b\neq 0\) because otherwise
+\(\Delta=a^2\neq 0\). Translate \(x_1\mapsto y_1+a/b\), so \(y_1=x_1-a/b\).
+Then \(r_{20}'=b y_1+x_0^2\), hence after scaling we obtain a relation
+\(y_1+\widetilde a\,x_0^2\). Also
+\[
+  r_{02}'=
+  \Bigl(e'-\frac{a}{b}f'+\frac{a^2}{b^2}\Bigr)
+  +\Bigl(f'-\frac{2a}{b}\Bigr)y_1+y_1^2.
+\]
+The constant term is \(\Delta/b^2=0\), so the translated third relation is
+either \(y_1^2\) or \(y_1+\widetilde d\,y_1^2\) after rescaling. This is one of
+the pure-\(x_1\) endpoint families already handled in Case 2. If \(a=0\), then
+\(\Delta=b^2 e'=0\) forces \(e'=0\), so
+\(r_{20}'=b x_1+x_0^2\), \(r_{11}'=x_0x_1\), and
+\(r_{02}'=f' x_1+x_1^2\), which is again a Case 2 endpoint family.
+
+Finally, suppose \((a,b)=(0,0)\). Then \(r_{20}=x_0^2\) is exact, and the tail
+rank condition forces the tails of \(r_{11}\) and \(r_{02}\) to be
+independent. Write \(r_{11}=c+d x_1+x_0x_1\) and
+\(r_{02}=e+f x_1+x_1^2\), and set \(\Delta'=c^2-c d f+d^2 e\).
+
+If \(\Delta'\neq 0\), then \(c+d x_1=r_{11}-x_0x_1\in \im(A_u)\) and
+\(c x_1+d x_1^2=r_{11}x_1-x_0x_1^2\in \im(A_u)\). Also
+\[
+  (d e-c f)\cdot 1+d x_1^2=d r_{02}-f r_{11}+f x_0x_1\in \im(A_u),
+\]
+so \((c f-d e)\cdot 1+c x_1\in \im(A_u)\). Combining these gives
+\(\Delta'\cdot 1\in \im(A_u)\) and \(\Delta'\cdot x_1\in \im(A_u)\), hence
+\(1,x_1\in \im(A_u)\). So again every quartic lies in \(\im(A_u)\).
+
+If \(\Delta'=0\) and \(d\neq 0\), translate by \(y_1=x_1-c/d\). Then
+\(r_{11}=d y_1+x_0y_1+(c/d)x_0\), so subtracting \((c/d)x_0\) and rescaling
+gives a relation \(y_1+\widetilde c\,x_0y_1\). For \(r_{02}\), the constant
+term after translation is
+\[
+  e-\frac{c}{d}f+\frac{c^2}{d^2}=\frac{\Delta'}{d^2}=0,
+\]
+so the translated third relation is either \(y_1^2\) or
+\(y_1+\widetilde d\,y_1^2\). This is again one of the pure-\(x_1\) endpoint
+families from Case 2. If \(d=0\), then \(\Delta'=c^2=0\), so \(c=0\), hence
+\(r_{11}=x_0x_1\), and we are already in those endpoint families.
+
+This exhausts the three possibilities for \(\dim \Tail(u)\), so every SOS
+quartic \(p\) satisfies \(r(u,p)=0\).
 \end{proof}
 
 \section{The exact-affine classifier}\label{sec:classifier}
@@ -409,8 +810,7 @@ rank--nullity gives \(\dim\Exact(u)\ge 1\). On the other hand, because
 injective, so \(\dim\Exact(u)\le \dim \Aff =3\).
 \end{proof}
 
-\begin{theorem}[Exact-affine dimension \(3\); Lean:
-\texttt{residual\_eq\_zero\_of\_exactAffineDimThree}]
+\begin{theorem}[Exact-affine dimension \(3\)]
 \label{thm:exact-dim3}
 If \(\Ker(\rel_u)=\{0\}\) and \(\dim \Exact(u)=3\), then \(r(u,p)=0\).
 \end{theorem}
@@ -421,8 +821,7 @@ and codomain have dimension \(3\), so it is an isomorphism. Therefore there are
 exact relations for \(1,x_0,x_1\). Apply \cref{thm:contains-aff1}.
 \end{proof}
 
-\begin{theorem}[Exact-affine dimension \(2\) with a constant relation; Lean:
-\texttt{residual\_eq\_zero\_of\_exactAffineDimTwo\_contains\_one}]
+\begin{theorem}[Exact-affine dimension \(2\) with a constant relation]
 \label{thm:exact-dim2-const}
 If \(\Ker(\rel_u)=\{0\}\), \(\dim \Exact(u)=2\), and \(1\in \rel_u(\Exact(u))\),
 then \(r(u,p)=0\).
@@ -430,12 +829,11 @@ then \(r(u,p)=0\).
 
 \begin{proof}
 Fix an exact constant relation \(1\). Since \(\Exact(u)\) has dimension \(2\),
-there is a second independent exact affine relation \(r+a x_0+b x_1\) with
+there is a second independent exact affine relation \(t+a x_0+b x_1\) with
 \(a^2+b^2\neq 0\). Apply \cref{thm:const-affine-line}.
 \end{proof}
 
-\begin{theorem}[Exact-affine dimension \(2\) without a constant relation; Lean:
-\texttt{residual\_eq\_zero\_of\_exactAffineDimTwo\_noConst}]
+\begin{theorem}[Exact-affine dimension \(2\) without a constant relation]
 \label{thm:exact-dim2-noconst}
 If \(\Ker(\rel_u)=\{0\}\), \(\dim \Exact(u)=2\), and
 \(1\notin \rel_u(\Exact(u))\), then \(r(u,p)=0\).
@@ -450,22 +848,24 @@ affine relation has zero linear part.
 Consider the translated zero-linear-tail kernel. There are two possibilities.
 \begin{enumerate}
 \item Every such relation has zero constant term. Then the complementary
-quadratic relations form a genuine homogeneous plane in \(\HomQ\), so
-\cref{thm:low-affine} applies.
+quadratic relations are purely homogeneous. Their homogeneous parts span a
+two-dimensional subspace of \(\HomQ\), so \cref{thm:low-affine} applies.
 \item Some translated kernel relation has nonzero constant term. Then choose a
 pair of translated relations with constants \(1\) and \(0\). If their
 homogeneous parts are dependent, a linear combination produces a constant
-relation and one falls back to \cref{thm:contains-aff1}. If their homogeneous
-parts are independent, the constant-perturbed low-affine plane is classified by
-the same common-factor/cross/diagonal normal forms as in
-\cref{thm:low-affine}, now with one relation shifted by \(1\). The formalized
-constant-perturbed low-affine plane theorems close these cases.
+relation. Together with the exact relations for \(x_0\) and \(x_1\), this gives
+exact relations for \(1,x_0,x_1\), so \cref{thm:contains-aff1} applies. If
+their homogeneous parts are independent, then we are in the constant-perturbed
+low-affine situation. The corresponding arguments analyze the same
+common-factor, cross, and diagonal normal forms as in
+\cref{thm:low-affine}, now with one relation shifted by \(1\), and again show
+that every square \(q^2\) is an image term plus kernel squares.
 \end{enumerate}
-Thus \(r(u,p)=0\).
+Transporting back through the translation preserves residual vanishing by
+\cref{prop:equivariance}, so \(r(u,p)=0\).
 \end{proof}
 
-\begin{theorem}[Exact-affine dimension \(1\) with a constant relation; Lean:
-\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_contains\_one}]
+\begin{theorem}[Exact-affine dimension \(1\) with a constant relation]
 \label{thm:exact-dim1-const}
 If \(\dim \Exact(u)=1\) and \(1\in \rel_u(\Exact(u))\), then \(r(u,p)=0\).
 \end{theorem}
@@ -474,28 +874,29 @@ If \(\dim \Exact(u)=1\) and \(1\in \rel_u(\Exact(u))\), then \(r(u,p)=0\).
 Let \(c^{(0)}\) generate \(\Exact(u)\) with \(\rel_u(c^{(0)})=1\). Consider
 the subspace
 \[
-  K=\{c\in \R^4 : [1]\rel_u(c)=0\}.
+  K=\{c\in \R^4 : \text{the constant term of }\rel_u(c)\text{ is }0\}.
 \]
-Since the constant coefficient map is surjective, \(\dim K=3\). The projection
-from \(K\) to homogeneous quadratic coefficients is injective: if a vector in
-\(K\) also has zero homogeneous quadratic part, then it would give a second
-independent exact affine relation, contradicting \(\dim\Exact(u)=1\). Thus the
-three vectors in \(K\) provide three independent quadratic relations.
+Because \(\rel_u(c^{(0)})=1\), the constant coefficient map is surjective, so
+\(\dim K=3\). Now map \(K\) to \(\HomQ\) by taking the homogeneous quadratic
+part of \(\rel_u(c)\). This map is injective: if \(c\in K\) maps to \(0\),
+then \(\rel_u(c)\) is an exact affine relation with zero constant term. Since
+\(\dim \Exact(u)=1\) and \(\Exact(u)\) is generated by the relation \(1\), the
+only such relation is \(0\). Therefore the image of \(K\) in \(\HomQ\) also has
+dimension \(3\), hence equals all of \(\HomQ\).
 
-Now inspect their affine tails. The map sending a relation in \(K\) to its
-\((x_0,x_1)\)-tail has rank \(0\), \(1\), or \(2\). In each case, elementary
-row operations inside \(K\) produce a basis whose relations are of the form
+So we may choose \(d^{(0)},d^{(1)},d^{(2)}\in K\) whose homogeneous parts are
+exactly \(x_0^2\), \(x_0x_1\), and \(x_1^2\). Their lower-degree parts involve
+only \(x_0\) and \(x_1\), so they are relations of the form
 \[
   \text{(affine tail)}+x_0^2,\qquad
   \text{(affine tail)}+x_0x_1,\qquad
   \text{(affine tail)}+x_1^2.
 \]
-Their homogeneous coefficient matrix is therefore invertible. Applying
-\cref{thm:surjective-basis} yields \(r(u,p)=0\).
+The homogeneous coefficient matrix is the identity, so
+\cref{thm:surjective-basis} applies and gives \(r(u,p)=0\).
 \end{proof}
 
-\begin{theorem}[Exact-affine dimension \(1\) without a constant relation; Lean:
-\texttt{residual\_eq\_zero\_of\_exactAffineDimOne\_noConst}]
+\begin{theorem}[Exact-affine dimension \(1\) without a constant relation]
 \label{thm:exact-dim1-noconst}
 If \(\Ker(\rel_u)=\{0\}\), \(\dim \Exact(u)=1\), and
 \(1\notin \rel_u(\Exact(u))\), then \(r(u,p)=0\).
@@ -506,11 +907,10 @@ Extract the unique exact affine line and normalize it by an affine equivalence
 to \(x_0\). After this normalization, the remaining exact affine relations with
 zero \(x_0\)-coefficient define the tail space \(\Tail(u)\subseteq\Span\{1,x_1\}\).
 Its dimension is \(0\), \(1\), or \(2\). The three cases are exactly the three
-tail-rank branches in \cref{thm:affine-rank-one}, so \(r(u,p)=0\).
+cases covered by \cref{thm:affine-rank-one}, so \(r(u,p)=0\).
 \end{proof}
 
-\begin{theorem}[Exact-affine classifier; Lean:
-\texttt{residual\_eq\_zero\_of\_relationPolyLin\_ker\_eq\_bot}]
+\begin{theorem}[Exact-affine classifier]
 \label{thm:classifier}
 If \(\Ker(\rel_u)=\{0\}\), then \(r(u,p)=0\) for every SOS quartic \(p\) and
 every \(\SOCP\) \(u\).
@@ -529,8 +929,7 @@ These cases exhaust the possibilities.
 \end{proof}
 
 \section{Proof of the main theorem}\label{sec:main-proof}
-\begin{theorem}[No spurious rank-$4$ SOCPs for ternary quartics; Lean:
-\texttt{ternaryQuartic\_rankFour\_no\_spurious\_socp}]
+\begin{theorem}[No spurious rank-$4$ SOCPs for ternary quartics]
 \label{thm:main}
 Let \(p\) be an SOS quartic, let \(u\in \Quad^4\), and let \(B\) be a
 positive-definite bilinear form on \(\Poly\). If \(u\) is a second-order
@@ -567,7 +966,65 @@ the multivariate replacement is the exact-affine classifier:
   \dim \Exact(u)\in \{1,2,3\},
 \]
 followed by the span-three, mixed-affine, low-affine, and affine-rank-one
-closure theorems described above.
+theorems described above.
 \end{remark}
+
+\section{Formalization Cross-Reference}\label{sec:lean-xref}
+\cref{tab:lean-xref} collects the corresponding Lean declarations and source
+files.
+
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\small
+\begin{longtable}{L{0.27\textwidth}L{0.63\textwidth}}
+\caption{Formalization cross-reference for the statements used in this blueprint.}
+\label{tab:lean-xref}\\
+\textbf{Blueprint item} & \textbf{Lean declaration(s) or source file(s)}\\
+\hline
+\endfirsthead
+\textbf{Blueprint item} & \textbf{Lean declaration(s) or source file(s)}\\
+\hline
+\endhead
+\cref{def:basic-maps} &
+\lean{sigma}, \lean{A}, \lean{residual}, \lean{IsSOCP}\\
+\cref{def:sos} &
+\lean{IsSOSQuartic}\\
+\cref{def:relation-poly-lin} &
+\lean{relationPoly}, \lean{relationPolyLin}, \lean{exactAffineSubmodule}\\
+\cref{lem:certificate} &
+\lean{admissible_image_plus_cone_residual_eq_zero}\\
+\cref{cor:constant-relation} &
+\lean{residual_eq_zero_of_constant_relation}\\
+\cref{prop:equivariance} &
+\lean{AffineSocpTransform.lean}, \lean{FactorTransform.lean}\\
+\cref{thm:contains-aff1} &
+\lean{residual_eq_zero_of_contains_aff1}\\
+\cref{thm:const-affine-line} &
+\lean{residual_eq_zero_of_relations_const_affineLine}\\
+\cref{thm:surjective-basis} &
+\lean{exact_relations_of_homQuadBasis_det},
+\lean{residual_eq_zero_of_relations_const_homQuadBasis_det}\\
+\cref{thm:low-affine} &
+\lean{RepresentativeLowAffine.lean}\\
+\cref{thm:affine-rank-one} &
+\lean{residual_eq_zero_of_exactAffineDimOne_affineLine_tailRangeZero},
+\lean{residual_eq_zero_of_exactAffineDimOne_affineLine_tailRangeOne},
+\lean{residual_eq_zero_of_exactAffineDimOne_affineLine_tailRangeTwo}\\
+\cref{thm:exact-dim3} &
+\lean{residual_eq_zero_of_exactAffineDimThree}\\
+\cref{thm:exact-dim2-const} &
+\lean{residual_eq_zero_of_exactAffineDimTwo_contains_one}\\
+\cref{thm:exact-dim2-noconst} &
+\lean{residual_eq_zero_of_exactAffineDimTwo_noConst}\\
+\cref{thm:exact-dim1-const} &
+\lean{residual_eq_zero_of_exactAffineDimOne_contains_one}\\
+\cref{thm:exact-dim1-noconst} &
+\lean{residual_eq_zero_of_exactAffineDimOne_noConst}\\
+\cref{thm:classifier} &
+\lean{residual_eq_zero_of_relationPolyLin_ker_eq_bot}\\
+\cref{thm:main} &
+\lean{ternaryQuartic_rankFour_no_spurious_socp}\\
+\end{longtable}
+\normalsize
 
 \end{document}
