@@ -1,0 +1,128 @@
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+% fixltx2e is not required with releases after 2015
+% \usepackage{fixltx2e}
+\usepackage{mathtools}
+\usepackage{subfig}
+
+\algtext*{EndWhile}
+\algtext*{EndIf}
+\algtext*{EndFor}
+\algtext*{EndFunction}
+\algtext*{EndLoop}
+\MakeRobust{\Call}
+\newcommand{\paren}[1]{\left( #1 \right)}
+\newcommand{\pfrac}[2]{\left( \frac{#1}{#2} \right)}
+\newcommand{\bracket}[1]{\left[ #1 \right]}
+\newcommand{\braces}[1]{\left\{ #1 \right\}}
+\newcommand{\pabs}[1]{\left\lvert #1 \right\lvert}
+\newcommand{\norm}[1]{\left\lVert #1 \right\lVert}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\Var}[1]{\text{Var}\paren{#1}}
+\newcommand{\dotp}[1]{\left\langle #1 \right\rangle}
+\newcommand{\interact}[2]{\ensuremath{\langle #1, #2 \rangle}}
+\newcommand{\bit}{\{0,1\}}
+\newcommand{\Oh}{\mathcal{O}}
+\newcommand{\bmat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\newcommand{\Ex}{\mathop{{}\mathbb{E}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Sbb}{\mathbb{S}}
+\newcommand{\Kcal}{\mathcal{K}}
+\newcommand{\Ncal}{\mathcal{N}}
+\newcommand{\defeq}{\vcentcolon=}
+\newcommand{\eqdef}{=\vcentcolon}
+\newcommand{\pEx}{\mathop{\tilde{\Ex}}}
+\newcommand{\Ksym}{\mathcal{K}_\text{sym}}
+\newcommand{\midvert}{\,\middle\vert\,}
+\newcommand{\SymK}[1][n]{\mathcal{S}^{#1}}
+\newcommand{\Psd}[1][n]{\SymK[#1]_+}
+\newcommand{\Pd}{\SymK_{++}}
+\newcommand{\la}{\langle}
+\newcommand{\ra}{\rangle}
+\newcommand{\vecp}[1]{\boldsymbol{\mathbf{#1}}}
+\newcommand{\vecpoly}[1]{\vecp{#1}(x)}
+\newcommand{\House}[1]{H_{#1}}
+\newcommand{\Tr}{\top}
+
+\DeclareMathOperator{\trace}{Tr}
+\DeclareMathOperator{\Cay}{Cay}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\mspan}{span}
+\DeclareMathOperator{\conv}{conv}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\Diag}{Diag}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\argmin}{arg\,min}
+\DeclareMathOperator{\argmax}{arg\,max}
+\DeclareMathOperator{\var}{var}
+\DeclareMathOperator{\poly}{poly}
+\DeclareMathOperator{\cone}{cone}
+\DeclareMathOperator{\per}{per}
+\DeclareMathOperator{\haf}{haf}
+\DeclareMathOperator{\Vol}{Vol}
+%\DeclareMathOperator{\Pr}{Pr}
+\DeclareMathOperator{\dimension}{dim}
+\DeclareMathOperator{\codim}{codim}
+\DeclareMathOperator{\cofactor}{cofactor}
+\DeclareMathOperator{\imag}{Im}
+\DeclareMathOperator{\kernel}{Ker}
+\DeclareMathOperator{\nullity}{nullity}
+\DeclareMathOperator{\Syg}{Syg}
+\DeclareMathOperator{\Res}{Res}
+\DeclareMathOperator{\Seg}{Seg}
+
+\newcommand{\equivI}[2]{#1 \equiv #2 \pmod{I}}
+%\newcommand{\equivI}[2]{#1 - #2 \in \imag(\mathcal{A}_{\vecpoly{u}})}
+
+\usepackage{hyperref}
+
+\usepackage{xargs}
+\newcommandx{\polyspace}[2][1=n,2=d]{\R[x]_{#1, #2}}
+\newcommandx{\formspace}[2][1=n,2=d]{\R[x]_{\mathbf{#1, #2}}}
+
+\newcommandx{\polyspaceuni}[1][1=d]{\R[x]_{#1}}
+\newcommandx{\formspaceuni}[1][1=d]{\R[x]_{\mathbf{#1}}}
+\newcommandx{\dimpolyspace}[2][1=n,2=d]{\dim(\polyspace[#1][#2])}
+\newcommandx{\dimformspace}[2][1=n,2=d]{\dim(\formspace[#1][#2])}
+\newcommandx{\polyspacesquare}[2][1=n,2={2d}]{\R[x]_{#1, #2}}
+\newcommandx{\dimpolyspacesquare}[2][1=n,2={2d}]{\dim(\polyspacesquare[#1][#2])}
+\newcommandx{\formspacesquare}[2][1=n,2={2d}]{\R[x]_{\mathbf{#1, #2}}}
+\newcommandx{\dimformspacesquare}[2][1=n,2={2d}]{\dim(\formspacesquare[#1][#2])}
+\newcommandx{\soscone}[2][1=n,2=2d]{\Sigma[x]_{#1,#2}}
+\newcommandx{\sosconeh}[2][1=n,2=2d]{\Sigma[x]_{\mathbf{#1,#2}}}
+\newcommandx{\usosconeh}[1][1=2d]{\Sigma[x]_{\mathbf{#1}}}
+\newcommandx{\pythagoras}[2][1=n,2=d]{\pi(#1, #2)}
+\newcommandx{\pythagorash}[2][1=n,2=d]{\pi(\formspace[#1][#2])}
+\newcommandx{\pythagoraslb}[2][1=n,2=d]{\lambda(\polyspace[#1][#2])}
+\newcommandx{\pythagoraslbh}[2][1=n,2=d]{\lambda(\formspace[#1][#2])}
+
+\newcommandx{\Rx}[1][1=]{\R[x]_{#1}}
+\newcommandx{\Rxhom}[1][1=]{\Rx[\mathbf{#1}]}
+\newcommandx{\Sx}[1][1=]{\Sigma[x]_{#1}}
+\newcommandx{\Sxhom}[1][1=]{\Sx[\mathbf{#1}]}
+
+\newcommand{\Au}{\mathcal{A}_{\vecpoly{u}}}
+\newcommand{\Avp}{\mathcal{A}_{\vecp{v}}}
+\newcommand{\Aup}{\mathcal{A}_{\vecp{u}}}
+\newcommand{\Aupp}{\mathcal{A}_{\vecp{u}'}}
+\newcommand{\Auh}{\mathcal{A}_{\vecp{u}/h}}
+
+\newcommand{\bi}{b(\hat{x}_i)}
+\newcommand{\pxi}{p(\hat{x}_i)}
+\newcommand{\xxi}[1]{#1(\hat{x}_i)}
+
+\newcommand{\maxdeg}[2]{\max(\deg(#1), \deg(#2))}
+
+\newcommand{\sig}{\sigma}
+\newcommand{\gc}{\hat{g}}
+\newcommand{\setbuild}[2]{\{\, #1 \mid #2 \,\}}
+
+\newcommand{\PP}{\mathbb{P}}

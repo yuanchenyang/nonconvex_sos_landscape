@@ -1,0 +1,3 @@
+[submodule "low_rank_univariate_sos"]
+	path = low_rank_univariate_sos
+	url = https://github.com/yuanchenyang/lean_low_rank_univariate_sos

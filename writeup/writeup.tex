@@ -1,0 +1,371 @@
+\documentclass[11pt]{article}
+\usepackage{mymacros}
+\usepackage{mytheorems}
+\usepackage{textcomp,geometry,graphicx,enumerate,fullpage}
+\usepackage{booktabs}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{mathrsfs} % for mathscr
+\usepackage{cleveref}
+\usepackage{todonotes}
+\DeclareMathOperator{\tr}{tr}
+
+\newcommand{\suppfun}[1]{h_{#1}}
+\newcommand{\error}{e}
+\newcommand{\Error}{\mathbf{E}_A}
+\newcommand{\APsd}{\mathbf{Q}_A}
+
+\title{Hidden Convexity}
+
+\date{\today}
+
+\newcommand{\cA}{\mathcal{A}}
+
+\DeclareMathOperator{\vecf}{vec}
+
+\begin{document}
+\maketitle
+
+\section{Outline}
+
+In this paper, we introduce a semi-automated way to analyse the global landscape
+of nonconvex optimization problems.  More precisely, the goal is to investigate
+the existence of local minima that are not global, which we called
+\emph{spurious}.  The approach requires finding a \emph{convex} problem for dual
+solutions provide certificate of global optimality of specific solution.
+
+This convex formulation can be used to either find spurious local minima or aid
+the development of a proof of global optimality for all local minima.  We
+illustrate the methodology on two nonconvex problems: the Burer-Monteiro
+formulation for Semidefinite Programming.  We show how the approach can
+streamline the analysis.
+
+For Burer-Monteiro, we start with the general case where we show how the method
+can be used to find existing counterexamples found by
+\cite{bhojanapalli2018smoothed}.  For the particular case of Burer-Monteiro
+applied to the Sum-of-Squares problem, we show how the approach find the proof
+of \cite{legat2023lowrank} and the counterexamples of
+\cite{blekherman2024Spurious}.
+
+We argue that such hidden convexity approach should provide a way for the
+optimization community to leverage its expertise in convex modeling to the
+analysis of the nonconvex formulation that are prevalent nowadays.  Moreover,
+once these hidden convex problems are found, it significantly streamline the
+proof development, by providing guidance through the search of these complicated
+global landscape.
+
+A similar approach is in \cite[(3.2)]{zhang2024improved}.  The key difference is
+that their $\phi$ represents the whole problem so they optimize of the class of
+all SDPs while we just optimize over the right-hand side of the constant of the
+SDP.
+
+\section{Background}
+Let $S^n$ be the space of $n\times n$ symmetric matrices, and $S^n_r$ be the
+space of rank-$r$ symmetric PSD matrices.  Let $\cA: \R^n \rightarrow \R^m$ be a
+quadratic map defined by $A_1, \ldots, A_m \in S^n$:
+\begin{align*}
+  \cA(x) = (x^\top A_1 x, \ldots, x^\top A_m x).
+\end{align*}
+More generally, we can define
+$A: S^n \rightarrow \R^m$:
+\begin{align*}
+  A(X) = (\dotp{A_1, X}, \ldots, \dotp{A_m, X}).
+\end{align*}
+We say that $A$ (resp. $\cA$) satisfies \emph{hidden convexity} if
+$\braces{A(x) \mid X \in S_1^n} = \braces{\cA(x) \mid x \in \R^n}$ is a convex
+set. More generally, we can also consider the set
+$\braces{A(x) \mid X \in S_r^n}$ for $r < n$. Below we list a few examples of
+hidden convexity.
+
+\paragraph{Dines' Theorem} When $m=2$, Dines \cite{dines1941mapping} proved that
+$\braces{(x^\top A_1 x, x^\top A_2 x) \mid x \in \R^n}$, which is
+$ \braces{(\dotp{A_1, X}, \dotp{A_2, X}) \mid X \in S_1^n}$, is convex.
+
+\paragraph{Barvinok-Pataki Bound} When $r \ge \floor{(\sqrt{8m+1}-1)/2}$, the
+set $\braces{A(x) \mid X \in S_r^n}$ is convex. This is known as the
+Barvinok-Pataki
+\cite{BarvinokFeasibilitytestingsystems1993,PatakiRankExtremeMatrices1998}
+bound. Dines' theorem arises as a special case of this bound, when $m = 2$.
+
+\paragraph{Sum of Squares Polynomials} Let $b(x) \in \R^n$ be a basis of
+$\Rx[p, d]$, the set of polynomials in $p$ variables of degree at most
+$d$. Suppose $A(X)$ is the map extracting the coefficients of the polynomial
+$b(x)^\top X b(x)$. Then if $r$ is at least the Pythagoras number of
+$\Rx[p, d]$, the set $\braces{A(x) \mid X \in S_r^n}$ is equal to the sum of
+squares cone $\Sx[p, 2d]$, which is convex.
+
+\section{Landscape of Burer-Monteiro Factorization}
+Consider the following problem: Given $A: S^n \rightarrow \R^m$ and
+$b \in \R^m$, find $X \in S^n_r$ so that $A(X) = b$. We consider the following
+quadratically-penalized \footnote{The squared norm can be replaced by any convex
+  positive definite function and the same analysis should hold.} objective:
+\begin{align} \label{eq:obj}
+  \min_{U \in \R^{n \times r}} f_b(U) := \norm{A(UU^\top) - b}^2.
+\end{align}
+If $U$ is a second-order critical point (SOCP) of \eqref{eq:obj}, the following
+conditions must hold:
+\begin{align}
+  \label{eq:grad}
+  \dotp{A(UV^\top), A(UU^\top) - b} \sim \nabla f_b(U)(V) &= 0,\quad \text{for all } V \in \R^{n \times r}. \\
+  \label{eq:hess}
+  \dotp{A(VV^\top), A(UU^\top) - b} + 2\norm{A(UV^\top)}^2 = \nabla^2 f_b(U)(V, V) &\ge 0,\quad \text{for all } V \in \R^{n \times r}.
+\end{align}
+In order to prove this for all SOCPs $U$, we want to show that the two sets
+\begin{align*}
+  G_A(U) &:= \braces{c \in \R^m \mid \nabla f_c(U)(V) = 0,\, \forall\, V \in \R^{n \times r}}, \\
+  H_A(U) &:= \braces{c \in \R^m \mid \nabla^2 f_c(U)(V, V) \ge 0,\, \forall\, V \in \R^{n \times r}},
+\end{align*}
+only intersect at the point $b$. As we will see, this depends on the interplay
+between the quadratic map $Q(U) = A(UU^\top)$ and the linear map
+$A_U(V) = A(UV^\top)$. It is more convenient to work with affine shifts of
+$G_A(U)$ and $H_A(U)$, shifting $Q(U)$ to the origin:
+\begin{align*}
+  \textbf{G}_A(U)
+  &:= \braces{\error \in \R^m \mid \dotp{A_U(V), \error} = 0,\, \forall\, V \in \R^{n \times r}}, \\
+  \textbf{H}_A(U)
+  &:= \braces{\error \in \R^m \mid \dotp{Q(V), \error} + 2 \norm{A_U(V)}^2 \ge 0,\, \forall\, V \in \R^{n \times r}}.
+\end{align*}
+We have a nice characterization of $\textbf{G}_A(U)$ in terms of the linear map
+$A_U$: It is the orthogonal complement of $\imag(A_U)$. In other words,
+\begin{align*}
+  \textbf{G}_A(U) = \kernel(A_U^*).
+\end{align*}
+We wish to show that there are no spurious SOCPs for \eqref{eq:obj}, for a
+particular fixed $U \in \R^{n\times r}$. For the simplest case, first consider
+the case when $Q(U)$ is in the interior of $\APsd$.
+\begin{proposition}
+  If $Q(U)$ is in the interior of $\APsd$ and
+  \begin{align*}
+    H_A(U) \cap G_A(U) \ne \braces{Q(U)},
+  \end{align*}
+  then there exists $b \in \APsd$ where $U$ is a spurious SOCP for $f_b$
+  (i.e. $U$ is SOCP but not global minimum of $f_b$).
+  \begin{proof}
+    Since $Q(U)$ is in the interior of $\APsd$ and $H_A(U) \cap G_A(U)$ is not a
+    singleton, we can find $b \in H_A(U) \cap G_A(U)$ (ensuring that $U$ is a
+    SOCP of $f_b$) where $b \in \APsd$ and $b \ne Q(U)$ (ensuring that $U$ is
+    not a global minimum of $f_b$).
+  \end{proof}
+\end{proposition}
+
+If $Q(U)$ is on the boundary of $\APsd$, the main difficulty arises from
+characterizing $b$ for which $U$ is \emph{not} a global minimum of $f_b$. In
+particular, there are $b$ for which $f_b(U) > 0$ but $U$ is still a global
+minimum. This occurs when $Q(U)$ is the \emph{projection} of $b$ onto the convex
+set $\APsd$. We can account for these cases with the strengthened proposition:
+\begin{proposition}
+  Given any $U \in \R^{n \times r}$, if there exists $c \in \APsd$ and
+  $b \in H_A(U) \cap G_A(U)$ so that
+  \begin{align*}
+    \dotp{Q(U) - c, Q(U) - b} > 0,
+  \end{align*}
+  then $U$ is a spurious SOCP of $f_b$.
+  \begin{proof}
+    Since $b \in H_A(U) \cap G_A(U)$, $U$ is a SOCP of $f_b$. Using the
+    variational characterization of projection onto the convex set $\APsd$: $U$
+    is the minimum of $f_b(U) = \norm{Q(U) - b}^2$ if for all $c \in \APsd$,
+    $\dotp{Q(U) - c, Q(U) - b} \le 0$. Thus $\dotp{Q(U) - c, Q(U) - b} > 0 $ for
+    some $c \in \APsd$ if and only if $U$ not a global minimum of $f_b$.
+  \end{proof}
+\end{proposition}
+
+In summary, to show that there are no spurious SOCPs for \eqref{eq:obj}, we need
+to show that for all $U \in \R^{n \times r}$ satisfying \eqref{eq:grad} and
+\eqref{eq:hess}, $H_A(U) \cap G_A(U) = \braces{b}$.  For example, if
+$\Sigma = \braces{Q(U) \mid U \in \R^{n \times r}}$ is a pointed convex cone,
+when $U = 0$ it is clear that these two sets only intersect at the origin.
+
+\section{Counterexample SDP and Duality}
+We can determine whether a fixed $U \in \R^{n \times r}$ is a spurious SOCP for
+a particular $f_b(U)$ by conducting a search over all $b \in \R^m$. Let
+\begin{align*}
+  \APsd &:= \{ Q(V)\mid V \in \R^{n \times r} \},\\
+  \Error(U) &:= \{ Q(U) - Q(V) \mid V \in \R^{n \times r} \} = Q(U) - \APsd.
+\end{align*}
+
+\begin{proposition}
+  \label{prop:onepoint}
+  $\textbf{G}_A(U) \cap \textbf{H}_A(U) \cap \Error(U) \ne \{0\}$ if and
+  only if $U$ is a spurious SOCP for $f_b(U)$ for some $b \in \APsd$.
+
+  \begin{proof}
+    If $a \in \textbf{G}_A(U)\cap \textbf{H}_A(U) \cap \Error(U)$ is
+    non-zero, let $b = Q(U) - a$. Then $U$ is a SOCP of $f_b$ by definition and
+    $f_b(U) = \norm{a}^2 > 0$, but since $a = Q(U) - Q(V)$ for some $V$,
+    $b = Q(V)$ and $f_b(V) = 0$ is the global minimum.
+
+    On the other hand, if $U$ is a spurious SOCP of $f_b$ where $b = Q(V)$ for
+    some $V$, then $Q(U) - b \in \textbf{G}_A(U)\cap \textbf{H}_A(U)$ but
+    $f_b(U) > 0$. This implies that $Q(U) - b \ne 0$.
+  \end{proof}
+\end{proposition}
+
+When $\APsd$ is a convex semidefinite-representable set, i.e. there is
+hidden convexity, this search can be performed by solving a SDP. In particular,
+hidden convexity means that $\APsd$ is the image of the PSD cone under
+the linear map $A$:
+\begin{align*}
+  \APsd = \{ A(X) \mid X \in S_+^n \}.
+\end{align*}
+
+Let $H^1_A: \R^m \rightarrow \R^{nr \times nr}$ be the linear map defined by
+$\vecf(V)^T H^1_A(a) \vecf(V) := \dotp{A(VV^\top), a}$ and
+$H^2_{A, U} \in \R^{nr \times nr}$ be the quadratic form defined by
+$\vecf(V)^T H^2_{A, U} \vecf(V) := 2\norm{A_U(V)}^2$.
+
+We now reformulate
+\[ \textbf{G}_A(U) \cap \textbf{H}_A(U) \cap \Error(U) \ne \{0\} \]
+into
+\[ \exists c \in \R^m \text{ s.t. } \suppfun{\textbf{G}_A(U) \cap \textbf{H}_A(U) \cap \Error(U)}(c) > 0. \]
+where $\suppfun{S}$ is the support function of a set $S$.
+Note that there if the set is nonempty then the set of $c$ such that the support function is nonzero is
+at least a halfspace.
+So picking a random $c$ already gives a 50\% chance of detecting a counterexample.
+
+This support function evaluation be formulated as follows:
+\begin{align*}
+  \max_{e} \, & \dotp{-c, \error} &
+  \min_{\lambda, \nu, Y} \, & \dotp{\nu, Q(U)} + \dotp{Y, H^2_{A, U}} \\
+  \text{s.t. } & A_U^*(\error) = 0  &
+  \text{s.t. } & A_U(\lambda) + {H^1_A}^*(Y) - c = \nu \\
+         & H^1_A(\error) + H^2_{A, U} \succeq 0 &
+         & Y \succeq 0\\
+         & Q(U) - \error \in \APsd &
+         & \nu \in \APsd^*
+\end{align*}
+or
+\begin{align}
+  \label{eq:progb}
+  \max_{b} \, & \dotp{-c, Q(U) - b} &
+  \min_{\lambda, P} \, & \dotp{c + A_U(\lambda) + {H^1_A}^*(P), Q(U)} + \dotp{P, H^2_{A, U}} \\
+  \notag
+  \text{s.t. } & A_U^*(Q(U) - b) = 0  &
+  \text{s.t. } & A_U(\lambda) + {H^1_A}^*(P) + c \in \APsd^*\\
+  \notag
+         & H^1_A(Q(U) - b) + H^2_{A, U} \succeq 0 &
+         & P \succeq 0\\
+  \notag
+         & b \in \APsd\\
+\end{align}
+If we expand $\APsd$ (noting that $\APsd^* = (A(\Psd))^* = A^{-*}(\Psd)$ where $A^{-*}$ is the preimage of the adjoint (TODO cite rockafellar)), we get
+\begin{align*}
+  \max_{X} \, & \dotp{-c, Q(U) - A(X)} &
+  \min_{\lambda, P} \, & \dotp{c + A_U(\lambda) + {H^1_A}^*(P), Q(U)} + \dotp{P, H^2_{A, U}} \\
+  \text{s.t. } & A_U^*(Q(U) - A(X)) = 0  &
+  \text{s.t. } & A^*(A_U(\lambda)) + A^*({H^1_A}^*(P)) + A^*(c) \succeq 0\\
+         & H^1_A(Q(U) - A(X)) + H^2_{A, U} \succeq 0 &
+         & P \succeq 0 \\
+         & X \succeq 0
+\end{align*}
+Note that, as $\dotp{Q(U), Q(U) - b} = 0$, we have $\dotp{-c, Q(U) - b} = \dotp{-c', Q(U) - b}$ where $c' = c - Q(U) \dotp{c, Q(U)} / \dotp{Q(U), Q(U)}$.
+As $\dotp{c', Q(U)} = 0$, we further have $\dotp{-c', Q(U) - b} = \dotp{c', b}$.
+The equivalence with the following program is due to the following proposition.
+\begin{proposition}
+  Consider a convex cone $K$ and a point $x \in K$.
+  If $x$ is in the interior of $K$ or if $x$ has a unique dual point $x^*$ then
+  for all $y \in \R^n$ such that $\dotp{x^*, y} \le 0$,
+  there exists $\lambda \in \R_+$ such that
+  $y + \lambda x \in K$.
+  \begin{proof}
+    We can simply take $\lambda = \inf \{\dotp{z, y} / \dotp{z, x} \mid z \in K^*, \dotp{z, x} > 0\}$.
+  \end{proof}
+\end{proposition}
+Given a feasible solution of \cref{eq:progb},
+we have $\dotp{Q(U) - b, Q(U) - b} > 0$ hence $c = b$ is a feasible solution of the following program.
+
+The projection formulation, given $c \in \APsd$,
+\begin{align*}
+  \max_b \, & \dotp{Q(U) - c, Q(U) - b} &
+  \min_{P, \lambda} \, & \dotp{P, H^2_{A, U}} \\
+  \text{s.t. } & A_U^*(Q(U) - b) = 0 &
+  \text{s.t. } & c - Q(U) = A_U(\lambda) + {H^1_A}^*(P) \\
+         & H^1_A(Q(U) - b) + H^2_{A, U} \succeq 0 &
+         & P \succeq 0
+\end{align*}
+
+
+Then we can find a
+counterexample if there exists $c \in \R^m$ so that the following SDP has a
+non-zero objective value:
+\begin{align*}
+  \max_e \, & \dotp{c, e} \\
+  \text{s.t. } & A_U^*(e) = 0 \\
+         & H^1_A(e) + H^2_{A, U} \succeq 0 \\
+         &  A^*(Q(U) - e) \succeq 0
+\end{align*}
+We can homogenize by using $\sqrt{\gamma}U$ which gives
+$H^2_{A, \sqrt{\gamma}U} = \gamma H^2_{A, U}$,
+$Q(\sqrt{\gamma}U) = \gamma Q(U)$,
+\begin{align*}
+  \max_b \, & \dotp{c, b} \\
+  \text{s.t. } & A_U^*(b) = 0 \\
+         & H^1_A(b) + \gamma H^2_{A, U} \succeq 0 \\
+         &  A^*(\gamma Q(U) - b) \succeq 0
+\end{align*}
+Now it's homogeneous in $(\gamma, b)$ so we can do wlog
+\begin{align*}
+  \text{s.t. } & \dotp{c, b} = 1 \\
+  & A_U^*(b) = 0 \\
+         & H^1_A(b) + \gamma H^2_{A, U} \succeq 0 \\
+         &  A^*(\gamma Q(U) - b) \succeq 0
+\end{align*}
+Taking the dual of this SDP we get:
+\begin{align*}
+  \min_{X, Y, \lambda} \, & \dotp{A(X), Q(U)} + \dotp{Y, H^2_{A, U}} \\
+  \text{s.t. } & A(X) = c + A_U(\lambda) + {H^1_A}^*(Y)  \\
+                          & X, Y \succeq 0
+\end{align*}
+
+Another way is to certify that $U$ is not a spurious SOCP for any $b \in \R^m$
+is to show that for all $c \in \APsd$, the following SDP has objective
+value 0 (note that the objective is at least 0 because $b = Q(U)$ is a feasible
+solution):
+\begin{align*}
+  (P_1) = \max_b \, & \dotp{Q(U) - c, Q(U) - b} \\
+  \text{s.t. } & A_U^*(Q(U) - b) = 0 \\
+         & H^1_A(Q(U) - b) + H^2_{A, U} \succeq 0
+\end{align*}
+This is because of the variational characterization of projection onto the
+convex set $\APsd$: $U$ is the minimum of $f_b(U) = \norm{Q(U) - b}^2$ if for
+all $c \in \APsd$, $\dotp{Q(U) - c, Q(U) - b} \le 0$. Thus the objective is
+positive for some $c \in \APsd$ (i.e.  $\dotp{Q(U) - c, Q(U) - b} > 0 $) if and
+only if $U$ is a SOCP but not a global minimum of $f_b$.
+
+Note that, with a limit argument, we can replace $c \in \mathcal{Q}_A$ with $c$
+being in the tangent space at $U$.
+
+Notice that, because $A_U^*(Q(U) - b) = 0$, we have $\dotp{Q(U), Q(U) - b} = 0$.
+So the objective can be rewritten as $\dotp{-c, Q(U) - b}$.  The existence of a
+$c \in \APsd$ such that $\dotp{-c, Q(U) - b}$ is positive is equivalent to the
+existence of $c \in \APsd$ such that $\dotp{c, Q(U) - b}$ is negative.  So there
+should be a separating hyperplane $h$ separating $Q(U) - b$ to the cone
+$K = \{f | \dotp{c, f} \ge 0, \forall c \in \APsd \}$.  This cone is equivalent
+to $K = \{f | \dotp{Q, A^*(f)} \ge 0, \forall Q \text{ is PSD}\}$.  So
+$A^*(K) = \Psd$ is the PSD cone.  So the dual of $K$ is $K^* = A^{-1}(\Psd)$
+where $A^{-1}$ is the preimage of $A$.  So $h \in K^*$ is equivalent to
+$A(h) \in \Psd$.
+
+As $\APsd$ is the image of the PSD cone through $A$, the nonpositivity of that
+scalar product for all $c$ is equivalent to $A^*(Q(U) - b) \succeq 0$.  So
+$(P_1) \le 0$ is equivalent to the existence of PSD $X$ such that
+$\langle A(X), e \rangle > 0$ where $\error = Q(U) - b$.
+
+Making the substitution $\error = Q(U) - b$ and taking the dual, we
+get
+\begin{align*}
+  \min_{P, \lambda} \, & \dotp{P, H^2_{A, U}} \\
+  \text{s.t. } & c - Q(U) = A_U(\lambda) + {H^1_A}^*(P) \\
+                      & P \succeq 0
+\end{align*}
+If strong duality holds, the primal and dual have the same objective value of 0,
+implying that $\dotp{P, H^2_{A, U}} = 0$ and hence $P = VV^\top$ where
+$V \in \ker(A_U)$.  This corresponds to the certificate form of our proof for
+univariate sum of squares using the simpler condition (C2). However, as we have
+seen, strong duality may not always hold as the cones involved may not be
+closed. Therefore in the full proof we need a limiting argument to deal with the
+closure issues.
+
+\bibliographystyle{amsalpha}
+\bibliography{MyLibraryTEX}
+
+\end{document}
