@@ -44,10 +44,12 @@ On first boot, `scripts/vagrant-provision.sh` runs (once per new machine). It
 roughly:
 
 - Installs system packages (build tools, Git, TeX/Rubber, CMake, Python, Node,
-  etc.).
+  etc.), including `bubblewrap`.
 - Installs **Julia** using the version in `julia/Manifest.toml` (the
   `Vagrantfile` passes this as `JULIA_VERSION`).
 - Installs **elan** and the **Lean** toolchain pinned in `lean-toolchain`.
+- Enables unprivileged user namespaces in the guest so sandboxed tools that
+  rely on `bubblewrap` can start normally.
 - Configures login `PATH` for elan via `/etc/profile.d/agent-workspace-env.sh`.
 
 The initial provision script is **not idempotent** (it is meant for a fresh

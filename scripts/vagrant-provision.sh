@@ -8,6 +8,7 @@ JULIA_INSTALL_DIR="/opt/julia-${JULIA_VERSION}"
 
 apt-get update
 apt-get install -y \
+  bubblewrap \
   build-essential \
   ca-certificates \
   cmake \
@@ -32,6 +33,13 @@ apt-get install -y \
   unzip \
   xz-utils \
   zstd
+
+cat > /etc/sysctl.d/60-agent-workspace-userns.conf <<'EOF'
+kernel.unprivileged_userns_clone = 1
+kernel.apparmor_restrict_unprivileged_userns = 0
+user.max_user_namespaces = 28633
+EOF
+sysctl --system
 
 chown -R vagrant:vagrant /agent-workspace
 
