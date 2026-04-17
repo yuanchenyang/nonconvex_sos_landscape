@@ -1,4 +1,4 @@
-import TernaryQuartic
+import TernaryQuarticProof.ExactAffineClassification
 
 set_option autoImplicit false
 set_option warningAsError true

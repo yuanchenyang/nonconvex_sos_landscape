@@ -12,6 +12,9 @@
 .lake/
 .vagrant/
 /build/
+/plots/
 auto/
 /plots
 /writeup/writeup.pdf
+/writeup/blueprint.pdf
+/writeup/summary.pdf
