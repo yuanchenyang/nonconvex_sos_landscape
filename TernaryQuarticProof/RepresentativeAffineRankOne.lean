@@ -11913,18 +11913,6 @@ private theorem coeff_m02_X0_mul_x1 :
     MvPolynomial.coeff m02 ((MvPolynomial.X 0 : Poly) * x1) = 0 := by
   simpa [x1] using coeff_m02_X0_mul_X1
 
-private theorem coeff_m00_x0_mul_x1 :
-    MvPolynomial.coeff m00 (x0 * x1 : Poly) = 0 := by
-  simpa [x0] using coeff_m00_X0_mul_X1
-
-private theorem coeff_m01_x0_mul_x1 :
-    MvPolynomial.coeff m01 (x0 * x1 : Poly) = 0 := by
-  simpa [x0] using coeff_m01_X0_mul_X1
-
-private theorem coeff_m02_x0_mul_x1 :
-    MvPolynomial.coeff m02 (x0 * x1 : Poly) = 0 := by
-  simpa [x0] using coeff_m02_X0_mul_X1
-
 private theorem coeff_m01_one :
     MvPolynomial.coeff m01 (1 : Poly) = 0 := by
   rw [MvPolynomial.coeff_one]
@@ -12996,10 +12984,6 @@ theorem residual_eq_zero_of_equiv_relations_x0_x1Plus_homQuadratics_x0sq_x0x1Pla
       (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 hq1 hq1_00 hq1_10 hq1_01
       h2 h3 htail hdet hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
-
-private theorem coeff_m00_one :
-    MvPolynomial.coeff m00 (1 : Poly) = 1 := by
-  simp [m00]
 
 private theorem coeff_m03_one :
     MvPolynomial.coeff m03 (1 : Poly) = 0 := by

@@ -131,7 +131,6 @@ theorem mixedAffineRank15Rep_admissible : IsAdmissiblePoint mixedAffineRank15Rep
   · simp [mixedAffineRank15Rep, x0, x1, IsQuadratic]
   · simp [mixedAffineRank15Rep, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
   · simp [mixedAffineRank15Rep, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
-
 /-- A determinant-zero tailed mixed-affine representative whose image is still
 surjective as soon as the `x₀²` tail is nonzero. -/
 def mixedAffineTailX1SqRep (a : ℝ) : RankFourVec :=
@@ -320,58 +319,6 @@ private theorem monomial_image_mixedAffineTailX1SqRep
                       _ = r • (x0 ^ 3 * x1 : Poly) := by rw [hcancel]; simpa using hlast
               _ = MvPolynomial.C r * x0 ^ 3 * x1 := by
                     simp [MvPolynomial.smul_eq_C_mul, mul_assoc]
-
-theorem quartic_in_image_mixedAffineTailX1SqRep
-    (a : ℝ) (ha : a ≠ 0)
-    {p : Poly} (hp : IsQuartic p) :
-    InAdmissibleImage (mixedAffineTailX1SqRep a) p := by
-  classical
-  rw [← MvPolynomial.support_sum_monomial_coeff p]
-  let P : Finset (Fin 2 →₀ ℕ) → Prop := fun S =>
-    (∀ s ∈ S, s ∈ p.support) →
-      InAdmissibleImage (mixedAffineTailX1SqRep a)
-        (∑ s ∈ S, MvPolynomial.monomial s (MvPolynomial.coeff s p))
-  have hP : P p.support := by
-    refine Finset.induction_on p.support ?_ ?_
-    · intro hsub
-      simpa using inAdmissibleImage_zero (mixedAffineTailX1SqRep a)
-    · intro s ss hsnot ih hsub
-      rw [Finset.sum_insert hsnot]
-      refine inAdmissibleImage_add (mixedAffineTailX1SqRep a) ?_ (ih ?_)
-      · have hsdeg : s.sum (fun _ e => e) ≤ 4 :=
-          (MvPolynomial.le_totalDegree (hsub s (by simp))).trans hp
-        exact monomial_image_mixedAffineTailX1SqRep a ha s (MvPolynomial.coeff s p) hsdeg
-      · intro t ht
-        exact hsub t (by simp [ht])
-  exact hP (fun s hs => hs)
-
-theorem mixedAffineTailX1SqRep_admissible (a : ℝ) :
-    IsAdmissiblePoint (mixedAffineTailX1SqRep a) := by
-  intro i
-  fin_cases i
-  · simp [mixedAffineTailX1SqRep, IsQuadratic]
-  · simp [mixedAffineTailX1SqRep, x0, x1, IsQuadratic]
-  · simp [mixedAffineTailX1SqRep, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
-  ·
-    calc
-      (x1 + a • (x0 ^ 2 : Poly)).totalDegree ≤ max x1.totalDegree (a • (x0 ^ 2 : Poly)).totalDegree := by
-        exact MvPolynomial.totalDegree_add _ _
-      _ ≤ 2 := by
-        refine max_le ?_ ?_
-        · simp [x1]
-        · exact (MvPolynomial.totalDegree_smul_le a (x0 ^ 2 : Poly)).trans <| by
-            simp [x0, MvPolynomial.totalDegree_X_pow]
-
-theorem residual_eq_zero_mixedAffineTailX1SqRep
-    (a : ℝ) (ha : a ≠ 0)
-    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
-    {p : Poly}
-    (hp : IsSOSQuartic p)
-    (hsocp : IsSOCP B p (mixedAffineTailX1SqRep a)) :
-    residual p (mixedAffineTailX1SqRep a) = 0 := by
-  exact residual_eq_zero_of_in_admissible_image
-    (B := B) (mixedAffineTailX1SqRep_admissible a) hsocp
-    (quartic_in_image_mixedAffineTailX1SqRep a ha hp.1)
 
 theorem quartic_in_image_of_relations_const_x0_x1sq_x1PlusX0sq
     {u : RankFourVec}
@@ -607,41 +554,6 @@ theorem residual_eq_zero_of_relations_const_x0_x1sq_x1PlusX0sq
   exact residual_eq_zero_of_in_admissible_image
     (B := B) hu hsocp
     (quartic_in_image_of_relations_const_x0_x1sq_x1PlusX0sq h0 h1 h2 h3 ha hp.1)
-
-theorem residual_eq_zero_of_equiv_relations_const_x0_x1sq_x1PlusX0sq
-    (e : Poly ≃ₐ[ℝ] Poly)
-    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
-    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
-    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
-    {B : DotForm} {p : Poly} {u : RankFourVec}
-    (hB : IsPositiveDefinite B)
-    (hp : IsSOSQuartic p)
-    (hu : IsAdmissiblePoint u)
-    (hsocp : IsSOCP B p u)
-    {c0 c1 c2 c3 : Fin 4 → ℝ}
-    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = (1 : Poly))
-    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x0)
-    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = x1 ^ 2)
-    {a : ℝ}
-    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = x1 + a • (x0 ^ 2 : Poly))
-    (ha : a ≠ 0) :
-    residual p u = 0 := by
-  let B0 : DotForm := dotTransport e B
-  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
-  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
-  have hp0 : IsSOSQuartic (e p) := by
-    exact isSOSQuartic_map_of_equiv
-      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
-  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
-    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
-  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
-    dsimp [B0]
-    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
-  have hres0 :
-      residual (e p) (mapVec e.toAlgHom u) = 0 := by
-    exact residual_eq_zero_of_relations_const_x0_x1sq_x1PlusX0sq
-      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 ha hp0 hsocp0
-  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
 private theorem isQuadratic_x0_mul_x1_early : IsQuadratic (x0 * x1 : Poly) := by
   calc
@@ -1009,42 +921,6 @@ theorem residual_eq_zero_of_relations_const_x0_diagX1sq_x1PlusX0sq
     (B := B) hu hsocp
     (quartic_in_image_of_relations_const_x0_diagX1sq_x1PlusX0sq h0 h1 h2 h3 ha hp.1)
 
-theorem residual_eq_zero_of_equiv_relations_const_x0_diagX1sq_x1PlusX0sq
-    (e : Poly ≃ₐ[ℝ] Poly)
-    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
-    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
-    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
-    {B : DotForm} {p : Poly} {u : RankFourVec}
-    (hB : IsPositiveDefinite B)
-    (hp : IsSOSQuartic p)
-    (hu : IsAdmissiblePoint u)
-    (hsocp : IsSOCP B p u)
-    {c0 c1 c2 c3 : Fin 4 → ℝ}
-    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = (1 : Poly))
-    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x0)
-    {d : ℝ}
-    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = d • (x0 ^ 2 : Poly) + x1 ^ 2)
-    {a : ℝ}
-    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = x1 + a • (x0 ^ 2 : Poly))
-    (ha : a ≠ 0) :
-    residual p u = 0 := by
-  let B0 : DotForm := dotTransport e B
-  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
-  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
-  have hp0 : IsSOSQuartic (e p) := by
-    exact isSOSQuartic_map_of_equiv
-      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
-  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
-    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
-  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
-    dsimp [B0]
-    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
-  have hres0 :
-      residual (e p) (mapVec e.toAlgHom u) = 0 := by
-    exact residual_eq_zero_of_relations_const_x0_diagX1sq_x1PlusX0sq
-      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 ha hp0 hsocp0
-  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
-
 private theorem monomial_image_mixedAffineRank14Rep
     (s : Fin 2 →₀ ℕ) (a : ℝ)
     (hdeg : s.sum (fun _ e => e) ≤ 4)
@@ -1283,39 +1159,6 @@ theorem coeff_m40_sq_of_quadratic_eq (q : Poly) (hq : IsQuadratic q) :
     MvPolynomial.coeff m40 (q ^ 2) = (MvPolynomial.coeff m20 q) ^ 2 :=
   coeff_m40_sq_of_quadratic q hq
 
-theorem quartic_in_image_mixedAffineRank14Rep_of_coeff_m40_zero
-    {p : Poly} (hp : IsQuartic p)
-    (h40 : MvPolynomial.coeff m40 p = 0) :
-    InAdmissibleImage mixedAffineRank14Rep p := by
-  classical
-  rw [← MvPolynomial.support_sum_monomial_coeff p]
-  let P : Finset (Fin 2 →₀ ℕ) → Prop := fun S =>
-    (∀ s ∈ S, s ∈ p.support) →
-      InAdmissibleImage mixedAffineRank14Rep
-        (∑ s ∈ S, MvPolynomial.monomial s (MvPolynomial.coeff s p))
-  have hP : P p.support := by
-    refine Finset.induction_on p.support ?_ ?_
-    · intro hsub
-      simpa using inAdmissibleImage_zero mixedAffineRank14Rep
-    · intro s ss hsnot ih hsub
-      rw [Finset.sum_insert hsnot]
-      refine inAdmissibleImage_add mixedAffineRank14Rep ?_ (ih ?_)
-      · have hsdeg : s.sum (fun _ e => e) ≤ 4 :=
-          (MvPolynomial.le_totalDegree (hsub s (by simp))).trans hp
-        have hscoeff : MvPolynomial.coeff s p ≠ 0 :=
-          MvPolynomial.mem_support_iff.mp (hsub s (by simp))
-        have hsne : s ≠ m40 := by
-          intro hs
-          apply hscoeff
-          simpa [hs] using h40
-        exact monomial_image_mixedAffineRank14Rep s (MvPolynomial.coeff s p) hsdeg hsne
-      · intro t ht
-        exact hsub t (by simp [ht])
-  exact hP (fun s hs => hs)
-
-/-- A fixed kernel generator for the missing `x₀⁴` class in the rank-14
-mixed-affine representative. -/
-def mixedAffineRank14KerBase : RankFourVec := ![0, 0, -(x0 * x1), x0 ^ 2]
 
 private theorem isQuadratic_x0_mul_x1 : IsQuadratic (x0 * x1 : Poly) := by
   calc
@@ -1323,21 +1166,6 @@ private theorem isQuadratic_x0_mul_x1 : IsQuadratic (x0 * x1 : Poly) := by
       exact MvPolynomial.totalDegree_mul _ _
     _ = 2 := by simp [x0, x1]
 
-theorem mixedAffineRank14Rep_admissible : IsAdmissiblePoint mixedAffineRank14Rep := by
-  intro i
-  fin_cases i
-  · simp [mixedAffineRank14Rep, IsQuadratic]
-  · simp [mixedAffineRank14Rep, x0, x1, IsQuadratic]
-  · simpa [mixedAffineRank14Rep] using isQuadratic_x0_mul_x1
-  · simp [mixedAffineRank14Rep, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
-
-theorem mixedAffineRank14KerBase_admissible : IsAdmissibleDirection mixedAffineRank14KerBase := by
-  intro i
-  fin_cases i
-  · simp [mixedAffineRank14KerBase, IsQuadratic]
-  · simp [mixedAffineRank14KerBase, IsQuadratic]
-  · simpa [mixedAffineRank14KerBase, IsQuadratic] using isQuadratic_x0_mul_x1
-  · simp [mixedAffineRank14KerBase, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
 
 private theorem A_smul_right_local (u v : RankFourVec) (t : ℝ) :
     A u (t • v) = t • A u v := by
@@ -1358,62 +1186,6 @@ private theorem isAdmissibleDirection_smul_local (t : ℝ) {v : RankFourVec}
     IsAdmissibleDirection (t • v) := by
   intro i
   exact (MvPolynomial.totalDegree_smul_le t (v i)).trans (hv i)
-
-theorem mixedAffineRank14KerBase_inKer :
-    InAdmissibleKer mixedAffineRank14Rep mixedAffineRank14KerBase := by
-  refine ⟨mixedAffineRank14KerBase_admissible, ?_⟩
-  simp [A, mixedAffineRank14Rep, mixedAffineRank14KerBase, Fin.sum_univ_four, x0, x1]
-  ring
-
-theorem mixedAffineRank14Ker_scaled_inKer (t : ℝ) :
-    InAdmissibleKer mixedAffineRank14Rep (t • mixedAffineRank14KerBase) := by
-  refine ⟨isAdmissibleDirection_smul_local t mixedAffineRank14KerBase_admissible, ?_⟩
-  rw [A_smul_right_local, mixedAffineRank14KerBase_inKer.2]
-  simp
-
-private theorem isQuadratic_smul_x0_mul_x1 (t : ℝ) :
-    IsQuadratic (t • (x0 * x1 : Poly)) := by
-  exact (MvPolynomial.totalDegree_smul_le t (x0 * x1 : Poly)).trans isQuadratic_x0_mul_x1
-
-private theorem isQuadratic_smul_x0_sq (t : ℝ) :
-    IsQuadratic (t • (x0 ^ 2 : Poly)) := by
-  exact (MvPolynomial.totalDegree_smul_le t (x0 ^ 2 : Poly)).trans <|
-    by simp [x0, MvPolynomial.totalDegree_X_pow]
-
-private theorem coeff_m20_smul_x0_mul_x1 (t : ℝ) :
-    MvPolynomial.coeff m20 (t • (x0 * x1 : Poly)) = 0 := by
-  rw [MvPolynomial.coeff_smul]
-  have hx : MvPolynomial.coeff m20 (x0 * x1 : Poly) = 0 := by
-    rw [show (x0 * x1 : Poly) = MvPolynomial.monomial m11 (1 : ℝ) by
-      simp [x0, x1, m11, MvPolynomial.monomial_eq]]
-    rw [MvPolynomial.coeff_monomial]
-    split_ifs with h
-    · exfalso
-      have := congrArg (fun e : Fin 2 →₀ ℕ => e 1) h.symm
-      simp [m11, m20] at this
-    · rfl
-  simp [hx]
-
-private theorem coeff_m20_smul_x0_sq (t : ℝ) :
-    MvPolynomial.coeff m20 (t • (x0 ^ 2 : Poly)) = t := by
-  rw [MvPolynomial.coeff_smul]
-  have hx : MvPolynomial.coeff m20 (x0 ^ 2 : Poly) = 1 := by
-    simp [x0, m20, MvPolynomial.coeff_X_pow]
-  simp [hx]
-
-theorem coeff_m40_sigma_mixedAffineRank14KerScaled (t : ℝ) :
-    MvPolynomial.coeff m40 (sigma (t • mixedAffineRank14KerBase)) = t ^ 2 := by
-  have hxy :
-      MvPolynomial.coeff m40 ((t • (x0 * x1 : Poly)) ^ 2) = 0 := by
-    rw [coeff_m40_sq_of_quadratic _ (isQuadratic_smul_x0_mul_x1 t)]
-    rw [coeff_m20_smul_x0_mul_x1]
-    ring
-  have hx0 :
-      MvPolynomial.coeff m40 ((t • (x0 ^ 2 : Poly)) ^ 2) = t ^ 2 := by
-    rw [coeff_m40_sq_of_quadratic _ (isQuadratic_smul_x0_sq t)]
-    rw [coeff_m20_smul_x0_sq]
-  rw [sigma, Fin.sum_univ_four]
-  simp [mixedAffineRank14KerBase, hxy, hx0]
 
 private theorem isQuartic_sigma_of_admissible_local {u : RankFourVec}
     (hu : IsAdmissibleDirection u) :
@@ -1517,41 +1289,6 @@ private theorem monomial_image_mixedAffineRank13Rep
           apply hne4
           ext i
           fin_cases i <;> simp [m04, e0, e1, hx0, hy4]
-
-theorem quartic_in_image_mixedAffineRank13Rep_of_coeff_m03_m04_zero
-    {p : Poly} (hp : IsQuartic p)
-    (h03 : MvPolynomial.coeff m03 p = 0)
-    (h04 : MvPolynomial.coeff m04 p = 0) :
-    InAdmissibleImage mixedAffineRank13Rep p := by
-  classical
-  rw [← MvPolynomial.support_sum_monomial_coeff p]
-  let P : Finset (Fin 2 →₀ ℕ) → Prop := fun S =>
-    (∀ s ∈ S, s ∈ p.support) →
-      InAdmissibleImage mixedAffineRank13Rep
-        (∑ s ∈ S, MvPolynomial.monomial s (MvPolynomial.coeff s p))
-  have hP : P p.support := by
-    refine Finset.induction_on p.support ?_ ?_
-    · intro hsub
-      simpa using inAdmissibleImage_zero mixedAffineRank13Rep
-    · intro s ss hsnot ih hsub
-      rw [Finset.sum_insert hsnot]
-      refine inAdmissibleImage_add mixedAffineRank13Rep ?_ (ih ?_)
-      · have hsdeg : s.sum (fun _ e => e) ≤ 4 :=
-          (MvPolynomial.le_totalDegree (hsub s (by simp))).trans hp
-        have hscoeff : MvPolynomial.coeff s p ≠ 0 :=
-          MvPolynomial.mem_support_iff.mp (hsub s (by simp))
-        have hsne3 : s ≠ m03 := by
-          intro hs
-          apply hscoeff
-          simpa [hs] using h03
-        have hsne4 : s ≠ m04 := by
-          intro hs
-          apply hscoeff
-          simpa [hs] using h04
-        exact monomial_image_mixedAffineRank13Rep s (MvPolynomial.coeff s p) hsdeg hsne3 hsne4
-      · intro t ht
-        exact hsub t (by simp [ht])
-  exact hP (fun s hs => hs)
 
 private abbrev quadSuppNo_m01_m02 : Finset (Fin 2 →₀ ℕ) := (quadSupp.erase m01).erase m02
 
@@ -1668,27 +1405,6 @@ private theorem coeff_m03_qRest_zero (q : Poly) :
     · have := congrArg (fun e : Fin 2 →₀ ℕ => e 1) h
       simp [m02] at this
   simp [hm03]
-
-private theorem coeff_m04_qRest_zero (q : Poly) :
-    MvPolynomial.coeff m04
-      (∑ e ∈ quadSuppNo_m01_m02, MvPolynomial.monomial e (MvPolynomial.coeff e q)) = 0 := by
-  rw [coeff_qRest_m01_m02]
-  have hm04 : m04 ∉ quadSuppNo_m01_m02 := by
-    intro h
-    have : m04 ∈ quadSupp := Finset.mem_of_mem_erase (Finset.mem_of_mem_erase h)
-    simp [quadSupp, m04] at this
-    rcases this with h | h | h | h | h
-    · have := congrArg (fun e : Fin 2 →₀ ℕ => e 0) h
-      simp [m10] at this
-    · have := congrArg (fun e : Fin 2 →₀ ℕ => e 1) h
-      simp [m01] at this
-    · have := congrArg (fun e : Fin 2 →₀ ℕ => e 0) h
-      simp [m20] at this
-    · have := congrArg (fun e : Fin 2 →₀ ℕ => e 0) h
-      simp [m11] at this
-    · have := congrArg (fun e : Fin 2 →₀ ℕ => e 1) h
-      simp [m02] at this
-  simp [hm04]
 
 private theorem coeff_m03_qRest_sq_zero (q : Poly) :
     MvPolynomial.coeff m03
@@ -2027,177 +1743,6 @@ private theorem coeff_m04_sq_of_quadratic (q : Poly) (hq : IsQuadratic q) :
           rw [hrestsq, hrest1, hrest2, h1rest, h11, h12, h2rest, h21, h22c]
           ring
 
-/-- The affine linear polynomial `b + c x₁` used in the rank-13 kernel line. -/
-def mixedAffineRank13Line (b c : ℝ) : Poly := MvPolynomial.C b + MvPolynomial.C c * x1
-
-/-- The explicit kernel family for the rank-13 mixed-affine representative. -/
-def mixedAffineRank13KerLine (b c : ℝ) : RankFourVec :=
-  ![0, 0, -(x1 * mixedAffineRank13Line b c), x0 * mixedAffineRank13Line b c]
-
-theorem mixedAffineRank13Rep_admissible : IsAdmissiblePoint mixedAffineRank13Rep := by
-  intro i
-  fin_cases i
-  · simp [mixedAffineRank13Rep, IsQuadratic]
-  · simp [mixedAffineRank13Rep, x0, x1, IsQuadratic]
-  · simp [mixedAffineRank13Rep, x0, x1, IsQuadratic, MvPolynomial.totalDegree_X_pow]
-  · simpa [mixedAffineRank13Rep] using isQuadratic_x0_mul_x1
-
-private theorem totalDegree_mixedAffineRank13Line_le (b c : ℝ) :
-    (mixedAffineRank13Line b c).totalDegree ≤ 1 := by
-  unfold mixedAffineRank13Line
-  calc
-    (MvPolynomial.C b + MvPolynomial.C c * x1).totalDegree ≤
-        max (MvPolynomial.C b).totalDegree ((MvPolynomial.C c * x1).totalDegree) := by
-          exact MvPolynomial.totalDegree_add _ _
-    _ ≤ 1 := by
-          apply max_le
-          · simp
-          · calc
-              (MvPolynomial.C c * x1).totalDegree ≤ (MvPolynomial.C c).totalDegree + x1.totalDegree := by
-                exact MvPolynomial.totalDegree_mul _ _
-              _ = 1 := by simp [x1]
-
-private theorem isQuadratic_x1_mul_mixedAffineRank13Line (b c : ℝ) :
-    IsQuadratic (x1 * mixedAffineRank13Line b c) := by
-  have hx1 : x1.totalDegree ≤ 1 := by simp [x1]
-  calc
-    (x1 * mixedAffineRank13Line b c).totalDegree ≤
-        x1.totalDegree + (mixedAffineRank13Line b c).totalDegree := by
-          exact MvPolynomial.totalDegree_mul _ _
-    _ ≤ 1 + 1 := by
-          exact add_le_add hx1 (totalDegree_mixedAffineRank13Line_le b c)
-    _ = 2 := by norm_num
-
-private theorem isQuadratic_x0_mul_mixedAffineRank13Line (b c : ℝ) :
-    IsQuadratic (x0 * mixedAffineRank13Line b c) := by
-  have hx0 : x0.totalDegree ≤ 1 := by simp [x0]
-  calc
-    (x0 * mixedAffineRank13Line b c).totalDegree ≤
-        x0.totalDegree + (mixedAffineRank13Line b c).totalDegree := by
-          exact MvPolynomial.totalDegree_mul _ _
-    _ ≤ 1 + 1 := by
-          exact add_le_add hx0 (totalDegree_mixedAffineRank13Line_le b c)
-    _ = 2 := by norm_num
-
-private theorem coeff_m00_mixedAffineRank13Line (b c : ℝ) :
-    MvPolynomial.coeff m00 (mixedAffineRank13Line b c) = b := by
-  unfold mixedAffineRank13Line
-  simp [m00, x1]
-
-private theorem coeff_m01_mixedAffineRank13Line (b c : ℝ) :
-    MvPolynomial.coeff m01 (mixedAffineRank13Line b c) = c := by
-  unfold mixedAffineRank13Line
-  rw [MvPolynomial.coeff_add]
-  have hC : MvPolynomial.coeff m01 (MvPolynomial.C b : Poly) = 0 := by
-    rw [MvPolynomial.coeff_C]
-    split_ifs with h
-    · exfalso
-      have := congrArg (fun e : Fin 2 →₀ ℕ => e 1) h.symm
-      simp [m01] at this
-    · rfl
-  have hmul : MvPolynomial.coeff m01 (MvPolynomial.C c * x1 : Poly) = c := by
-    rw [show x1 = MvPolynomial.monomial m01 (1 : ℝ) by
-      simp [x1, m01, MvPolynomial.monomial_eq]]
-    rw [MvPolynomial.coeff_mul_monomial']
-    have hsub : m01 - m01 = m00 := by
-      ext i
-      fin_cases i <;> simp [m00, m01]
-    rw [if_pos le_rfl, hsub]
-    simp [m00]
-  simp [hC, hmul]
-
-private theorem coeff_m01_x1_mul_mixedAffineRank13Line (b c : ℝ) :
-    MvPolynomial.coeff m01 (x1 * mixedAffineRank13Line b c) = b := by
-  rw [show x1 = MvPolynomial.monomial m01 (1 : ℝ) by
-    simp [x1, m01, MvPolynomial.monomial_eq]]
-  rw [MvPolynomial.coeff_monomial_mul']
-  have hsub : m01 - m01 = m00 := by
-    ext i
-    fin_cases i <;> simp [m00, m01]
-  rw [if_pos le_rfl, hsub, coeff_m00_mixedAffineRank13Line]
-  simp
-
-private theorem coeff_m02_x1_mul_mixedAffineRank13Line (b c : ℝ) :
-    MvPolynomial.coeff m02 (x1 * mixedAffineRank13Line b c) = c := by
-  rw [show x1 = MvPolynomial.monomial m01 (1 : ℝ) by
-    simp [x1, m01, MvPolynomial.monomial_eq]]
-  rw [MvPolynomial.coeff_monomial_mul']
-  have hmle : m01 ≤ m02 := by
-    intro i
-    fin_cases i <;> simp [m01, m02]
-  have hsub : m02 - m01 = m01 := by
-    ext i
-    fin_cases i <;> simp [m01, m02]
-  rw [if_pos hmle, hsub, coeff_m01_mixedAffineRank13Line]
-  simp
-
-private theorem coeff_m01_x0_mul_mixedAffineRank13Line (b c : ℝ) :
-    MvPolynomial.coeff m01 (x0 * mixedAffineRank13Line b c) = 0 := by
-  rw [show x0 = MvPolynomial.monomial m10 (1 : ℝ) by
-    simp [x0, m10, MvPolynomial.monomial_eq]]
-  rw [MvPolynomial.coeff_monomial_mul']
-  have hnot : ¬ m10 ≤ m01 := by
-    intro h
-    have := h 0
-    simp [m10, m01] at this
-  rw [if_neg hnot]
-
-private theorem coeff_m02_x0_mul_mixedAffineRank13Line (b c : ℝ) :
-    MvPolynomial.coeff m02 (x0 * mixedAffineRank13Line b c) = 0 := by
-  rw [show x0 = MvPolynomial.monomial m10 (1 : ℝ) by
-    simp [x0, m10, MvPolynomial.monomial_eq]]
-  rw [MvPolynomial.coeff_monomial_mul']
-  have hnot : ¬ m10 ≤ m02 := by
-    intro h
-    have := h 0
-    simp [m10, m02] at this
-  rw [if_neg hnot]
-
-theorem mixedAffineRank13KerLine_inKer (b c : ℝ) :
-    InAdmissibleKer mixedAffineRank13Rep (mixedAffineRank13KerLine b c) := by
-  refine ⟨?_, ?_⟩
-  · intro i
-    fin_cases i
-    · simp [mixedAffineRank13KerLine, IsQuadratic]
-    · simp [mixedAffineRank13KerLine, IsQuadratic]
-    ·
-      calc
-        (-(x1 * mixedAffineRank13Line b c) : Poly).totalDegree
-            = (x1 * mixedAffineRank13Line b c).totalDegree := by
-                rw [MvPolynomial.totalDegree_neg]
-        _ ≤ 2 := isQuadratic_x1_mul_mixedAffineRank13Line b c
-    · exact isQuadratic_x0_mul_mixedAffineRank13Line b c
-  · simp [A, mixedAffineRank13Rep, mixedAffineRank13KerLine, mixedAffineRank13Line,
-      Fin.sum_univ_four, x0, x1]
-    ring
-
-theorem coeff_m03_sigma_mixedAffineRank13KerLine (b c : ℝ) :
-    MvPolynomial.coeff m03 (sigma (mixedAffineRank13KerLine b c)) = 2 * b * c := by
-  have h1 :
-      MvPolynomial.coeff m03 ((x1 * mixedAffineRank13Line b c) ^ 2) = 2 * b * c := by
-    rw [coeff_m03_sq_of_quadratic _ (isQuadratic_x1_mul_mixedAffineRank13Line b c)]
-    rw [coeff_m01_x1_mul_mixedAffineRank13Line, coeff_m02_x1_mul_mixedAffineRank13Line]
-  have h0 :
-      MvPolynomial.coeff m03 ((x0 * mixedAffineRank13Line b c) ^ 2) = 0 := by
-    rw [coeff_m03_sq_of_quadratic _ (isQuadratic_x0_mul_mixedAffineRank13Line b c)]
-    rw [coeff_m01_x0_mul_mixedAffineRank13Line, coeff_m02_x0_mul_mixedAffineRank13Line]
-    ring
-  rw [sigma, Fin.sum_univ_four]
-  simp [mixedAffineRank13KerLine, h1, h0]
-
-theorem coeff_m04_sigma_mixedAffineRank13KerLine (b c : ℝ) :
-    MvPolynomial.coeff m04 (sigma (mixedAffineRank13KerLine b c)) = c ^ 2 := by
-  have h1 :
-      MvPolynomial.coeff m04 ((x1 * mixedAffineRank13Line b c) ^ 2) = c ^ 2 := by
-    rw [coeff_m04_sq_of_quadratic _ (isQuadratic_x1_mul_mixedAffineRank13Line b c)]
-    rw [coeff_m02_x1_mul_mixedAffineRank13Line]
-  have h0 :
-      MvPolynomial.coeff m04 ((x0 * mixedAffineRank13Line b c) ^ 2) = 0 := by
-    rw [coeff_m04_sq_of_quadratic _ (isQuadratic_x0_mul_mixedAffineRank13Line b c)]
-    rw [coeff_m02_x0_mul_mixedAffineRank13Line]
-    ring
-  rw [sigma, Fin.sum_univ_four]
-  simp [mixedAffineRank13KerLine, h1, h0]
 
 theorem coeff_m03_sq_of_quadratic_eq (q : Poly) (hq : IsQuadratic q) :
     MvPolynomial.coeff m03 (q ^ 2) =
@@ -2207,6 +1752,8 @@ theorem coeff_m03_sq_of_quadratic_eq (q : Poly) (hq : IsQuadratic q) :
 theorem coeff_m04_sq_of_quadratic_eq (q : Poly) (hq : IsQuadratic q) :
     MvPolynomial.coeff m04 (q ^ 2) = (MvPolynomial.coeff m02 q) ^ 2 :=
   coeff_m04_sq_of_quadratic q hq
+
+def mixedAffineRank13Line (b c : ℝ) : Poly := MvPolynomial.C b + MvPolynomial.C c * x1
 
 /-- The determinant-zero cross-type mixed-affine representative with image
 codimension one. -/
@@ -2588,99 +2135,6 @@ theorem residual_eq_zero_mixedAffineTailCrossRep
   refine admissible_image_plus_cone_residual_eq_zero (B := B)
     (u := mixedAffineTailCrossRep a) (uImg := mixedAffineTailCrossRep a)
     (mixedAffineTailCrossRep_admissible a) hsocp
-    (imageOrthogonalResidual_self (B := B) hsocp.1) ?_
-  refine ⟨p - sigma w, {w}, himg, ?_, ?_⟩
-  · intro w' hw'
-    have hw' : w' = w := by simpa using hw'
-    subst hw'
-    exact hwker
-  · simp [w, sub_eq_add_neg]
-
-theorem residual_eq_zero_mixedAffineRank13Rep
-    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
-    {p : Poly}
-    (hp : IsSOSQuartic p)
-    (hsocp : IsSOCP B p mixedAffineRank13Rep) :
-    residual p mixedAffineRank13Rep = 0 := by
-  rcases hp with ⟨hpquartic, k, qs, hqdeg, hpq⟩
-  let s3 : ℝ := ∑ i : Fin k, MvPolynomial.coeff m01 (qs i) * MvPolynomial.coeff m02 (qs i)
-  let s4 : ℝ := ∑ i : Fin k, (MvPolynomial.coeff m02 (qs i)) ^ 2
-  let c : ℝ := Real.sqrt s4
-  let b : ℝ := s3 / c
-  let w : RankFourVec := mixedAffineRank13KerLine b c
-  have hs4_nonneg : 0 ≤ s4 := by
-    dsimp [s4]
-    positivity
-  have hp03 : MvPolynomial.coeff m03 p = 2 * s3 := by
-    calc
-      MvPolynomial.coeff m03 p = ∑ i : Fin k, MvPolynomial.coeff m03 ((qs i) ^ 2) := by
-        rw [hpq, MvPolynomial.coeff_sum]
-      _ = ∑ i : Fin k, 2 * MvPolynomial.coeff m01 (qs i) * MvPolynomial.coeff m02 (qs i) := by
-        refine Finset.sum_congr rfl ?_
-        intro i hi
-        exact coeff_m03_sq_of_quadratic (qs i) (hqdeg i)
-      _ = 2 * s3 := by
-        dsimp [s3]
-        rw [Finset.mul_sum]
-        refine Finset.sum_congr rfl ?_
-        intro i hi
-        ring
-  have hp04 : MvPolynomial.coeff m04 p = s4 := by
-    calc
-      MvPolynomial.coeff m04 p = ∑ i : Fin k, MvPolynomial.coeff m04 ((qs i) ^ 2) := by
-        rw [hpq, MvPolynomial.coeff_sum]
-      _ = ∑ i : Fin k, (MvPolynomial.coeff m02 (qs i)) ^ 2 := by
-        refine Finset.sum_congr rfl ?_
-        intro i hi
-        exact coeff_m04_sq_of_quadratic (qs i) (hqdeg i)
-      _ = s4 := by
-        rfl
-  have hc_sq : c ^ 2 = s4 := by
-    dsimp [c]
-    rw [Real.sq_sqrt hs4_nonneg]
-  have hs3_zero_of_c_zero (hc0 : c = 0) : s3 = 0 := by
-    have hs4_zero : s4 = 0 := by
-      simpa [hc0] using hc_sq.symm
-    have htermzero :=
-      (Finset.sum_eq_zero_iff_of_nonneg
-        (fun i _ => sq_nonneg (MvPolynomial.coeff m02 (qs i)))).mp hs4_zero
-    dsimp [s3]
-    refine Finset.sum_eq_zero ?_
-    intro i hi
-    have hi0 : MvPolynomial.coeff m02 (qs i) = 0 := by
-      exact sq_eq_zero_iff.mp (htermzero i (by simp))
-    simp [hi0]
-  have hwker : InAdmissibleKer mixedAffineRank13Rep w := by
-    dsimp [w]
-    exact mixedAffineRank13KerLine_inKer b c
-  have hw03 : MvPolynomial.coeff m03 (sigma w) = 2 * s3 := by
-    change MvPolynomial.coeff m03 (sigma (mixedAffineRank13KerLine b c)) = 2 * s3
-    rw [coeff_m03_sigma_mixedAffineRank13KerLine]
-    by_cases hc0 : c = 0
-    · have hs3zero : s3 = 0 := hs3_zero_of_c_zero hc0
-      simp [b, hc0, hs3zero]
-    · dsimp [b]
-      field_simp [hc0]
-  have hw04 : MvPolynomial.coeff m04 (sigma w) = s4 := by
-    change MvPolynomial.coeff m04 (sigma (mixedAffineRank13KerLine b c)) = s4
-    rw [coeff_m04_sigma_mixedAffineRank13KerLine, hc_sq]
-  have hquartic_sub : IsQuartic (p - sigma w) := by
-    calc
-      (p - sigma w).totalDegree ≤ max p.totalDegree (sigma w).totalDegree := by
-        exact MvPolynomial.totalDegree_sub _ _
-      _ ≤ 4 := by
-        exact max_le hpquartic (isQuartic_sigma_of_admissible_local hwker.1)
-  have h03_sub : MvPolynomial.coeff m03 (p - sigma w) = 0 := by
-    rw [MvPolynomial.coeff_sub, hp03, hw03]
-    ring
-  have h04_sub : MvPolynomial.coeff m04 (p - sigma w) = 0 := by
-    rw [MvPolynomial.coeff_sub, hp04, hw04]
-    ring
-  have himg : InAdmissibleImage mixedAffineRank13Rep (p - sigma w) :=
-    quartic_in_image_mixedAffineRank13Rep_of_coeff_m03_m04_zero hquartic_sub h03_sub h04_sub
-  refine admissible_image_plus_cone_residual_eq_zero (B := B)
-    (u := mixedAffineRank13Rep) (uImg := mixedAffineRank13Rep)
-    mixedAffineRank13Rep_admissible hsocp
     (imageOrthogonalResidual_self (B := B) hsocp.1) ?_
   refine ⟨p - sigma w, {w}, himg, ?_, ?_⟩
   · intro w' hw'
@@ -3086,40 +2540,5 @@ theorem residual_eq_zero_of_relations_const_x0_x0x1_x1PlusX0sq
     subst hw'
     exact hwker
   · simp [w, sub_eq_add_neg]
-
-theorem residual_eq_zero_of_equiv_relations_const_x0_x0x1_x1PlusX0sq
-    (e : Poly ≃ₐ[ℝ] Poly)
-    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
-    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
-    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
-    {B : DotForm} {p : Poly} {u : RankFourVec}
-    (hB : IsPositiveDefinite B)
-    (hp : IsSOSQuartic p)
-    (hu : IsAdmissiblePoint u)
-    (hsocp : IsSOCP B p u)
-    {c0 c1 c2 c3 : Fin 4 → ℝ}
-    (h0 : ∑ i : Fin 4, c0 i • mapVec e.toAlgHom u i = (1 : Poly))
-    (h1 : ∑ i : Fin 4, c1 i • mapVec e.toAlgHom u i = x0)
-    (h2 : ∑ i : Fin 4, c2 i • mapVec e.toAlgHom u i = x0 * x1)
-    {a : ℝ}
-    (h3 : ∑ i : Fin 4, c3 i • mapVec e.toAlgHom u i = x1 + a • (x0 ^ 2 : Poly))
-    (ha : a ≠ 0) :
-    residual p u = 0 := by
-  let B0 : DotForm := dotTransport e B
-  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
-  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
-  have hp0 : IsSOSQuartic (e p) := by
-    exact isSOSQuartic_map_of_equiv
-      (e := e) (heQuad := fun {_} hpq => heQuad hpq) (heQuartic := fun {_} hpq => heQuartic hpq) hp
-  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
-    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
-  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
-    dsimp [B0]
-    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
-  have hres0 :
-      residual (e p) (mapVec e.toAlgHom u) = 0 := by
-    exact residual_eq_zero_of_relations_const_x0_x0x1_x1PlusX0sq
-      (B := B0) (u := mapVec e.toAlgHom u) hu0 h0 h1 h2 h3 ha hp0 hsocp0
-  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
 end TernaryQuartic

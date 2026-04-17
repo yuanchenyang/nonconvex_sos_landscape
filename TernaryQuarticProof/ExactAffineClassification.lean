@@ -1227,9 +1227,6 @@ theorem exists_translatedKernel_constSplit_of_affinePair
   · simpa [u', e, b] using hd1const
   · simpa [u', e, b] using hd1poly_ne
 
-/-- If the translated zero-linear-tail kernel above an affine pair contains a
-normalized constant/nonconstant pair whose quadratic parts are dependent, then
-the translated branch already contains `1,x₀,x₁`, so the residual vanishes. -/
 theorem residual_eq_zero_of_relations_affinePair_translatedKernel_constSplit_dependent
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}
@@ -1523,9 +1520,6 @@ theorem residual_eq_zero_of_relations_affinePair_translatedKernel_constSplit_not
       hd1poly_ne hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
-/-- The translated-kernel constant-split branch above an affine pair closes
-directly when the homogeneous part lands in the repeated-line/common-factor
-chart. -/
 theorem residual_eq_zero_of_relations_affinePair_translatedKernel_constSplit_commonFactorChart
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}
@@ -1686,9 +1680,6 @@ theorem residual_eq_zero_of_relations_affinePair_translatedKernel_constSplit_com
       hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
-/-- The translated-kernel constant-split branch above an affine pair closes
-directly when the homogeneous part lands in the coprime cross-determinant-zero
-chart. -/
 theorem residual_eq_zero_of_relations_affinePair_translatedKernel_constSplit_crossDet_zero
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}
@@ -1832,8 +1823,6 @@ theorem residual_eq_zero_of_relations_affinePair_translatedKernel_constSplit_cro
       hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
-/-- The translated-kernel constant-split branch above an affine pair closes
-directly when the homogeneous part lands in the diagonal-sum chart. -/
 theorem residual_eq_zero_of_relations_affinePair_translatedKernel_constSplit_diagSumChart
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}
@@ -1993,8 +1982,6 @@ theorem residual_eq_zero_of_relations_affinePair_translatedKernel_constSplit_dia
       hp0 hsocp0
   exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
-/-- The translated-kernel constant-split branch above an affine pair closes
-directly when the homogeneous part lands in the diagonal-difference chart. -/
 theorem residual_eq_zero_of_relations_affinePair_translatedKernel_constSplit_diagDiffChart
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}
@@ -2314,9 +2301,8 @@ private theorem range_affineCoeff_eq_span_x0_of_finrank_one
     rcases Submodule.mem_span_singleton.mp hy with ⟨t, rfl⟩
     exact Submodule.smul_mem _ _ hx0mem
 
-/-- If the affine coefficient image is already one-dimensional and contains an
-exact `x₀` relation, the whole branch closes through the affine-rank-one
-theorem. -/
+/-- If the affine coefficient image is one-dimensional and contains an exact
+`x₀` relation, the branch closes through the affine-rank-one theorem. -/
 theorem residual_eq_zero_of_relations_x0_affineRankOne_of_finrank_range_one
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}
@@ -3398,21 +3384,6 @@ private theorem homQuadBasis_eq_sum_inv_mul_of_matrix
           rw [hmul]
           simp [Matrix.one_apply]
 
-private theorem homQuadBasis_linearIndependent :
-    LinearIndependent ℝ homQuadBasis := by
-  rw [Fintype.linearIndependent_iff]
-  intro g hg i
-  fin_cases i
-  · have hcoeff := congrArg (MvPolynomial.coeff m20) hg
-    simpa [homQuadBasis, Fin.sum_univ_three, MvPolynomial.coeff_add,
-      MvPolynomial.coeff_smul, coeff_m20_x0sq, coeff_m20_x0x1, coeff_m20_x1sq] using hcoeff
-  · have hcoeff := congrArg (MvPolynomial.coeff m11) hg
-    simpa [homQuadBasis, Fin.sum_univ_three, MvPolynomial.coeff_add,
-      MvPolynomial.coeff_smul, coeff_m11_x0sq, coeff_m11_x0x1, coeff_m11_x1sq] using hcoeff
-  · have hcoeff := congrArg (MvPolynomial.coeff m02) hg
-    simpa [homQuadBasis, Fin.sum_univ_three, MvPolynomial.coeff_add,
-      MvPolynomial.coeff_smul, coeff_m02_x0sq, coeff_m02_x0x1, coeff_m02_x1sq] using hcoeff
-
 private def rowToHomQuad : (Fin 3 → ℝ) →ₗ[ℝ] Poly where
   toFun v := ∑ k : Fin 3, v k • homQuadBasis k
   map_add' x y := by
@@ -3600,10 +3571,6 @@ theorem q_linearIndependent
     simp [rowToHomQuad, D.q_eq_sum_homQuadBasis]
   simpa [hqeq] using hmap
 
-/-- In the normalized tail-rank `2` package, at least one tail-stripped
-homogeneous relation has a nonzero `x₀²` coefficient. Otherwise the triple
-would lie in the two-dimensional span of `x₀x₁` and `x₁²`, contradicting the
-invertibility of the extracted homogeneous-basis matrix. -/
 theorem exists_q_coeff_m20_ne_zero
     {u : RankFourVec} (hu : IsAdmissiblePoint u) (D : X0TailConstX1HomBasisMatrixData u) :
     ∃ j : Fin 3, MvPolynomial.coeff m20 (D.q j) ≠ 0 := by
@@ -3619,10 +3586,6 @@ theorem exists_q_coeff_m20_ne_zero
         exact hnone ⟨j, hj⟩)
   exact D.q_linearIndependent
 
-/-- In the normalized tail-rank `2` package, at least one tail-stripped
-homogeneous relation has a nonzero `x₁²` coefficient. Otherwise the triple
-would lie in the two-dimensional span of `x₀²` and `x₀x₁`, again contradicting
-the invertibility of the extracted homogeneous-basis matrix. -/
 theorem exists_q_coeff_m02_ne_zero
     {u : RankFourVec} (hu : IsAdmissiblePoint u) (D : X0TailConstX1HomBasisMatrixData u) :
     ∃ j : Fin 3, MvPolynomial.coeff m02 (D.q j) ≠ 0 := by
@@ -3682,9 +3645,6 @@ theorem q12_linearIndependent
     have h1 := hcoeffs 1
     norm_num at h1
 
-/-- The pure pair `(q₀,q₂)` spans a genuine low-homogeneous plane. This is the
-constant-tail range-two plane that will later feed the affine-rank-one
-classifier routing. -/
 theorem q02_plane_nontrivial
     {u : RankFourVec} (hu : IsAdmissiblePoint u) (D : X0TailConstX1HomBasisMatrixData u) :
     lowHomQuadPlaneA (D.q 0) (D.q 2) ≠ 0 ∨
@@ -3697,9 +3657,6 @@ theorem q02_plane_nontrivial
   exact lowHomQuadPlane_nontrivial_of_independent_pair
     (hq 0) (hq 2) (h00 0) (h10 0) (h01 0) (h00 2) (h10 2) (h01 2) D.q02_linearIndependent
 
-/-- The pure pair `(q₁,q₂)` spans a genuine low-homogeneous plane. This is the
-`x₁`-tail range-two plane that will later feed the affine-rank-one classifier
-routing. -/
 theorem q12_plane_nontrivial
     {u : RankFourVec} (hu : IsAdmissiblePoint u) (D : X0TailConstX1HomBasisMatrixData u) :
     lowHomQuadPlaneA (D.q 1) (D.q 2) ≠ 0 ∨
@@ -4189,27 +4146,6 @@ theorem lowHomQuadPlaneC_comp11_comp02
     coeff_m11_relation_comp11, coeff_m20_relation_comp02]
   ring
 
-theorem lowHomQuadPlaneA_comp11_comp02_ne_zero_of_h00_ne
-    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
-    (h00_ne : D.A⁻¹ 0 0 ≠ 0) :
-    lowHomQuadPlaneA (relationPoly u D.comp11) (relationPoly u D.comp02) ≠ 0 := by
-  rw [lowHomQuadPlaneA_comp11_comp02]
-  exact pow_ne_zero 2 h00_ne
-
-theorem comp11_comp02_diagTerm_eq
-    {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
-    (h00_ne : D.A⁻¹ 0 0 ≠ 0) :
-    lowHomQuadPlaneC (relationPoly u D.comp11) (relationPoly u D.comp02) -
-        lowHomQuadPlaneB (relationPoly u D.comp11) (relationPoly u D.comp02) ^ 2 /
-          lowHomQuadPlaneA (relationPoly u D.comp11) (relationPoly u D.comp02) =
-      D.A⁻¹ 0 0 * D.A⁻¹ 2 0 - (D.A⁻¹ 1 0) ^ 2 := by
-  have hfrac :
-      (-(D.A⁻¹ 0 0) * D.A⁻¹ 1 0) ^ 2 / (D.A⁻¹ 0 0) ^ 2 = (D.A⁻¹ 1 0) ^ 2 := by
-    apply (div_eq_iff (pow_ne_zero 2 h00_ne)).2
-    ring
-  rw [lowHomQuadPlaneC_comp11_comp02, lowHomQuadPlaneB_comp11_comp02,
-    lowHomQuadPlaneA_comp11_comp02, hfrac]
-
 /-- The annihilator quadratic built from the first inverse homogeneous column
 has homogeneous part exactly `mixedAffineAnnihilator`, with the common affine
 tail scaled by the squared column norm. -/
@@ -4329,8 +4265,6 @@ theorem b0_ne_zero_of_r0_zero
   apply htail0_ne'
   simp [hr0, hb0]
 
-/-- In the `r₀ = 0` branch, the canonical annihilator normalizes to a pure
-`x₁`-tail relation. -/
 theorem relation_ann_normalized_x1Tail
     {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
     (h00_ne : D.A⁻¹ 0 0 ≠ 0)
@@ -4361,8 +4295,6 @@ theorem relation_ann_normalized_x1Tail
           mixedAffineAnnihilator (D.A⁻¹ 0 0) (D.A⁻¹ 1 0) (D.A⁻¹ 2 0) := by
           rw [smul_smul, inv_mul_cancel₀ (mul_ne_zero hs_ne hb0), one_smul]
 
-/-- In the `r₀ ≠ 0` branch, the canonical annihilator normalizes to a mixed
-constant-plus-`x₁` tail relation. -/
 theorem relation_ann_normalized_onePlusBX1
     {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
     (h00_ne : D.A⁻¹ 0 0 ≠ 0)
@@ -4408,10 +4340,6 @@ theorem relation_ann_normalized_onePlusBX1
               _ = D.b0 / D.r0 := by rw [div_eq_mul_inv, mul_comm]
           rw [hconst, hlin]
 
-/-- Specialization of `mixedAffineAnnihilator_normal_form_cases` to the first
-inverse homogeneous column of the exact-affine tail-rank `1` extractor, with
-the already-solved pure `x₀²` support removed. This is the remaining normal
-form split for the mixed-support `A⁻¹₀₀ ≠ 0` branch. -/
 theorem mixedAffineAnnihilator_normal_form_cases_of_h00_ne_hmixed
     {u : RankFourVec} (D : X0TailHomBasisMatrixData u)
     (_h00_ne : D.A⁻¹ 0 0 ≠ 0)
@@ -5588,47 +5516,6 @@ theorem residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX1sq
     · exact residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x1sq
         (B := B) (u := u) hu h0 h20 h11 h02 ha20 hb20 ha11 hb11 ha02 hb02 hp hsocp
 
-theorem residual_eq_zero_of_equiv_relations_x0_homQuadBasis_tailOnX1sq
-    (e : Poly ≃ₐ[ℝ] Poly)
-    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
-    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
-    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
-    {B : DotForm} {p : Poly} {u : RankFourVec}
-    (hB : IsPositiveDefinite B)
-    (hp : IsSOSQuartic p)
-    (hu : IsAdmissiblePoint u)
-    (hsocp : IsSOCP B p u)
-    {c0 c20 c11 c02 : Fin 4 → ℝ}
-    {a20 b20 a11 b11 a02 b02 : ℝ}
-    (h0 : relationPoly (mapVec e.toAlgHom u) c0 = x0)
-    (h20 : relationPoly (mapVec e.toAlgHom u) c20 = a20 • (1 : Poly) + b20 • x1 + x0 ^ 2)
-    (h11 : relationPoly (mapVec e.toAlgHom u) c11 = a11 • (1 : Poly) + b11 • x1 + (x0 * x1 : Poly))
-    (h02 : relationPoly (mapVec e.toAlgHom u) c02 = a02 • (1 : Poly) + b02 • x1 + x1 ^ 2)
-    (ha20 : a20 = 0) (hb20 : b20 = 0)
-    (ha11 : a11 = 0) (hb11 : b11 = 0)
-    (htail : a02 ≠ 0 ∨ b02 ≠ 0) :
-    residual p u = 0 := by
-  let B0 : DotForm := dotTransport e B
-  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
-  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
-  have hp0 : IsSOSQuartic (e p) := by
-    exact isSOSQuartic_map_of_equiv
-      (e := e)
-      (heQuad := fun {_} hpq => heQuad hpq)
-      (heQuartic := fun {_} hpq => heQuartic hpq)
-      hp
-  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
-    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
-  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
-    dsimp [B0]
-    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
-  have hres0 :
-      residual (e p) (mapVec e.toAlgHom u) = 0 := by
-    exact residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX1sq
-      (B := B0) (u := mapVec e.toAlgHom u) hu0
-      h0 h20 h11 h02 ha20 hb20 ha11 hb11 htail hp0 hsocp0
-  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
-
 /-- In the exact-affine `dim = 1` branch, if only the `x₀²`-direction carries
 tails, Lean now closes the pure constant-tail, pure `x₁`-tail, and mixed
 repeated-line subcases internally. -/
@@ -5682,47 +5569,6 @@ theorem residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX0sq
     · exact residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x0sq
         (B := B) (u := u) hu h0 h20 h11 h02 ha20 hb20 ha11 hb11 ha02 hb02 hp hsocp
 
-theorem residual_eq_zero_of_equiv_relations_x0_homQuadBasis_tailOnX0sq
-    (e : Poly ≃ₐ[ℝ] Poly)
-    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
-    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
-    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
-    {B : DotForm} {p : Poly} {u : RankFourVec}
-    (hB : IsPositiveDefinite B)
-    (hp : IsSOSQuartic p)
-    (hu : IsAdmissiblePoint u)
-    (hsocp : IsSOCP B p u)
-    {c0 c20 c11 c02 : Fin 4 → ℝ}
-    {a20 b20 a11 b11 a02 b02 : ℝ}
-    (h0 : relationPoly (mapVec e.toAlgHom u) c0 = x0)
-    (h20 : relationPoly (mapVec e.toAlgHom u) c20 = a20 • (1 : Poly) + b20 • x1 + x0 ^ 2)
-    (h11 : relationPoly (mapVec e.toAlgHom u) c11 = a11 • (1 : Poly) + b11 • x1 + (x0 * x1 : Poly))
-    (h02 : relationPoly (mapVec e.toAlgHom u) c02 = a02 • (1 : Poly) + b02 • x1 + x1 ^ 2)
-    (ha11 : a11 = 0) (hb11 : b11 = 0)
-    (ha02 : a02 = 0) (hb02 : b02 = 0)
-    (htail : a20 ≠ 0 ∨ b20 ≠ 0) :
-    residual p u = 0 := by
-  let B0 : DotForm := dotTransport e B
-  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
-  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
-  have hp0 : IsSOSQuartic (e p) := by
-    exact isSOSQuartic_map_of_equiv
-      (e := e)
-      (heQuad := fun {_} hpq => heQuad hpq)
-      (heQuartic := fun {_} hpq => heQuartic hpq)
-      hp
-  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
-    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
-  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
-    dsimp [B0]
-    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
-  have hres0 :
-      residual (e p) (mapVec e.toAlgHom u) = 0 := by
-    exact residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX0sq
-      (B := B0) (u := mapVec e.toAlgHom u) hu0
-      h0 h20 h11 h02 ha11 hb11 ha02 hb02 htail hp0 hsocp0
-  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
-
 /-- In the exact-affine `dim = 1` branch, if only the `x₀x₁`-direction carries
 tails, Lean now closes the pure constant-tail, pure `x₁`-tail, and mixed cross
 subcases internally. -/
@@ -5775,47 +5621,6 @@ theorem residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX0x1
         (Or.inr <| Or.inl ⟨rfl, ha11, rfl⟩) hp hsocp
     · exact residual_eq_zero_of_relations_x0_homQuadBasis_singleMixedTail_x0x1
         (B := B) (u := u) hu h0 h20 h11 h02 ha20 hb20 ha11 hb11 ha02 hb02 hp hsocp
-
-theorem residual_eq_zero_of_equiv_relations_x0_homQuadBasis_tailOnX0x1
-    (e : Poly ≃ₐ[ℝ] Poly)
-    (heQuad : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e p))
-    (heQuadSymm : ∀ {p : Poly}, IsQuadratic p → IsQuadratic (e.symm p))
-    (heQuartic : ∀ {p : Poly}, IsQuartic p → IsQuartic (e p))
-    {B : DotForm} {p : Poly} {u : RankFourVec}
-    (hB : IsPositiveDefinite B)
-    (hp : IsSOSQuartic p)
-    (hu : IsAdmissiblePoint u)
-    (hsocp : IsSOCP B p u)
-    {c0 c20 c11 c02 : Fin 4 → ℝ}
-    {a20 b20 a11 b11 a02 b02 : ℝ}
-    (h0 : relationPoly (mapVec e.toAlgHom u) c0 = x0)
-    (h20 : relationPoly (mapVec e.toAlgHom u) c20 = a20 • (1 : Poly) + b20 • x1 + x0 ^ 2)
-    (h11 : relationPoly (mapVec e.toAlgHom u) c11 = a11 • (1 : Poly) + b11 • x1 + (x0 * x1 : Poly))
-    (h02 : relationPoly (mapVec e.toAlgHom u) c02 = a02 • (1 : Poly) + b02 • x1 + x1 ^ 2)
-    (ha20 : a20 = 0) (hb20 : b20 = 0)
-    (ha02 : a02 = 0) (hb02 : b02 = 0)
-    (htail : a11 ≠ 0 ∨ b11 ≠ 0) :
-    residual p u = 0 := by
-  let B0 : DotForm := dotTransport e B
-  have hB0 : IsPositiveDefinite B0 := isPositiveDefinite_dotTransport e hB
-  letI : Fact B0.toQuadraticMap.PosDef := ⟨hB0⟩
-  have hp0 : IsSOSQuartic (e p) := by
-    exact isSOSQuartic_map_of_equiv
-      (e := e)
-      (heQuad := fun {_} hpq => heQuad hpq)
-      (heQuartic := fun {_} hpq => heQuartic hpq)
-      hp
-  have hu0 : IsAdmissiblePoint (mapVec e.toAlgHom u) := by
-    exact isAdmissiblePoint_mapVec_of_equiv (e := e) (he := fun {_} hpq => heQuad hpq) hu
-  have hsocp0 : IsSOCP B0 (e p) (mapVec e.toAlgHom u) := by
-    dsimp [B0]
-    exact isSOCP_mapVec_of_equiv (e := e) (heSymm := fun {_} hpq => heQuadSymm hpq) hsocp
-  have hres0 :
-      residual (e p) (mapVec e.toAlgHom u) = 0 := by
-    exact residual_eq_zero_of_relations_x0_homQuadBasis_tailOnX0x1
-      (B := B0) (u := mapVec e.toAlgHom u) hu0
-      h0 h20 h11 h02 ha20 hb20 ha02 hb02 htail hp0 hsocp0
-  exact (residual_eq_zero_mapVec_iff_of_equiv e p u).mp hres0
 
 /-- Tail-rank `1` exact-affine data closes immediately when the inverse
 homogeneous basis matrix shows that only the `x₁²` direction carries the affine
@@ -6969,11 +6774,6 @@ theorem residual_eq_zero_of_relations_x0_tail_hom_basis_matrix_commonFactorCompl
       hc02_00 hc02_10 hc02_01
       hA hdiag0 htail hp hsocp
 
-/-- Classifier-level wrapper for the repeated-line subcase of the exact-affine
-`dim = 1`, tail-rank `1` range-one branch. Once the extracted inverse
-homogeneous-basis matrix has nonzero `x₀²` coordinate and repeated-line
-discriminant zero, Lean closes the branch directly through the affine-rank-one
-common-factor chart. -/
 theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne_commonFactorComplement
     {B : DotForm} [Fact B.toQuadraticMap.PosDef]
     {u : RankFourVec}
@@ -7570,6 +7370,28 @@ theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne
           (B := B) (u := u) hu hrelker hdim h0 hrange1 h00_ne h10 h20 hr0 hp hsocp
       · exact residual_eq_zero_of_exactAffineDimOne_tailRangeOne_h10_ne_h20_ne_r0_ne_zero
           (B := B) (u := u) hu hrelker hdim h0 hrange1 h00_ne h10 h20 hr0 hp hsocp
+
+theorem residual_eq_zero_of_exactAffineDimOne_tailRangeOne_resolvedRegion
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef]
+    {u : RankFourVec}
+    (hu : IsAdmissiblePoint u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hdim : Module.finrank ℝ (exactAffineSubmodule u) = 1)
+    {c0 : Fin 4 → ℝ}
+    (h0 : relationPoly u c0 = x0)
+    (hrange1 : Module.finrank ℝ (LinearMap.range (x0TailCoeffMap u)) = 1)
+    (_hresolved :
+      (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).SimpleBranch ∨
+        ((exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 0 0 ≠ 0 ∧
+          (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 0 0 *
+              (exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 2 0 -
+            ((exactAffineDimOneRangeOneData hu hrelker hdim h0 hrange1).A⁻¹ 1 0) ^ 2 = 0))
+    {p : Poly}
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 := by
+  exact residual_eq_zero_of_exactAffineDimOne_tailRangeOne
+    (B := B) (u := u) hu hrelker hdim h0 hrange1 hp hsocp
 
 /-- If the exact affine relation space has dimension one and contains no exact
 constant relation, then it contains a genuine nonconstant affine line. -/

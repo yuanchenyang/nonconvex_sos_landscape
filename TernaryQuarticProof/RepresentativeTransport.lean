@@ -80,35 +80,3 @@ theorem residual_eq_zero_of_socp_of_eq_mix_mapVec
     exact hresRep
   exact (residual_eq_zero_mapVec_iff_of_equiv
     (e := e.symm) (p := p) (u := u)).mp hresMap
-
-theorem residual_eq_zero_of_socp_of_eq_mix_affineEquiv
-    (uRep : RankFourVec)
-    (hRep :
-      ∀ {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly},
-        IsSOSQuartic p → IsSOCP B p uRep → residual p uRep = 0)
-    (A A' : Matrix (Fin 2) (Fin 2) ℝ) (b b' : Fin 2 → ℝ)
-    (hAA' : A * A' = 1) (hA'A : A' * A = 1)
-    (hb : ∀ i, b' i + Matrix.mulVec A' b i = 0)
-    (hb' : ∀ i, b i + Matrix.mulVec A b' i = 0)
-    (M : Matrix (Fin 4) (Fin 4) ℝ)
-    (hMtM : M.transpose * M = 1)
-    (hMMt : M * M.transpose = 1)
-    {B : DotForm} {p : Poly} {u : RankFourVec}
-    (hB : IsPositiveDefinite B)
-    (hp : IsSOSQuartic p)
-    (huRep :
-      mix M.transpose
-        (mapVec (affineEquiv A A' b b' hAA' hA'A hb hb').symm.toAlgHom u) = uRep)
-    (hsocp : IsSOCP B p u) :
-    residual p u = 0 := by
-  exact residual_eq_zero_of_socp_of_eq_mix_mapVec
-    (uRep := uRep)
-    (hRep := hRep)
-    (e := affineEquiv A A' b b' hAA' hA'A hb hb')
-    (heQuad := fun {_} hpq => isQuadratic_affineEquiv A A' b b' hAA' hA'A hb hb' hpq)
-    (heQuadSymm := fun {_} hpq => isQuadratic_affineEquiv_symm A A' b b' hAA' hA'A hb hb' hpq)
-    (heQuarticSymm := fun {_} hpq => isQuartic_affineEquiv_symm A A' b b' hAA' hA'A hb hb' hpq)
-    (M := M)
-    hMtM hMMt hB hp huRep hsocp
-
-end TernaryQuartic

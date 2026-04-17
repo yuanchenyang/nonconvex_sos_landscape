@@ -8068,29 +8068,6 @@ private theorem coeff_m02_zero_of_lowHomQuadPlaneA_B_zero_C_ne_zero
   · exact (mul_eq_zero.mp hmul2).resolve_right hC
   · exact (mul_eq_zero.mp hmul3).resolve_right hC
 
-private theorem det_x0x1_x1sq_affineHom_x1Shear
-    {q2 q3 : Poly}
-    (hq2 : IsQuadratic q2)
-    (hq3 : IsQuadratic q3)
-    (t : ℝ) :
-    MvPolynomial.coeff m11 (affineHom (x1ShearMatrix t) 0 q2) *
-        MvPolynomial.coeff m02 (affineHom (x1ShearMatrix t) 0 q3) -
-      MvPolynomial.coeff m02 (affineHom (x1ShearMatrix t) 0 q2) *
-        MvPolynomial.coeff m11 (affineHom (x1ShearMatrix t) 0 q3) =
-      lowHomQuadPlaneA q2 q3 := by
-  rw [coeff_m11_affineHom_x1Shear hq2, coeff_m11_affineHom_x1Shear hq3,
-    coeff_m02_affineHom_x1Shear hq2, coeff_m02_affineHom_x1Shear hq3]
-  calc
-    (MvPolynomial.coeff m11 q2 + 2 * MvPolynomial.coeff m02 q2 * t) *
-          MvPolynomial.coeff m02 q3 -
-        MvPolynomial.coeff m02 q2 *
-          (MvPolynomial.coeff m11 q3 + 2 * MvPolynomial.coeff m02 q3 * t) =
-      MvPolynomial.coeff m11 q2 * MvPolynomial.coeff m02 q3 -
-        MvPolynomial.coeff m02 q2 * MvPolynomial.coeff m11 q3 := by
-          ring
-    _ = lowHomQuadPlaneA q2 q3 := by
-          simp [lowHomQuadPlaneA]
-
 private theorem det_x0x1_x0sq_affineHom_x1Shear_kill_cross
     {q2 q3 : Poly}
     (hq2 : IsQuadratic q2)

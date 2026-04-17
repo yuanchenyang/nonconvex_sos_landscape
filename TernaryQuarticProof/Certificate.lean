@@ -16,7 +16,6 @@ def InAdmissibleImage (u : RankFourVec) (q : Poly) : Prop :=
 /-- An admissible kernel direction for `A_u`. -/
 def InAdmissibleKer (u w : RankFourVec) : Prop :=
   IsAdmissibleDirection w ∧ A u w = 0
-
 /-- The residual at `u` is orthogonal to the admissible image of `uImg`. -/
 def ImageOrthogonalResidual (B : DotForm) (p : Poly) (u uImg : RankFourVec) : Prop :=
   ∀ q : Poly, InAdmissibleImage uImg q → B q (residual p u) = 0
@@ -354,7 +353,6 @@ theorem inAdmissibleKer_neg (u : RankFourVec) {w : RankFourVec}
     (hw : InAdmissibleKer u w) :
     InAdmissibleKer u (-w) := by
   simpa using inAdmissibleKer_smul u (-1) hw
-
 theorem relationDirection_admissible (c : Fin 4 → ℝ) {q : Poly}
     (hq : IsQuadratic q) :
     IsAdmissibleDirection (relationDirection c q) := by

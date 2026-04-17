@@ -131,7 +131,6 @@ def mapVec (φ : Poly →ₐ[ℝ] Poly) (u : RankFourVec) : RankFourVec :=
 @[simp] theorem mapVec_apply (φ : Poly →ₐ[ℝ] Poly) (u : RankFourVec) (i : Fin 4) :
     mapVec φ u i = φ (u i) :=
   rfl
-
 /-- Map an exact scalar relation through an algebra homomorphism coordinatewise
 on the factor tuple. -/
 theorem relation_map
@@ -147,7 +146,6 @@ theorem relationPoly_map
     relationPoly (mapVec φ u) c = φ (relationPoly u c) := by
   rw [relationPoly]
   exact relation_map φ (u := u) (c := c) (r := relationPoly u c) rfl
-
 theorem A_mapVec
     (φ : Poly →ₐ[ℝ] Poly) (u v : RankFourVec) :
     A (mapVec φ u) (mapVec φ v) = φ (A u v) := by

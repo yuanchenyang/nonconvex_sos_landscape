@@ -3882,16 +3882,6 @@ private def splitDiagEquiv : Poly ≃ₐ[ℝ] Poly :=
     affineHom splitDiagMatrix 0 x1 = x0 - x1 := by
   simp [x0, x1, affineImage, affineHom_X, splitDiagMatrix, Fin.sum_univ_two, sub_eq_add_neg]
 
-private theorem affineHom_splitDiag_x0x1 :
-    affineHom splitDiagMatrix 0 (x0 * x1 : Poly) = x0 ^ 2 - x1 ^ 2 := by
-  simp [affineHom_splitDiag_x0, affineHom_splitDiag_x1]
-  ring
-
-private theorem affineHom_splitDiag_sumsq :
-    affineHom splitDiagMatrix 0 (x0 ^ 2 + x1 ^ 2 : Poly) = 2 • (x0 ^ 2 + x1 ^ 2 : Poly) := by
-  simp [affineHom_splitDiag_x0, affineHom_splitDiag_x1]
-  ring
-
 private theorem affineHom_splitDiag_x0x1_sumsq
     (a b : ℝ) :
     affineHom splitDiagMatrix 0 (a • (x0 * x1 : Poly) + b • (x0 ^ 2 + x1 ^ 2 : Poly)) =
