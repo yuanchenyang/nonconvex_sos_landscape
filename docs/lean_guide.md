@@ -1,22 +1,30 @@
 # Lean Build Guide
 
-## Root Ternary-Quartic Project
+## Root Lean Workspace
 
-The repository root contains the current ternary-quartic Lean 4 project. It
-depends on mathlib (pinned in `lakefile.toml`) and is independent of the
-univariate submodule.
+The repository root contains Lean 4 theorem families for multiple SOS proof
+tracks. The workspace depends on mathlib (pinned in `lakefile.toml`) and is
+independent of the univariate submodule.
 
 ### Project Layout
 
-- `TernaryQuartic.lean` — Immutable statement file (read-only).
-- `TernaryQuarticProof.lean` — Root import file; must keep the final theorem
-  declaration.
-- `TernaryQuarticProof/` — All helper lemmas and proof development go here.
+- `TernaryQuartic.lean` — Immutable statement file for the rank-4
+  ternary-quartic theorem.
+- `TernaryQuarticProof.lean` — Root import file for the ternary proof; must
+  keep the final theorem declaration.
+- `TernaryQuarticProof/` — Ternary helper lemmas and proof development.
+- `QuaternaryQuartic.lean` — Immutable statement file for the rank-5
+  quaternary-quartic theorem.
+- `QuaternaryQuarticProof.lean` — Root import file for the quaternary proof.
+- `QuaternaryQuarticProof/` — Quaternary helper lemmas and proof development.
+- `program.md` — Active execution brief for the quaternary proof track.
 - `prompts/ternary_quartic.md` — Ternary-quartic task prompt and workflow.
 - `scripts/verify_formalization.sh` — Generic theorem/proof verification
   harness.
 - `scripts/verify_ternary_quartic.sh` — Ternary-quartic wrapper around the
   generic verification harness.
+- `scripts/verify_quaternary_quartic.sh` — Quaternary-quartic full verification
+  script for the theorem scaffold.
 - `lakefile.toml` — Lake build configuration (pinned mathlib `v4.29.0`).
 
 ### Build and Verify
@@ -24,14 +32,19 @@ univariate submodule.
 ```bash
 lake build
 ./scripts/verify_ternary_quartic.sh
+./scripts/verify_quaternary_quartic.sh
 ```
 
 ### Verification Harness Details
 
-For the root ternary-quartic development, use
-`scripts/verify_ternary_quartic.sh`. It calls the generic
-`scripts/verify_formalization.sh` with the ternary-quartic theorem, proof
-import, proof file, and expected axiom list.
+Use the project-specific verification scripts for routine workflows:
+
+- `scripts/verify_ternary_quartic.sh` for the completed ternary-quartic target
+- `scripts/verify_quaternary_quartic.sh` for the new quaternary-quartic track
+
+The ternary script delegates to the generic harness. The quaternary script
+also delegates to the generic harness. The generic harness now normalizes
+multi-line `#print axioms` output before comparing it to the expected list.
 
 The generic harness can also be used directly for other theorem/proof pairs:
 
@@ -42,7 +55,6 @@ The generic harness can also be used directly for other theorem/proof pairs:
   --proof-file TernaryQuarticProof.lean \
   --build-target TernaryQuartic \
   --build-target TernaryQuarticProof \
-  --expected-axioms '[propext, Classical.choice, Quot.sound]'
 ```
 
 The ternary-quartic formalization counts as successful only if all of the
@@ -56,6 +68,15 @@ following hold:
 Both `TernaryQuartic.lean` and `TernaryQuarticProof.lean` set
 `warningAsError = true`, so `sorry` is not allowed in a successful formalization.
 
+For the quaternary-quartic track, the current wrapper is full-strength in the
+same sense as the ternary wrapper: it targets the theorem
+`QuaternaryQuartic.quaternaryQuartic_rankFive_no_spurious_socp`, checks that the
+theorem is defined in `QuaternaryQuarticProof.lean`, and enforces an exact axiom
+list. At the moment that list includes the temporary scaffold axiom
+`QuaternaryQuartic.quaternaryQuartic_rankFive_no_spurious_socp_placeholder`.
+That means a successful quaternary verification run only confirms the scaffold
+is wired correctly; it does not yet certify a real proof.
+
 ### File-Scope Rules
 
 - You may add new Lean files **only** inside `TernaryQuarticProof/`.
@@ -67,6 +88,16 @@ Both `TernaryQuartic.lean` and `TernaryQuarticProof.lean` set
   unless explicitly requested to change them.
 - Add `import TernaryQuarticProof.<Module>` lines to the root
   `TernaryQuarticProof.lean` as needed.
+
+For the quaternary track:
+
+- You may add new Lean files **only** inside `QuaternaryQuarticProof/`.
+- You may modify `QuaternaryQuarticProof.lean` (root import file that must keep
+  the final theorem declaration).
+- You should treat `QuaternaryQuartic.lean` as the immutable statement file for
+  this track.
+- Add `import QuaternaryQuarticProof.<Module>` lines to the root
+  `QuaternaryQuarticProof.lean` as needed.
 
 ### Fixed Lean Target
 
@@ -110,6 +141,10 @@ The `writeup/` folder contains the project LaTeX sources:
 - `ternary_quartic/blueprint.tex` — Ternary-quartic proof blueprint
 - `ternary_quartic/exploration_log.tex` — Ternary-quartic experiment log
 - `ternary_quartic/summary.tex` — Ternary-quartic proof summary
+
+There is no committed `writeup/quaternary_quartic/` folder in the current repo
+snapshot yet. If the quaternary track grows a parallel writeup, add it under
+`writeup/` explicitly rather than assuming those files already exist.
 
 The Vagrant VM provisions `rubber` together with a lightweight TeX Live install
 that is sufficient for `writeup.tex`:

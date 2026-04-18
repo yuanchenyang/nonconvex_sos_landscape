@@ -210,10 +210,3 @@ spurious SOCP:
 
 The dual variables satisfy:
 $A(X) = c + A_U(\lambda) + H_A^*(P)$ with $X, P \succeq 0$.
-
-### Current Branch Notes
-
-- `counter_poly.jl` now imports `MathOptInterface` correctly; `find_counter` was
-  broken before that fix.
-- `test_ternary_quartic` is not present in the current file even though older
-  docs mention it.

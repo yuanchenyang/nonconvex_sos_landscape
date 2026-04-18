@@ -8,7 +8,7 @@ Prove `TernaryQuarticRankFourNoSpuriousSOCP` in Lean for the ternary quartic ran
 
 Iterate until the theorem is proved:
 
-1. **Julia exploration**: Run SDP searches (`julia/counter_poly.jl`) to generate dual certificates. Extract algebraic patterns, form hypotheses, and update the proof strategy. See [docs/julia_guide.md](docs/julia_guide.md) for setup and architecture.
+1. **Julia exploration**: Run SDP searches (`julia/counter_poly.jl`) to generate dual certificates. Extract algebraic patterns, form hypotheses, and update the proof strategy. See [docs/julia_guide.md](../docs/julia_guide.md) for setup and architecture.
 2. **Proof in words first**: Before formalizing any subtheorem, write a complete mathematical proof in `writeup/ternary_quartic/blueprint.tex`. Only attempt Lean formalization once the argument is clear and correct.
 3. **Lean formalization**: Translate the written proof into Lean files in `TernaryQuarticProof/`. One logical unit per file.
 4. **Verify**: Run `./scripts/verify_ternary_quartic.sh`. Update `.tex` documents. Commit.
@@ -16,7 +16,7 @@ Iterate until the theorem is proved:
 
 # Lean Target
 
-See [docs/lean_guide.md](docs/lean_guide.md) for full build instructions.
+See [docs/lean_guide.md](../docs/lean_guide.md) for full build instructions.
 
 - **Statement (read-only)**: `TernaryQuartic.lean`
 - **Root proof file**: `TernaryQuarticProof.lean` — must contain the final theorem declaration
@@ -44,7 +44,7 @@ Success requires: the script exits 0 and the axiom check reports exactly `propex
 
 # Julia Dual Certificates
 
-See [docs/julia_guide.md](docs/julia_guide.md) for solver config, persistent REPL workflow, and code architecture. Key functions in `julia/counter_poly.jl`:
+See [docs/julia_guide.md](../docs/julia_guide.md) for solver config, persistent REPL workflow, and code architecture. Key functions in `julia/counter_poly.jl`:
 
 - `find_counter(vars, u; ntrials=10, hess=true, verbose=true)`
 - `counter_homogeneous(x, d, u, a; verbose=true)`
@@ -54,11 +54,11 @@ Use Julia to: generate dual certificates for specific `u`, extract algebraic pat
 
 # Univariate Reference
 
-The `low_rank_univariate_sos/` submodule is a reference only — do not depend on or build it. See [docs/univariate_proof_strategy.md](docs/univariate_proof_strategy.md) and [docs/univariate_proof_formalization.md](docs/univariate_proof_formalization.md).
+The `low_rank_univariate_sos/` submodule is a reference only — do not depend on or build it. See [docs/univariate_proof_strategy.md](../docs/univariate_proof_strategy.md) and [docs/univariate_proof_formalization.md](../docs/univariate_proof_formalization.md).
 
 # `.tex` Documents
 
-Maintain the ternary-quartic documents in `writeup/ternary_quartic/` (see [docs/lean_guide.md](docs/lean_guide.md) for LaTeX build):
+Maintain the ternary-quartic documents in `writeup/ternary_quartic/` (see [docs/lean_guide.md](../docs/lean_guide.md) for LaTeX build):
 
 **`exploration_log.tex`** — Running log of all explorations. Append to this single file. Must include: current proof strategy and how it evolved, every Julia experiment with commands/outputs, hypotheses from dual certificates, subgoal outcomes (proved/abandoned/open), remaining blockers.
 

@@ -17,10 +17,14 @@ The methodology combines:
 ## Repository Structure
 
 ```
-TernaryQuartic.lean              - Immutable statement file (read-only)
-TernaryQuarticProof.lean         - Root import file for the proof
-TernaryQuarticProof/             - All new Lean proof code goes here
-prompts/                         - Task prompts and agent instructions
+TernaryQuartic.lean              - Immutable statement file (read-only) for the rank-4 ternary-quartic track
+TernaryQuarticProof.lean         - Root import file for the ternary proof
+TernaryQuarticProof/             - Ternary proof modules
+QuaternaryQuartic.lean           - Immutable statement file (read-only) for the rank-5 quaternary-quartic track
+QuaternaryQuarticProof.lean      - Root import file for the quaternary proof
+QuaternaryQuarticProof/          - Quaternary proof modules
+program.md                       - Active execution brief for the quaternary-quartic proof track
+prompts/                         - Existing task prompts and agent instructions
 scripts/                         - Helper scripts (verification harnesses, Vagrant helpers, agent launcher)
 julia/                           - Computational search code (Julia)
 julia/ternary_quartic_explorations/ - Saved ternary-quartic Julia experiment scripts
@@ -33,7 +37,7 @@ docs/                            - Guides and supporting documentation
 ## Detailed Guides
 
 - **[docs/lean_guide.md](docs/lean_guide.md)** — Building and verifying the
-  root Lean project, using the univariate reference without building it here,
+  root Lean workspace, using the univariate reference without building it here,
   and building the LaTeX writeups
 - **[docs/julia_guide.md](docs/julia_guide.md)** — Running Julia SDP searches,
   solver configuration, persistent REPL workflow, code architecture

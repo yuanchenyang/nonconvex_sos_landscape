@@ -17,7 +17,6 @@ Usage:
     --proof-file <path/to/Proof.lean> \
     [--build-target <LakeTarget>]... \
     [--declaration-name <local_theorem_name>] \
-    [--expected-axioms '[propext, Classical.choice, Quot.sound]']
 
 Checks that:
   1. the selected Lake targets build;
@@ -53,10 +52,6 @@ while (($# > 0)); do
       ;;
     --declaration-name)
       DECLARATION_NAME="$2"
-      shift 2
-      ;;
-    --expected-axioms)
-      EXPECTED_AXIOMS="$2"
       shift 2
       ;;
     --build-target)
@@ -102,6 +97,24 @@ cleanup() {
 }
 trap cleanup EXIT
 
+normalize_axioms() {
+  printf '%s' "$1" | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/\[ /[/g; s/ \]/]/g; s/^ //; s/ $//'
+}
+
+extract_axioms() {
+  awk -v theorem="$THEOREM_NAME" '
+    index($0, "'"'"'" theorem "'"'"' depends on axioms:") {
+      sub("^'"'"'" theorem "'"'"' depends on axioms: ", "", $0)
+      out = $0
+      while (out !~ /\]/ && getline > 0) {
+        out = out "\n" $0
+      }
+      print out
+      exit
+    }
+  ' "$AXIOM_OUTPUT"
+}
+
 echo "[1/5] Building selected Lean targets"
 lake build "${BUILD_TARGETS[@]}"
 
@@ -128,14 +141,15 @@ import $PROOF_IMPORT
 EOF
 lake env lean "$AXIOM_CHECK" >"$AXIOM_OUTPUT" 2>&1
 cat "$AXIOM_OUTPUT"
-AXIOM_LINE="$(grep -F "'$THEOREM_NAME' depends on axioms:" "$AXIOM_OUTPUT" || true)"
-ACTUAL_AXIOMS="$(printf '%s\n' "$AXIOM_LINE" | sed -E "s/^'.*' depends on axioms: //")"
-if [ -z "$AXIOM_LINE" ]; then
+ACTUAL_AXIOMS_RAW="$(extract_axioms)"
+if [ -z "$ACTUAL_AXIOMS_RAW" ]; then
   echo "verification failed: could not extract theorem axioms from #print axioms output" >&2
   exit 1
 fi
-if [ "$ACTUAL_AXIOMS" != "$EXPECTED_AXIOMS" ]; then
-  echo "verification failed: expected axioms $EXPECTED_AXIOMS but found $ACTUAL_AXIOMS" >&2
+ACTUAL_AXIOMS="$(normalize_axioms "$ACTUAL_AXIOMS_RAW")"
+NORMALIZED_EXPECTED="$(normalize_axioms "$EXPECTED_AXIOMS")"
+if [ "$ACTUAL_AXIOMS" != "$NORMALIZED_EXPECTED" ]; then
+  echo "verification failed: expected axioms $NORMALIZED_EXPECTED but found $ACTUAL_AXIOMS" >&2
   exit 1
 fi
 
