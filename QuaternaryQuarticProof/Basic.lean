@@ -8,7 +8,7 @@ noncomputable section
 namespace QuaternaryQuartic
 
 /-
-Helper lemmas for the quaternary quartic rank-5 proof go here.
+Helper lemmas for the quaternary quartic rank-7 proof go here.
 Exploration agents should add new Lean code to files in this folder
 (`QuaternaryQuarticProof/`), not to the root `QuaternaryQuarticProof.lean`.
 
@@ -17,7 +17,7 @@ track buildable while the actual proof decomposition is still being developed.
 It must be replaced by proof-serving lemmas and a real derivation.
 -/
 
-axiom quaternaryQuartic_rankFive_no_spurious_socp_placeholder :
-    QuaternaryQuarticRankFiveNoSpuriousSOCP
+axiom quaternaryQuartic_rankSeven_no_spurious_socp_placeholder :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP
 
 end QuaternaryQuartic

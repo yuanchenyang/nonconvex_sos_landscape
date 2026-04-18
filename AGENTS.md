@@ -20,7 +20,7 @@ The methodology combines:
 TernaryQuartic.lean              - Immutable statement file (read-only) for the rank-4 ternary-quartic track
 TernaryQuarticProof.lean         - Root import file for the ternary proof
 TernaryQuarticProof/             - Ternary proof modules
-QuaternaryQuartic.lean           - Immutable statement file (read-only) for the rank-5 quaternary-quartic track
+QuaternaryQuartic.lean           - Immutable statement file (read-only) for the rank-7 quaternary-quartic track
 QuaternaryQuarticProof.lean      - Root import file for the quaternary proof
 QuaternaryQuarticProof/          - Quaternary proof modules
 program.md                       - Active execution brief for the quaternary-quartic proof track

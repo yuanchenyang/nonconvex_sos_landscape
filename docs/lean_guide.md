@@ -13,7 +13,7 @@ independent of the univariate submodule.
 - `TernaryQuarticProof.lean` — Root import file for the ternary proof; must
   keep the final theorem declaration.
 - `TernaryQuarticProof/` — Ternary helper lemmas and proof development.
-- `QuaternaryQuartic.lean` — Immutable statement file for the rank-5
+- `QuaternaryQuartic.lean` — Immutable statement file for the rank-7
   quaternary-quartic theorem.
 - `QuaternaryQuarticProof.lean` — Root import file for the quaternary proof.
 - `QuaternaryQuarticProof/` — Quaternary helper lemmas and proof development.
@@ -70,12 +70,13 @@ Both `TernaryQuartic.lean` and `TernaryQuarticProof.lean` set
 
 For the quaternary-quartic track, the current wrapper is full-strength in the
 same sense as the ternary wrapper: it targets the theorem
-`QuaternaryQuartic.quaternaryQuartic_rankFive_no_spurious_socp`, checks that the
-theorem is defined in `QuaternaryQuarticProof.lean`, and enforces an exact axiom
-list. At the moment that list includes the temporary scaffold axiom
-`QuaternaryQuartic.quaternaryQuartic_rankFive_no_spurious_socp_placeholder`.
-That means a successful quaternary verification run only confirms the scaffold
-is wired correctly; it does not yet certify a real proof.
+`QuaternaryQuartic.quaternaryQuartic_rankSeven_no_spurious_socp`, checks that the
+theorem is defined in `QuaternaryQuarticProof.lean`, and enforces the same
+default allowed axiom list used by the generic harness. Because the current
+scaffold still depends on the temporary axiom
+`QuaternaryQuartic.quaternaryQuartic_rankSeven_no_spurious_socp_placeholder`,
+the quaternary verification script is expected to fail until that placeholder is
+removed.
 
 ### File-Scope Rules
 

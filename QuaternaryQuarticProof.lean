@@ -18,8 +18,8 @@ temporary placeholder axiom declared in `QuaternaryQuarticProof.Basic`. Future
 work should remove that axiom and replace it with a genuine proof.
 -/
 
-theorem quaternaryQuartic_rankFive_no_spurious_socp :
-    QuaternaryQuarticRankFiveNoSpuriousSOCP := by
-  exact quaternaryQuartic_rankFive_no_spurious_socp_placeholder
+theorem quaternaryQuartic_rankSeven_no_spurious_socp :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  exact quaternaryQuartic_rankSeven_no_spurious_socp_placeholder
 
 end QuaternaryQuartic

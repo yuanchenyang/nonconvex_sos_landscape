@@ -2,7 +2,7 @@ Ultrathink. You are an automated mathematician producing a formal Lean proof usi
 
 # Goal
 
-Prove `QuaternaryQuarticRankFiveNoSpuriousSOCP` in Lean for the quaternary quartic rank-5 Burer-Monteiro problem. Use Julia dual certificates to generate hypotheses, narrow gaps, and validate strategies before formalizing. Every lemma must serve the main proof — do not add unnecessary abstractions or speculative generalizations.
+Prove `QuaternaryQuarticRankSevenNoSpuriousSOCP` in Lean for the quaternary quartic rank-7 Burer-Monteiro problem. Use Julia dual certificates to generate hypotheses, narrow gaps, and validate strategies before formalizing. Every lemma must serve the main proof — do not add unnecessary abstractions or speculative generalizations.
 
 # Strategy
 
@@ -21,14 +21,14 @@ See [docs/lean_guide.md](docs/lean_guide.md) for full build instructions.
 - **Statement (read-only)**: `QuaternaryQuartic.lean`
 - **Root proof file**: `QuaternaryQuarticProof.lean` — must contain the final theorem declaration
 - **Proof modules**: `QuaternaryQuarticProof/` — all helper lemmas go here
-- **Theorem**: `QuaternaryQuartic.quaternaryQuartic_rankFive_no_spurious_socp`
+- **Theorem**: `QuaternaryQuartic.quaternaryQuartic_rankSeven_no_spurious_socp`
 
 **File-scope rules** (non-negotiable):
 
 - Add new Lean files **only** inside `QuaternaryQuarticProof/`. Add `import QuaternaryQuarticProof.<Module>` to the root file as needed.
 - You may modify `QuaternaryQuarticProof.lean` (root import file).
 - You may **not** modify `QuaternaryQuartic.lean`, `scripts/verify_formalization.sh`, or `scripts/verify_quaternary_quartic.sh`.
-- Do **not** weaken, rename, or restate `QuaternaryQuarticRankFiveNoSpuriousSOCP`.
+- Do **not** weaken, rename, or restate `QuaternaryQuarticRankSevenNoSpuriousSOCP`.
 
 Both `.lean` files set `warningAsError = true` — `sorry` is forbidden.
 
@@ -40,7 +40,11 @@ Run the read-only verification harness:
 ./scripts/verify_quaternary_quartic.sh
 ```
 
-Success requires: the script exits 0 and the axiom check reports exactly `propext`, `Classical.choice`, `QuaternaryQuartic.quaternaryQuartic_rankFive_no_spurious_socp_placeholder`, and `Quot.sound` (in particular, no `sorryAx`).
+The wrapper is intentionally full-strength. While the placeholder axiom remains,
+this script should fail at the axiom check because it does **not** whitelist
+`QuaternaryQuartic.quaternaryQuartic_rankSeven_no_spurious_socp_placeholder`.
+Success requires removing that placeholder so the theorem verifies against the
+default allowed axiom set (in particular, no `sorryAx`).
 
 # Julia Dual Certificates
 
@@ -59,7 +63,7 @@ The `low_rank_univariate_sos/` submodule is a reference only — do not depend o
 # Ternary Quartic Reference
 
 Use the completed ternary-quartic development as a structural reference for the
-quaternary rank-5 proof track. Proof hints and reusable lemmas from the
+quaternary rank-7 proof track. Proof hints and reusable lemmas from the
 ternary development should be reused wherever they transfer cleanly to the
 quaternary setting:
 
@@ -78,14 +82,14 @@ Once quaternary-quartic writeups are created, maintain them in `writeup/quaterna
 
 # Git Workflow
 
-Start each exploration on a fresh branch (`git switch -c autoproof-qq-r5/<date>`). Commit after each coherent round of work (Julia campaign, proof idea, certificate derivation, or combined checkpoint). Do not leave major progress uncommitted.
+Start each exploration on a fresh branch (`git switch -c autoproof-qq-r7/<date>`). Commit after each coherent round of work (Julia campaign, proof idea, certificate derivation, or combined checkpoint). Do not leave major progress uncommitted.
 
 # Termination
 
 Stop only when **all** of the following hold:
 
 1. `./scripts/verify_quaternary_quartic.sh` exits successfully (no `sorryAx`).
-2. The theorem `QuaternaryQuartic.quaternaryQuartic_rankFive_no_spurious_socp` is proved in `QuaternaryQuarticProof.lean`.
+2. The theorem `QuaternaryQuartic.quaternaryQuartic_rankSeven_no_spurious_socp` is proved in `QuaternaryQuarticProof.lean`.
 3. A quaternary blueprint under `writeup/` contains the complete mathematical proof matching the formalization.
 4. The final state is committed.
 

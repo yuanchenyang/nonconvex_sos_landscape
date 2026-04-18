@@ -45,10 +45,10 @@ variable {B : DotForm}
 
 end BilinearLemmas
 
-@[simp] theorem A_self_eq_sigma (u : RankFiveVec) : A u u = sigma u := by
+@[simp] theorem A_self_eq_sigma (u : RankSevenVec) : A u u = sigma u := by
   simp [A, sigma, pow_two]
 
-theorem focp_sigma_residual_eq_zero {B : DotForm} {p : Poly} {u : RankFiveVec}
+theorem focp_sigma_residual_eq_zero {B : DotForm} {p : Poly} {u : RankSevenVec}
     (h : IsFOCP B p u) (hu : IsAdmissiblePoint u) :
     B (sigma u) (residual p u) = 0 := by
   simpa [A_self_eq_sigma, IsAdmissibleDirection] using h u hu
@@ -57,11 +57,11 @@ section Positivity
 
 variable {B : DotForm} [Fact B.toQuadraticMap.PosDef]
 
-theorem objective_nonneg (p : Poly) (u : RankFiveVec) : 0 ≤ objective B p u := by
+theorem objective_nonneg (p : Poly) (u : RankSevenVec) : 0 ≤ objective B p u := by
   simpa [objective, LinearMap.BilinMap.toQuadraticMap_apply] using
     (Fact.out : B.toQuadraticMap.PosDef).nonneg (residual p u)
 
-theorem objective_eq_zero_iff_residual_eq_zero {p : Poly} {u : RankFiveVec} :
+theorem objective_eq_zero_iff_residual_eq_zero {p : Poly} {u : RankSevenVec} :
     objective B p u = 0 ↔ residual p u = 0 := by
   have hani : B.toQuadraticMap.Anisotropic :=
     (Fact.out : B.toQuadraticMap.PosDef).anisotropic
