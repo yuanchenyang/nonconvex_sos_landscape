@@ -1,4 +1,4 @@
-# Automatic Proof of a Benign Non-Convex Landscape Theorem
+# Automatic Proof of a Benign Nonconvex Landscape Theorem
 
 <img src="/imgs/loc_autoproof-tq-r4-apr9.png" alt="Successful Apr 9 run LOC">
 
