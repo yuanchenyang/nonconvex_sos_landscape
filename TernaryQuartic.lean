@@ -87,6 +87,7 @@ formalization should prove this exact proposition without weakening or renaming
 it. -/
 def TernaryQuarticRankFourNoSpuriousSOCP : Prop :=
   ∀ (B : DotForm) (p : Poly) (u : RankFourVec),
+    B.IsSymm →
     IsPositiveDefinite B →
     IsSOSQuartic p →
     IsAdmissiblePoint u →

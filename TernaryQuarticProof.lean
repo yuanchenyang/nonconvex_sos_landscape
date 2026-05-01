@@ -20,7 +20,7 @@ The final proof should complete:
 
 theorem ternaryQuartic_rankFour_no_spurious_socp :
     TernaryQuarticRankFourNoSpuriousSOCP := by
-  intro B p u hB hp hu hsocp
+  intro B p u _hBsymm hB hp hu hsocp
   letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
   by_cases hrelker : LinearMap.ker (relationPolyLin u) = ⊥
   · exact residual_eq_zero_of_relationPolyLin_ker_eq_bot
