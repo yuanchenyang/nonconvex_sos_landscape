@@ -986,6 +986,46 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Multiplication by a nonzero linear form}
+
+\paragraph{Largest gap selected.}
+The rank-one and rank-two incidence arguments both use the dimension claim
+\(\dim(xA)=\dim A\) for a nonzero affine-linear form \(x\).  This is one of
+the first product-space dimension facts needed after introducing
+\texttt{linProductSubmodule}.
+
+\paragraph{Lean progress.}
+Defined the linear maps
+\[
+\texttt{linProductLeftMap}\ x:\Lin\to\Quad,\qquad
+\texttt{linProductLeftMapOn}\ x\ A:A\to\Quad
+\]
+given by multiplication by \(x\).  Proved
+\[
+\texttt{linProductLeftMap\_ker\_eq\_bot\_of\_ne\_zero}
+\]
+and its restricted-subspace version, using that
+\(\mathbb R[X_1,X_2,X_3]\) has no zero divisors.  Also proved
+\[
+\texttt{finrank\_range\_linProductLeftMapOn\_eq},
+\]
+which states that multiplication by a nonzero affine-linear form preserves
+the dimension of any subspace \(A\le\Lin\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+This establishes the injective multiplication input used for \(xA\) and
+\(MB\).  The remaining incidence work still needs dimension lower bounds for
+the multi-generator product spaces \(MA\) and \(MB\), plus the low-rank support
+and binary negative-pure-square theorems.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Linear annihilator for support reduction}
 
 \paragraph{Largest gap selected.}

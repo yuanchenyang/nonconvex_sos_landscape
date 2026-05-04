@@ -268,6 +268,68 @@ theorem linProductSubmodule_le_of_generators
   rintro q ⟨x, rfl⟩
   exact hgen x.1 x.2
 
+def linProductLeftMap (a : linSubmodule) : linSubmodule →ₗ[ℝ] quadSubmodule where
+  toFun b := linProduct a b
+  map_add' b c := linProduct_add_right a b c
+  map_smul' r b := linProduct_smul_right r a b
+
+@[simp] theorem linProductLeftMap_apply (a b : linSubmodule) :
+    linProductLeftMap a b = linProduct a b := rfl
+
+def linProductLeftMapOn (a : linSubmodule) (A : Submodule ℝ linSubmodule) :
+    A →ₗ[ℝ] quadSubmodule :=
+  (linProductLeftMap a).comp A.subtype
+
+@[simp] theorem linProductLeftMapOn_apply
+    (a : linSubmodule) (A : Submodule ℝ linSubmodule) (b : A) :
+    linProductLeftMapOn a A b = linProduct a b.1 := rfl
+
+theorem linProductLeftMap_ker_eq_bot_of_ne_zero {a : linSubmodule}
+    (ha : (a : Poly) ≠ 0) :
+    LinearMap.ker (linProductLeftMap a) = ⊥ := by
+  ext b
+  constructor
+  · intro hb
+    rw [Submodule.mem_bot]
+    apply Subtype.ext
+    have hprod : (a : Poly) * (b : Poly) = 0 := by
+      have hbzero := congrArg (fun q : quadSubmodule => (q : Poly)) hb
+      simpa [linProductLeftMap, linProduct] using hbzero
+    simpa using (mul_eq_zero.mp hprod).resolve_left ha
+  · intro hb
+    rw [hb]
+    simp
+
+theorem linProductLeftMapOn_ker_eq_bot_of_ne_zero
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (ha : (a : Poly) ≠ 0) :
+    LinearMap.ker (linProductLeftMapOn a A) = ⊥ := by
+  ext b
+  constructor
+  · intro hb
+    rw [Submodule.mem_bot]
+    apply Subtype.ext
+    have hprod : (a : Poly) * (b.1 : Poly) = 0 := by
+      have hbzero := congrArg (fun q : quadSubmodule => (q : Poly)) hb
+      simpa [linProductLeftMapOn, linProductLeftMap, linProduct] using hbzero
+    simpa using (mul_eq_zero.mp hprod).resolve_left ha
+  · intro hb
+    rw [hb]
+    simp
+
+theorem finrank_range_linProductLeftMapOn_eq
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (ha : (a : Poly) ≠ 0) :
+    Module.finrank ℝ (LinearMap.range (linProductLeftMapOn a A)) =
+      Module.finrank ℝ A := by
+  refine LinearMap.finrank_range_of_inj ?_
+  intro b c hbc
+  apply Subtype.ext
+  have hprod : (a : Poly) * (b.1 : Poly) = (a : Poly) * (c.1 : Poly) := by
+    have hbcval := congrArg (fun q : quadSubmodule => (q : Poly)) hbc
+    simpa [linProductLeftMapOn, linProductLeftMap, linProduct] using hbcval
+  simpa using mul_left_cancel₀ ha hprod
+
 /-- Span of the seven quadratic coordinates of a rank-seven point. -/
 def spanU (u : RankSevenVec) : Submodule ℝ Poly :=
   Submodule.span ℝ (Set.range u)
