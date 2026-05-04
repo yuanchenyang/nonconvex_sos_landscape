@@ -2843,4 +2843,38 @@ be formalized and then combined with this sum bound.
 
 No Julia numerical claims were used in this round.
 
+\section*{Bounded subspace-sum dimension estimates}
+
+\paragraph{Gap targeted.}
+The rank-one and rank-two ambient spaces are built as sums of smaller product
+subspaces.  The previous round added \(\dim(S+T)\le\dim S+\dim T\), but callers
+would still need to repeat the arithmetic for the specific blueprint bounds.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{finrank\_sup\_le\_of\_le\_add}
+\]
+to \texttt{QuaternaryQuarticProof/Dimension.lean}, plus the specializations
+\[
+\texttt{finrank\_sup\_le\_five\_of\_le\_two\_three},\quad
+\texttt{finrank\_sup\_le\_six\_of\_le\_three\_three},\quad
+\texttt{finrank\_sup\_le\_nine\_of\_le\_three\_six}.
+\]
+These package the finite-dimensional arithmetic needed to bound the support
+ambient spaces in the lower-rank incidence arguments.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Dimension.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The product-subspace dimension bounds feeding these sum estimates remain to be
+formalized for the concrete support subspaces.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

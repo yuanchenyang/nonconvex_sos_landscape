@@ -38,6 +38,35 @@ theorem finrank_sup_le_add (s t : Submodule K V) :
       (Submodule.finrank_sup_add_finrank_inf_eq s t)
   omega
 
+theorem finrank_sup_le_of_le_add
+    {s t : Submodule K V} {a b c : ℕ}
+    (hs : finrank K s ≤ a) (ht : finrank K t ≤ b)
+    (habc : a + b ≤ c) :
+    finrank K ↥(s ⊔ t) ≤ c := by
+  have hsup := finrank_sup_le_add (K := K) (V := V) s t
+  omega
+
+theorem finrank_sup_le_five_of_le_two_three
+    {s t : Submodule K V}
+    (hs : finrank K s ≤ 2) (ht : finrank K t ≤ 3) :
+    finrank K ↥(s ⊔ t) ≤ 5 :=
+  finrank_sup_le_of_le_add (K := K) (V := V)
+    (s := s) (t := t) hs ht (by norm_num)
+
+theorem finrank_sup_le_six_of_le_three_three
+    {s t : Submodule K V}
+    (hs : finrank K s ≤ 3) (ht : finrank K t ≤ 3) :
+    finrank K ↥(s ⊔ t) ≤ 6 :=
+  finrank_sup_le_of_le_add (K := K) (V := V)
+    (s := s) (t := t) hs ht (by norm_num)
+
+theorem finrank_sup_le_nine_of_le_three_six
+    {s t : Submodule K V}
+    (hs : finrank K s ≤ 3) (ht : finrank K t ≤ 6) :
+    finrank K ↥(s ⊔ t) ≤ 9 :=
+  finrank_sup_le_of_le_add (K := K) (V := V)
+    (s := s) (t := t) hs ht (by norm_num)
+
 theorem inf_ne_bot_of_finrank_lt_add
     {s t w : Submodule K V}
     (hsw : s ≤ w) (htw : t ≤ w)
