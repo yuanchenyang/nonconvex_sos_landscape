@@ -709,4 +709,32 @@ theorem hasPreimageProductSupportData_of_rank_one_ambient_bounds
     (x := x) (A := A) (S := spanUQuad hu ⊓ U) (W := U)
     hx hAann inf_le_left inf_le_right hrangeU hMAU hSdim hAdim hUdim_le hneg
 
+theorem exists_negative_syzygyCertificate_of_rank_one_ambient_bounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1)
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {U : Submodule ℝ quadSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hUker : U ≤ LinearMap.ker (catalecticantMap B p u))
+    (hUdim_ge : 6 ≤ Module.finrank ℝ U)
+    (hUdim_le : Module.finrank ℝ U ≤ 6)
+    (hrangeU : LinearMap.range (linProductLeftMapOn x A) ≤ U)
+    (hMAU :
+      linProductSubmodule
+          (linProductLeftPreimageWithin x A (spanUQuad hu ⊓ U)) A ≤ U)
+    (hAdim : 3 ≤ Module.finrank ℝ A)
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    ∃ q : Poly, IsQuadratic q ∧
+      B (q^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q :=
+  exists_negative_syzygyCertificate_of_preimageProductSupportData
+    (B := B) (p := p) (u := u) (hu := hu)
+    (hasPreimageProductSupportData_of_rank_one_ambient_bounds
+      (B := B) (p := p) (u := u) (hu := hu)
+      hfocp hrelker hrank hx hAann hUker hUdim_ge hUdim_le
+      hrangeU hMAU hAdim hneg)
+
 end QuaternaryQuartic

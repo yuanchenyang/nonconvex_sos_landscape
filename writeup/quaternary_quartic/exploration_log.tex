@@ -3531,4 +3531,36 @@ the selected support direction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one ambient bounds to negative certificate}
+
+\paragraph{Gap targeted.}
+The rank-one incidence interface produced
+\(\texttt{HasPreimageProductSupportData}\) from ambient bounds, but the
+rank-case reducer needs a negative syzygy certificate.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_rank\_one\_ambient\_bounds}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It composes the existing
+rank-one ambient-bound constructor with
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_preimageProductSupportData}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-one branch still needs its normal-form transport to provide the
+ambient \(U\), range/product inclusions, and negative pure square.  Once those
+are available, this lemma returns the certificate directly.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
