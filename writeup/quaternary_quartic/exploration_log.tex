@@ -2339,4 +2339,38 @@ form back to the quaternary support subspace.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one binary outer-product evaluation}
+
+\paragraph{Gap targeted.}
+The binary normal-form branch also includes the rank-one Hankel case, where the
+catalecticant is a negative scalar times an outer product.  The scalar
+negativity lemma was present, but it had not yet been packaged as a negative
+binary quartic evaluation.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{rank\_one\_binaryQuarticEval\_exists\_negative}
+\]
+to \texttt{QuaternaryQuarticProof/Binary.lean}.  If
+\(\rho<0\) and \((\alpha,\beta)\ne(0,0)\), the lemma chooses
+\((x,y)=(\alpha,\beta)\) and proves the corresponding binary quartic value is
+\[
+\rho(\alpha^2+\beta^2)^4<0.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+All binary scalar normal forms now have quartic-evaluation wrappers.  The next
+binary step is to derive those normal forms from an actual rank-one or rank-two
+Hankel/catalecticant kernel hypothesis.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

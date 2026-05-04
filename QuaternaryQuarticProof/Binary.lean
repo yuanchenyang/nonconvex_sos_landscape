@@ -46,6 +46,27 @@ theorem rank_one_negative_value
   have hsquare_pos : 0 < (α^2 + β^2)^2 := sq_pos_of_pos hsum_pos
   exact mul_neg_of_neg_of_pos hρ hsquare_pos
 
+theorem rank_one_binaryQuarticEval_exists_negative
+    {ρ α β : ℝ} (hρ : ρ < 0) (hvec : α ≠ 0 ∨ β ≠ 0) :
+    ∃ x y : ℝ,
+      binaryQuarticEval
+        (ρ * α^4) (ρ * α^3 * β) (ρ * α^2 * β^2) (ρ * α * β^3) (ρ * β^4)
+        x y < 0 := by
+  refine ⟨α, β, ?_⟩
+  have hsum_pos : 0 < α^2 + β^2 := by
+    rcases hvec with hα | hβ
+    · nlinarith [sq_pos_of_ne_zero hα, sq_nonneg β]
+    · nlinarith [sq_nonneg α, sq_pos_of_ne_zero hβ]
+  have hpow_pos : 0 < (α^2 + β^2)^4 := pow_pos hsum_pos 4
+  have heq :
+      binaryQuarticEval
+        (ρ * α^4) (ρ * α^3 * β) (ρ * α^2 * β^2) (ρ * α * β^3) (ρ * β^4)
+        α β = ρ * (α^2 + β^2)^4 := by
+    unfold binaryQuarticEval
+    ring
+  rw [heq]
+  exact mul_neg_of_neg_of_pos hρ hpow_pos
+
 theorem exists_linear_combination_lt_zero (a b : ℝ) (hb : b ≠ 0) :
     ∃ t : ℝ, a + 4 * b * t < 0 := by
   refine ⟨-(|a| + 1) / (4 * b), ?_⟩
