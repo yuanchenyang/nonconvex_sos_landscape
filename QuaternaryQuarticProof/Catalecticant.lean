@@ -449,6 +449,51 @@ theorem finrank_symSquareSubmodule_le_three_of_finrank_eq_two
     decide
   exact (Submodule.finrank_mono hle).trans (by simpa [hcard] using hspan)
 
+theorem finrank_symSquareSubmodule_le_six_of_finrank_eq_three
+    {A : Submodule ℝ linSubmodule}
+    (hA : Module.finrank ℝ A = 3) :
+    Module.finrank ℝ (symSquareSubmodule A) ≤ 6 := by
+  classical
+  letI : Module.Free ℝ A := Module.Free.of_divisionRing ℝ A
+  let β := Module.finBasisOfFinrankEq ℝ A hA
+  let ι := {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2}
+  let S : Set quadSubmodule :=
+    Set.range fun ij : ι => linProduct (β ij.1.1).1 (β ij.1.2).1
+  have hle : symSquareSubmodule A ≤ Submodule.span ℝ S := by
+    refine linProductSubmodule_le_of_generators ?_
+    intro a b
+    have hrepr :=
+      LinearMap.sum_repr_mul_repr_mul
+        (b₁' := β) (b₂' := β) (B := linProductBilinOn A) a b
+    change ((linProductBilinOn A) a) b ∈ Submodule.span ℝ S
+    rw [← hrepr]
+    rw [Finsupp.sum_fintype]
+    swap
+    · simp
+    refine Submodule.sum_mem _ ?_
+    intro i _hi
+    rw [Finsupp.sum_fintype]
+    swap
+    · simp
+    refine Submodule.sum_mem _ ?_
+    intro j _hj
+    refine Submodule.smul_mem (Submodule.span ℝ S) _ ?_
+    refine Submodule.smul_mem (Submodule.span ℝ S) _ ?_
+    change linProduct (β i).1 (β j).1 ∈ Submodule.span ℝ S
+    by_cases hij : i ≤ j
+    · exact Submodule.subset_span ⟨⟨(i, j), hij⟩, rfl⟩
+    · have hji : j ≤ i := le_of_not_ge hij
+      rw [linProduct_comm]
+      exact Submodule.subset_span ⟨⟨(j, i), hji⟩, rfl⟩
+  have hspan :
+      Module.finrank ℝ (Submodule.span ℝ S) ≤ Fintype.card ι := by
+    simpa [S] using
+      (finrank_range_le_card (R := ℝ)
+        (b := fun ij : ι => linProduct (β ij.1.1).1 (β ij.1.2).1))
+  have hcard : Fintype.card ι = 6 := by
+    decide
+  exact (Submodule.finrank_mono hle).trans (by simpa [hcard] using hspan)
+
 theorem linOne_mul_linOne_mem_linProductSubmodule_top_top :
     linProduct linOne linOne ∈
       linProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤ := by

@@ -3212,4 +3212,36 @@ negative pure square and ambient lower bound.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one symmetric-square dimension bound}
+
+\paragraph{Gap targeted.}
+The rank-one incidence proof needs the bound
+\(\dim\operatorname{Sym}^2 A\le6\) when the support complement has dimension
+three.  This is the three-dimensional analogue of the previous rank-two
+symmetric-square bound.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{finrank\_symSquareSubmodule\_le\_six\_of\_finrank\_eq\_three}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  The proof spans
+\(\operatorname{Sym}^2 A\) by the six unordered products of a three-element
+basis and uses commutativity to cover the reversed ordered products.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The lower-rank ambient dimension bounds now have formal symmetric-square
+dimension inputs for dimensions two and three.  The remaining rank-one/rank-two
+work is to connect those ambient spaces to the exact binary/support normal
+forms.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
