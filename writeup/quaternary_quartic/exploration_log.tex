@@ -4044,4 +4044,45 @@ disjointness from the catalecticant support structure.
 
 No Julia numerical claims were used in this round.
 
+\section*{Binary restriction coefficient evaluation}
+
+\paragraph{Gap targeted.}
+The binary normal-form rank-case data still required an opaque
+coefficient-evaluation identity.  This identity should come from expanding
+\((Xx+Yy)^4\) and applying linearity of the residual functional.
+
+\paragraph{Lean progress.}
+Added binary restriction coefficient definitions
+\[
+\texttt{binaryRestrictionCoeffA},\ldots,
+\texttt{binaryRestrictionCoeffE}
+\]
+to \texttt{QuaternaryQuarticProof/Binary.lean}.  These are the five coefficients
+\(\lambda(x^4),\lambda(x^3y),\lambda(x^2y^2),\lambda(xy^3),\lambda(y^4)\)
+for the plane spanned by \(x,y\).
+
+Added
+\[
+\texttt{binaryRestriction\_eval\_eq\_of\_pow\_expansion}.
+\]
+It proves the required \(\texttt{binaryQuarticEval}\) identity from the
+polynomial expansion of \((Xx+Yy)^4\).  Thus the remaining evaluation-identity
+work is reduced to a pure polynomial expansion lemma, separated from bilinear
+functional linearity.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The coefficient-evaluation gap has been split: bilinear evaluation is done,
+and the remaining subgoal is a standalone \(\texttt{MvPolynomial}\) expansion
+for \((Xx+Yy)^4\).  The normal-form classification and the exact
+dimension/disjointness facts remain open.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

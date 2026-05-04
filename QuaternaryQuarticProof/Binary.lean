@@ -24,6 +24,58 @@ def HasBinaryLowRankNegativeNormalForm (a b c d e : ℝ) : Prop :=
   (c = 0 ∧ d = 0 ∧ e = 0 ∧ b ≠ 0) ∨
   (c = -a ∧ d = -b ∧ e = a ∧ (a ≠ 0 ∨ b ≠ 0))
 
+def binaryRestrictionCoeffA
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (x : linSubmodule) : ℝ :=
+  B ((linProduct x x : quadSubmodule).1^2) (residual p u)
+
+def binaryRestrictionCoeffB
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule) : ℝ :=
+  B ((linProduct x x : quadSubmodule).1 *
+      (linProduct x y : quadSubmodule).1) (residual p u)
+
+def binaryRestrictionCoeffC
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule) : ℝ :=
+  B ((linProduct x y : quadSubmodule).1^2) (residual p u)
+
+def binaryRestrictionCoeffD
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule) : ℝ :=
+  B ((linProduct x y : quadSubmodule).1 *
+      (linProduct y y : quadSubmodule).1) (residual p u)
+
+def binaryRestrictionCoeffE
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (y : linSubmodule) : ℝ :=
+  B ((linProduct y y : quadSubmodule).1^2) (residual p u)
+
+theorem binaryRestriction_eval_eq_of_pow_expansion
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule)
+    (hpow : ∀ X Y : ℝ,
+      (linProduct (X • x + Y • y) (X • x + Y • y) :
+          quadSubmodule).1^2 =
+        X^4 • (linProduct x x : quadSubmodule).1^2 +
+          (4 * X^3 * Y) •
+            ((linProduct x x : quadSubmodule).1 *
+              (linProduct x y : quadSubmodule).1) +
+            (6 * X^2 * Y^2) • (linProduct x y : quadSubmodule).1^2 +
+              (4 * X * Y^3) •
+                ((linProduct x y : quadSubmodule).1 *
+                  (linProduct y y : quadSubmodule).1) +
+                Y^4 • (linProduct y y : quadSubmodule).1^2) :
+    ∀ X Y : ℝ,
+      B ((linProduct (X • x + Y • y) (X • x + Y • y) :
+          quadSubmodule).1^2) (residual p u) =
+        binaryQuarticEval
+          (binaryRestrictionCoeffA B p u x)
+          (binaryRestrictionCoeffB B p u x y)
+          (binaryRestrictionCoeffC B p u x y)
+          (binaryRestrictionCoeffD B p u x y)
+          (binaryRestrictionCoeffE B p u y) X Y := by
+  intro X Y
+  rw [hpow X Y]
+  simp [binaryRestrictionCoeffA, binaryRestrictionCoeffB,
+    binaryRestrictionCoeffC, binaryRestrictionCoeffD, binaryRestrictionCoeffE,
+    binaryQuarticEval]
+  ring
+
 theorem diagonal_form_negative_pure_of_negative
     {a e : ℝ} (hneg : ∃ x y : ℝ, a * x^2 + e * y^2 < 0) :
     a < 0 ∨ e < 0 := by
