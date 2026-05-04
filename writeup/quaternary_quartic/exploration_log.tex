@@ -3563,4 +3563,37 @@ are available, this lemma returns the certificate directly.
 
 No Julia numerical claims were used in this round.
 
+\section*{Finite exponent-set instances}
+
+\paragraph{Gap targeted.}
+To prove that linear products span the full quadratic space, the proof needs
+finite case analysis over degree-bounded exponent sets.  The cardinality
+arguments already used equivalences with bounded triples, but the exponent
+subtypes themselves did not have explicit local \(\texttt{Fintype}\)
+instances.
+
+\paragraph{Lean progress.}
+Added private \(\texttt{Fintype}\) instances for
+\[
+\texttt{LinExponentSet},\quad \texttt{QuadExponentSet},\quad
+\texttt{QuarticExponentSet}
+\]
+in \texttt{QuaternaryQuarticProof/Catalecticant.lean}, reusing the existing
+equivalences with bounded finite triples.  This is preparatory infrastructure
+for a future monomial-level proof that every degree-\(\le2\) monomial is a
+product of degree-\(\le1\) monomials.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The actual monomial decomposition theorem still needs an explicit construction
+rather than relying on opaque finite reduction.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

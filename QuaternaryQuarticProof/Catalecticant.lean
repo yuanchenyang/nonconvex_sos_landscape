@@ -86,6 +86,9 @@ private def linExponentEquivBoundedFinTripleOne :
     ext i
     simp
 
+private instance instFintypeLinExponentSet : Fintype LinExponentSet :=
+  Fintype.ofEquiv BoundedFinTripleOne linExponentEquivBoundedFinTripleOne.symm
+
 private theorem natCard_linExponentSet :
     Nat.card LinExponentSet = 4 := by
   rw [Nat.card_congr linExponentEquivBoundedFinTripleOne]
@@ -164,6 +167,9 @@ private def quadExponentEquivBoundedFinTriple :
     ext i
     simp
 
+private instance instFintypeQuadExponentSet : Fintype QuadExponentSet :=
+  Fintype.ofEquiv BoundedFinTriple quadExponentEquivBoundedFinTriple.symm
+
 private theorem natCard_quadExponentSet :
     Nat.card QuadExponentSet = 10 := by
   rw [Nat.card_congr quadExponentEquivBoundedFinTriple]
@@ -241,6 +247,9 @@ private def quarticExponentEquivBoundedFinTripleFour :
     apply Subtype.ext
     ext i
     simp
+
+private instance instFintypeQuarticExponentSet : Fintype QuarticExponentSet :=
+  Fintype.ofEquiv BoundedFinTripleFour quarticExponentEquivBoundedFinTripleFour.symm
 
 private theorem natCard_quarticExponentSet :
     Nat.card QuarticExponentSet = 35 := by
