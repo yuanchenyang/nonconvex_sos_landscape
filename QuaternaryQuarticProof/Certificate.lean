@@ -191,6 +191,31 @@ theorem residual_eq_zero_of_constant_relation
     linarith
   exact (objective_eq_zero_iff_residual_eq_zero (B := B)).mp hobj
 
+theorem residual_eq_zero_of_relationPolyLin_ker_ne_bot
+    {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) ≠ ⊥) :
+    residual p u = 0 := by
+  rcases Submodule.exists_mem_ne_zero_of_ne_bot hrelker with ⟨c, hc, hcne⟩
+  have hrel : relationPoly u c = 0 := by
+    simpa [relationPolyLin] using hc
+  exact residual_eq_zero_of_constant_relation
+    (B := B) (u := u) hu hrel hcne hp hsocp
+
+theorem residual_eq_zero_or_relationPolyLin_ker_eq_bot
+    {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u) :
+    residual p u = 0 ∨ LinearMap.ker (relationPolyLin u) = ⊥ := by
+  by_cases hrelker : LinearMap.ker (relationPolyLin u) = ⊥
+  · exact Or.inr hrelker
+  · exact Or.inl
+      (residual_eq_zero_of_relationPolyLin_ker_ne_bot
+        (B := B) hu hp hsocp hrelker)
+
 end Positivity
 
 end QuaternaryQuartic

@@ -315,4 +315,40 @@ syzygy is also still pending in Lean.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Main split reduced to full rank}
+
+\paragraph{Largest gap selected.}
+The blueprint's main proof first splits on whether the seven coordinates have
+a nonzero scalar relation.  The rank-deficient certificate was formalized
+earlier, but the reusable main split had not yet been packaged.
+
+\paragraph{Lean progress.}
+Extended \texttt{QuaternaryQuarticProof/Certificate.lean} with:
+\[
+\texttt{residual\_eq\_zero\_of\_relationPolyLin\_ker\_ne\_bot}
+\]
+and
+\[
+\texttt{residual\_eq\_zero\_or\_relationPolyLin\_ker\_eq\_bot}.
+\]
+The second theorem proves that any admissible SOS/SOCP point either already
+has zero residual or has full scalar rank
+\[
+\ker(\texttt{relationPolyLin}\ u)=\bot.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Certificate.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The root theorem can now reduce to the full-rank branch.  The unresolved
+content is entirely in that branch: use the rank-\(\le3\) catalecticant bound,
+the negative SOS summand, and the low-rank support/syzygy mechanisms to
+construct a negative-curvature direction.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
