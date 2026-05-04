@@ -536,6 +536,25 @@ theorem hasSyzygyCertificate_of_support_product_decomposition
       _ = s.1 * q.1 := by
             rw [mul_comm]
 
+theorem exists_negative_syzygyCertificate_of_support_product_decomposition
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    {z : linSubmodule} {W : Submodule ℝ linSubmodule} {q s : quadSubmodule}
+    (hzW_L : ∀ w : W, linProduct z w.1 ∈ spanUQuad hu)
+    (hzW_K : ∀ w : W, (linProduct z w.1 : quadSubmodule).1 ∈ catalecticantKernel B p u)
+    (hsL : s ∈ spanUQuad hu)
+    (hsne : s.1 ≠ 0)
+    (hs : s = linProduct z z)
+    (hqWW : q ∈ linProductSubmodule W W)
+    (hneg : B (q.1^2) (residual p u) < 0) :
+    ∃ q' : Poly, IsQuadratic q' ∧
+      B (q'^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q' := by
+  refine ⟨q.1, q.2, hneg, ?_⟩
+  exact hasSyzygyCertificate_of_support_product_decomposition
+    (B := B) (p := p) (u := u) (hu := hu)
+    (z := z) (W := W) (q := q) (s := s)
+    hzW_L hzW_K hsL hsne hs hqWW
+
 theorem hasSyzygyCertificate_of_rank_three_kernel_product_identity
     {ι : Type} [Fintype ι] {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

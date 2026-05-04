@@ -986,6 +986,38 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Rank-three negative certificate wrapper}
+
+\paragraph{Largest gap selected.}
+The rank-three support-product constructor produced
+\texttt{HasSyzygyCertificate} for a quadratic \(q\), but the flexible
+rank-case reduction expects the bundled existential containing the quadratic
+degree bound and negativity of \(\lambda(q^2)\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_support\_product\_decomposition}.
+\]
+This wraps
+\texttt{hasSyzygyCertificate\_of\_support\_product\_decomposition} with
+\(q\in\Quad\) and a hypothesis \(B(q^2,R)<0\), returning the exact
+existential consumed by
+\texttt{residual\_eq\_zero\_of\_rank\_case\_exists\_negative\_syzygy\_certificate}.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The rank-three endpoint now matches the global rank-split interface.  The
+unformalized parts are still the low-rank support theorem and the construction
+that moves the initially negative square to the supported \(WW\)-quadratic.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Rank-three support product decomposition}
 
 \paragraph{Largest gap selected.}
