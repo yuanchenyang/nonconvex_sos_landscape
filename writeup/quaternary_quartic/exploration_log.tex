@@ -2234,4 +2234,35 @@ round supplies the exact rank-nullity object that such a bound will feed into.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-nullity bridge for the apolar support predicate}
+
+\paragraph{Gap targeted.}
+After introducing the quotient-valued annihilator map, the support predicate
+\(\texttt{HasLinearAnnihilatorCodimAtMost}\) still needed a direct way to use
+a bound on that map's image dimension.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasLinearAnnihilatorCodimAtMost\_of\_annihilatorMap\_range}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It applies the rank-nullity
+identity for \(\texttt{linearAnnihilatorMap}\) to show that if the image has
+dimension at most \(k\le4\), then the annihilator has dimension at least
+\(4-k\).  Also added the rank-specialized wrappers for \(k=1,2,3\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The remaining structural step is now sharper: prove the annihilator-map image
+bound from catalecticant rank at most \(1,2,3\), or supply an equivalent
+formal version of the low-rank apolar support theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

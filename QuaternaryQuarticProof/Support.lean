@@ -15,6 +15,41 @@ def HasLinearAnnihilatorCodimAtMost
     A ≤ linearAnnihilator B p u ∧
       4 - k ≤ Module.finrank ℝ A
 
+theorem hasLinearAnnihilatorCodimAtMost_of_annihilatorMap_range
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {k : ℕ}
+    (hk : k ≤ 4)
+    (hrange :
+      Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ k) :
+    HasLinearAnnihilatorCodimAtMost B p u k := by
+  refine ⟨linearAnnihilator B p u, le_rfl, ?_⟩
+  have hsum :=
+    finrank_range_linearAnnihilatorMap_add_finrank_linearAnnihilator B p u
+  omega
+
+theorem hasLinearAnnihilatorCodimAtMost_one_of_annihilatorMap_range
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrange :
+      Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 1) :
+    HasLinearAnnihilatorCodimAtMost B p u 1 :=
+  hasLinearAnnihilatorCodimAtMost_of_annihilatorMap_range
+    (B := B) (p := p) (u := u) (k := 1) (by norm_num) hrange
+
+theorem hasLinearAnnihilatorCodimAtMost_two_of_annihilatorMap_range
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrange :
+      Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 2) :
+    HasLinearAnnihilatorCodimAtMost B p u 2 :=
+  hasLinearAnnihilatorCodimAtMost_of_annihilatorMap_range
+    (B := B) (p := p) (u := u) (k := 2) (by norm_num) hrange
+
+theorem hasLinearAnnihilatorCodimAtMost_three_of_annihilatorMap_range
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrange :
+      Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 3) :
+    HasLinearAnnihilatorCodimAtMost B p u 3 :=
+  hasLinearAnnihilatorCodimAtMost_of_annihilatorMap_range
+    (B := B) (p := p) (u := u) (k := 3) (by norm_num) hrange
+
 theorem HasLinearAnnihilatorCodimAtMost.mono
     {B : DotForm} {p : Poly} {u : RankSevenVec} {k l : ℕ}
     (hkl : k ≤ l)
