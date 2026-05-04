@@ -986,6 +986,41 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Product preimage subspaces}
+
+\paragraph{Largest gap selected.}
+The rank-one and rank-two incidence constructions define spaces such as
+\(M=\{a\in A:xa\in P\}\).  The Lean development had product spans, but not
+named preimage subspaces for multiplication by a fixed linear form.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{symSquareSubmodule}\ U=\texttt{linProductSubmodule}\ U\ U
+\]
+and the fixed-factor preimage subspaces
+\[
+\texttt{linProductLeftPreimage}\ x\ P\le\Lin,\qquad
+\texttt{linProductLeftPreimageOn}\ x\ A\ P\le A.
+\]
+Both are implemented as comaps of the multiplication linear maps, with
+membership simp lemmas stating that membership is exactly the condition
+\(xb\in P\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+These definitions make the blueprint's \(M\) and \(N\) subspaces directly
+expressible.  The next missing piece is the dimension comparison between such
+preimages and the corresponding intersections \(P\cap xA\), followed by the
+low-rank support and negative pure-square theorems.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Flexible negative-square reduction}
 
 \paragraph{Largest gap selected.}

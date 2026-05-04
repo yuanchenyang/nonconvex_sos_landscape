@@ -233,6 +233,10 @@ def linProductSubmodule (U V : Submodule ℝ linSubmodule) :
     Submodule ℝ quadSubmodule :=
   Submodule.span ℝ (Set.range fun x : U × V => linProduct x.1.1 x.2.1)
 
+def symSquareSubmodule (U : Submodule ℝ linSubmodule) :
+    Submodule ℝ quadSubmodule :=
+  linProductSubmodule U U
+
 theorem linProduct_mem_linProductSubmodule
     {U V : Submodule ℝ linSubmodule} (a : U) (b : V) :
     linProduct a.1 b.1 ∈ linProductSubmodule U V := by
@@ -284,6 +288,26 @@ def linProductLeftMapOn (a : linSubmodule) (A : Submodule ℝ linSubmodule) :
 @[simp] theorem linProductLeftMapOn_apply
     (a : linSubmodule) (A : Submodule ℝ linSubmodule) (b : A) :
     linProductLeftMapOn a A b = linProduct a b.1 := rfl
+
+def linProductLeftPreimage (a : linSubmodule) (P : Submodule ℝ quadSubmodule) :
+    Submodule ℝ linSubmodule :=
+  P.comap (linProductLeftMap a)
+
+@[simp] theorem mem_linProductLeftPreimage
+    {a : linSubmodule} {P : Submodule ℝ quadSubmodule} {b : linSubmodule} :
+    b ∈ linProductLeftPreimage a P ↔ linProduct a b ∈ P :=
+  Iff.rfl
+
+def linProductLeftPreimageOn
+    (a : linSubmodule) (A : Submodule ℝ linSubmodule)
+    (P : Submodule ℝ quadSubmodule) : Submodule ℝ A :=
+  P.comap (linProductLeftMapOn a A)
+
+@[simp] theorem mem_linProductLeftPreimageOn
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {P : Submodule ℝ quadSubmodule} {b : A} :
+    b ∈ linProductLeftPreimageOn a A P ↔ linProduct a b.1 ∈ P :=
+  Iff.rfl
 
 theorem linProductLeftMap_ker_eq_bot_of_ne_zero {a : linSubmodule}
     (ha : (a : Poly) ≠ 0) :
