@@ -3064,4 +3064,41 @@ ambient lower bound, symmetric-square dimension bound, and negative square.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two support ambient from annihilator inclusion}
+
+\paragraph{Gap targeted.}
+The rank-two support-ambient constructor previously required the caller to
+prove \(\texttt{supportAmbient x A}\subseteq K\).  After proving that this
+follows from \(A\le\operatorname{Ann}_1\), the rank-two wrapper could be
+simplified.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_supportAmbient\_of\_annihilator}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It consumes
+\(A\le\texttt{linearAnnihilator B p u}\) and automatically supplies the ambient
+kernel inclusion using
+\[
+\texttt{supportAmbient\_le\_ker\_of\_le\_linearAnnihilator}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+followed by
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two case is now reduced to producing the support subspace \(A\), a
+negative pure square \(x^2\), and the two ambient dimension bounds.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
