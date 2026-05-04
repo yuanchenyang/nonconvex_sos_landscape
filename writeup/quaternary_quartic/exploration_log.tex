@@ -635,4 +635,48 @@ mathematical input still unformalized.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Main theorem reduced to three rank-case certificates}
+
+\paragraph{Largest gap selected.}
+After isolating the generic syzygy contradiction, the proof still needed a
+single theorem matching the blueprint's final structure: split off the
+rank-deficient case, obtain the catalecticant rank trichotomy in the full-rank
+case, and dispatch each rank by a structural certificate.
+
+\paragraph{Lean progress.}
+Added the predicate
+\[
+\texttt{HasSyzygyCertificate}\ B\ p\ u\ q
+\]
+for the syzygy data needed by the generic curvature argument.  Rephrased the
+previous negative-square theorem in terms of this predicate.
+
+Added
+\[
+\texttt{residual\_eq\_zero\_of\_rank\_case\_syzygy\_certificates}.
+\]
+This theorem proves \(\texttt{residual}\ p\ u=0\) from three assumptions:
+for every negative quadratic square \(q\), if the catalecticant range rank is
+respectively \(1\), \(2\), or \(3\), then \(\texttt{HasSyzygyCertificate}\)
+holds for \(q\).  Internally it uses the rank-deficient split, the full-rank
+catalecticant rank trichotomy, and the generic syzygy negative-curvature
+theorem.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The root theorem is now reduced to the three low-rank certificate-existence
+lemmas:
+\[
+k=1,\qquad k=2,\qquad k=3.
+\]
+These are exactly the structural support/syzygy constructions from the
+blueprint.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
