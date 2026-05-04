@@ -1537,6 +1537,51 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Certificate wrappers from annihilator data}
+
+\paragraph{Largest gap selected.}
+The support theorem will naturally provide annihilator data, such as
+\(A\le\texttt{linearAnnihilator}\) or \(z\in\texttt{linearAnnihilator}\).
+The rank-case certificate wrappers previously expected the already-converted
+kernel inclusions \(xA\subseteq K\) and \(zW\subseteq K\).
+
+\paragraph{Lean progress.}
+In \texttt{Catalecticant.lean}, added commuted annihilator-to-kernel lemmas:
+\[
+\texttt{linProduct\_comm\_mem\_catalecticantKernel\_of\_mem\_linearAnnihilator}
+\]
+and
+\[
+\texttt{linProduct\_comm\_mem\_catalecticantKernel\_of\_le\_linearAnnihilator}.
+\]
+In \texttt{Syzygy.lean}, added wrappers
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_preimage\_product\_dimension\_of\_annihilator}
+\]
+and
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_support\_product\_decomposition\_of\_annihilator}.
+\]
+These versions consume annihilator hypotheses directly and internally produce
+the catalecticant-kernel inclusions needed for the syzygy certificate.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+followed by
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The eventual low-rank support theorem can now feed its annihilator output
+directly into both the rank-one/rank-two and rank-three certificate
+constructors.  The support theorem itself remains unformalized.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Named rank-case certificate obligation}
 
 \paragraph{Largest gap selected.}

@@ -453,6 +453,31 @@ theorem exists_negative_syzygyCertificate_of_preimage_product_dimension
     (x := x) (A := A) (S := S) (s := s)
     hS_L hxA_K hsS (fun hszero => hsne (Subtype.ext hszero)) hsMA hneg
 
+theorem exists_negative_syzygyCertificate_of_preimage_product_dimension_of_annihilator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {S W : Submodule ℝ quadSubmodule}
+    (hS_L : S ≤ spanUQuad hu)
+    (hA_ann : A ≤ linearAnnihilator B p u)
+    (hSW : S ≤ W)
+    (hMAW : linProductSubmodule (linProductLeftPreimageWithin x A S) A ≤ W)
+    (hMne : linProductLeftPreimageWithin x A S ≠ ⊥)
+    {sdim adim wdim : ℕ}
+    (hSdim : sdim ≤ Module.finrank ℝ S)
+    (hAdim : adim ≤ Module.finrank ℝ A)
+    (hWdim : Module.finrank ℝ W = wdim)
+    (hgt : wdim < sdim + adim)
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    ∃ q : Poly, IsQuadratic q ∧
+      B (q^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q :=
+  exists_negative_syzygyCertificate_of_preimage_product_dimension
+    (B := B) (p := p) (u := u) (hu := hu)
+    (x := x) (A := A) (S := S) (W := W)
+    hS_L
+    (fun a => linProduct_comm_mem_catalecticantKernel_of_le_linearAnnihilator hA_ann x a)
+    hSW hMAW hMne hSdim hAdim hWdim hgt hneg
+
 theorem hasSyzygyCertificate_of_support_product_decomposition
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -554,6 +579,26 @@ theorem exists_negative_syzygyCertificate_of_support_product_decomposition
     (B := B) (p := p) (u := u) (hu := hu)
     (z := z) (W := W) (q := q) (s := s)
     hzW_L hzW_K hsL hsne hs hqWW
+
+theorem exists_negative_syzygyCertificate_of_support_product_decomposition_of_annihilator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    {z : linSubmodule} {W : Submodule ℝ linSubmodule} {q s : quadSubmodule}
+    (hz_ann : z ∈ linearAnnihilator B p u)
+    (hzW_L : ∀ w : W, linProduct z w.1 ∈ spanUQuad hu)
+    (hsL : s ∈ spanUQuad hu)
+    (hsne : s.1 ≠ 0)
+    (hs : s = linProduct z z)
+    (hqWW : q ∈ linProductSubmodule W W)
+    (hneg : B (q.1^2) (residual p u) < 0) :
+    ∃ q' : Poly, IsQuadratic q' ∧
+      B (q'^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q' :=
+  exists_negative_syzygyCertificate_of_support_product_decomposition
+    (B := B) (p := p) (u := u) (hu := hu)
+    (z := z) (W := W) (q := q) (s := s)
+    hzW_L
+    (fun w => linProduct_mem_catalecticantKernel_of_mem_linearAnnihilator hz_ann w.1)
+    hsL hsne hs hqWW hneg
 
 theorem hasSyzygyCertificate_of_rank_three_kernel_product_identity
     {ι : Type} [Fintype ι] {B : DotForm} {p : Poly} {u : RankSevenVec}
