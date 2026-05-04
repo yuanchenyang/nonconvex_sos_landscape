@@ -211,6 +211,14 @@ theorem linProductSubmodule_mono
   exact linProduct_mem_linProductSubmodule
     (⟨x.1.1, hU x.1.2⟩ : U₂) (⟨x.2.1, hV x.2.2⟩ : V₂)
 
+theorem linProductSubmodule_le_of_generators
+    {U V : Submodule ℝ linSubmodule} {W : Submodule ℝ quadSubmodule}
+    (hgen : ∀ (a : U) (b : V), linProduct a.1 b.1 ∈ W) :
+    linProductSubmodule U V ≤ W := by
+  refine Submodule.span_le.mpr ?_
+  rintro q ⟨x, rfl⟩
+  exact hgen x.1 x.2
+
 /-- Span of the seven quadratic coordinates of a rank-seven point. -/
 def spanU (u : RankSevenVec) : Submodule ℝ Poly :=
   Submodule.span ℝ (Set.range u)
@@ -412,6 +420,14 @@ theorem mem_ker_catalecticantMap_iff {B : DotForm} {p : Poly} {u : RankSevenVec}
     change catalecticantMap B p u q = 0
     ext r
     exact hq.2 r.1 r.2
+
+theorem linProductSubmodule_le_ker_catalecticantMap_of_generators
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {U V : Submodule ℝ linSubmodule}
+    (hgen : ∀ (a : U) (b : V),
+      linProduct a.1 b.1 ∈ LinearMap.ker (catalecticantMap B p u)) :
+    linProductSubmodule U V ≤ LinearMap.ker (catalecticantMap B p u) :=
+  linProductSubmodule_le_of_generators hgen
 
 theorem catalecticantMap_rank_le_three_of_relationPolyLin_ker_eq_bot
     {B : DotForm} {p : Poly} {u : RankSevenVec}
