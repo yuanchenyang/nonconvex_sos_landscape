@@ -790,4 +790,44 @@ product-subspace incidence arguments themselves.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Product identity converted to syzygy certificate}
+
+\paragraph{Largest gap selected.}
+The rank-specific blueprint arguments naturally produce geometric data:
+\[
+m_j\in L,\qquad n_j\in K,\qquad 0\ne s\in L,\qquad
+\sum_j m_jn_j=sq.
+\]
+The generic Lean endpoint, however, expects explicit coefficient vectors in
+\texttt{HasSyzygyCertificate}.  The conversion from geometric product data to
+coefficient data was still missing.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasSyzygyCertificate\_of\_product\_identity}.
+\]
+Given finite product data \(m_j,n_j,s,q\), with \(m_j,s\in\texttt{spanUQuad}\),
+\(n_j\in\texttt{catalecticantKernel}\), \(s\ne0\), and
+\[
+\sum_j m_jn_j=sq,
+\]
+the theorem extracts coefficient vectors for the \(m_j\)'s and \(s\) using the
+span-coefficient lemmas, proves the coefficient vector for \(s\) is nonzero,
+and returns \(\texttt{HasSyzygyCertificate}\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The rank-specific low-rank proofs can now aim to produce only the natural
+product identity data.  The remaining work is the low-rank support theorem and
+the concrete incidence/product-space constructions that create these
+\(m_j,n_j,s,q\).
+
+No Julia numerical claims were used in this round.
+
 \end{document}

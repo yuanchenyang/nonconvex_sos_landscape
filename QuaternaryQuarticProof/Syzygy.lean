@@ -223,4 +223,38 @@ theorem residual_eq_zero_of_rank_case_syzygy_certificates
       · exact hcase2 hrank2
       · exact hcase3 hrank3
 
+theorem hasSyzygyCertificate_of_product_identity
+    {ι : Type} [Fintype ι] {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    {m : ι → quadSubmodule} {n : ι → Poly} {s : quadSubmodule} {q : Poly}
+    (hmL : ∀ j, m j ∈ spanUQuad hu)
+    (hnK : ∀ j, n j ∈ catalecticantKernel B p u)
+    (hsL : s ∈ spanUQuad hu)
+    (hsne : s.1 ≠ 0)
+    (hprod : (∑ j : ι, (m j).1 * n j) = s.1 * q) :
+    HasSyzygyCertificate B p u q := by
+  classical
+  have hmCoeff : ∀ j, ∃ c : Fin 7 → ℝ, relationPoly u c = (m j).1 := by
+    intro j
+    exact exists_relationPoly_eq_of_mem_spanUQuad (u := u) (hu := hu) (x := m j) (hmL j)
+  choose α hα using hmCoeff
+  rcases exists_relationPoly_eq_of_mem_spanUQuad (u := u) (hu := hu) (x := s) hsL with
+    ⟨β, hβeq⟩
+  have hβne : β ≠ 0 := by
+    intro hβzero
+    apply hsne
+    calc
+      s.1 = relationPoly u β := hβeq.symm
+      _ = relationPoly u 0 := by rw [hβzero]
+      _ = 0 := by simp [relationPoly]
+  refine ⟨ι, inferInstance, α, n, β, hnK, ?_, hβne⟩
+  calc
+    (∑ j : ι, relationPoly u (α j) * n j) =
+        ∑ j : ι, (m j).1 * n j := by
+          refine Finset.sum_congr rfl ?_
+          intro j _hj
+          rw [hα j]
+    _ = s.1 * q := hprod
+    _ = relationPoly u β * q := by rw [hβeq]
+
 end QuaternaryQuartic
