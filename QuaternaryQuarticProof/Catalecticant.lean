@@ -5,6 +5,7 @@ import Mathlib.Data.Finsupp.Order
 import Mathlib.Algebra.BigOperators.Finsupp.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 import Mathlib.Data.Fintype.Pi
+import Mathlib.LinearAlgebra.Basis.Bilinear
 import QuaternaryQuarticProof.Certificate
 import QuaternaryQuarticProof.Dimension
 
@@ -346,6 +347,27 @@ def symSquareSubmodule (U : Submodule ℝ linSubmodule) :
     Submodule ℝ quadSubmodule :=
   linProductSubmodule U U
 
+def linProductBilinOn (U : Submodule ℝ linSubmodule) :
+    U →ₗ[ℝ] U →ₗ[ℝ] quadSubmodule where
+  toFun a :=
+    { toFun := fun b => linProduct a.1 b.1
+      map_add' := by
+        intro b c
+        exact linProduct_add_right a.1 b.1 c.1
+      map_smul' := by
+        intro r b
+        exact linProduct_smul_right r a.1 b.1 }
+  map_add' := by
+    intro a b
+    apply LinearMap.ext
+    intro c
+    exact linProduct_add_left a.1 b.1 c.1
+  map_smul' := by
+    intro r a
+    apply LinearMap.ext
+    intro b
+    exact linProduct_smul_left r a.1 b.1
+
 theorem linProduct_mem_linProductSubmodule
     {U V : Submodule ℝ linSubmodule} (a : U) (b : V) :
     linProduct a.1 b.1 ∈ linProductSubmodule U V := by
@@ -381,6 +403,51 @@ theorem linProductSubmodule_le_of_generators
   refine Submodule.span_le.mpr ?_
   rintro q ⟨x, rfl⟩
   exact hgen x.1 x.2
+
+theorem finrank_symSquareSubmodule_le_three_of_finrank_eq_two
+    {A : Submodule ℝ linSubmodule}
+    (hA : Module.finrank ℝ A = 2) :
+    Module.finrank ℝ (symSquareSubmodule A) ≤ 3 := by
+  classical
+  letI : Module.Free ℝ A := Module.Free.of_divisionRing ℝ A
+  let β := Module.finBasisOfFinrankEq ℝ A hA
+  let ι := {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2}
+  let S : Set quadSubmodule :=
+    Set.range fun ij : ι => linProduct (β ij.1.1).1 (β ij.1.2).1
+  have hle : symSquareSubmodule A ≤ Submodule.span ℝ S := by
+    refine linProductSubmodule_le_of_generators ?_
+    intro a b
+    have hrepr :=
+      LinearMap.sum_repr_mul_repr_mul
+        (b₁' := β) (b₂' := β) (B := linProductBilinOn A) a b
+    change ((linProductBilinOn A) a) b ∈ Submodule.span ℝ S
+    rw [← hrepr]
+    rw [Finsupp.sum_fintype]
+    swap
+    · simp
+    refine Submodule.sum_mem _ ?_
+    intro i _hi
+    rw [Finsupp.sum_fintype]
+    swap
+    · simp
+    refine Submodule.sum_mem _ ?_
+    intro j _hj
+    refine Submodule.smul_mem (Submodule.span ℝ S) _ ?_
+    refine Submodule.smul_mem (Submodule.span ℝ S) _ ?_
+    change linProduct (β i).1 (β j).1 ∈ Submodule.span ℝ S
+    by_cases hij : i ≤ j
+    · exact Submodule.subset_span ⟨⟨(i, j), hij⟩, rfl⟩
+    · have hji : j ≤ i := le_of_not_ge hij
+      rw [linProduct_comm]
+      exact Submodule.subset_span ⟨⟨(j, i), hji⟩, rfl⟩
+  have hspan :
+      Module.finrank ℝ (Submodule.span ℝ S) ≤ Fintype.card ι := by
+    simpa [S] using
+      (finrank_range_le_card (R := ℝ)
+        (b := fun ij : ι => linProduct (β ij.1.1).1 (β ij.1.2).1))
+  have hcard : Fintype.card ι = 3 := by
+    decide
+  exact (Submodule.finrank_mono hle).trans (by simpa [hcard] using hspan)
 
 theorem linOne_mul_linOne_mem_linProductSubmodule_top_top :
     linProduct linOne linOne ∈

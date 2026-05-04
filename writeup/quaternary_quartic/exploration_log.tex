@@ -3139,4 +3139,40 @@ formal symmetric-square dimension bound for a two-dimensional support subspace.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two symmetric-square dimension bound}
+
+\paragraph{Gap targeted.}
+The rank-two support ambient requires the bound
+\(\dim\operatorname{Sym}^2 A\le3\) when \(\dim A=2\).  This was the main
+finite-dimensional product-space input still missing from the rank-two
+ambient construction.
+
+\paragraph{Lean progress.}
+Added a bilinear map
+\[
+\texttt{linProductBilinOn}
+\]
+and proved
+\[
+\texttt{finrank\_symSquareSubmodule\_le\_three\_of\_finrank\_eq\_two}
+\]
+in \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  The proof chooses a
+two-element basis of \(A\), spans \(\operatorname{Sym}^2 A\) by the three
+products \(e_0e_0,e_0e_1,e_1e_1\), and uses commutativity to handle the
+ordered product \(e_1e_0\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two ambient dimension upper bound can now be derived from
+\(\dim A=2\).  The rank-two branch still needs the support theorem to provide
+such an \(A\), plus binary transport of a negative pure square.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
