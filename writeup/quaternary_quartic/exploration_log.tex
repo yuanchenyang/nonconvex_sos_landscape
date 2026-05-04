@@ -2813,4 +2813,34 @@ square.  The repetitive \(S=L\cap U\) bookkeeping is packaged.
 
 No Julia numerical claims were used in this round.
 
+\section*{Dimension bound for sums of subspaces}
+
+\paragraph{Gap targeted.}
+The rank-one and rank-two ambient subspaces are sums such as
+\(xA+\operatorname{Sym}^2 A\).  Their dimension bounds require the elementary
+inequality \(\dim(S+T)\le\dim S+\dim T\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{finrank\_sup\_le\_add}
+\]
+to \texttt{QuaternaryQuarticProof/Dimension.lean}, derived from
+\(\texttt{Submodule.finrank\_sup\_add\_finrank\_inf\_eq}\).  This will be used
+to bound the finite-dimensional support ambient spaces that appear in the
+rank-one and rank-two cases.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Dimension.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The product-subspace dimension bounds for \(\operatorname{Sym}^2 A\) remain to
+be formalized and then combined with this sum bound.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

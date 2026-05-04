@@ -29,6 +29,15 @@ theorem finrank_add_le_finrank_add_finrank_inf_of_le
       (Submodule.finrank_sup_add_finrank_inf_eq s t)
   nlinarith
 
+theorem finrank_sup_le_add (s t : Submodule K V) :
+    finrank K ↥(s ⊔ t) ≤ finrank K s + finrank K t := by
+  have hgrassmann :
+      finrank K ↥(s ⊔ t) + finrank K ↥(s ⊓ t) =
+        finrank K s + finrank K t := by
+    simpa [add_comm, add_left_comm, add_assoc] using
+      (Submodule.finrank_sup_add_finrank_inf_eq s t)
+  omega
+
 theorem inf_ne_bot_of_finrank_lt_add
     {s t w : Submodule K V}
     (hsw : s ≤ w) (htw : t ≤ w)
