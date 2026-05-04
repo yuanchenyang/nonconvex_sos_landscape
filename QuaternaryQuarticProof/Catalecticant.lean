@@ -597,6 +597,24 @@ theorem finrank_range_linProductLeftMapOn_eq
     simpa [linProductLeftMapOn, linProductLeftMap, linProduct] using hbcval
   simpa using mul_left_cancel₀ ha hprod
 
+theorem finrank_range_linProductLeftMapOn_le
+    (a : linSubmodule) (A : Submodule ℝ linSubmodule) :
+    Module.finrank ℝ (LinearMap.range (linProductLeftMapOn a A)) ≤
+      Module.finrank ℝ A :=
+  LinearMap.finrank_range_le (linProductLeftMapOn a A)
+
+theorem finrank_range_linProductLeftMapOn_le_two
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hA : Module.finrank ℝ A ≤ 2) :
+    Module.finrank ℝ (LinearMap.range (linProductLeftMapOn a A)) ≤ 2 :=
+  (finrank_range_linProductLeftMapOn_le a A).trans hA
+
+theorem finrank_range_linProductLeftMapOn_le_three
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hA : Module.finrank ℝ A ≤ 3) :
+    Module.finrank ℝ (LinearMap.range (linProductLeftMapOn a A)) ≤ 3 :=
+  (finrank_range_linProductLeftMapOn_le a A).trans hA
+
 theorem linProductLeftPreimageOn_ne_bot_of_finrank_lt_add
     {a : linSubmodule} {A : Submodule ℝ linSubmodule}
     {P W : Submodule ℝ quadSubmodule}

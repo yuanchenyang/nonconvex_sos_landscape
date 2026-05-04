@@ -2877,4 +2877,35 @@ formalized for the concrete support subspaces.
 
 No Julia numerical claims were used in this round.
 
+\section*{Fixed-linear product range dimension bounds}
+
+\paragraph{Gap targeted.}
+The lower-rank ambient spaces contain components of the form \(xA\), the image
+of multiplication by a fixed linear form.  Their dimension is bounded by
+\(\dim A\), independent of whether \(x\) is known nonzero.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{finrank\_range\_linProductLeftMapOn\_le}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}, with rank-specific
+wrappers for upper bounds \(2\) and \(3\).  These lemmas use
+\(\texttt{LinearMap.finrank\_range\_le}\) on
+\(\texttt{linProductLeftMapOn}\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The next product-dimension target is the symmetric square component
+\(\operatorname{Sym}^2 A\), which needs a finite spanning argument rather than
+just a single linear-map range bound.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
