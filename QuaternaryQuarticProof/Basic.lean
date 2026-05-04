@@ -89,6 +89,20 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseNegativeCertific
   exact residual_eq_zero_of_hasRankCaseNegativeCertificateFamily
     (B := B) hu hp hsocp (hcert B p u hB hp hu hsocp)
 
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseSupportData
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseSupportData B p u hu) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_rankCaseSupportData
+    (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
+
 /-
 Helper lemmas for the quaternary quartic rank-7 proof go here.
 Exploration agents should add new Lean code to files in this folder

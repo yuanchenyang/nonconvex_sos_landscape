@@ -2438,4 +2438,39 @@ placing a negative square inside the supported quadratic subspace.
 
 No Julia numerical claims were used in this round.
 
+\section*{Final-theorem bridge from rank-case support data}
+
+\paragraph{Gap targeted.}
+The root theorem still depends on the placeholder, but the proof architecture
+had only a final constructor from rank-case negative certificates.  Since the
+current work is focused on support data, the final theorem should also have a
+direct support-data constructor.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_rankCaseSupportData}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  It converts a uniform proof of
+\(\texttt{HasRankCaseSupportData}\) for every positive-definite instance into
+the target statement, by invoking
+\[
+\texttt{residual\_eq\_zero\_of\_rankCaseSupportData}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The remaining top-level obligation is now concentrated in one statement:
+construct \(\texttt{HasRankCaseSupportData}\) uniformly from the low-rank
+support theorem, binary negative-square theorem, and the rank-three support
+branch.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
