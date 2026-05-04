@@ -283,6 +283,24 @@ theorem spanUQuad_le_ker_catalecticantMap {B : DotForm} {p : Poly} {u : RankSeve
     singleDirection_admissible i r.2
   simpa [A_singleDirection] using hfocp (Pi.single i r.1) hdir
 
+theorem mem_ker_catalecticantMap_iff {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {q : quadSubmodule} :
+    q ∈ LinearMap.ker (catalecticantMap B p u) ↔
+      q.1 ∈ catalecticantKernel B p u := by
+  constructor
+  · intro hq
+    constructor
+    · exact q.2
+    · intro r hr
+      let rQuad : quadSubmodule := ⟨r, hr⟩
+      have hmap : catalecticantMap B p u q = 0 := hq
+      have hval := congrArg (fun φ : Module.Dual ℝ quadSubmodule => φ rQuad) hmap
+      simpa [rQuad] using hval
+  · intro hq
+    change catalecticantMap B p u q = 0
+    ext r
+    exact hq.2 r.1 r.2
+
 theorem catalecticantMap_rank_le_three_of_relationPolyLin_ker_eq_bot
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)

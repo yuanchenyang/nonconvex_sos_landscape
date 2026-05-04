@@ -871,4 +871,38 @@ m_j=z\ell_j,\qquad n_j=zm_j,\qquad s=z^2.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Restricted kernel identified with polynomial kernel}
+
+\paragraph{Largest gap selected.}
+The low-rank structural arguments naturally switch between quadratics as
+elements of \(\Quad\) and quadratics as polynomials satisfying the
+catalecticant-kernel condition.  The Lean development had both notions:
+\(\ker(\texttt{catalecticantMap})\) in \texttt{quadSubmodule} and
+\(\texttt{catalecticantKernel}\) as a polynomial submodule, but no bridge.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{mem\_ker\_catalecticantMap\_iff}.
+\]
+It proves, for \(q:\texttt{quadSubmodule}\),
+\[
+q\in\ker(\texttt{catalecticantMap}\ B\ p\ u)
+\iff
+q.1\in\texttt{catalecticantKernel}\ B\ p\ u.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+This removes a coercion barrier for the rank \(1,2,3\) structural proofs.  The
+remaining work is still the support theorem and construction of the product
+identity data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
