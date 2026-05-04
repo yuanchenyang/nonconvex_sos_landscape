@@ -716,4 +716,42 @@ dimension equality \(L=K\) is now available in Lean.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Kernel dimensions in ranks one, two, and three}
+
+\paragraph{Largest gap selected.}
+The rank-specific blueprint arguments use the numerical identities
+\[
+\dim K=9,\qquad \dim K=8,\qquad \dim K=7
+\]
+in catalecticant ranks \(1,2,3\), respectively.  Only the rank-three equality
+was implicit in the previous \(L=K\) lemma.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{finrank\_ker\_catalecticantMap\_eq\_nine\_of\_rank\_one},
+\]
+\[
+\texttt{finrank\_ker\_catalecticantMap\_eq\_eight\_of\_rank\_two},
+\]
+and
+\[
+\texttt{finrank\_ker\_catalecticantMap\_eq\_seven\_of\_rank\_three}.
+\]
+Each follows from rank-nullity and \(\dim\Quad=10\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The rank-one and rank-two incidence arguments can now use the formal ambient
+kernel dimensions \(9\) and \(8\).  The remaining unformalized content is
+still the low-rank support theorem and the concrete product-subspace
+dimension computations.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

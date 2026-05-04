@@ -352,6 +352,36 @@ theorem spanUQuad_eq_ker_catalecticantMap_of_rank_three
     omega
   exact Submodule.eq_of_le_of_finrank_eq hle (by rw [hspan, hker_finrank])
 
+theorem finrank_ker_catalecticantMap_eq_nine_of_rank_one
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1) :
+    Module.finrank ℝ (LinearMap.ker (catalecticantMap B p u)) = 9 := by
+  have hnullity :=
+    LinearMap.finrank_range_add_finrank_ker (catalecticantMap B p u)
+  have hquad : Module.finrank ℝ quadSubmodule = 10 :=
+    finrank_quadSubmodule_eq_ten
+  omega
+
+theorem finrank_ker_catalecticantMap_eq_eight_of_rank_two
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2) :
+    Module.finrank ℝ (LinearMap.ker (catalecticantMap B p u)) = 8 := by
+  have hnullity :=
+    LinearMap.finrank_range_add_finrank_ker (catalecticantMap B p u)
+  have hquad : Module.finrank ℝ quadSubmodule = 10 :=
+    finrank_quadSubmodule_eq_ten
+  omega
+
+theorem finrank_ker_catalecticantMap_eq_seven_of_rank_three
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3) :
+    Module.finrank ℝ (LinearMap.ker (catalecticantMap B p u)) = 7 := by
+  have hnullity :=
+    LinearMap.finrank_range_add_finrank_ker (catalecticantMap B p u)
+  have hquad : Module.finrank ℝ quadSubmodule = 10 :=
+    finrank_quadSubmodule_eq_ten
+  omega
+
 section ResidualFunctional
 
 variable {B : DotForm} [Fact B.toQuadraticMap.PosDef]
