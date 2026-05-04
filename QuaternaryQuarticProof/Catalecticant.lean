@@ -1,4 +1,5 @@
 import Mathlib.LinearAlgebra.Dimension.Constructions
+import Mathlib.RingTheory.MvPolynomial.Basic
 import QuaternaryQuarticProof.Certificate
 
 set_option autoImplicit false
@@ -22,6 +23,15 @@ def quadSubmodule : Submodule ℝ Poly where
 
 @[simp] theorem mem_quadSubmodule {q : Poly} :
     q ∈ quadSubmodule ↔ IsQuadratic q := Iff.rfl
+
+theorem quadSubmodule_eq_restrictTotalDegree :
+    quadSubmodule = MvPolynomial.restrictTotalDegree (Fin 3) ℝ 2 := by
+  ext q
+  simp [quadSubmodule, IsQuadratic, MvPolynomial.mem_restrictTotalDegree]
+
+instance instModuleFiniteQuadSubmodule : Module.Finite ℝ quadSubmodule := by
+  rw [quadSubmodule_eq_restrictTotalDegree]
+  infer_instance
 
 /-- Span of the seven quadratic coordinates of a rank-seven point. -/
 def spanU (u : RankSevenVec) : Submodule ℝ Poly :=

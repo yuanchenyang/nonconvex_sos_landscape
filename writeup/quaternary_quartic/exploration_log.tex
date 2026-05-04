@@ -183,4 +183,40 @@ support theorem and the rank \(1,2,3\) syzygy constructions.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Quadratic submodule tied to mathlib degree filtration}
+
+\paragraph{Largest gap selected.}
+The rank bound requires finite-dimensional control of the quadratic submodule.
+Rather than maintain a standalone hand-built submodule, the proof should reuse
+mathlib's existing total-degree filtration for multivariate polynomials.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{quadSubmodule\_eq\_restrictTotalDegree}
+\]
+showing that \texttt{quadSubmodule} is exactly
+\[
+  \texttt{MvPolynomial.restrictTotalDegree (Fin 3) }\mathbb R\texttt{ 2}.
+\]
+Also added the finite-module instance
+\[
+\texttt{instModuleFiniteQuadSubmodule}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean},\qquad
+\texttt{lake env lean QuaternaryQuarticProof.lean}
+\]
+both typecheck after this change.
+
+\paragraph{Remaining blockers.}
+The exact numerical dimension \(\dim(\texttt{quadSubmodule})=10\) is still
+open.  The next likely route is to use the basis of
+\texttt{MvPolynomial.restrictTotalDegree} indexed by exponent vectors of total
+degree at most two, then count those exponent vectors for \(\texttt{Fin 3}\).
+
+No Julia numerical claims were used in this round.
+
 \end{document}
