@@ -435,4 +435,48 @@ negative-curvature mechanism before the rank \(1,2,3\) structural cases.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Generic syzygy-to-negative-curvature lemma}
+
+\paragraph{Largest gap selected.}
+After formalizing the syzygy direction and its \(A_u\)-image, the remaining
+generic Hessian work was the residual-functional calculation.  This is the
+part of Lemma~\textup{``Syzygy gives negative curvature''} that is independent
+of the low-rank structural cases.
+
+\paragraph{Lean progress.}
+Extended \texttt{QuaternaryQuarticProof/Syzygy.lean} with:
+\[
+\texttt{dot\_sigma\_syzygyDirection}
+\]
+and
+\[
+\texttt{false\_of\_syzygy\_negative\_curvature}.
+\]
+The first theorem proves that if every \(n_j\) lies in the catalecticant
+kernel, then
+\[
+B(\sigma(v),R)
+=\left(\sum_i\beta_i^2\right)B(q^2,R)
+\]
+for the syzygy direction \(v_i=\sum_j\alpha_{j,i}n_j-\beta_iq\).
+The second theorem combines this formula with the product identity
+\[
+\sum_j \texttt{relationPoly}\ u\ \alpha_j\cdot n_j
+=\texttt{relationPoly}\ u\ \beta\cdot q,
+\]
+\(\beta\ne0\), and \(B(q^2,R)<0\) to contradict SOCP.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The reusable SOCP/Hessian mechanism is now formalized.  The largest remaining
+gap is the low-rank structural theorem and the rank \(1,2,3\) constructions
+that produce the required \(\alpha,n,\beta,q\) data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
