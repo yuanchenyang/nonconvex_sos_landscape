@@ -309,6 +309,45 @@ def linProductLeftPreimageOn
     b ∈ linProductLeftPreimageOn a A P ↔ linProduct a b.1 ∈ P :=
   Iff.rfl
 
+def linProductLeftPreimageWithin
+    (a : linSubmodule) (A : Submodule ℝ linSubmodule)
+    (P : Submodule ℝ quadSubmodule) : Submodule ℝ linSubmodule :=
+  A ⊓ linProductLeftPreimage a P
+
+@[simp] theorem mem_linProductLeftPreimageWithin
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {P : Submodule ℝ quadSubmodule} {b : linSubmodule} :
+    b ∈ linProductLeftPreimageWithin a A P ↔ b ∈ A ∧ linProduct a b ∈ P :=
+  Iff.rfl
+
+theorem linProductLeftPreimageWithin_le_left
+    (a : linSubmodule) (A : Submodule ℝ linSubmodule)
+    (P : Submodule ℝ quadSubmodule) :
+    linProductLeftPreimageWithin a A P ≤ A :=
+  inf_le_left
+
+theorem linProduct_mem_of_mem_linProductLeftPreimageWithin
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {P : Submodule ℝ quadSubmodule} {b : linSubmodule}
+    (hb : b ∈ linProductLeftPreimageWithin a A P) :
+    linProduct a b ∈ P :=
+  hb.2
+
+theorem linProductLeftPreimageWithin_ne_bot_of_on_ne_bot
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {P : Submodule ℝ quadSubmodule}
+    (hM : linProductLeftPreimageOn a A P ≠ ⊥) :
+    linProductLeftPreimageWithin a A P ≠ ⊥ := by
+  rcases Submodule.exists_mem_ne_zero_of_ne_bot hM with ⟨b, hbM, hbne⟩
+  intro hbot
+  apply hbne
+  apply Subtype.ext
+  have hbWithin : (b.1 : linSubmodule) ∈ linProductLeftPreimageWithin a A P := by
+    exact ⟨b.2, hbM⟩
+  have hbzero : (b.1 : linSubmodule) = 0 := by
+    simpa [hbot] using hbWithin
+  exact hbzero
+
 theorem linProductLeftMap_ker_eq_bot_of_ne_zero {a : linSubmodule}
     (ha : (a : Poly) ≠ 0) :
     LinearMap.ker (linProductLeftMap a) = ⊥ := by
@@ -455,6 +494,22 @@ theorem linProductLeftPreimageOn_ne_bot_of_finrank_lt_add
       hyP hyrange hyne with ⟨b, hbM, hbne⟩
   intro hbot
   exact hbne (by simpa [hbot] using hbM)
+
+theorem linProductLeftPreimageWithin_ne_bot_of_finrank_lt_add
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {P W : Submodule ℝ quadSubmodule}
+    (ha : (a : Poly) ≠ 0)
+    (hPW : P ≤ W)
+    (hrangeW : LinearMap.range (linProductLeftMapOn a A) ≤ W)
+    {pdim adim wdim : ℕ}
+    (hPdim : pdim ≤ Module.finrank ℝ P)
+    (hAdim : adim ≤ Module.finrank ℝ A)
+    (hWdim : Module.finrank ℝ W = wdim)
+    (hgt : wdim < pdim + adim) :
+    linProductLeftPreimageWithin a A P ≠ ⊥ :=
+  linProductLeftPreimageWithin_ne_bot_of_on_ne_bot
+    (linProductLeftPreimageOn_ne_bot_of_finrank_lt_add
+      ha hPW hrangeW hPdim hAdim hWdim hgt)
 
 theorem range_linProductLeftMapOn_le_linProductSubmodule
     {M A : Submodule ℝ linSubmodule} (m : M) :

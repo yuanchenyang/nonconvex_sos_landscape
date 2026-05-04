@@ -986,6 +986,45 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Preimages as linear subspaces}
+
+\paragraph{Largest gap selected.}
+The dimension argument naturally produces a nonzero preimage inside the type
+\(A\), but the product-space and syzygy lemmas need \(M\) as an actual
+subspace of \(\Lin\).  The formal proof needed a reusable way to view
+\(\{a\in A:xa\in P\}\) as a submodule of \(\Lin\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{linProductLeftPreimageWithin}\ x\ A\ P
+  = A\cap\texttt{linProductLeftPreimage}\ x\ P
+\]
+as a submodule of \(\Lin\), with membership and projection lemmas.  Proved
+\[
+\texttt{linProductLeftPreimageWithin\_ne\_bot\_of\_on\_ne\_bot}
+\]
+and the packaged Grassmann criterion
+\[
+\texttt{linProductLeftPreimageWithin\_ne\_bot\_of\_finrank\_lt\_add}.
+\]
+This lets the rank cases obtain a nonzero \(M\le\Lin\) directly from the
+dimension inequality for \(P\cap xA\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The rank-one/rank-two incidence plumbing now has compatible subspace types.
+The remaining work is still to instantiate these lemmas with the blueprint's
+rank-specific \(P,N,A,B,W\), and to formalize the low-rank support and binary
+negative-pure-square structural statements.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Nonzero product preimages from Grassmann}
 
 \paragraph{Largest gap selected.}
