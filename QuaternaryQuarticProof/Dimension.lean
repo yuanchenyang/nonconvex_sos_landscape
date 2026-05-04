@@ -1,4 +1,5 @@
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+import Mathlib.LinearAlgebra.Basis.VectorSpace
 
 set_option autoImplicit false
 set_option warningAsError true
@@ -62,5 +63,28 @@ theorem exists_mem_inf_ne_zero_of_finrank_eq_and_lt_add
   nlinarith
 
 end Grassmann
+
+section Complements
+
+variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
+variable [FiniteDimensional K V]
+
+theorem exists_isCompl_finrank_eq_sub
+    (s : Submodule K V) {n m : ℕ}
+    (hV : finrank K V = n)
+    (hs : finrank K s = m) :
+    ∃ t : Submodule K V, IsCompl s t ∧ finrank K t = n - m := by
+  rcases Submodule.exists_isCompl s with ⟨t, hst⟩
+  refine ⟨t, hst, ?_⟩
+  have hsum := Submodule.finrank_add_eq_of_isCompl (K := K) (V := V) hst
+  omega
+
+theorem exists_isCompl_finrank_add_eq
+    (s : Submodule K V) :
+    ∃ t : Submodule K V, IsCompl s t ∧ finrank K s + finrank K t = finrank K V := by
+  rcases Submodule.exists_isCompl s with ⟨t, hst⟩
+  exact ⟨t, hst, Submodule.finrank_add_eq_of_isCompl (K := K) (V := V) hst⟩
+
+end Complements
 
 end QuaternaryQuartic

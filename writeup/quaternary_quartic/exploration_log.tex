@@ -1537,6 +1537,40 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Complement dimension bookkeeping}
+
+\paragraph{Largest gap selected.}
+The low-rank support theorem will produce an annihilator subspace
+\(A\subseteq\Lin\), then choose a complementary support subspace \(W\) with
+\(\Lin=W\oplus A\).  The Lean development needed reusable dimension
+bookkeeping for such complements.
+
+\paragraph{Lean progress.}
+Extended \texttt{QuaternaryQuarticProof/Dimension.lean} with
+\[
+\texttt{exists\_isCompl\_finrank\_eq\_sub}
+\]
+and
+\[
+\texttt{exists\_isCompl\_finrank\_add\_eq}.
+\]
+These lemmas use \texttt{Submodule.exists\_isCompl} and
+\texttt{Submodule.finrank\_add\_eq\_of\_isCompl} to choose complements and
+record the expected finrank equalities.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Dimension.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The complement bookkeeping for the support theorem is now available.  The
+substantive missing part remains proving that a sufficiently large
+annihilator subspace exists from catalecticant rank at most three.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Rank-three annihilator endpoint}
 
 \paragraph{Largest gap selected.}
