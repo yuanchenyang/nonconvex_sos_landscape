@@ -986,6 +986,49 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Product-space lower bounds}
+
+\paragraph{Largest gap selected.}
+After proving that multiplication by a nonzero linear form is injective, the
+rank-one and rank-two incidence arguments still need the multi-generator
+consequence: if \(M\neq0\), then the product space \(MA\) has dimension at
+least \(\dim A\).
+
+\paragraph{Lean progress.}
+Proved
+\[
+\texttt{range\_linProductLeftMapOn\_le\_linProductSubmodule},
+\]
+which embeds the image of multiplication by a chosen \(m\in M\) into the full
+product span \(MA\).  Combining this with injectivity gives
+\[
+\texttt{finrank\_right\_le\_finrank\_linProductSubmodule\_of\_mem\_ne\_zero}
+\]
+and the subspace-level version
+\[
+\texttt{finrank\_right\_le\_finrank\_linProductSubmodule\_of\_left\_ne\_bot}.
+\]
+Also added the symmetric form
+\[
+\texttt{finrank\_left\_le\_finrank\_linProductSubmodule\_of\_right\_ne\_bot}.
+\]
+These are the formal dimension lower bounds behind the blueprint claims
+\(\dim(MA)\ge2\) and \(\dim(MB)\ge3\) once \(M\neq0\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The next finite-dimensional incidence step is to combine these product-space
+lower bounds with the existing Grassmann intersection lemma to produce a
+nonzero element of \(N\cap MA\) or \(N\cap MB\).  The low-rank support theorem
+and binary negative-pure-square theorem remain the main structural gaps.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Multiplication by a nonzero linear form}
 
 \paragraph{Largest gap selected.}

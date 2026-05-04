@@ -330,6 +330,36 @@ theorem finrank_range_linProductLeftMapOn_eq
     simpa [linProductLeftMapOn, linProductLeftMap, linProduct] using hbcval
   simpa using mul_left_cancel₀ ha hprod
 
+theorem range_linProductLeftMapOn_le_linProductSubmodule
+    {M A : Submodule ℝ linSubmodule} (m : M) :
+    LinearMap.range (linProductLeftMapOn m.1 A) ≤ linProductSubmodule M A := by
+  rintro q ⟨a, rfl⟩
+  exact linProduct_mem_linProductSubmodule m a
+
+theorem finrank_right_le_finrank_linProductSubmodule_of_mem_ne_zero
+    {M A : Submodule ℝ linSubmodule} (m : M)
+    (hmne : ((m : linSubmodule) : Poly) ≠ 0) :
+    Module.finrank ℝ A ≤ Module.finrank ℝ (linProductSubmodule M A) := by
+  rw [← finrank_range_linProductLeftMapOn_eq (a := m.1) (A := A) hmne]
+  exact Submodule.finrank_mono (range_linProductLeftMapOn_le_linProductSubmodule m)
+
+theorem finrank_right_le_finrank_linProductSubmodule_of_left_ne_bot
+    {M A : Submodule ℝ linSubmodule}
+    (hM : M ≠ ⊥) :
+    Module.finrank ℝ A ≤ Module.finrank ℝ (linProductSubmodule M A) := by
+  rcases Submodule.exists_mem_ne_zero_of_ne_bot hM with ⟨m, hmM, hmne⟩
+  let mM : M := ⟨m, hmM⟩
+  refine finrank_right_le_finrank_linProductSubmodule_of_mem_ne_zero mM ?_
+  intro hpoly
+  exact hmne (Subtype.ext hpoly)
+
+theorem finrank_left_le_finrank_linProductSubmodule_of_right_ne_bot
+    {M A : Submodule ℝ linSubmodule}
+    (hA : A ≠ ⊥) :
+    Module.finrank ℝ M ≤ Module.finrank ℝ (linProductSubmodule M A) := by
+  rw [linProductSubmodule_comm]
+  exact finrank_right_le_finrank_linProductSubmodule_of_left_ne_bot hA
+
 /-- Span of the seven quadratic coordinates of a rank-seven point. -/
 def spanU (u : RankSevenVec) : Submodule ℝ Poly :=
   Submodule.span ℝ (Set.range u)
