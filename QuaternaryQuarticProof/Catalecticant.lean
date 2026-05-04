@@ -1249,6 +1249,48 @@ theorem finrank_ker_catalecticantMap_eq_seven_of_rank_three
     finrank_quadSubmodule_eq_ten
   omega
 
+theorem four_le_finrank_spanUQuad_inf_of_rank_two_ambient
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2)
+    {U : Submodule ℝ quadSubmodule}
+    (hUker : U ≤ LinearMap.ker (catalecticantMap B p u))
+    (hUdim : 5 ≤ Module.finrank ℝ U) :
+    4 ≤ Module.finrank ℝ ↥(spanUQuad hu ⊓ U) := by
+  have hLker : spanUQuad hu ≤ LinearMap.ker (catalecticantMap B p u) :=
+    spanUQuad_le_ker_catalecticantMap hu hfocp
+  have hLdim : 7 ≤ Module.finrank ℝ (spanUQuad hu) := by
+    rw [finrank_spanUQuad_eq_seven_of_relationPolyLin_ker_eq_bot hu hrelker]
+  have hKdim : Module.finrank ℝ (LinearMap.ker (catalecticantMap B p u)) ≤ 8 := by
+    rw [finrank_ker_catalecticantMap_eq_eight_of_rank_two hrank]
+  exact four_le_finrank_inf_of_seven_five_eight
+    (K := ℝ) (V := quadSubmodule)
+    (s := spanUQuad hu) (t := U) (w := LinearMap.ker (catalecticantMap B p u))
+    hLker hUker hLdim hUdim hKdim
+
+theorem four_le_finrank_spanUQuad_inf_of_rank_one_ambient
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1)
+    {U : Submodule ℝ quadSubmodule}
+    (hUker : U ≤ LinearMap.ker (catalecticantMap B p u))
+    (hUdim : 6 ≤ Module.finrank ℝ U) :
+    4 ≤ Module.finrank ℝ ↥(spanUQuad hu ⊓ U) := by
+  have hLker : spanUQuad hu ≤ LinearMap.ker (catalecticantMap B p u) :=
+    spanUQuad_le_ker_catalecticantMap hu hfocp
+  have hLdim : 7 ≤ Module.finrank ℝ (spanUQuad hu) := by
+    rw [finrank_spanUQuad_eq_seven_of_relationPolyLin_ker_eq_bot hu hrelker]
+  have hKdim : Module.finrank ℝ (LinearMap.ker (catalecticantMap B p u)) ≤ 9 := by
+    rw [finrank_ker_catalecticantMap_eq_nine_of_rank_one hrank]
+  exact four_le_finrank_inf_of_seven_six_nine
+    (K := ℝ) (V := quadSubmodule)
+    (s := spanUQuad hu) (t := U) (w := LinearMap.ker (catalecticantMap B p u))
+    hLker hUker hLdim hUdim hKdim
+
 section ResidualFunctional
 
 variable {B : DotForm} [Fact B.toQuadraticMap.PosDef]

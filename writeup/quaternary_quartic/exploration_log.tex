@@ -2731,4 +2731,42 @@ supplies the Grassmann step once those subspaces are available.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-case span--ambient intersection bounds}
+
+\paragraph{Gap targeted.}
+The lower rank incidence proof needs the subspace
+\(P=L\cap U\), where \(L=\texttt{spanUQuad}\) and \(U\) is a support ambient
+inside the catalecticant kernel, to have dimension at least four.  The generic
+Grassmann bound was available after the previous round but not yet connected to
+the catalecticant rank hypotheses.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{four\_le\_finrank\_spanUQuad\_inf\_of\_rank\_two\_ambient}
+\]
+and
+\[
+\texttt{four\_le\_finrank\_spanUQuad\_inf\_of\_rank\_one\_ambient}.
+\]
+They use \(\dim L=7\), the rank-two/rank-one kernel dimensions \(8\) and \(9\),
+and an ambient lower bound \(\dim U\ge5\) or \(\dim U\ge6\) to prove
+\[
+4\le\dim(\texttt{spanUQuad hu} \cap U).
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-one/rank-two branches still need the concrete definitions and
+dimension bounds for their support ambient subspaces \(U\), but the
+catalecticant-rank part of the \(P=L\cap U\) lower bound is now packaged.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
