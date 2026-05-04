@@ -986,6 +986,42 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Preimage-intersection dimension comparison}
+
+\paragraph{Largest gap selected.}
+The rank-one and rank-two lower bounds on \(M=\{a\in A:xa\in P\}\) use
+\(\dim M=\dim(P\cap xA)\), relying on injectivity of multiplication by a
+nonzero \(x\).
+
+\paragraph{Lean progress.}
+Defined
+\[
+\texttt{linProductLeftPreimageOnToInfRange},
+\]
+the canonical linear map from the preimage subspace
+\(\{a\in A:xa\in P\}\) to
+\[
+P\cap \operatorname{range}(\texttt{linProductLeftMapOn}\ x\ A).
+\]
+For \(x\neq0\), proved this map is bijective and recorded the finrank equality
+\[
+\texttt{finrank\_linProductLeftPreimageOn\_eq\_inf\_range\_of\_ne\_zero}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+This supplies the dimension comparison for the blueprint's preimage subspaces
+\(M\).  The remaining rank-case work is to instantiate \(P\), \(A\), \(B\),
+and the ambient symmetric-square subspaces, and to formalize the low-rank
+support and binary negative-pure-square structural inputs.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Product preimage subspaces}
 
 \paragraph{Largest gap selected.}

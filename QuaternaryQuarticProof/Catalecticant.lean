@@ -342,6 +342,51 @@ theorem linProductLeftMapOn_ker_eq_bot_of_ne_zero
     rw [hb]
     simp
 
+def linProductLeftPreimageOnToInfRange
+    (a : linSubmodule) (A : Submodule ℝ linSubmodule)
+    (P : Submodule ℝ quadSubmodule) :
+    linProductLeftPreimageOn a A P →ₗ[ℝ]
+      ↥(P ⊓ LinearMap.range (linProductLeftMapOn a A)) :=
+  ((linProductLeftMapOn a A).comp (linProductLeftPreimageOn a A P).subtype).codRestrict
+    (P ⊓ LinearMap.range (linProductLeftMapOn a A))
+    (fun b => ⟨b.2, ⟨b.1, rfl⟩⟩)
+
+@[simp] theorem linProductLeftPreimageOnToInfRange_apply
+    (a : linSubmodule) (A : Submodule ℝ linSubmodule)
+    (P : Submodule ℝ quadSubmodule)
+    (b : linProductLeftPreimageOn a A P) :
+    (linProductLeftPreimageOnToInfRange a A P b : quadSubmodule) =
+      linProduct a b.1.1 := rfl
+
+theorem finrank_linProductLeftPreimageOn_eq_inf_range_of_ne_zero
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {P : Submodule ℝ quadSubmodule}
+    (ha : (a : Poly) ≠ 0) :
+    Module.finrank ℝ (linProductLeftPreimageOn a A P) =
+      Module.finrank ℝ ↥(P ⊓ LinearMap.range (linProductLeftMapOn a A)) := by
+  let f := linProductLeftPreimageOnToInfRange a A P
+  have hinj : Function.Injective f := by
+    intro b c hbc
+    apply Subtype.ext
+    apply Subtype.ext
+    have hprod : (a : Poly) * (b.1.1 : Poly) = (a : Poly) * (c.1.1 : Poly) := by
+      have hbcval := congrArg (fun q :
+        ↥(P ⊓ LinearMap.range (linProductLeftMapOn a A)) => (q : quadSubmodule)) hbc
+      have hbcpoly := congrArg (fun q : quadSubmodule => (q : Poly)) hbcval
+      change (a : Poly) * (b.1.1 : Poly) = (a : Poly) * (c.1.1 : Poly) at hbcpoly
+      exact hbcpoly
+    simpa using mul_left_cancel₀ ha hprod
+  have hsurj : Function.Surjective f := by
+    intro y
+    rcases y.2.2 with ⟨b, hb⟩
+    refine ⟨⟨b, ?_⟩, ?_⟩
+    · change linProduct a b.1 ∈ P
+      have hyP : (y : quadSubmodule) ∈ P := y.2.1
+      rwa [← hb] at hyP
+    · apply Subtype.ext
+      exact hb
+  exact (LinearEquiv.ofBijective f ⟨hinj, hsurj⟩).finrank_eq
+
 theorem finrank_range_linProductLeftMapOn_eq
     {a : linSubmodule} {A : Submodule ℝ linSubmodule}
     (ha : (a : Poly) ≠ 0) :
