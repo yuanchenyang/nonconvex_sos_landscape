@@ -15,6 +15,28 @@ def HasLinearAnnihilatorCodimAtMost
     A ≤ linearAnnihilator B p u ∧
       4 - k ≤ Module.finrank ℝ A
 
+theorem HasLinearAnnihilatorCodimAtMost.mono
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {k l : ℕ}
+    (hkl : k ≤ l)
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u k) :
+    HasLinearAnnihilatorCodimAtMost B p u l := by
+  rcases hsupp with ⟨A, hAann, hAdim⟩
+  refine ⟨A, hAann, ?_⟩
+  have hle : 4 - l ≤ 4 - k := Nat.sub_le_sub_left hkl 4
+  exact hle.trans hAdim
+
+theorem HasLinearAnnihilatorCodimAtMost.rank_one_to_two
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 1) :
+    HasLinearAnnihilatorCodimAtMost B p u 2 :=
+  HasLinearAnnihilatorCodimAtMost.mono (by norm_num) hsupp
+
+theorem HasLinearAnnihilatorCodimAtMost.rank_two_to_three
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 2) :
+    HasLinearAnnihilatorCodimAtMost B p u 3 :=
+  HasLinearAnnihilatorCodimAtMost.mono (by norm_num) hsupp
+
 theorem exists_support_complement_of_hasLinearAnnihilatorCodimAtMost
     {B : DotForm} {p : Poly} {u : RankSevenVec} {k : ℕ}
     (hk : k ≤ 4)

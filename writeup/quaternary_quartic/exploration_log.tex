@@ -1537,6 +1537,39 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Support codimension monotonicity}
+
+\paragraph{Largest gap selected.}
+The low-rank support theorem is naturally stated for rank at most \(k\), while
+individual branches may consume weaker support bounds.  The formal support
+interface needed monotonicity in \(k\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasLinearAnnihilatorCodimAtMost.mono}.
+\]
+If \(k\le l\), then a codimension-at-most-\(k\) annihilator immediately gives
+a codimension-at-most-\(l\) annihilator.  Also added the concrete convenience
+lemmas
+\[
+\texttt{HasLinearAnnihilatorCodimAtMost.rank\_one\_to\_two},\qquad
+\texttt{HasLinearAnnihilatorCodimAtMost.rank\_two\_to\_three}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The support interface can now be weakened between rank cases.  The substantive
+support theorem proving the interface from the catalecticant rank remains
+open.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Low-rank support interface}
 
 \paragraph{Largest gap selected.}
