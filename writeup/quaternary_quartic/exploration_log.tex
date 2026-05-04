@@ -558,4 +558,41 @@ gap.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Grassmann intersection lemmas}
+
+\paragraph{Largest gap selected.}
+The remaining rank \(1,2,3\) structural cases repeatedly use the finite
+dimensional inequality
+\[
+\dim(U\cap V)\ge \dim U+\dim V-\dim W
+\]
+for subspaces \(U,V\subseteq W\), and then conclude that an intersection is
+nonzero when the sum of dimensions is larger than the ambient dimension.
+
+\paragraph{Lean progress.}
+Added \texttt{QuaternaryQuarticProof/Dimension.lean} with:
+\[
+\texttt{finrank\_add\_le\_finrank\_add\_finrank\_inf\_of\_le}
+\]
+and
+\[
+\texttt{inf\_ne\_bot\_of\_finrank\_lt\_add}.
+\]
+The first is the Grassmann lower-bound inequality in rearranged form.  The
+second packages the common nonzero-intersection conclusion.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Dimension.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The dimension-intersection tool is now available for the incidence arguments
+inside \(\operatorname{Sym}^2A\) and \(\operatorname{Sym}^2B\).  The remaining
+dominant work is still the low-rank support theorem and the concrete
+rank-specific syzygy existence proofs.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
