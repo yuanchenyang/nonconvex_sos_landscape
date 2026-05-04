@@ -895,6 +895,13 @@ theorem mem_ker_catalecticantMap_iff {B : DotForm} {p : Poly} {u : RankSevenVec}
     ext r
     exact hq.2 r.1 r.2
 
+theorem finrank_quotient_ker_catalecticantMap_eq_rank
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    Module.finrank ℝ
+        (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) =
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) :=
+  (catalecticantMap B p u).quotKerEquivRange.finrank_eq
+
 theorem catalecticantKernel_pair_comm {B : DotForm} {p : Poly} {u : RankSevenVec}
     {q r : Poly} :
     B (q * r) (residual p u) = B (r * q) (residual p u) := by

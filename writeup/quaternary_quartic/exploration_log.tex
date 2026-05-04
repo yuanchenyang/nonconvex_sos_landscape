@@ -2265,4 +2265,36 @@ formal version of the low-rank apolar support theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Catalecticant quotient dimension}
+
+\paragraph{Gap targeted.}
+The low-rank support argument passes through the quotient of quadratics by the
+catalecticant kernel.  To use catalecticant rank hypotheses inside this
+quotient, the formalization needs a direct dimension identity.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{finrank\_quotient\_ker\_catalecticantMap\_eq\_rank}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  It uses the standard
+\(\texttt{quotKerEquivRange}\) isomorphism to identify
+\[
+\dim(\Quad/\ker C_\lambda)=\dim(\operatorname{range} C_\lambda).
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The next missing structural comparison is bounding the image of
+\(\texttt{linearAnnihilatorMap}\) using this low-dimensional quotient and the
+special inverse-system facts for rank at most three.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
