@@ -600,6 +600,29 @@ theorem exists_negative_syzygyCertificate_of_support_product_decomposition_of_an
     (fun w => linProduct_mem_catalecticantKernel_of_mem_linearAnnihilator hz_ann w.1)
     hsL hsne hs hqWW hneg
 
+theorem exists_negative_syzygyCertificate_of_rank_three_annihilator_support
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    {z : linSubmodule} {W : Submodule ℝ linSubmodule} {q : quadSubmodule}
+    (hz_ann : z ∈ linearAnnihilator B p u)
+    (hz_ne : (z : Poly) ≠ 0)
+    (hqWW : q ∈ linProductSubmodule W W)
+    (hneg : B (q.1^2) (residual p u) < 0) :
+    ∃ q' : Poly, IsQuadratic q' ∧
+      B (q'^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q' := by
+  refine exists_negative_syzygyCertificate_of_support_product_decomposition_of_annihilator
+    (B := B) (p := p) (u := u) (hu := hu)
+    (z := z) (W := W) (q := q) (s := linProduct z z)
+    hz_ann ?_ ?_ (linProduct_self_ne_zero hz_ne) rfl hqWW hneg
+  · intro w
+    exact linProduct_mem_spanUQuad_of_rank_three_of_mem_linearAnnihilator
+      (B := B) (p := p) (u := u) hu hfocp hker hrank hz_ann w.1
+  · exact linProduct_mem_spanUQuad_of_rank_three_of_mem_linearAnnihilator
+      (B := B) (p := p) (u := u) hu hfocp hker hrank hz_ann z
+
 theorem hasSyzygyCertificate_of_rank_three_kernel_product_identity
     {ι : Type} [Fintype ι] {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

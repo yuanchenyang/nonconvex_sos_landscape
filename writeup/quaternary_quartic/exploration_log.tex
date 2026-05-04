@@ -1537,6 +1537,50 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Rank-three annihilator endpoint}
+
+\paragraph{Largest gap selected.}
+In the rank-three branch \(K=L\), so support-theorem annihilator data should
+provide both \(zW\subseteq K\) and \(zW\subseteq L\).  This conversion was not
+yet packaged.
+
+\paragraph{Lean progress.}
+In \texttt{Catalecticant.lean}, proved
+\[
+\texttt{mem\_spanUQuad\_of\_rank\_three\_of\_mem\_catalecticantKernel}
+\]
+and
+\[
+\texttt{linProduct\_mem\_spanUQuad\_of\_rank\_three\_of\_mem\_linearAnnihilator}.
+\]
+Also added \(\texttt{linProduct\_self\_ne\_zero}\), using that the polynomial
+ring has no zero divisors.
+
+In \texttt{Syzygy.lean}, added
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_rank\_three\_annihilator\_support}.
+\]
+Under the rank-three hypotheses, \(z\in\texttt{linearAnnihilator}\),
+\(z\neq0\), \(q\in WW\), and \(B(q^2,R)<0\), this returns the negative
+syzygy-certificate existential for the global rank split.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+followed by
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The rank-three endpoint can now consume annihilator support data directly.
+The missing structural pieces are the existence of such \(z,W\) and the
+decomposition of a negative square into a supported \(WW\)-quadratic.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Certificate wrappers from annihilator data}
 
 \paragraph{Largest gap selected.}

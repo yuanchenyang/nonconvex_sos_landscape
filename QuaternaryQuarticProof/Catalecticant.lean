@@ -240,6 +240,11 @@ theorem linProduct_comm (a b : linSubmodule) :
   ext
   simp [linProduct, mul_comm]
 
+theorem linProduct_self_ne_zero {a : linSubmodule}
+    (ha : (a : Poly) ≠ 0) :
+    (linProduct a a : quadSubmodule).1 ≠ 0 := by
+  simpa [linProduct] using mul_ne_zero ha ha
+
 def linProductSubmodule (U V : Submodule ℝ linSubmodule) :
     Submodule ℝ quadSubmodule :=
   Submodule.span ℝ (Set.range fun x : U × V => linProduct x.1.1 x.2.1)
@@ -969,6 +974,36 @@ theorem spanUQuad_eq_ker_catalecticantMap_of_rank_three
       Module.finrank ℝ (LinearMap.ker (catalecticantMap B p u)) = 7 := by
     omega
   exact Submodule.eq_of_le_of_finrank_eq hle (by rw [hspan, hker_finrank])
+
+theorem mem_spanUQuad_of_rank_three_of_mem_catalecticantKernel
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    {q : quadSubmodule}
+    (hqK : q.1 ∈ catalecticantKernel B p u) :
+    q ∈ spanUQuad hu := by
+  have hspan_eq_ker :
+      spanUQuad hu = LinearMap.ker (catalecticantMap B p u) :=
+    spanUQuad_eq_ker_catalecticantMap_of_rank_three
+      (B := B) (p := p) (u := u) hu hfocp hker hrank
+  rw [hspan_eq_ker]
+  exact mem_ker_catalecticantMap_iff.mpr hqK
+
+theorem linProduct_mem_spanUQuad_of_rank_three_of_mem_linearAnnihilator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    {a : linSubmodule}
+    (ha : a ∈ linearAnnihilator B p u)
+    (e : linSubmodule) :
+    linProduct a e ∈ spanUQuad hu :=
+  mem_spanUQuad_of_rank_three_of_mem_catalecticantKernel
+    (B := B) (p := p) (u := u) hu hfocp hker hrank
+    (linProduct_mem_catalecticantKernel_of_mem_linearAnnihilator ha e)
 
 theorem finrank_ker_catalecticantMap_eq_nine_of_rank_one
     {B : DotForm} {p : Poly} {u : RankSevenVec}
