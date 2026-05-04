@@ -3101,4 +3101,42 @@ negative pure square \(x^2\), and the two ambient dimension bounds.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two support ambient with range dimension derived}
+
+\paragraph{Gap targeted.}
+The rank-two support-ambient wrapper still required a separate upper bound on
+the fixed-linear product range \(xA\).  This bound follows from
+\(\dim A\le2\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_supportAmbient\_of\_annihilator\_dim}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It derives
+\[
+\dim(\operatorname{range}(\texttt{linProductLeftMapOn x A}))\le2
+\]
+from \(\dim A\le2\), using
+\(\texttt{finrank\_range\_linProductLeftMapOn\_le\_two}\).  The remaining
+rank-two ambient dimension input is now the symmetric-square bound
+\(\dim\operatorname{Sym}^2 A\le3\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+followed by
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The key finite-dimensional product-space gap for rank two is now precisely the
+formal symmetric-square dimension bound for a two-dimensional support subspace.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
