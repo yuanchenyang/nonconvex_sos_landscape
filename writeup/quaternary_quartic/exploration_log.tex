@@ -219,4 +219,49 @@ degree at most two, then count those exponent vectors for \(\texttt{Fin 3}\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Quadratic dimension proved}
+
+\paragraph{Largest gap selected.}
+The immediate blocker for the catalecticant rank bound was the exact dimension
+of the quadratic submodule.  The blueprint needs
+\(\dim \Quad=10\), and the previous round had only connected \(\Quad\) to
+mathlib's total-degree filtration.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{finrank\_quadSubmodule\_eq\_ten} :
+  \operatorname{finrank}_{\mathbb R}(\texttt{quadSubmodule})=10.
+\]
+The proof uses \texttt{MvPolynomial.basisRestrictSupport} for the
+total-degree-bounded monomial basis.  The indexing subtype
+\[
+\{s:\texttt{Fin 3}\to_0\mathbb N : \sum_i s_i\le2\}
+\]
+is counted by an equivalence with bounded triples
+\[
+\{f:\texttt{Fin 3}\to\texttt{Fin 3} : \sum_i f_i\le2\}.
+\]
+The final finite cardinal computation is closed by \texttt{decide}, not
+\texttt{native\_decide}, so it introduces no extra axiom.
+
+\paragraph{Verification.}
+The module builds, and
+\[
+\texttt{\#print axioms QuaternaryQuartic.finrank\_quadSubmodule\_eq\_ten}
+\]
+reports only
+\[
+\texttt{[propext, Classical.choice, Quot.sound]}.
+\]
+
+\paragraph{Remaining blockers.}
+The largest remaining gap is the restricted catalecticant rank inequality:
+define the linear map \(\Quad\to\Quad^\ast\), identify its kernel with the
+quadratic catalecticant kernel, and prove that the full-rank branch gives
+rank at most \(10-7=3\).  After that, the main mathematical burden remains
+the low-rank support theorem and the rank \(1,2,3\) syzygy constructions.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

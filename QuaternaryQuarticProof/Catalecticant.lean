@@ -1,5 +1,9 @@
 import Mathlib.LinearAlgebra.Dimension.Constructions
 import Mathlib.RingTheory.MvPolynomial.Basic
+import Mathlib.Data.Finsupp.Order
+import Mathlib.Algebra.BigOperators.Finsupp.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+import Mathlib.Data.Fintype.Pi
 import QuaternaryQuarticProof.Certificate
 
 set_option autoImplicit false
@@ -8,6 +12,8 @@ set_option warningAsError true
 noncomputable section
 
 namespace QuaternaryQuartic
+
+open scoped BigOperators
 
 /-- The submodule of affine-chart polynomials of total degree at most two. -/
 def quadSubmodule : Submodule ℝ Poly where
@@ -32,6 +38,66 @@ theorem quadSubmodule_eq_restrictTotalDegree :
 instance instModuleFiniteQuadSubmodule : Module.Finite ℝ quadSubmodule := by
   rw [quadSubmodule_eq_restrictTotalDegree]
   infer_instance
+
+private abbrev QuadExponentSet :=
+  {s : Fin 3 →₀ ℕ // s.sum (fun _ e => e) ≤ 2}
+
+private abbrev BoundedFinTriple :=
+  {f : Fin 3 → Fin 3 // (∑ i, (f i).val) ≤ 2}
+
+private theorem finsupp_value_lt_three (s : Fin 3 →₀ ℕ)
+    (hs : s.sum (fun _ e => e) ≤ 2) (i : Fin 3) :
+    s i < 3 := by
+  have hle_sum : s i ≤ s.sum (fun _ e => e) := by
+    simpa using
+      (Finsupp.single_eval_le_sum (f := s) (g := fun n : ℕ => n)
+        (by simp) (fun n => Nat.zero_le n) i)
+  omega
+
+private theorem finsupp_sum_eq_finset_sum (s : Fin 3 →₀ ℕ) :
+    s.sum (fun _ e => e) = ∑ i, s i := by
+  rw [Finsupp.sum_fintype]
+  intro i
+  simp
+
+private theorem equivFunOnFinite_symm_sum_finTriple (f : Fin 3 → Fin 3) :
+    (Finsupp.equivFunOnFinite.symm (fun i => (f i).val)).sum (fun _ e => e) =
+      ∑ i, (f i).val := by
+  simpa using
+    (Finsupp.equivFunOnFinite_symm_sum (f := fun i : Fin 3 => (f i).val))
+
+private def quadExponentEquivBoundedFinTriple :
+    QuadExponentSet ≃ BoundedFinTriple where
+  toFun s := ⟨fun i => ⟨s.1 i, finsupp_value_lt_three s.1 s.2 i⟩, by
+    simpa [finsupp_sum_eq_finset_sum s.1] using s.2⟩
+  invFun f := ⟨Finsupp.equivFunOnFinite.symm (fun i => (f.1 i).val), by
+    simpa [equivFunOnFinite_symm_sum_finTriple f.1] using f.2⟩
+  left_inv := by
+    intro s
+    apply Subtype.ext
+    ext i
+    simp
+  right_inv := by
+    intro f
+    apply Subtype.ext
+    ext i
+    simp
+
+private theorem natCard_quadExponentSet :
+    Nat.card QuadExponentSet = 10 := by
+  rw [Nat.card_congr quadExponentEquivBoundedFinTriple]
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+theorem finrank_quadSubmodule_eq_ten :
+    Module.finrank ℝ quadSubmodule = 10 := by
+  rw [quadSubmodule_eq_restrictTotalDegree]
+  change Module.finrank ℝ
+    (MvPolynomial.restrictSupport ℝ {n : Fin 3 →₀ ℕ | n.sum (fun _ e => e) ≤ 2}) = 10
+  rw [Module.finrank_eq_nat_card_basis
+    (MvPolynomial.basisRestrictSupport ℝ
+      {n : Fin 3 →₀ ℕ | n.sum (fun _ e => e) ≤ 2})]
+  exact natCard_quadExponentSet
 
 /-- Span of the seven quadratic coordinates of a rank-seven point. -/
 def spanU (u : RankSevenVec) : Submodule ℝ Poly :=
