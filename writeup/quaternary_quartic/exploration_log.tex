@@ -3027,4 +3027,41 @@ negative-square transport to produce \(x,A\), the kernel inclusion for
 
 No Julia numerical claims were used in this round.
 
+\section*{Support ambient kernel inclusion from annihilator}
+
+\paragraph{Gap targeted.}
+The rank-two support-ambient wrapper still required a proof that
+\(\texttt{supportAmbient x A}\) lies in the catalecticant kernel.  In the
+blueprint this follows from \(AE\subseteq K\): both \(xA\) and
+\(\operatorname{Sym}^2A\) contain a factor from \(A\).
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{range\_linProductLeftMapOn\_le\_ker\_of\_le\_linearAnnihilator},
+\]
+\[
+\texttt{symSquareSubmodule\_le\_ker\_of\_le\_linearAnnihilator},
+\]
+and
+\[
+\texttt{supportAmbient\_le\_ker\_of\_le\_linearAnnihilator}.
+\]
+These prove the ambient kernel inclusion directly from
+\(A\le\texttt{linearAnnihilator B p u}\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+For the rank-two support-ambient wrapper, the kernel inclusion can now be
+discharged automatically from support data.  The remaining inputs are the
+ambient lower bound, symmetric-square dimension bound, and negative square.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

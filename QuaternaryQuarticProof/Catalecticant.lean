@@ -1141,6 +1141,36 @@ theorem supportAmbient_le_ker_of_range_and_symSquare
     supportAmbient x A ≤ LinearMap.ker (catalecticantMap B p u) :=
   sup_le hrange hsym
 
+theorem range_linProductLeftMapOn_le_ker_of_le_linearAnnihilator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hA : A ≤ linearAnnihilator B p u) :
+    LinearMap.range (linProductLeftMapOn x A) ≤
+      LinearMap.ker (catalecticantMap B p u) := by
+  rintro q ⟨a, rfl⟩
+  change linProduct x a.1 ∈ LinearMap.ker (catalecticantMap B p u)
+  rw [linProduct_comm]
+  exact hA a.2 x
+
+theorem symSquareSubmodule_le_ker_of_le_linearAnnihilator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {A : Submodule ℝ linSubmodule}
+    (hA : A ≤ linearAnnihilator B p u) :
+    symSquareSubmodule A ≤ LinearMap.ker (catalecticantMap B p u) :=
+  (linProductSubmodule_mono le_rfl le_top).trans
+    (linProductSubmodule_le_ker_of_le_linearAnnihilator hA)
+
+theorem supportAmbient_le_ker_of_le_linearAnnihilator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hA : A ≤ linearAnnihilator B p u) :
+    supportAmbient x A ≤ LinearMap.ker (catalecticantMap B p u) :=
+  supportAmbient_le_ker_of_range_and_symSquare
+    (range_linProductLeftMapOn_le_ker_of_le_linearAnnihilator
+      (B := B) (p := p) (u := u) (x := x) hA)
+    (symSquareSubmodule_le_ker_of_le_linearAnnihilator
+      (B := B) (p := p) (u := u) hA)
+
 theorem linProduct_mem_catalecticantKernel_of_mem_linearAnnihilator
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {a : linSubmodule}
