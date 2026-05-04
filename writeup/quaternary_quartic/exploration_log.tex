@@ -595,4 +595,44 @@ rank-specific syzygy existence proofs.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Nonzero intersection witnesses}
+
+\paragraph{Largest gap selected.}
+The Grassmann inequality itself was available, but the rank-one and rank-two
+incidence arguments need an actual nonzero element of an intersection.  In the
+blueprint this element is later named \(s\) and becomes the nonzero factor in
+the syzygy identity.
+
+\paragraph{Lean progress.}
+Extended \texttt{QuaternaryQuarticProof/Dimension.lean} with:
+\[
+\texttt{exists\_mem\_inf\_ne\_zero\_of\_finrank\_lt\_add}
+\]
+and
+\[
+\texttt{exists\_mem\_inf\_ne\_zero\_of\_finrank\_eq\_and\_lt\_add}.
+\]
+These lemmas package the common step:
+if \(s,t\subseteq w\) and \(\dim w < \dim s+\dim t\), then there exists
+\[
+0\ne x\in s\cap t.
+\]
+The second version accepts lower bounds on \(\dim s,\dim t\) and an exact
+ambient dimension, matching the arithmetic form used in the rank-specific
+blueprint cases.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Dimension.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The next incidence step is to instantiate these lemmas inside the concrete
+product subspaces \(MA\), \(MB\), \(\operatorname{Sym}^2A\), and
+\(\operatorname{Sym}^2B\).  The low-rank support theorem remains the largest
+mathematical input still unformalized.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -41,6 +41,26 @@ theorem inf_ne_bot_of_finrank_lt_add
     simp
   nlinarith
 
+theorem exists_mem_inf_ne_zero_of_finrank_lt_add
+    {s t w : Submodule K V}
+    (hsw : s ≤ w) (htw : t ≤ w)
+    (hgt : finrank K w < finrank K s + finrank K t) :
+    ∃ x : V, x ∈ s ∧ x ∈ t ∧ x ≠ 0 := by
+  have hinf_ne : s ⊓ t ≠ ⊥ :=
+    inf_ne_bot_of_finrank_lt_add (K := K) (V := V) hsw htw hgt
+  rcases Submodule.exists_mem_ne_zero_of_ne_bot hinf_ne with ⟨x, hx, hxne⟩
+  exact ⟨x, hx.1, hx.2, hxne⟩
+
+theorem exists_mem_inf_ne_zero_of_finrank_eq_and_lt_add
+    {s t w : Submodule K V} {a b c : ℕ}
+    (hsw : s ≤ w) (htw : t ≤ w)
+    (hs : a ≤ finrank K s) (ht : b ≤ finrank K t)
+    (hw : finrank K w = c)
+    (hgt : c < a + b) :
+    ∃ x : V, x ∈ s ∧ x ∈ t ∧ x ≠ 0 := by
+  refine exists_mem_inf_ne_zero_of_finrank_lt_add (K := K) (V := V) hsw htw ?_
+  nlinarith
+
 end Grassmann
 
 end QuaternaryQuartic
