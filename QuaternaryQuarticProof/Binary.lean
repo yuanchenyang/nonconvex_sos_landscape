@@ -7,6 +7,9 @@ noncomputable section
 
 namespace QuaternaryQuartic
 
+def binaryQuarticEval (a b c d e x y : ℝ) : ℝ :=
+  a * x^4 + 4 * b * x^3 * y + 6 * c * x^2 * y^2 + 4 * d * x * y^3 + e * y^4
+
 theorem diagonal_form_negative_pure_of_negative
     {a e : ℝ} (hneg : ∃ x y : ℝ, a * x^2 + e * y^2 < 0) :
     a < 0 ∨ e < 0 := by
@@ -25,6 +28,13 @@ theorem diagonal_form_exists_pure_negative
   rcases diagonal_form_negative_pure_of_negative hneg with ha | he
   · exact Or.inl ⟨ha, by simpa using ha⟩
   · exact Or.inr ⟨he, by simpa using he⟩
+
+theorem diagonal_binaryQuarticEval_exists_negative
+    {a e : ℝ} (hneg : ∃ x y : ℝ, a * x^2 + e * y^2 < 0) :
+    ∃ x y : ℝ, binaryQuarticEval a 0 0 0 e x y < 0 := by
+  rcases diagonal_form_negative_pure_of_negative hneg with ha | he
+  · exact ⟨1, 0, by simpa [binaryQuarticEval] using ha⟩
+  · exact ⟨0, 1, by simpa [binaryQuarticEval] using he⟩
 
 theorem rank_one_negative_value
     {ρ α β : ℝ} (hρ : ρ < 0) (hvec : α ≠ 0 ∨ β ≠ 0) :
@@ -47,6 +57,13 @@ theorem exists_linear_combination_lt_zero (a b : ℝ) (hb : b ≠ 0) :
   rw [hmul]
   have ha_le_abs : a ≤ |a| := le_abs_self a
   linarith
+
+theorem y_sq_kernel_binaryQuarticEval_exists_negative
+    (a b : ℝ) (hb : b ≠ 0) :
+    ∃ x y : ℝ, binaryQuarticEval a b 0 0 0 x y < 0 := by
+  rcases exists_linear_combination_lt_zero a b hb with ⟨t, ht⟩
+  refine ⟨1, t, ?_⟩
+  simpa [binaryQuarticEval, mul_assoc] using ht
 
 theorem exists_cubic_tail_lt_zero (b : ℝ) (hb : b ≠ 0) :
     ∃ t : ℝ, 4 * b * (t - t^3) < 0 := by
@@ -94,5 +111,17 @@ theorem exists_quartic_tail_lt_zero
   · by_cases ha : a = 0
     · exact exists_quartic_tail_lt_zero_of_nonzero_linear a b ha hb
     · exact exists_quartic_tail_lt_zero_of_nonzero_quadratic a b ha
+
+theorem elliptic_kernel_binaryQuarticEval_exists_negative
+    (a b : ℝ) (hne : a ≠ 0 ∨ b ≠ 0) :
+    ∃ x y : ℝ, binaryQuarticEval a b (-a) (-b) a x y < 0 := by
+  rcases exists_quartic_tail_lt_zero a b hne with ⟨t, ht⟩
+  refine ⟨1, t, ?_⟩
+  have heq :
+      binaryQuarticEval a b (-a) (-b) a 1 t =
+        a * (1 - 6 * t^2 + t^4) + 4 * b * (t - t^3) := by
+    unfold binaryQuarticEval
+    ring_nf
+  rwa [heq]
 
 end QuaternaryQuartic

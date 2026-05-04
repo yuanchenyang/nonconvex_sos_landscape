@@ -2297,4 +2297,46 @@ special inverse-system facts for rank at most three.
 
 No Julia numerical claims were used in this round.
 
+\section*{Binary normal-form evaluation lemmas}
+
+\paragraph{Gap targeted.}
+The binary rank-at-most-two theorem needs to turn scalar sign choices into
+negative values of actual binary quartic evaluations.  The previous round had
+the scalar inequalities but not the uniform quartic-evaluation packaging.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{binaryQuarticEval}
+\]
+to \texttt{QuaternaryQuarticProof/Binary.lean}, together with normal-form
+existence lemmas matching the blueprint's case split:
+\[
+\texttt{diagonal\_binaryQuarticEval\_exists\_negative},
+\]
+\[
+\texttt{y\_sq\_kernel\_binaryQuarticEval\_exists\_negative},
+\]
+and
+\[
+\texttt{elliptic\_kernel\_binaryQuarticEval\_exists\_negative}.
+\]
+These package the diagonal, \(y^2\)-kernel, and \(x^2+y^2\)-kernel cases as
+statements that some pair \((x,y)\) gives a negative pure fourth-power value in
+the corresponding binary normal form.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The remaining binary work is to connect catalecticant/Hankel kernel normal
+forms to these evaluation lemmas and then transport the resulting binary linear
+form back to the quaternary support subspace.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
