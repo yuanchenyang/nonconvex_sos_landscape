@@ -1537,6 +1537,41 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Binary normal-form scalar cases}
+
+\paragraph{Largest gap selected.}
+Continuing the binary negative-pure-square theorem, the blueprint also uses
+two scalar normal-form facts: in the diagonal case a negative value of
+\(aX^2+eY^2\) forces one diagonal coefficient negative, and in the rank-one
+case a negative scalar multiple of a fourth power gives a negative pure
+fourth power.
+
+\paragraph{Lean progress.}
+Extended \texttt{QuaternaryQuarticProof/Binary.lean} with
+\[
+\texttt{diagonal\_form\_negative\_pure\_of\_negative},\qquad
+\texttt{diagonal\_form\_exists\_pure\_negative},
+\]
+and
+\[
+\texttt{rank\_one\_negative\_value}.
+\]
+These lemmas formalize the scalar inequalities used in the \(xy\in\ker M\)
+and rank-one Hankel normal-form branches.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The binary theorem still needs the algebraic bridge from catalecticant kernel
+normal forms to these scalar lemmas.  The real inequality pieces for the
+normal-form case split are now mostly isolated.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Binary negative-square sign lemmas}
 
 \paragraph{Largest gap selected.}

@@ -7,6 +7,35 @@ noncomputable section
 
 namespace QuaternaryQuartic
 
+theorem diagonal_form_negative_pure_of_negative
+    {a e : ℝ} (hneg : ∃ x y : ℝ, a * x^2 + e * y^2 < 0) :
+    a < 0 ∨ e < 0 := by
+  rcases hneg with ⟨x, y, hxy⟩
+  by_contra hnone
+  push Not at hnone
+  have hx2 : 0 ≤ x^2 := sq_nonneg x
+  have hy2 : 0 ≤ y^2 := sq_nonneg y
+  have hax : 0 ≤ a * x^2 := mul_nonneg hnone.1 hx2
+  have hey : 0 ≤ e * y^2 := mul_nonneg hnone.2 hy2
+  nlinarith
+
+theorem diagonal_form_exists_pure_negative
+    {a e : ℝ} (hneg : ∃ x y : ℝ, a * x^2 + e * y^2 < 0) :
+    (a < 0 ∧ a * (1 : ℝ)^2 < 0) ∨ (e < 0 ∧ e * (1 : ℝ)^2 < 0) := by
+  rcases diagonal_form_negative_pure_of_negative hneg with ha | he
+  · exact Or.inl ⟨ha, by simpa using ha⟩
+  · exact Or.inr ⟨he, by simpa using he⟩
+
+theorem rank_one_negative_value
+    {ρ α β : ℝ} (hρ : ρ < 0) (hvec : α ≠ 0 ∨ β ≠ 0) :
+    ρ * (α^2 + β^2)^2 < 0 := by
+  have hsum_pos : 0 < α^2 + β^2 := by
+    rcases hvec with hα | hβ
+    · nlinarith [sq_pos_of_ne_zero hα, sq_nonneg β]
+    · nlinarith [sq_nonneg α, sq_pos_of_ne_zero hβ]
+  have hsquare_pos : 0 < (α^2 + β^2)^2 := sq_pos_of_pos hsum_pos
+  exact mul_neg_of_neg_of_pos hρ hsquare_pos
+
 theorem exists_linear_combination_lt_zero (a b : ℝ) (hb : b ≠ 0) :
     ∃ t : ℝ, a + 4 * b * t < 0 := by
   refine ⟨-(|a| + 1) / (4 * b), ?_⟩
