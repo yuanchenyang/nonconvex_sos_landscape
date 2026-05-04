@@ -406,4 +406,62 @@ theorem hasPreimageProductSupportData_of_rank_one_dimension_bounds
     (sdim := 4) (adim := 3) (wdim := 6)
     hx hAann hS_L hSW hrangeW hMAW hSdim hAdim hWdim (by norm_num) hneg
 
+theorem hasPreimageProductSupportData_of_rank_two_ambient_bounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2)
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {U : Submodule ℝ quadSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hUker : U ≤ LinearMap.ker (catalecticantMap B p u))
+    (hUdim_ge : 5 ≤ Module.finrank ℝ U)
+    (hUdim_le : Module.finrank ℝ U ≤ 5)
+    (hrangeU : LinearMap.range (linProductLeftMapOn x A) ≤ U)
+    (hMAU :
+      linProductSubmodule
+          (linProductLeftPreimageWithin x A (spanUQuad hu ⊓ U)) A ≤ U)
+    (hAdim : 2 ≤ Module.finrank ℝ A)
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    HasPreimageProductSupportData B p u hu := by
+  have hSdim :
+      4 ≤ Module.finrank ℝ ↥(spanUQuad hu ⊓ U) :=
+    four_le_finrank_spanUQuad_inf_of_rank_two_ambient
+      (B := B) (p := p) (u := u) hu hfocp hrelker hrank hUker hUdim_ge
+  exact hasPreimageProductSupportData_of_rank_two_dimension_bounds
+    (B := B) (p := p) (u := u) (hu := hu)
+    (x := x) (A := A) (S := spanUQuad hu ⊓ U) (W := U)
+    hx hAann inf_le_left inf_le_right hrangeU hMAU hSdim hAdim hUdim_le hneg
+
+theorem hasPreimageProductSupportData_of_rank_one_ambient_bounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1)
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {U : Submodule ℝ quadSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hUker : U ≤ LinearMap.ker (catalecticantMap B p u))
+    (hUdim_ge : 6 ≤ Module.finrank ℝ U)
+    (hUdim_le : Module.finrank ℝ U ≤ 6)
+    (hrangeU : LinearMap.range (linProductLeftMapOn x A) ≤ U)
+    (hMAU :
+      linProductSubmodule
+          (linProductLeftPreimageWithin x A (spanUQuad hu ⊓ U)) A ≤ U)
+    (hAdim : 3 ≤ Module.finrank ℝ A)
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    HasPreimageProductSupportData B p u hu := by
+  have hSdim :
+      4 ≤ Module.finrank ℝ ↥(spanUQuad hu ⊓ U) :=
+    four_le_finrank_spanUQuad_inf_of_rank_one_ambient
+      (B := B) (p := p) (u := u) hu hfocp hrelker hrank hUker hUdim_ge
+  exact hasPreimageProductSupportData_of_rank_one_dimension_bounds
+    (B := B) (p := p) (u := u) (hu := hu)
+    (x := x) (A := A) (S := spanUQuad hu ⊓ U) (W := U)
+    hx hAann inf_le_left inf_le_right hrangeU hMAU hSdim hAdim hUdim_le hneg
+
 end QuaternaryQuartic

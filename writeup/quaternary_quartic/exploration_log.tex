@@ -2769,4 +2769,48 @@ catalecticant-rank part of the \(P=L\cap U\) lower bound is now packaged.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one and rank-two ambient support constructors}
+
+\paragraph{Gap targeted.}
+The lower-rank cases choose \(S=L\cap U\), where
+\(L=\texttt{spanUQuad}\) and \(U\) is the support ambient inside the
+catalecticant kernel.  The support-data constructors still required callers to
+assemble this choice and its dimension bound manually.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_ambient\_bounds}
+\]
+and
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_one\_ambient\_bounds}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  These lemmas set
+\[
+S=\texttt{spanUQuad hu} \cap U
+\]
+and use the rank-specific catalecticant intersection bounds to prove
+\(\dim S\ge4\).  The caller now supplies the concrete ambient \(U\), the
+kernel inclusion \(U\subseteq K\), lower and upper dimension bounds for \(U\),
+and the range/product inclusions needed by the preimage construction.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+followed by
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-one/rank-two proof now needs concrete construction of the ambient
+subspaces \(U\) from the support decomposition and the binary negative pure
+square.  The repetitive \(S=L\cap U\) bookkeeping is packaged.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
