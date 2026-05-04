@@ -2573,4 +2573,41 @@ contradiction to prove the support theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Binary Hankel-case wrappers}
+
+\paragraph{Gap targeted.}
+The binary rank-at-most-two proof needs to connect Hankel kernel normal forms
+to the previously formalized negative pure-fourth-power evaluations.  The
+scalar evaluation lemmas existed, but the coefficient hypotheses from the
+individual kernel cases were not yet packaged.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Binary.lean}:
+\[
+\texttt{xy\_kernel\_binaryQuarticEval\_exists\_negative},
+\]
+\[
+\texttt{y\_sq\_kernel\_binaryQuarticEval\_exists\_negative\_of\_rank\_two},
+\]
+and
+\[
+\texttt{elliptic\_kernel\_binaryQuarticEval\_exists\_negative\_of\_nonzero\_hankel}.
+\]
+These lemmas match the blueprint's \(xy\), \(y^2\), and \(x^2+y^2\) kernel
+normal forms and dispatch to the already-proved real-variable sign choices.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The remaining binary work is to derive the normal-form coefficient hypotheses
+from the actual rank-one/rank-two catalecticant matrix and transport the
+resulting binary linear form back through the quaternary support decomposition.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

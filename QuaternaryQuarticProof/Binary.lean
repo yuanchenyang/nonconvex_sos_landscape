@@ -36,6 +36,12 @@ theorem diagonal_binaryQuarticEval_exists_negative
   · exact ⟨1, 0, by simpa [binaryQuarticEval] using ha⟩
   · exact ⟨0, 1, by simpa [binaryQuarticEval] using he⟩
 
+theorem xy_kernel_binaryQuarticEval_exists_negative
+    {a e : ℝ} (hneg : ∃ r t : ℝ, a * r^2 + e * t^2 < 0) :
+    ∃ x y : ℝ, binaryQuarticEval a 0 0 0 e x y < 0 := by
+  rcases hneg with ⟨r, t, hrt⟩
+  exact diagonal_binaryQuarticEval_exists_negative ⟨r, t, hrt⟩
+
 theorem rank_one_negative_value
     {ρ α β : ℝ} (hρ : ρ < 0) (hvec : α ≠ 0 ∨ β ≠ 0) :
     ρ * (α^2 + β^2)^2 < 0 := by
@@ -85,6 +91,12 @@ theorem y_sq_kernel_binaryQuarticEval_exists_negative
   rcases exists_linear_combination_lt_zero a b hb with ⟨t, ht⟩
   refine ⟨1, t, ?_⟩
   simpa [binaryQuarticEval, mul_assoc] using ht
+
+theorem y_sq_kernel_binaryQuarticEval_exists_negative_of_rank_two
+    (a b : ℝ) (_hneg : ∃ r s : ℝ, a * r^2 + 2 * b * r * s < 0)
+    (hb : b ≠ 0) :
+    ∃ x y : ℝ, binaryQuarticEval a b 0 0 0 x y < 0 :=
+  y_sq_kernel_binaryQuarticEval_exists_negative a b hb
 
 theorem exists_cubic_tail_lt_zero (b : ℝ) (hb : b ≠ 0) :
     ∃ t : ℝ, 4 * b * (t - t^3) < 0 := by
@@ -144,5 +156,12 @@ theorem elliptic_kernel_binaryQuarticEval_exists_negative
     unfold binaryQuarticEval
     ring_nf
   rwa [heq]
+
+theorem elliptic_kernel_binaryQuarticEval_exists_negative_of_nonzero_hankel
+    (a b : ℝ) (hne : a ≠ 0 ∨ b ≠ 0)
+    (_hneg : ∃ r s t : ℝ,
+      a * r^2 + 2 * b * r * s - 2 * a * r * t - 2 * b * s * t + a * t^2 < 0) :
+    ∃ x y : ℝ, binaryQuarticEval a b (-a) (-b) a x y < 0 :=
+  elliptic_kernel_binaryQuarticEval_exists_negative a b hne
 
 end QuaternaryQuartic
