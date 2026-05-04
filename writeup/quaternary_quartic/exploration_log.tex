@@ -3275,4 +3275,35 @@ for the natural \(xA+\operatorname{Sym}^2A\) space.
 
 No Julia numerical claims were used in this round.
 
+\section*{Exact-dimensional subspace extraction}
+
+\paragraph{Gap targeted.}
+The low-rank support theorem naturally gives lower bounds such as
+\(\dim A\ge2\) or \(\dim A\ge3\).  The rank-one and rank-two normal-form
+arguments often need to pass to a subspace of exact dimension two or three.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_submodule\_le\_finrank\_eq\_of\_le}
+\]
+to \texttt{QuaternaryQuarticProof/Dimension.lean}.  From
+\(n\le\dim s\), it constructs a submodule \(t\le s\) with \(\dim t=n\), by
+choosing \(n\) linearly independent vectors in \(s\) and taking their span.
+Also added the specialized wrappers for dimensions two and three.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Dimension.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+This supports replacing lower-bound annihilator data by exact-dimensional
+support subspaces, but the full apolar support theorem and binary transport are
+still required to instantiate the rank cases.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

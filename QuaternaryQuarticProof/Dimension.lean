@@ -1,4 +1,5 @@
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+import Mathlib.LinearAlgebra.Dimension.OrzechProperty
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 
 set_option autoImplicit false
@@ -156,6 +157,43 @@ theorem exists_isCompl_finrank_add_eq
   exact ⟨t, hst, Submodule.finrank_add_eq_of_isCompl (K := K) (V := V) hst⟩
 
 end Complements
+
+section ExactSubspaces
+
+variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
+
+theorem exists_submodule_le_finrank_eq_of_le
+    (s : Submodule K V) {n : ℕ}
+    (hn : n ≤ finrank K s) :
+    ∃ t : Submodule K V, t ≤ s ∧ finrank K t = n := by
+  classical
+  rcases exists_linearIndependent_of_le_finrank (R := K) (M := s) hn with
+    ⟨f, hf⟩
+  let q : Submodule K s := Submodule.span K (Set.range f)
+  let t : Submodule K V := q.map s.subtype
+  refine ⟨t, ?_, ?_⟩
+  · rintro x ⟨y, _hy, rfl⟩
+    exact y.2
+  · rw [Submodule.finrank_map_subtype_eq s q]
+    have hq :
+        Fintype.card (Fin n) = finrank K q := by
+      simpa [q] using
+        (linearIndependent_iff_card_eq_finrank_span (R := K) (b := f)).mp hf
+    simpa using hq.symm
+
+theorem exists_submodule_le_finrank_eq_two
+    (s : Submodule K V)
+    (hs : 2 ≤ finrank K s) :
+    ∃ t : Submodule K V, t ≤ s ∧ finrank K t = 2 :=
+  exists_submodule_le_finrank_eq_of_le (K := K) (V := V) s hs
+
+theorem exists_submodule_le_finrank_eq_three
+    (s : Submodule K V)
+    (hs : 3 ≤ finrank K s) :
+    ∃ t : Submodule K V, t ≤ s ∧ finrank K t = 3 :=
+  exists_submodule_le_finrank_eq_of_le (K := K) (V := V) s hs
+
+end ExactSubspaces
 
 section MacaulayNumerics
 
