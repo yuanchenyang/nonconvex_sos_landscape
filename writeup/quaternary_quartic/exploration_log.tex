@@ -4124,4 +4124,43 @@ canonical coefficients.
 
 No Julia numerical claims were used in this round.
 
+\section*{Polynomial expansion for binary restriction}
+
+\paragraph{Gap targeted.}
+The binary coefficient evaluation bridge still needs the algebraic expansion
+of \((Xx+Yy)^4\).  Direct scalar-smul notation caused coercion friction, but
+the same identity stated with \(\texttt{MvPolynomial.C}\) coefficients
+normalizes cleanly.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{binaryRestriction\_pow\_eq\_C}
+\]
+to \texttt{QuaternaryQuarticProof/Binary.lean}.  It proves the explicit
+polynomial identity
+\[
+(Xx+Yy)^4
+=X^4x^4+4X^3Yx^3y+6X^2Y^2x^2y^2+4XY^3xy^3+Y^4y^4
+\]
+in the \(\texttt{MvPolynomial.C}\)-coefficient form accepted by
+\(\texttt{ring\_nf}\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The pure polynomial expansion is now formalized.  The next evaluation step is
+to bridge this \(\texttt{MvPolynomial.C}\)-coefficient form to the scalar-smul
+form consumed by
+\(\texttt{binaryRestriction\_eval\_eq\_of\_pow\_expansion}\), or to add a
+parallel evaluation lemma for the \(\texttt{MvPolynomial.C}\)-coefficient
+statement.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

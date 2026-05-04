@@ -46,6 +46,23 @@ def binaryRestrictionCoeffE
     (B : DotForm) (p : Poly) (u : RankSevenVec) (y : linSubmodule) : ℝ :=
   B ((linProduct y y : quadSubmodule).1^2) (residual p u)
 
+theorem binaryRestriction_pow_eq_C
+    (x y : linSubmodule) (X Y : ℝ) :
+    (linProduct (X • x + Y • y) (X • x + Y • y) :
+        quadSubmodule).1^2 =
+      MvPolynomial.C (X^4) * (linProduct x x : quadSubmodule).1^2 +
+        MvPolynomial.C (X^3 * Y) *
+            ((linProduct x x : quadSubmodule).1 *
+              (linProduct x y : quadSubmodule).1) * 4 +
+          MvPolynomial.C (X^2 * Y^2) *
+              (linProduct x y : quadSubmodule).1^2 * 6 +
+            MvPolynomial.C (X * Y^3) *
+                ((linProduct x y : quadSubmodule).1 *
+                  (linProduct y y : quadSubmodule).1) * 4 +
+              MvPolynomial.C (Y^4) * (linProduct y y : quadSubmodule).1^2 := by
+  simp [linProduct, Algebra.smul_def]
+  ring_nf
+
 theorem binaryRestriction_eval_eq_of_pow_expansion
     (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule)
     (hpow : ∀ X Y : ℝ,
