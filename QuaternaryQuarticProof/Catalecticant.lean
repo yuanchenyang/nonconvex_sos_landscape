@@ -203,6 +203,92 @@ theorem finrank_spanU_eq_seven_of_relationPolyLin_ker_eq_bot {u : RankSevenVec}
     _ = Fintype.card (Fin 7) := finrank_span_eq_card hli
     _ = 7 := by simp
 
+def spanUQuad {u : RankSevenVec} (hu : IsAdmissiblePoint u) :
+    Submodule ℝ quadSubmodule :=
+  Submodule.span ℝ (Set.range fun i : Fin 7 => (⟨u i, hu i⟩ : quadSubmodule))
+
+theorem linearIndependent_uQuad_of_relationPolyLin_ker_eq_bot {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥) :
+    LinearIndependent ℝ (fun i : Fin 7 => (⟨u i, hu i⟩ : quadSubmodule)) := by
+  rw [Fintype.linearIndependent_iff]
+  intro g hg i
+  have hli : LinearIndependent ℝ u :=
+    linearIndependent_u_of_relationPolyLin_ker_eq_bot hker
+  have hsum_poly : ∑ i : Fin 7, g i • u i = 0 := by
+    have hcongr := congrArg Subtype.val hg
+    simpa using hcongr
+  exact (Fintype.linearIndependent_iff.mp hli g hsum_poly i)
+
+theorem finrank_spanUQuad_eq_seven_of_relationPolyLin_ker_eq_bot {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥) :
+    Module.finrank ℝ (spanUQuad hu) = 7 := by
+  have hli : LinearIndependent ℝ (fun i : Fin 7 => (⟨u i, hu i⟩ : quadSubmodule)) :=
+    linearIndependent_uQuad_of_relationPolyLin_ker_eq_bot hu hker
+  calc
+    Module.finrank ℝ (spanUQuad hu) =
+        Module.finrank ℝ
+          (Submodule.span ℝ
+            (Set.range fun i : Fin 7 => (⟨u i, hu i⟩ : quadSubmodule))) := rfl
+    _ = Fintype.card (Fin 7) := finrank_span_eq_card hli
+    _ = 7 := by simp
+
+def catalecticantMap (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    quadSubmodule →ₗ[ℝ] Module.Dual ℝ quadSubmodule where
+  toFun q := {
+    toFun := fun r => B (q.1 * r.1) (residual p u)
+    map_add' := by
+      intro r s
+      simp [mul_add]
+    map_smul' := by
+      intro a r
+      simp }
+  map_add' q r := by
+    ext s
+    simp [add_mul]
+  map_smul' a q := by
+    ext r
+    simp
+
+@[simp] theorem catalecticantMap_apply
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (q r : quadSubmodule) :
+    catalecticantMap B p u q r = B (q.1 * r.1) (residual p u) :=
+  rfl
+
+theorem spanUQuad_le_ker_catalecticantMap {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u) :
+    spanUQuad hu ≤ LinearMap.ker (catalecticantMap B p u) := by
+  refine Submodule.span_le.mpr ?_
+  rintro q ⟨i, rfl⟩
+  change catalecticantMap B p u (⟨u i, hu i⟩ : quadSubmodule) = 0
+  ext r
+  have hdir : IsAdmissibleDirection (Pi.single i r.1 : RankSevenVec) :=
+    singleDirection_admissible i r.2
+  simpa [A_singleDirection] using hfocp (Pi.single i r.1) hdir
+
+theorem catalecticantMap_rank_le_three_of_relationPolyLin_ker_eq_bot
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥) :
+    Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) ≤ 3 := by
+  have hspan_le :
+      spanUQuad hu ≤ LinearMap.ker (catalecticantMap B p u) :=
+    spanUQuad_le_ker_catalecticantMap hu hfocp
+  have hspan_finrank :
+      Module.finrank ℝ (spanUQuad hu) = 7 :=
+    finrank_spanUQuad_eq_seven_of_relationPolyLin_ker_eq_bot hu hker
+  have hker_ge : 7 ≤ Module.finrank ℝ (LinearMap.ker (catalecticantMap B p u)) := by
+    rw [← hspan_finrank]
+    exact Submodule.finrank_mono hspan_le
+  have hnullity :=
+    LinearMap.finrank_range_add_finrank_ker (catalecticantMap B p u)
+  have hquad : Module.finrank ℝ quadSubmodule = 10 :=
+    finrank_quadSubmodule_eq_ten
+  omega
+
 section ResidualFunctional
 
 variable {B : DotForm} [Fact B.toQuadraticMap.PosDef]

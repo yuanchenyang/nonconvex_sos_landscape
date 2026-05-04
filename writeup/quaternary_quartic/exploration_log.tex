@@ -264,4 +264,55 @@ the low-rank support theorem and the rank \(1,2,3\) syzygy constructions.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Restricted catalecticant rank bound}
+
+\paragraph{Largest gap selected.}
+After proving \(\dim \Quad=10\), the remaining finite-dimensional bridge was
+to define the actual restricted catalecticant map and prove the full-rank
+rank bound \(k\le3\).
+
+\paragraph{Lean progress.}
+Extended \texttt{QuaternaryQuarticProof/Catalecticant.lean} with:
+\[
+\texttt{spanUQuad},\quad
+\texttt{catalecticantMap},\quad
+\texttt{spanUQuad\_le\_ker\_catalecticantMap}.
+\]
+The map is
+\[
+  \Quad\to\Quad^\ast,\qquad
+  q\mapsto(r\mapsto B(qr,\texttt{residual}\ p\ u)).
+\]
+The inclusion theorem proves that FOCP places the seven-dimensional span of
+the coordinates inside this kernel.
+
+The main new theorem is
+\[
+\texttt{catalecticantMap\_rank\_le\_three\_of\_relationPolyLin\_ker\_eq\_bot}.
+\]
+It combines:
+\[
+\dim \Quad=10,\qquad
+\dim L_u=7,\qquad
+L_u\subseteq\ker C_\lambda,
+\]
+with rank-nullity to conclude
+\[
+  \operatorname{finrank}(\operatorname{range} C_\lambda)\le3.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks after the change.
+
+\paragraph{Remaining blockers.}
+The largest remaining mathematical gap is now the low-rank structural input:
+for catalecticant rank \(1,2,3\), produce the support reductions and syzygies
+from the blueprint.  The reusable negative-curvature construction for a
+syzygy is also still pending in Lean.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
