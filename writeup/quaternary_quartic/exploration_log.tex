@@ -1537,6 +1537,39 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Rank-three support data predicate}
+
+\paragraph{Largest gap selected.}
+After the rank-three annihilator endpoint was packaged, the remaining
+rank-three geometric work could be stated as: find \(z\), \(W\), and a
+negative supported quadratic \(q\in WW\).  This needed a named Lean predicate.
+
+\paragraph{Lean progress.}
+In \texttt{Support.lean}, added
+\[
+\texttt{HasRankThreeAnnihilatorSupportData}\ B\ p\ u.
+\]
+It packages \(z\in\texttt{linearAnnihilator}\), \(z\neq0\),
+\(q\in\texttt{linProductSubmodule}\ W\ W\), and \(B(q^2,R)<0\).  Proved
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_rank\_three\_supportData},
+\]
+which combines this data with the rank-three hypotheses and returns the
+negative syzygy-certificate existential required by the global rank split.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The rank-three branch is now reduced to proving
+\texttt{HasRankThreeAnnihilatorSupportData}; this is exactly the support and
+negative-square decomposition part of the blueprint.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Support codimension monotonicity}
 
 \paragraph{Largest gap selected.}

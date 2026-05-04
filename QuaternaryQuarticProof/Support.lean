@@ -89,4 +89,26 @@ theorem exists_rank_three_support_complement
     exists_support_complement_of_hasLinearAnnihilatorCodimAtMost
       (B := B) (p := p) (u := u) (k := 3) (by norm_num) hsupp
 
+def HasRankThreeAnnihilatorSupportData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  ∃ (z : linSubmodule) (W : Submodule ℝ linSubmodule) (q : quadSubmodule),
+    z ∈ linearAnnihilator B p u ∧
+      (z : Poly) ≠ 0 ∧
+        q ∈ linProductSubmodule W W ∧
+          B (q.1^2) (residual p u) < 0
+
+theorem exists_negative_syzygyCertificate_of_rank_three_supportData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    (hdata : HasRankThreeAnnihilatorSupportData B p u) :
+    ∃ q' : Poly, IsQuadratic q' ∧
+      B (q'^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q' := by
+  rcases hdata with ⟨z, W, q, hzann, hzne, hqWW, hneg⟩
+  exact exists_negative_syzygyCertificate_of_rank_three_annihilator_support
+    (B := B) (p := p) (u := u) (hu := hu) hfocp hker hrank
+    hzann hzne hqWW hneg
+
 end QuaternaryQuartic
