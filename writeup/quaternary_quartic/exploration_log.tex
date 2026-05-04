@@ -1537,6 +1537,47 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Explicit linear product generators}
+
+\paragraph{Largest gap selected.}
+The finite-dimensional inventory still lacks the formal statement that
+products of affine-linear forms span all quadratics.  A necessary concrete
+step is to expose the standard generators \(1\), \(X_i\), and \(X_iX_j\) as
+elements of the product span.
+
+\paragraph{Lean progress.}
+Added the bundled affine-linear forms
+\[
+\texttt{linOne}:\Lin,\qquad \texttt{linVar}\ i:\Lin
+\]
+with simp lemmas for their polynomial values.  Proved membership of the
+basic degree \(0\), \(1\), and \(2\) products in
+\[
+\texttt{linProductSubmodule}\ \top\ \top:
+\]
+\[
+\texttt{linOne\_mul\_linOne\_mem\_linProductSubmodule\_top\_top},
+\]
+\[
+\texttt{linVar\_mul\_linOne\_mem\_linProductSubmodule\_top\_top},
+\qquad
+\texttt{linVar\_mul\_linVar\_mem\_linProductSubmodule\_top\_top}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The standard product generators are now available as bundled elements.  The
+remaining span proof must connect arbitrary degree-\(\le2\) monomials to
+these generators and then use the restricted-support monomial basis to show
+\(\texttt{linProductSubmodule}\ \top\ \top=\top\).
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Binary normal-form scalar cases}
 
 \paragraph{Largest gap selected.}

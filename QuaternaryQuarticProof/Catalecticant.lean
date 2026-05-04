@@ -1,5 +1,6 @@
 import Mathlib.LinearAlgebra.Dimension.Constructions
 import Mathlib.RingTheory.MvPolynomial.Basic
+import Mathlib.RingTheory.MvPolynomial.Homogeneous
 import Mathlib.Data.Finsupp.Order
 import Mathlib.Algebra.BigOperators.Finsupp.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Defs
@@ -188,6 +189,16 @@ theorem mul_lin_lin_mem_quad {p q : Poly}
   change (p * q).totalDegree ≤ 2
   omega
 
+def linOne : linSubmodule :=
+  ⟨1, by simp⟩
+
+@[simp] theorem linOne_val : (linOne : Poly) = 1 := rfl
+
+def linVar (i : Fin 3) : linSubmodule :=
+  ⟨MvPolynomial.X i, (MvPolynomial.isHomogeneous_X (R := ℝ) i).totalDegree_le⟩
+
+@[simp] theorem linVar_val (i : Fin 3) : (linVar i : Poly) = MvPolynomial.X i := rfl
+
 def linProduct (a b : linSubmodule) : quadSubmodule :=
   ⟨a.1 * b.1, mul_lin_lin_mem_quad a.2 b.2⟩
 
@@ -272,6 +283,27 @@ theorem linProductSubmodule_le_of_generators
   refine Submodule.span_le.mpr ?_
   rintro q ⟨x, rfl⟩
   exact hgen x.1 x.2
+
+theorem linOne_mul_linOne_mem_linProductSubmodule_top_top :
+    linProduct linOne linOne ∈
+      linProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤ := by
+  exact linProduct_mem_linProductSubmodule
+    (⟨linOne, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+    (⟨linOne, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+
+theorem linVar_mul_linOne_mem_linProductSubmodule_top_top (i : Fin 3) :
+    linProduct (linVar i) linOne ∈
+      linProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤ := by
+  exact linProduct_mem_linProductSubmodule
+    (⟨linVar i, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+    (⟨linOne, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+
+theorem linVar_mul_linVar_mem_linProductSubmodule_top_top (i j : Fin 3) :
+    linProduct (linVar i) (linVar j) ∈
+      linProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤ := by
+  exact linProduct_mem_linProductSubmodule
+    (⟨linVar i, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+    (⟨linVar j, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
 
 def linProductLeftMap (a : linSubmodule) : linSubmodule →ₗ[ℝ] quadSubmodule where
   toFun b := linProduct a b
