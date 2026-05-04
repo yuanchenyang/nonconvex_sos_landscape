@@ -427,6 +427,32 @@ theorem exists_negative_syzygyCertificate_of_preimage_product_incidence
     (x := x) (A := A) (S := S) (s := s)
     hS_L hxA_K hsS hsne hsMA
 
+theorem exists_negative_syzygyCertificate_of_preimage_product_dimension
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {S W : Submodule ℝ quadSubmodule}
+    (hS_L : S ≤ spanUQuad hu)
+    (hxA_K : ∀ a : A, (linProduct x a.1 : quadSubmodule).1 ∈ catalecticantKernel B p u)
+    (hSW : S ≤ W)
+    (hMAW : linProductSubmodule (linProductLeftPreimageWithin x A S) A ≤ W)
+    (hMne : linProductLeftPreimageWithin x A S ≠ ⊥)
+    {sdim adim wdim : ℕ}
+    (hSdim : sdim ≤ Module.finrank ℝ S)
+    (hAdim : adim ≤ Module.finrank ℝ A)
+    (hWdim : Module.finrank ℝ W = wdim)
+    (hgt : wdim < sdim + adim)
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    ∃ q : Poly, IsQuadratic q ∧
+      B (q^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q := by
+  rcases exists_mem_inf_linProductSubmodule_ne_zero_of_finrank_lt_add
+      (N := S) (W := W) (M := linProductLeftPreimageWithin x A S) (A := A)
+      hSW hMAW hMne hSdim hAdim hWdim hgt with ⟨s, hsS, hsMA, hsne⟩
+  exact exists_negative_syzygyCertificate_of_preimage_product_incidence
+    (B := B) (p := p) (u := u) (hu := hu)
+    (x := x) (A := A) (S := S) (s := s)
+    hS_L hxA_K hsS (fun hszero => hsne (Subtype.ext hszero)) hsMA hneg
+
 theorem hasSyzygyCertificate_of_rank_three_kernel_product_identity
     {ι : Type} [Fintype ι] {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

@@ -986,6 +986,47 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Dimension-to-certificate wrapper}
+
+\paragraph{Largest gap selected.}
+After packaging a concrete incidence witness \(s\in S\cap MA\), the next
+rank-case gap was to package the Grassmann dimension step that produces such
+an \(s\).  This is the common endpoint of the rank-one and rank-two incidence
+arguments.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_preimage\_product\_dimension}.
+\]
+The lemma assumes \(S\subseteq L\), \(xA\subseteq K\), \(S\le W\),
+\[
+\texttt{linProductSubmodule}\,
+  (\texttt{linProductLeftPreimageWithin}\ x\ A\ S)\,A \le W,
+\]
+nontriviality of the preimage subspace, and numerical lower bounds whose sum
+exceeds \(\dim W\).  It then extracts a nonzero
+\[
+s\in S\cap
+\texttt{linProductSubmodule}\,
+  (\texttt{linProductLeftPreimageWithin}\ x\ A\ S)\,A
+\]
+and returns the negative-square syzygy-certificate existential for \(x^2\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The finite-dimensional rank-one/rank-two endpoint is now mostly packaged.
+The remaining high-level gaps are the structural support theorem, the binary
+negative-pure-square theorem, and the concrete rank-case subspace
+instantiations.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Incidence witness to negative certificate}
 
 \paragraph{Largest gap selected.}
