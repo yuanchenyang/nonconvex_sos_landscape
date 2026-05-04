@@ -1537,6 +1537,47 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Preimage-product support data predicate}
+
+\paragraph{Largest gap selected.}
+The rank-one and rank-two branches share the same endpoint: a preimage
+subspace \(M=\{a\in A:xa\in S\}\), a nonzero intersection produced by
+dimension, and negativity of \(x^4\).  This geometric endpoint needed a named
+Lean predicate parallel to the rank-three support-data predicate.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasPreimageProductSupportData}\ B\ p\ u\ hu.
+\]
+It packages the annihilator subspace \(A\), the subspaces \(S,W\le\Quad\),
+the inclusion
+\[
+\texttt{linProductSubmodule}
+  (\texttt{linProductLeftPreimageWithin}\ x\ A\ S)\ A\le W,
+\]
+nontriviality of the preimage, the Grassmann dimension inequalities, and
+the negativity \(B(x^4,R)<0\).  Proved
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_preimageProductSupportData},
+\]
+which converts this data into the negative syzygy-certificate existential for
+the global rank split.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The rank-one/rank-two endpoint is now named and connected to the proof.  The
+remaining work is to derive this support data from the binary pure-square
+theorem and low-rank support theorem in the concrete rank-one and rank-two
+cases.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Rank-three support data predicate}
 
 \paragraph{Largest gap selected.}

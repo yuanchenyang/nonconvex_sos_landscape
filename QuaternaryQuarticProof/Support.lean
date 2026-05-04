@@ -111,4 +111,34 @@ theorem exists_negative_syzygyCertificate_of_rank_three_supportData
     (B := B) (p := p) (u := u) (hu := hu) hfocp hker hrank
     hzann hzne hqWW hneg
 
+def HasPreimageProductSupportData
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (hu : IsAdmissiblePoint u) : Prop :=
+  ∃ (x : linSubmodule) (A : Submodule ℝ linSubmodule)
+      (S W : Submodule ℝ quadSubmodule) (sdim adim wdim : ℕ),
+    A ≤ linearAnnihilator B p u ∧
+      S ≤ spanUQuad hu ∧
+        S ≤ W ∧
+          linProductSubmodule (linProductLeftPreimageWithin x A S) A ≤ W ∧
+            linProductLeftPreimageWithin x A S ≠ ⊥ ∧
+              sdim ≤ Module.finrank ℝ S ∧
+                adim ≤ Module.finrank ℝ A ∧
+                  Module.finrank ℝ W = wdim ∧
+                    wdim < sdim + adim ∧
+                      B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0
+
+theorem exists_negative_syzygyCertificate_of_preimageProductSupportData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasPreimageProductSupportData B p u hu) :
+    ∃ q : Poly, IsQuadratic q ∧
+      B (q^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q := by
+  rcases hdata with
+    ⟨x, A, S, W, sdim, adim, wdim, hAann, hS_L, hSW, hMAW, hMne,
+      hSdim, hAdim, hWdim, hgt, hneg⟩
+  exact exists_negative_syzygyCertificate_of_preimage_product_dimension_of_annihilator
+    (B := B) (p := p) (u := u) (hu := hu)
+    (x := x) (A := A) (S := S) (W := W)
+    hS_L hAann hSW hMAW hMne hSdim hAdim hWdim hgt hneg
+
 end QuaternaryQuartic
