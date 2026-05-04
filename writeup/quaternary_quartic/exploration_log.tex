@@ -3687,4 +3687,45 @@ normal-form transport must still supply the negative pure square.
 
 No Julia numerical claims were used in this round.
 
+\section*{Exact symmetric-square dimension from product independence}
+
+\paragraph{Gap targeted.}
+The rank-two ambient criterion reduced the lower bound to exact
+\(\dim\Sym^2 A=3\) and a disjointness statement.  The exact symmetric-square
+dimension should follow once the three products of a basis of \(A\) are known
+to be linearly independent.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{finrank\_symSquareSubmodule\_eq\_three\_of\_basis\_products\_linearIndependent}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  For a basis
+\(\beta:\texttt{Fin 2}\to A\), it proves
+\[
+\dim(\texttt{symSquareSubmodule}\ A)=3
+\]
+from linear independence of
+\[
+\beta_0^2,\qquad \beta_0\beta_1,\qquad \beta_1^2.
+\]
+The proof combines the existing upper bound with a lower bound from the span
+of these three independent generators inside \(\texttt{symSquareSubmodule}\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The exact \(\Sym^2\) dimension gap is now concentrated in the polynomial
+linear-independence theorem for products of two independent affine-linear
+forms.  Rank two still also needs the disjointness of \(xA\) from
+\(\Sym^2 A\), and the binary normal-form transport still needs to construct a
+negative pure square.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

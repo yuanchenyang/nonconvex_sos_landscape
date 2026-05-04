@@ -458,6 +458,54 @@ theorem finrank_symSquareSubmodule_le_three_of_finrank_eq_two
     decide
   exact (Submodule.finrank_mono hle).trans (by simpa [hcard] using hspan)
 
+theorem finrank_symSquareSubmodule_eq_three_of_basis_products_linearIndependent
+    {A : Submodule ℝ linSubmodule}
+    (β : Module.Basis (Fin 2) ℝ A)
+    (hLI :
+      LinearIndependent ℝ
+        (fun ij : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+          linProduct (β ij.1.1).1 (β ij.1.2).1)) :
+    Module.finrank ℝ (symSquareSubmodule A) = 3 := by
+  let ι := {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2}
+  let f : ι → quadSubmodule :=
+    fun ij => linProduct (β ij.1.1).1 (β ij.1.2).1
+  have hspan_le : Submodule.span ℝ (Set.range f) ≤ symSquareSubmodule A := by
+    refine Submodule.span_le.mpr ?_
+    rintro q ⟨ij, rfl⟩
+    exact linProduct_mem_linProductSubmodule
+      (⟨(β ij.1.1).1, (β ij.1.1).2⟩ : A)
+      (⟨(β ij.1.2).1, (β ij.1.2).2⟩ : A)
+  have hspan_finrank :
+      Module.finrank ℝ (Submodule.span ℝ
+        (Set.range fun ij : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+          linProduct (β ij.1.1).1 (β ij.1.2).1)) = 3 := by
+    have hcard :
+        Fintype.card {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =
+          Module.finrank ℝ (Submodule.span ℝ
+            (Set.range fun ij : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+              linProduct (β ij.1.1).1 (β ij.1.2).1)) := by
+      exact
+        (linearIndependent_iff_card_eq_finrank_span (R := ℝ)
+          (b := fun ij : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+            linProduct (β ij.1.1).1 (β ij.1.2).1)).mp hLI
+    have hιcard : Fintype.card ι = 3 := by
+      decide
+    simpa [ι, hιcard] using hcard.symm
+  have hlower : 3 ≤ Module.finrank ℝ (symSquareSubmodule A) := by
+    have hmono := Submodule.finrank_mono hspan_le
+    rw [show Submodule.span ℝ (Set.range f) =
+        Submodule.span ℝ
+          (Set.range fun ij : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+            linProduct (β ij.1.1).1 (β ij.1.2).1) by rfl] at hmono
+    omega
+  have hA : Module.finrank ℝ A = 2 := by
+    rw [Module.finrank_eq_card_basis β]
+    rfl
+  have hupper :
+      Module.finrank ℝ (symSquareSubmodule A) ≤ 3 :=
+    finrank_symSquareSubmodule_le_three_of_finrank_eq_two hA
+  omega
+
 theorem finrank_symSquareSubmodule_le_six_of_finrank_eq_three
     {A : Submodule ℝ linSubmodule}
     (hA : Module.finrank ℝ A = 3) :
