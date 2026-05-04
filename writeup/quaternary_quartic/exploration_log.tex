@@ -986,6 +986,46 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: From product incidence to syzygy certificate}
+
+\paragraph{Largest gap selected.}
+The incidence lemmas can now produce a nonzero \(s\in N\cap MA\), but the
+negative-curvature mechanism requires an explicit finite product identity.
+The remaining bridge is to turn membership \(s\in MA\) into the finite
+syzygy certificate used by \texttt{HasSyzygyCertificate}.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasSyzygyCertificate\_of\_mem\_linProductSubmodule}.
+\]
+Given a fixed affine-linear form \(x\), subspaces \(M,A\le\Lin\), and
+\[
+xM\subseteq L,\qquad xA\subseteq K,\qquad s\in L\cap MA,\qquad s\neq0,
+\]
+the lemma constructs a \texttt{HasSyzygyCertificate} for
+\((xx)\).  The proof extracts a finitely supported linear-combination
+representation of \(s\in MA\) from
+\texttt{Finsupp.mem\_span\_range\_iff\_exists\_finsupp} and rewrites
+\[
+\sum_j (xm_j)(x a_j)=s\,x^2.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The rank-one and rank-two cases now have a direct path from their incidence
+witness \(s\) to a syzygy certificate.  What remains is to formalize the
+subspace setup that supplies \(xM\subseteq L\), \(xA\subseteq K\), and
+\(s\in L\cap MA\), plus the structural low-rank support and binary
+negative-pure-square results.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Product incidence intersection}
 
 \paragraph{Largest gap selected.}
