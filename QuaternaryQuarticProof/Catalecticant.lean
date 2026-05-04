@@ -207,6 +207,21 @@ def spanUQuad {u : RankSevenVec} (hu : IsAdmissiblePoint u) :
     Submodule ℝ quadSubmodule :=
   Submodule.span ℝ (Set.range fun i : Fin 7 => (⟨u i, hu i⟩ : quadSubmodule))
 
+theorem exists_relationPoly_eq_of_mem_spanUQuad {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u} {x : quadSubmodule}
+    (hx : x ∈ spanUQuad hu) :
+    ∃ c : Fin 7 → ℝ, relationPoly u c = x.1 := by
+  rcases (Submodule.mem_span_range_iff_exists_fun (R := ℝ)).mp hx with ⟨c, hc⟩
+  refine ⟨c, ?_⟩
+  have hval := congrArg Subtype.val hc
+  simpa [spanUQuad, relationPoly] using hval
+
+theorem exists_relationPoly_eq_of_mem_spanU {u : RankSevenVec} {x : Poly}
+    (hx : x ∈ spanU u) :
+    ∃ c : Fin 7 → ℝ, relationPoly u c = x := by
+  rcases (Submodule.mem_span_range_iff_exists_fun (R := ℝ)).mp hx with ⟨c, hc⟩
+  exact ⟨c, by simpa [spanU, relationPoly] using hc⟩
+
 theorem linearIndependent_uQuad_of_relationPolyLin_ker_eq_bot {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
     (hker : LinearMap.ker (relationPolyLin u) = ⊥) :

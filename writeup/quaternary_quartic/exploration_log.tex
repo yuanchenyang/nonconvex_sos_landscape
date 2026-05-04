@@ -754,4 +754,40 @@ dimension computations.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Coordinate-span coefficient extraction}
+
+\paragraph{Largest gap selected.}
+The structural low-rank arguments produce quadratics known to lie in the
+coordinate span \(L_u\).  The syzygy machinery, however, needs explicit
+coefficient vectors \(\alpha,\beta:\texttt{Fin 7}\to\mathbb R\) so those
+quadratics can be written as \(\texttt{relationPoly}\ u\ \alpha\) and
+\(\texttt{relationPoly}\ u\ \beta\).
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{exists\_relationPoly\_eq\_of\_mem\_spanUQuad}
+\]
+and
+\[
+\texttt{exists\_relationPoly\_eq\_of\_mem\_spanU}.
+\]
+These convert membership in \(\texttt{spanUQuad}\) or \(\texttt{spanU}\) into
+explicit scalar coefficient vectors.  This is needed to feed rank-specific
+span membership conclusions into \(\texttt{HasSyzygyCertificate}\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The low-rank structural cases can now move from membership statements
+\(m_j,s\in L_u\) to the coefficient data required by the generic syzygy
+certificate.  The remaining work is to formalize the support-reduction and
+product-subspace incidence arguments themselves.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
