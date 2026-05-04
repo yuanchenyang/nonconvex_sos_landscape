@@ -3997,4 +3997,51 @@ polynomial component facts for \(\Sym^2 A\) and the rank-two direct sum.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-case reducer for binary normal-form data}
+
+\paragraph{Gap targeted.}
+The proof had reducers from abstract support data and from negative
+certificates, but the largest remaining constructive work is now specifically
+the rank-one/rank-two binary normal-form transport.  The root proof needed a
+stable interface at exactly that level.
+
+\paragraph{Lean progress.}
+Added \(\texttt{HasRankCaseBinaryNormalFormData}\) to
+\texttt{QuaternaryQuarticProof/Basic.lean}.  Its rank-one branch packages an
+annihilator subspace \(A\), exact \(\dim A=3\), exact \(\dim\Sym^2A=6\), a
+binary low-rank negative normal form, and the coefficient-evaluation identity.
+Its rank-two branch packages the analogous \(\dim A=2\), exact
+\(\dim\Sym^2A=3\), binary normal form, evaluation identity, and the direct-sum
+disjointness condition for nonzero support-plane directions.  The rank-three
+branch reuses \(\texttt{HasRankThreeAnnihilatorSupportData}\).
+
+Added reducers
+\[
+\texttt{hasRankCaseNegativeCertificateFamily\_of\_binaryNormalFormData},
+\quad
+\texttt{residual\_eq\_zero\_of\_rankCaseBinaryNormalFormData},
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_rankCaseBinaryNormalFormData}.
+\]
+These compose the new binary-data interface with the already formalized
+rank-one/rank-two support bridges and the rank-three certificate bridge.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The global theorem is now reducible to proving
+\(\texttt{HasRankCaseBinaryNormalFormData}\) for every SOCP instance.  That is
+the current largest gap: deriving the binary normal forms, coefficient
+evaluation identities, exact symmetric-square dimensions, and rank-two
+disjointness from the catalecticant support structure.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

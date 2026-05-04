@@ -44,6 +44,40 @@ def HasRefinedRankCaseSupportData
   (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
     HasRankThreeAnnihilatorSupportData B p u)
 
+def HasRankCaseBinaryNormalFormData
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u) : Prop :=
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+    ∃ (A : Submodule ℝ linSubmodule) (x y : linSubmodule)
+        (a b c d e : ℝ),
+      A ≤ linearAnnihilator B p u ∧
+        Module.finrank ℝ A = 3 ∧
+          Module.finrank ℝ (symSquareSubmodule A) = 6 ∧
+            HasBinaryLowRankNegativeNormalForm a b c d e ∧
+              (∀ X Y : ℝ,
+                B ((linProduct (X • x + Y • y) (X • x + Y • y) :
+                    quadSubmodule).1^2) (residual p u) =
+                  binaryQuarticEval a b c d e X Y)) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∃ (A : Submodule ℝ linSubmodule) (x y : linSubmodule)
+        (a b c d e : ℝ),
+      A ≤ linearAnnihilator B p u ∧
+        Module.finrank ℝ A = 2 ∧
+          Module.finrank ℝ (symSquareSubmodule A) = 3 ∧
+            HasBinaryLowRankNegativeNormalForm a b c d e ∧
+              (∀ X Y : ℝ,
+                B ((linProduct (X • x + Y • y) (X • x + Y • y) :
+                    quadSubmodule).1^2) (residual p u) =
+                  binaryQuarticEval a b c d e X Y) ∧
+                ∀ z : linSubmodule,
+                  z ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) →
+                    (z : Poly) ≠ 0 →
+                      LinearMap.range (linProductLeftMapOn z A) ⊓
+                          symSquareSubmodule A =
+                        ⊥) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+    HasRankThreeAnnihilatorSupportData B p u)
+
 theorem hasRankCaseNegativeCertificateFamily_of_supportData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -84,6 +118,40 @@ theorem hasRankCaseNegativeCertificateFamily_of_refinedSupportData
     exact exists_negative_syzygyCertificate_of_rank_three_supportData
       (B := B) (p := p) (u := u) hu hfocp hker hrank3 (hdata3 hrank3)
 
+theorem hasRankCaseNegativeCertificateFamily_of_binaryNormalFormData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hdata : HasRankCaseBinaryNormalFormData B p u hu) :
+    HasRankCaseNegativeCertificateFamily B p u := by
+  intro _hres hker
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    rcases hdata1 hrank1 with
+      ⟨A, x, y, a, b, c, d, e, hAann, hAdim, hSymdim, hform, heval⟩
+    exact exists_negative_syzygyCertificate_of_rank_one_productSupportData
+      (B := B) (p := p) (u := u) (hu := hu)
+      (hasRankOneProductSupportData_of_binaryNormalForm
+        (B := B) (p := p) (u := u) (hu := hu)
+        hfocp hker hrank1
+        (A := A) (x := x) (y := y)
+        hAann hAdim hSymdim hform heval)
+  constructor
+  · intro hrank2
+    rcases hdata2 hrank2 with
+      ⟨A, x, y, a, b, c, d, e, hAann, hAdim, hSymdim, hform, heval, hdisj⟩
+    exact exists_negative_syzygyCertificate_of_preimageProductSupportData
+      (B := B) (p := p) (u := u) (hu := hu)
+      (hasPreimageProductSupportData_of_rank_two_binaryNormalForm
+        (B := B) (p := p) (u := u) (hu := hu)
+        hfocp hker hrank2
+        (A := A) (x := x) (y := y)
+        hAann hAdim hSymdim hform heval hdisj)
+  · intro hrank3
+    exact exists_negative_syzygyCertificate_of_rank_three_supportData
+      (B := B) (p := p) (u := u) hu hfocp hker hrank3 (hdata3 hrank3)
+
 theorem residual_eq_zero_of_hasRankCaseNegativeCertificateFamily
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -115,6 +183,17 @@ theorem residual_eq_zero_of_refinedRankCaseSupportData
   residual_eq_zero_of_hasRankCaseNegativeCertificateFamily
     (B := B) hu hp hsocp
     (hasRankCaseNegativeCertificateFamily_of_refinedSupportData hu hsocp.1 hdata)
+
+theorem residual_eq_zero_of_rankCaseBinaryNormalFormData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata : HasRankCaseBinaryNormalFormData B p u hu) :
+    residual p u = 0 :=
+  residual_eq_zero_of_hasRankCaseNegativeCertificateFamily
+    (B := B) hu hp hsocp
+    (hasRankCaseNegativeCertificateFamily_of_binaryNormalFormData hu hsocp.1 hdata)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseNegativeCertificates
     (hcert :
@@ -156,6 +235,20 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_refinedRankCaseSupportDa
   intro B p u hB hp hu hsocp
   letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
   exact residual_eq_zero_of_refinedRankCaseSupportData
+    (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseBinaryNormalFormData
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseBinaryNormalFormData B p u hu) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_rankCaseBinaryNormalFormData
     (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
 
 /-
