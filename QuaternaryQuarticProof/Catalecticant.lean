@@ -387,6 +387,34 @@ theorem finrank_linProductLeftPreimageOn_eq_inf_range_of_ne_zero
       exact hb
   exact (LinearEquiv.ofBijective f ⟨hinj, hsurj⟩).finrank_eq
 
+theorem exists_mem_linProductLeftPreimageOn_ne_zero_of_mem_inf_range_ne_zero
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {P : Submodule ℝ quadSubmodule} {y : quadSubmodule}
+    (hyP : y ∈ P)
+    (hyrange : y ∈ LinearMap.range (linProductLeftMapOn a A))
+    (hyne : y ≠ 0) :
+    ∃ b : A, b ∈ linProductLeftPreimageOn a A P ∧ b ≠ 0 := by
+  rcases hyrange with ⟨b, hb⟩
+  refine ⟨b, ?_, ?_⟩
+  · change linProduct a b.1 ∈ P
+    rwa [← hb] at hyP
+  · intro hbzero
+    apply hyne
+    rw [← hb, hbzero]
+    simp
+
+theorem linProductLeftPreimageOn_ne_bot_of_inf_range_ne_bot
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {P : Submodule ℝ quadSubmodule}
+    (hinter :
+      P ⊓ LinearMap.range (linProductLeftMapOn a A) ≠ ⊥) :
+    linProductLeftPreimageOn a A P ≠ ⊥ := by
+  rcases Submodule.exists_mem_ne_zero_of_ne_bot hinter with ⟨y, hy, hyne⟩
+  rcases exists_mem_linProductLeftPreimageOn_ne_zero_of_mem_inf_range_ne_zero
+      hy.1 hy.2 hyne with ⟨b, hbM, hbne⟩
+  intro hbot
+  exact hbne (by simpa [hbot] using hbM)
+
 theorem finrank_range_linProductLeftMapOn_eq
     {a : linSubmodule} {A : Submodule ℝ linSubmodule}
     (ha : (a : Poly) ≠ 0) :
@@ -399,6 +427,34 @@ theorem finrank_range_linProductLeftMapOn_eq
     have hbcval := congrArg (fun q : quadSubmodule => (q : Poly)) hbc
     simpa [linProductLeftMapOn, linProductLeftMap, linProduct] using hbcval
   simpa using mul_left_cancel₀ ha hprod
+
+theorem linProductLeftPreimageOn_ne_bot_of_finrank_lt_add
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {P W : Submodule ℝ quadSubmodule}
+    (ha : (a : Poly) ≠ 0)
+    (hPW : P ≤ W)
+    (hrangeW : LinearMap.range (linProductLeftMapOn a A) ≤ W)
+    {pdim adim wdim : ℕ}
+    (hPdim : pdim ≤ Module.finrank ℝ P)
+    (hAdim : adim ≤ Module.finrank ℝ A)
+    (hWdim : Module.finrank ℝ W = wdim)
+    (hgt : wdim < pdim + adim) :
+    linProductLeftPreimageOn a A P ≠ ⊥ := by
+  have hrangeDim :
+      adim ≤ Module.finrank ℝ (LinearMap.range (linProductLeftMapOn a A)) := by
+    rw [finrank_range_linProductLeftMapOn_eq ha]
+    exact hAdim
+  have hinter_exists :
+      ∃ y : quadSubmodule,
+        y ∈ P ∧ y ∈ LinearMap.range (linProductLeftMapOn a A) ∧ y ≠ 0 := by
+    refine exists_mem_inf_ne_zero_of_finrank_eq_and_lt_add
+      (K := ℝ) (V := quadSubmodule) hPW hrangeW hPdim ?_ hWdim hgt
+    exact hrangeDim
+  rcases hinter_exists with ⟨y, hyP, hyrange, hyne⟩
+  rcases exists_mem_linProductLeftPreimageOn_ne_zero_of_mem_inf_range_ne_zero
+      hyP hyrange hyne with ⟨b, hbM, hbne⟩
+  intro hbot
+  exact hbne (by simpa [hbot] using hbM)
 
 theorem range_linProductLeftMapOn_le_linProductSubmodule
     {M A : Submodule ℝ linSubmodule} (m : M) :

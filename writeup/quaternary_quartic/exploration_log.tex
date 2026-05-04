@@ -986,6 +986,49 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Nonzero product preimages from Grassmann}
+
+\paragraph{Largest gap selected.}
+The rank-one and rank-two incidence proofs need to pass from a nonzero
+intersection element in \(P\cap xA\) to a nonzero element of
+\[
+M=\{a\in A:xa\in P\}.
+\]
+This is the step that makes the product-space lower bounds applicable to the
+preimage subspace \(M\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_mem\_linProductLeftPreimageOn\_ne\_zero\_of\_mem\_inf\_range\_ne\_zero},
+\]
+which extracts a nonzero preimage from a nonzero element of
+\(P\cap\operatorname{range}(x\cdot-)\).  Also added
+\[
+\texttt{linProductLeftPreimageOn\_ne\_bot\_of\_inf\_range\_ne\_bot}
+\]
+and the packaged Grassmann criterion
+\[
+\texttt{linProductLeftPreimageOn\_ne\_bot\_of\_finrank\_lt\_add}.
+\]
+The last lemma says that if \(P\) and \(\operatorname{range}(x\cdot A)\) sit
+inside an ambient quadratic subspace \(W\), \(x\neq0\), and the lower bounds
+on \(\dim P\) and \(\dim A\) add to more than \(\dim W\), then the preimage
+subspace \(M\) is nonzero.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+This closes another finite-dimensional incidence bridge.  The structural
+gaps are still the low-rank support theorem and the binary negative-pure-square
+theorem, plus the final rank-specific instantiation of the subspaces.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Preimage-intersection dimension comparison}
 
 \paragraph{Largest gap selected.}
