@@ -132,6 +132,21 @@ theorem sum_sq_pos_of_ne_zero (c : Fin 7 → ℝ) (hc : c ≠ 0) :
 
 end Elementary
 
+theorem false_of_negative_curvature_direction
+    {B : DotForm} {p : Poly} {u v : RankSevenVec}
+    (hsocp : IsSOCP B p u)
+    (hvadm : IsAdmissibleDirection v)
+    (hA : A u v = 0)
+    (hneg : B (sigma v) (residual p u) < 0) :
+    False := by
+  have hhess : 0 ≤ hessianTerm B p u v := hsocp.2 v hvadm
+  have hAterm : B (A u v) (A u v) = 0 := by
+    rw [hA]
+    simp
+  have hsigma_nonneg : 0 ≤ B (sigma v) (residual p u) := by
+    simpa [hessianTerm, hAterm] using hhess
+  linarith
+
 section Positivity
 
 variable {B : DotForm} [Fact B.toQuadraticMap.PosDef]

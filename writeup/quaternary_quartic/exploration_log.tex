@@ -351,4 +351,36 @@ construct a negative-curvature direction.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Negative-curvature contradiction isolated}
+
+\paragraph{Largest gap selected.}
+All rank \(1,2,3\) syzygy arguments end the same way: construct an
+admissible direction \(v\) with \(A_u(v)=0\) and
+\[
+  B(\sigma(v),\texttt{residual}\ p\ u)<0.
+\]
+The SOCP contradiction from this data had not yet been isolated.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{false\_of\_negative\_curvature\_direction}.
+\]
+It proves directly from \(\texttt{IsSOCP}\) that such a direction is
+impossible.  The proof unfolds the Hessian term, uses \(A_u(v)=0\) to remove
+the \(2B(A_u(v),A_u(v))\) term, and contradicts the asserted negativity.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Certificate.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The pending syzygy lemma now only needs to construct an admissible direction,
+prove \(A_u(v)=0\), and prove the negative \(\sigma(v)\)-pairing.  The final
+low-rank case work remains the main mathematical gap.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
