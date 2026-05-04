@@ -1,0 +1,86 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+
+\title{Quaternary Quartic Rank-7 Exploration Log}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{2026-05-04: Rank-deficient branch formalized}
+
+\paragraph{Starting state.}
+The Lean root theorem
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp}
+was still proved through the scaffold axiom
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+The full verification harness therefore built the files but failed at
+\texttt{\#print axioms}, as expected.
+
+\paragraph{Largest gap selected.}
+The main blueprint splits first on whether the seven quadratic coordinates
+\(u_i\) are linearly dependent.  The rank-deficient branch is independent of
+the low-rank catalecticant support theorem and can be closed directly from the
+SOCP inequalities and the SOS certificate.  This made it the largest remaining
+gap that could be reduced without first formalizing the apolar Hilbert-function
+argument.
+
+\paragraph{Lean progress.}
+Added \texttt{QuaternaryQuarticProof/Certificate.lean}.  It defines:
+\[
+\texttt{relationDirection}\ c\ q=(i\mapsto c_i q),\qquad
+\texttt{relationPoly}\ u\ c=\sum_i c_i u_i,
+\]
+plus the supporting admissibility, \(A\)-image, and \(\sigma\)-formula lemmas.
+The main new theorem is
+\[
+\texttt{residual\_eq\_zero\_of\_constant\_relation}.
+\]
+It proves that if there is a nonzero scalar relation
+\(\sum_i c_i u_i=0\), then any SOS/SOCP point has
+\(\texttt{residual}\ p\ u=0\).
+
+\paragraph{Proof idea.}
+For each SOS summand \(q_j^2\), use the kernel direction
+\(w_i=c_i q_j\).  Then \(A_u(w)=0\) and
+\[
+\sigma(w)=\left(\sum_i c_i^2\right)q_j^2.
+\]
+The Hessian inequality gives
+\(\left(\sum_i c_i^2\right)B(q_j^2,R)\ge0\), and the scalar is positive
+because \(c\ne0\).  Summing over the SOS certificate gives \(B(p,R)\ge0\).
+FOCP at \(v=u\) gives \(B(\sigma(u),R)=0\), hence the objective equals
+\(-B(p,R)\le0\).  Positive-definiteness gives the opposite inequality, so the
+objective is zero and the residual vanishes.
+
+\paragraph{Verification.}
+The new module and root proof file typecheck:
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Certificate.lean},\qquad
+\texttt{lake env lean QuaternaryQuarticProof.lean}.
+\]
+The full harness command available in the repository is
+\texttt{./scripts/verify\_quaternary\_quartic.sh}; the user-provided
+\texttt{verify\_quarternary\_quartic.sh} path does not exist.  The full harness
+still fails only because the root theorem depends on the existing placeholder
+axiom.
+
+\paragraph{Remaining blockers.}
+The largest remaining gap is the full-rank branch.  The next proof-serving
+steps are:
+\begin{enumerate}
+\item formalize the catalecticant kernel \(K_\lambda\) and prove
+  \(L_u\subseteq K_\lambda\) from FOCP;
+\item express full rank of the seven coordinates as
+  \(\ker(\texttt{relationPolyLin}\ u)=\bot\), yielding \(\dim L_u=7\);
+\item formalize the low-rank catalecticant support theorem and the rank
+  \(1,2,3\) syzygy-to-negative-curvature constructions.
+\end{enumerate}
+
+No Julia numerical claims were used in this round.
+
+\end{document}

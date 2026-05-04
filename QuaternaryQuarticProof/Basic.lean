@@ -1,4 +1,4 @@
-import QuaternaryQuarticProof.Socp
+import QuaternaryQuarticProof.Certificate
 
 set_option autoImplicit false
 set_option warningAsError true
