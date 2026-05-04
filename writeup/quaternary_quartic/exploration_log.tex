@@ -942,4 +942,42 @@ low-rank support reduction and the rank-specific product-space constructions.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Product subspaces of linear forms}
+
+\paragraph{Largest gap selected.}
+The low-rank structural theorem and the rank-one/rank-two incidence arguments
+use product subspaces such as \(AE\), \(xA\), \(\operatorname{Sym}^2A\), and
+\(MB\).  The Lean development had \(\Lin\) and \(\Quad\), but not the
+operation sending two subspaces of \(\Lin\) to the span of their products in
+\(\Quad\).
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{linProduct} : \Lin\to\Lin\to\Quad
+\]
+and
+\[
+\texttt{linProductSubmodule}\ U\ V\le\Quad.
+\]
+The latter is the span of all products \(uv\) with \(u\in U\) and \(v\in V\).
+Also added membership and monotonicity lemmas:
+\[
+\texttt{linProduct\_mem\_linProductSubmodule},\qquad
+\texttt{linProductSubmodule\_mono}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The product spaces used in the blueprint can now be represented in Lean.  The
+next missing pieces are their concrete dimension computations and the
+low-rank support theorem that asserts \(AE\subseteq K\).
+
+No Julia numerical claims were used in this round.
+
 \end{document}

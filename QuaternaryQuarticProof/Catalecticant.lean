@@ -187,6 +187,30 @@ theorem mul_lin_lin_mem_quad {p q : Poly}
   change (p * q).totalDegree ≤ 2
   omega
 
+def linProduct (a b : linSubmodule) : quadSubmodule :=
+  ⟨a.1 * b.1, mul_lin_lin_mem_quad a.2 b.2⟩
+
+@[simp] theorem linProduct_val (a b : linSubmodule) :
+    (linProduct a b : Poly) = a.1 * b.1 := rfl
+
+def linProductSubmodule (U V : Submodule ℝ linSubmodule) :
+    Submodule ℝ quadSubmodule :=
+  Submodule.span ℝ (Set.range fun x : U × V => linProduct x.1.1 x.2.1)
+
+theorem linProduct_mem_linProductSubmodule
+    {U V : Submodule ℝ linSubmodule} (a : U) (b : V) :
+    linProduct a.1 b.1 ∈ linProductSubmodule U V := by
+  exact Submodule.subset_span ⟨(a, b), rfl⟩
+
+theorem linProductSubmodule_mono
+    {U₁ U₂ V₁ V₂ : Submodule ℝ linSubmodule}
+    (hU : U₁ ≤ U₂) (hV : V₁ ≤ V₂) :
+    linProductSubmodule U₁ V₁ ≤ linProductSubmodule U₂ V₂ := by
+  refine Submodule.span_le.mpr ?_
+  rintro q ⟨x, rfl⟩
+  exact linProduct_mem_linProductSubmodule
+    (⟨x.1.1, hU x.1.2⟩ : U₂) (⟨x.2.1, hV x.2.2⟩ : V₂)
+
 /-- Span of the seven quadratic coordinates of a rank-seven point. -/
 def spanU (u : RankSevenVec) : Submodule ℝ Poly :=
   Submodule.span ℝ (Set.range u)
