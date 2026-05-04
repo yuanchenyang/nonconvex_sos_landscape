@@ -223,6 +223,58 @@ theorem residual_eq_zero_of_rank_case_syzygy_certificates
       · exact hcase2 hrank2
       · exact hcase3 hrank3
 
+theorem residual_eq_zero_of_exists_negative_syzygy_certificate
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsocp : IsSOCP B p u)
+    (hcert :
+      residual p u ≠ 0 →
+        ∃ q : Poly, IsQuadratic q ∧
+          B (q^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q) :
+    residual p u = 0 := by
+  by_contra hres
+  rcases hcert hres with ⟨q, hq, hnegq, hcertq⟩
+  rcases hcertq with ⟨ι, hι, α, n, β, hnK, hsyzygy, hβ⟩
+  letI : Fintype ι := hι
+  exact false_of_syzygy_negative_curvature
+    (B := B) (p := p) (u := u) (α := α) (n := n) (β := β) (q := q)
+    hsocp hnK hq hsyzygy hβ hnegq
+
+theorem residual_eq_zero_of_rank_case_exists_negative_syzygy_certificate
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hcase :
+      residual p u ≠ 0 →
+        LinearMap.ker (relationPolyLin u) = ⊥ →
+          (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+            ∃ q : Poly, IsQuadratic q ∧
+              B (q^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q) ∧
+          (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+            ∃ q : Poly, IsQuadratic q ∧
+              B (q^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q) ∧
+          (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+            ∃ q : Poly, IsQuadratic q ∧
+              B (q^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q)) :
+    residual p u = 0 := by
+  refine residual_eq_zero_of_exists_negative_syzygy_certificate
+    (B := B) (p := p) (u := u) hsocp ?_
+  intro hres
+  rcases residual_eq_zero_or_relationPolyLin_ker_eq_bot
+      (B := B) hu hp hsocp with hzero | hker
+  · exact False.elim (hres hzero)
+  · rcases exists_negative_sos_summand_of_nonzero_residual
+        (B := B) hu hp hsocp.1 hres with ⟨q₀, hq₀, hnegq₀⟩
+    have hrank_cases :=
+      catalecticantMap_rank_eq_one_or_two_or_three
+        (B := B) (p := p) (u := u) hu hsocp.1 hker hq₀ hnegq₀
+    rcases hcase hres hker with ⟨hcase1, hcase2, hcase3⟩
+    rcases hrank_cases with hrank1 | hrank23
+    · exact hcase1 hrank1
+    · rcases hrank23 with hrank2 | hrank3
+      · exact hcase2 hrank2
+      · exact hcase3 hrank3
+
 theorem hasSyzygyCertificate_of_product_identity
     {ι : Type} [Fintype ι] {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

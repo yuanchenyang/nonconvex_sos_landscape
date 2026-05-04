@@ -986,6 +986,45 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Flexible negative-square reduction}
+
+\paragraph{Largest gap selected.}
+The previous rank-case reduction required a syzygy certificate for the exact
+negative SOS summand selected from \(p\).  The blueprint's rank-one and
+rank-two cases instead use that summand only to prove the existence of a
+negative pure square \(x^2\), and then build the syzygy certificate for
+\(x^2\).  The formal reduction therefore needed to allow the certified
+negative square to differ from the initial SOS summand.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{residual\_eq\_zero\_of\_exists\_negative\_syzygy\_certificate},
+\]
+which proves \(R=0\) from the existence, under \(R\neq0\), of any quadratic
+\(q\) with \(\lambda(q^2)<0\) and a
+\texttt{HasSyzygyCertificate} for \(q\).  Also added the rank-split version
+\[
+\texttt{residual\_eq\_zero\_of\_rank\_case\_exists\_negative\_syzygy\_certificate}.
+\]
+This theorem still uses the original negative SOS summand to prove the
+catalecticant rank is \(1\), \(2\), or \(3\), but each rank branch may now
+return a different certified negative square.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The formal reduction now matches the blueprint's rank-one and rank-two flow.
+The unresolved pieces are the rank-specific construction of a negative pure
+square and the structural low-rank support theorem that supplies the
+subspaces used by the product-incidence machinery.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: From product incidence to syzygy certificate}
 
 \paragraph{Largest gap selected.}
