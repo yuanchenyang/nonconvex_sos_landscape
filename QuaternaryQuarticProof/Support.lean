@@ -185,6 +185,23 @@ theorem exists_rank_one_exact_annihilator
     ⟨A, hAA₀, hAfin⟩
   exact ⟨A, hAA₀.trans hAann, hAfin⟩
 
+theorem exists_rank_one_exact_annihilator_complement
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 1) :
+    ∃ A W : Submodule ℝ linSubmodule,
+      A ≤ linearAnnihilator B p u ∧
+        IsCompl A W ∧
+          Module.finrank ℝ A = 3 ∧
+            Module.finrank ℝ W = 1 := by
+  rcases exists_rank_one_exact_annihilator
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, hAann, hAfin⟩
+  rcases exists_isCompl_finrank_add_eq (K := ℝ) (V := linSubmodule) A with
+    ⟨W, hAW, hsum⟩
+  refine ⟨A, W, hAann, hAW, hAfin, ?_⟩
+  have hlin : Module.finrank ℝ linSubmodule = 4 := finrank_linSubmodule_eq_four
+  omega
+
 theorem exists_rank_two_exact_annihilator
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupp : HasLinearAnnihilatorCodimAtMost B p u 2) :
@@ -194,6 +211,23 @@ theorem exists_rank_two_exact_annihilator
   rcases exists_submodule_le_finrank_eq_two A₀ hAdim with
     ⟨A, hAA₀, hAfin⟩
   exact ⟨A, hAA₀.trans hAann, hAfin⟩
+
+theorem exists_rank_two_exact_annihilator_complement
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 2) :
+    ∃ A W : Submodule ℝ linSubmodule,
+      A ≤ linearAnnihilator B p u ∧
+        IsCompl A W ∧
+          Module.finrank ℝ A = 2 ∧
+            Module.finrank ℝ W = 2 := by
+  rcases exists_rank_two_exact_annihilator
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, hAann, hAfin⟩
+  rcases exists_isCompl_finrank_add_eq (K := ℝ) (V := linSubmodule) A with
+    ⟨W, hAW, hsum⟩
+  refine ⟨A, W, hAann, hAW, hAfin, ?_⟩
+  have hlin : Module.finrank ℝ linSubmodule = 4 := finrank_linSubmodule_eq_four
+  omega
 
 theorem exists_rank_two_exact_annihilator_supportAmbient
     {B : DotForm} {p : Poly} {u : RankSevenVec}

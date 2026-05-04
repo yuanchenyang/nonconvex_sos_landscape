@@ -3426,4 +3426,40 @@ negative pure square.
 
 No Julia numerical claims were used in this round.
 
+\section*{Exact annihilator complements}
+
+\paragraph{Gap targeted.}
+The rank-one and rank-two normal-form arguments use a direct-sum support
+decomposition \(E=A\oplus W\), with exact dimensions for both sides.  Previous
+rounds extracted exact-dimensional annihilator subspaces \(A\), but did not
+package a complementary \(W\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_rank\_one\_exact\_annihilator\_complement}
+\]
+and
+\[
+\texttt{exists\_rank\_two\_exact\_annihilator\_complement}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  They extract \(A\le
+\operatorname{Ann}_1\), choose a complement \(W\), and prove the exact
+dimension pairs \((\dim A,\dim W)=(3,1)\) and \((2,2)\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The support decomposition is now available in exact-dimensional form; the
+remaining lower-rank work is the binary negative-square transport and the
+stronger product-space lower/equality statements needed for the selected
+ambient subspaces.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
