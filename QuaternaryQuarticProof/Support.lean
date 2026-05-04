@@ -225,6 +225,22 @@ theorem exists_rank_three_exact_annihilator
     ⟨A, hAA₀, hAfin⟩
   exact ⟨A, hAA₀.trans hAann, hAfin⟩
 
+theorem exists_rank_one_exact_annihilator_symSquare
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 1) :
+    ∃ A : Submodule ℝ linSubmodule,
+      A ≤ linearAnnihilator B p u ∧
+        Module.finrank ℝ A = 3 ∧
+          symSquareSubmodule A ≤ LinearMap.ker (catalecticantMap B p u) ∧
+            Module.finrank ℝ (symSquareSubmodule A) ≤ 6 := by
+  rcases exists_rank_one_exact_annihilator
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, hAann, hAfin⟩
+  exact ⟨A, hAann, hAfin,
+    symSquareSubmodule_le_ker_of_le_linearAnnihilator
+      (B := B) (p := p) (u := u) hAann,
+    finrank_symSquareSubmodule_le_six_of_finrank_eq_three hAfin⟩
+
 theorem exists_nonzero_mem_linearAnnihilator_of_rank_three_support
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupp : HasLinearAnnihilatorCodimAtMost B p u 3) :

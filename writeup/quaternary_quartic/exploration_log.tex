@@ -3384,4 +3384,46 @@ support data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one symmetric-square ambient extraction}
+
+\paragraph{Gap targeted.}
+The rank-one branch uses the second-stage ambient
+\(\operatorname{Sym}^2 A\), not the full \(xA+\operatorname{Sym}^2A\).  Once
+the support predicate gives a large annihilator, the proof needs an exact
+three-dimensional \(A\), kernel inclusion for \(\operatorname{Sym}^2A\), and
+the dimension upper bound \(\le6\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_rank\_one\_exact\_annihilator\_symSquare}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It extracts
+\(\dim A=3\) from rank-one support data and packages
+\[
+\texttt{symSquareSubmodule A <= ker(catalecticantMap B p u)}
+\]
+together with
+\[
+\dim(\texttt{symSquareSubmodule A})\le6.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+followed by
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-one branch still needs the matching lower bound/equality for
+\(\operatorname{Sym}^2A\), and the normal-form transport that supplies the
+negative pure square.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
