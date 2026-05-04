@@ -2610,4 +2610,49 @@ resulting binary linear form back through the quaternary support decomposition.
 
 No Julia numerical claims were used in this round.
 
+\section*{Preimage incidence with ambient dimension upper bounds}
+
+\paragraph{Gap targeted.}
+The rank-one and rank-two incidence arguments often produce an ambient
+quadratic subspace with a dimension upper bound before proving or using an
+exact equality.  The existing preimage nonzero lemmas required an exact
+\(\texttt{finrank W = wdim}\), which made future applications unnecessarily
+rigid.
+
+\paragraph{Lean progress.}
+Added upper-bound variants in
+\texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{linProductLeftPreimageOn\_ne\_bot\_of\_finrank\_le\_lt\_add}
+\]
+and
+\[
+\texttt{linProductLeftPreimageWithin\_ne\_bot\_of\_finrank\_le\_lt\_add}.
+\]
+Then added
+\[
+\texttt{hasPreimageProductSupportData\_of\_dimension\_le}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}, which stores the actual
+ambient dimension but allows callers to prove only an upper bound
+\(\dim W\le wdim\) together with \(wdim<sdim+adim\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+followed by
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The incidence framework is now less brittle, but the rank-one/rank-two cases
+still need concrete ambient subspaces and dimension bounds from the support
+decomposition and binary negative-square theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

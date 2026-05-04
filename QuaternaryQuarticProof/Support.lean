@@ -295,6 +295,29 @@ theorem hasPreimageProductSupportData_of_dimension
   exact linProductLeftPreimageWithin_ne_bot_of_finrank_lt_add
     hx hSW hrangeW hSdim hAdim hWdim hgt
 
+theorem hasPreimageProductSupportData_of_dimension_le
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {S W : Submodule ℝ quadSubmodule} {sdim adim wdim : ℕ}
+    (hx : (x : Poly) ≠ 0)
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hS_L : S ≤ spanUQuad hu)
+    (hSW : S ≤ W)
+    (hrangeW : LinearMap.range (linProductLeftMapOn x A) ≤ W)
+    (hMAW : linProductSubmodule (linProductLeftPreimageWithin x A S) A ≤ W)
+    (hSdim : sdim ≤ Module.finrank ℝ S)
+    (hAdim : adim ≤ Module.finrank ℝ A)
+    (hWdim : Module.finrank ℝ W ≤ wdim)
+    (hgt : wdim < sdim + adim)
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    HasPreimageProductSupportData B p u hu := by
+  refine ⟨x, A, S, W, sdim, adim, Module.finrank ℝ W,
+    hAann, hS_L, hSW, hMAW, ?_, hSdim, hAdim, rfl, ?_, hneg⟩
+  · exact linProductLeftPreimageWithin_ne_bot_of_finrank_le_lt_add
+      hx hSW hrangeW hSdim hAdim hWdim hgt
+  · exact lt_of_le_of_lt hWdim hgt
+
 theorem hasPreimageProductSupportData_of_rank_two_dimensions
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

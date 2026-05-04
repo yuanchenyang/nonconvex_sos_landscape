@@ -641,6 +641,37 @@ theorem linProductLeftPreimageWithin_ne_bot_of_finrank_lt_add
     (linProductLeftPreimageOn_ne_bot_of_finrank_lt_add
       ha hPW hrangeW hPdim hAdim hWdim hgt)
 
+theorem linProductLeftPreimageOn_ne_bot_of_finrank_le_lt_add
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {P W : Submodule ℝ quadSubmodule}
+    (ha : (a : Poly) ≠ 0)
+    (hPW : P ≤ W)
+    (hrangeW : LinearMap.range (linProductLeftMapOn a A) ≤ W)
+    {pdim adim wdim : ℕ}
+    (hPdim : pdim ≤ Module.finrank ℝ P)
+    (hAdim : adim ≤ Module.finrank ℝ A)
+    (hWdim : Module.finrank ℝ W ≤ wdim)
+    (hgt : wdim < pdim + adim) :
+    linProductLeftPreimageOn a A P ≠ ⊥ :=
+  linProductLeftPreimageOn_ne_bot_of_finrank_lt_add
+    ha hPW hrangeW hPdim hAdim rfl (lt_of_le_of_lt hWdim hgt)
+
+theorem linProductLeftPreimageWithin_ne_bot_of_finrank_le_lt_add
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {P W : Submodule ℝ quadSubmodule}
+    (ha : (a : Poly) ≠ 0)
+    (hPW : P ≤ W)
+    (hrangeW : LinearMap.range (linProductLeftMapOn a A) ≤ W)
+    {pdim adim wdim : ℕ}
+    (hPdim : pdim ≤ Module.finrank ℝ P)
+    (hAdim : adim ≤ Module.finrank ℝ A)
+    (hWdim : Module.finrank ℝ W ≤ wdim)
+    (hgt : wdim < pdim + adim) :
+    linProductLeftPreimageWithin a A P ≠ ⊥ :=
+  linProductLeftPreimageWithin_ne_bot_of_on_ne_bot
+    (linProductLeftPreimageOn_ne_bot_of_finrank_le_lt_add
+      ha hPW hrangeW hPdim hAdim hWdim hgt)
+
 theorem range_linProductLeftMapOn_le_linProductSubmodule
     {M A : Submodule ℝ linSubmodule} (m : M) :
     LinearMap.range (linProductLeftMapOn m.1 A) ≤ linProductSubmodule M A := by
