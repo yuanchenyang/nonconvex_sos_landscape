@@ -3728,4 +3728,49 @@ negative pure square.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one product-support certificate interface}
+
+\paragraph{Gap targeted.}
+The blueprint's rank-one case uses two incidence spaces,
+\[
+M=\{a\in A: xa\in L\},\qquad N=L\cap\Sym^2A,
+\]
+then finds a nonzero element of \(N\cap MA\).  This is not the same shape as
+the rank-two preimage interface, so the formal proof needed a rank-one-specific
+support-data bridge.
+
+\paragraph{Lean progress.}
+Added \(\texttt{HasRankOneProductSupportData}\) and
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_rank\_one\_productSupportData}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  The new theorem proves the
+negative syzygy certificate from the rank-one dimension package:
+\(\dim N\ge4\), \(\dim A\ge3\), \(\dim\Sym^2A=6\), \(M\ne0\), and
+\(MA\subseteq\Sym^2A\).  It uses the existing Grassmann/product intersection
+lemma to choose \(0\ne s\in N\cap MA\), then feeds that product decomposition
+to \(\texttt{hasSyzygyCertificate\_of\_mem\_linProductSubmodule}\).
+
+Added \(\texttt{HasRefinedRankCaseSupportData}\) and its reducers to
+\texttt{QuaternaryQuarticProof/Basic.lean}.  This root-level bridge uses the
+new rank-one product data, the existing rank-two preimage data, and the
+existing rank-three annihilator data to prove residual vanishing.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Support}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+For rank one, the formal certificate step is now available once the normal
+form supplies the subspaces \(A,M,N\), the dimension bounds
+\(\dim N\ge4\), \(\dim\Sym^2A=6\), and the negative pure square.  The remaining
+work is the normal-form transport and the exact polynomial dimension facts.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

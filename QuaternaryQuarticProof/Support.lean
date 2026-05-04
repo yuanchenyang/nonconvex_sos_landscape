@@ -751,6 +751,46 @@ theorem exists_negative_syzygyCertificate_of_rank_two_support
       (B := B) (p := p) (u := u) (hu := hu)
       hfocp hrelker hrank hsupp hx hUdim_ge hneg)
 
+def HasRankOneProductSupportData
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (hu : IsAdmissiblePoint u) : Prop :=
+  ∃ (x : linSubmodule) (A M : Submodule ℝ linSubmodule)
+      (N : Submodule ℝ quadSubmodule),
+    A ≤ linearAnnihilator B p u ∧
+      (∀ m : M, linProduct x m.1 ∈ spanUQuad hu) ∧
+        N ≤ spanUQuad hu ∧
+          N ≤ symSquareSubmodule A ∧
+            linProductSubmodule M A ≤ symSquareSubmodule A ∧
+              M ≠ ⊥ ∧
+                4 ≤ Module.finrank ℝ N ∧
+                  3 ≤ Module.finrank ℝ A ∧
+                    Module.finrank ℝ (symSquareSubmodule A) = 6 ∧
+                      B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0
+
+theorem exists_negative_syzygyCertificate_of_rank_one_productSupportData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankOneProductSupportData B p u hu) :
+    ∃ q : Poly, IsQuadratic q ∧
+      B (q^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q := by
+  rcases hdata with
+    ⟨x, A, M, N, hAann, hxM_L, hN_L, hN_sym, hMA_sym, hMne,
+      hNdim, hAdim, hSymdim, hneg⟩
+  rcases exists_mem_inf_linProductSubmodule_ne_zero_of_finrank_lt_add
+      (N := N) (W := symSquareSubmodule A) (M := M) (A := A)
+      hN_sym hMA_sym hMne hNdim hAdim hSymdim (by norm_num) with
+    ⟨s, hsN, hsMA, hsne⟩
+  refine ⟨(linProduct x x : quadSubmodule).1, (linProduct x x : quadSubmodule).2,
+    hneg, ?_⟩
+  exact hasSyzygyCertificate_of_mem_linProductSubmodule
+    (B := B) (p := p) (u := u) (hu := hu)
+    (x := x) (M := M) (A := A) (s := s)
+    hxM_L
+    (fun a => linProduct_comm_mem_catalecticantKernel_of_le_linearAnnihilator hAann x a)
+    (hN_L hsN)
+    (fun hszero => hsne (Subtype.ext hszero))
+    hsMA
+
 theorem hasPreimageProductSupportData_of_rank_one_ambient_bounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
