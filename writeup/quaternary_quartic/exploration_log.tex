@@ -1537,6 +1537,47 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Named rank-case certificate obligation}
+
+\paragraph{Largest gap selected.}
+The proof had a rank-split theorem accepting a long anonymous hypothesis.
+To make the remaining global gap explicit, Lean needed a named predicate for
+the structural rank-case certificate family.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof/Basic.lean}, defined
+\[
+\texttt{HasRankCaseNegativeCertificateFamily}\ B\ p\ u.
+\]
+It states that under \(R\neq0\) and full rank of the seven factor quadratics,
+each catalecticant rank \(1,2,3\) returns a negative quadratic square together
+with a \texttt{HasSyzygyCertificate}.  Proved
+\[
+\texttt{residual\_eq\_zero\_of\_hasRankCaseNegativeCertificateFamily}
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_rankCaseNegativeCertificates}.
+\]
+The latter shows that a uniform proof of this named certificate family implies
+the immutable target
+\(\texttt{QuaternaryQuarticRankSevenNoSpuriousSOCP}\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The final theorem is now reduced to a single named structural obligation.
+The remaining work is to prove \(\texttt{HasRankCaseNegativeCertificateFamily}\)
+from the low-rank support theorem, the binary negative-pure-square theorem,
+and the rank-specific subspace instantiations already packaged in
+\texttt{Syzygy.lean}.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Linear annihilator to polynomial kernel}
 
 \paragraph{Largest gap selected.}
