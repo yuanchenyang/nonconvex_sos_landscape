@@ -435,6 +435,33 @@ theorem hasPreimageProductSupportData_of_rank_two_ambient_bounds
     (x := x) (A := A) (S := spanUQuad hu ⊓ U) (W := U)
     hx hAann inf_le_left inf_le_right hrangeU hMAU hSdim hAdim hUdim_le hneg
 
+theorem hasPreimageProductSupportData_of_rank_two_supportAmbient
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2)
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hUker : supportAmbient x A ≤ LinearMap.ker (catalecticantMap B p u))
+    (hUdim_ge : 5 ≤ Module.finrank ℝ (supportAmbient x A))
+    (hrangeDim : Module.finrank ℝ (LinearMap.range (linProductLeftMapOn x A)) ≤ 2)
+    (hsymDim : Module.finrank ℝ (symSquareSubmodule A) ≤ 3)
+    (hAdim : 2 ≤ Module.finrank ℝ A)
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    HasPreimageProductSupportData B p u hu := by
+  exact hasPreimageProductSupportData_of_rank_two_ambient_bounds
+    (B := B) (p := p) (u := u) (hu := hu)
+    hfocp hrelker hrank
+    (x := x) (A := A) (U := supportAmbient x A)
+    hx hAann hUker hUdim_ge
+    (finrank_supportAmbient_le_five (x := x) (A := A) hrangeDim hsymDim)
+    (range_linProductLeftMapOn_le_supportAmbient x A)
+    (linProductSubmodule_leftPreimageWithin_le_supportAmbient
+      x A (spanUQuad hu ⊓ supportAmbient x A))
+    hAdim hneg
+
 theorem hasPreimageProductSupportData_of_rank_one_ambient_bounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

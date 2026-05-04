@@ -2986,4 +2986,45 @@ summand's kernel inclusion and dimension bound from the support decomposition.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two support-ambient data wrapper}
+
+\paragraph{Gap targeted.}
+After naming \(\texttt{supportAmbient x A}\), the rank-two support-data
+constructor still required explicit range and product inclusions.  Those
+inclusions are automatic from the definition of the ambient.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_supportAmbient}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It specializes the rank-two
+ambient-bound constructor to
+\[
+U=\texttt{supportAmbient x A},
+\]
+deriving the required range inclusion and the
+\(\texttt{linProductSubmodule}\) inclusion from the ambient's two summands.
+The caller supplies the kernel inclusion, the lower bound \(\dim U\ge5\), the
+upper bounds on the fixed-linear range and symmetric-square summand, and the
+negative square.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+followed by
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two branch still needs the concrete support theorem and binary
+negative-square transport to produce \(x,A\), the kernel inclusion for
+\(\texttt{supportAmbient x A}\), and the required dimension bounds.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
