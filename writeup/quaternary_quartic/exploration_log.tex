@@ -2949,4 +2949,41 @@ The remaining ambient-dimension input is an upper bound on
 
 No Julia numerical claims were used in this round.
 
+\section*{Support ambient inclusion lemmas}
+
+\paragraph{Gap targeted.}
+The preimage support-data constructors require product inclusions of the form
+\(\texttt{linProductSubmodule M A <= W}\).  When \(W\) is the named support
+ambient \(xA+\operatorname{Sym}^2A\), these inclusions should follow
+automatically from \(M\le A\).
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{linProductSubmodule\_leftPreimageWithin\_le\_symSquare}
+\]
+and
+\[
+\texttt{linProductSubmodule\_leftPreimageWithin\_le\_supportAmbient}.
+\]
+Also added
+\[
+\texttt{supportAmbient\_le\_ker\_of\_range\_and\_symSquare},
+\]
+which proves the whole ambient lies in the catalecticant kernel when both
+summands do.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The remaining ambient construction work is to prove the symmetric-square
+summand's kernel inclusion and dimension bound from the support decomposition.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
