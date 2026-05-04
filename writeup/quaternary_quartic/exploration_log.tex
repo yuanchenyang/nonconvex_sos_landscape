@@ -3773,4 +3773,44 @@ work is the normal-form transport and the exact polynomial dimension facts.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one product data from annihilator normal form}
+
+\paragraph{Gap targeted.}
+After adding the rank-one product-support certificate interface, the next gap
+was constructing its \(M\) and \(N\) spaces from the normal-form components.
+The blueprint obtains \(M\ne0\) from \(L\cap xA\) inside the rank-one kernel
+and obtains \(\dim N\ge4\) from \(L\cap\Sym^2A\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankOneProductSupportData\_of\_annihilator\_symSquare}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  Assuming rank one, an
+annihilator subspace \(A\), \(\dim A=3\), exact
+\(\dim\Sym^2A=6\), and a negative pure square for \(x\), it constructs
+\(\texttt{HasRankOneProductSupportData}\).  The proof sets
+\[
+M=\texttt{linProductLeftPreimageWithin}\ x\ A\ L,\qquad
+N=L\cap\Sym^2A,
+\]
+uses the rank-one kernel dimension \(9\) to prove \(M\ne0\), and uses the
+existing Grassmann lemma
+\(\texttt{four\_le\_finrank\_spanUQuad\_inf\_of\_rank\_one\_ambient}\) to prove
+\(\dim N\ge4\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-one case is now reduced to the normal-form obligations: choose the
+three-dimensional annihilator/support subspace \(A\), prove
+\(\dim\Sym^2A=6\), and produce \(x\) with \(\lambda(x^4)<0\).
+
+No Julia numerical claims were used in this round.
+
 \end{document}

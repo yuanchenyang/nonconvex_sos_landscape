@@ -791,6 +791,47 @@ theorem exists_negative_syzygyCertificate_of_rank_one_productSupportData
     (fun hszero => hsne (Subtype.ext hszero))
     hsMA
 
+theorem hasRankOneProductSupportData_of_annihilator_symSquare
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1)
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hAdim : Module.finrank ℝ A = 3)
+    (hSymdim : Module.finrank ℝ (symSquareSubmodule A) = 6)
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    HasRankOneProductSupportData B p u hu := by
+  let M := linProductLeftPreimageWithin x A (spanUQuad hu)
+  let N := spanUQuad hu ⊓ symSquareSubmodule A
+  have hMne : M ≠ ⊥ := by
+    refine linProductLeftPreimageWithin_ne_bot_of_finrank_le_lt_add
+      (a := x) (A := A) (P := spanUQuad hu)
+      (W := LinearMap.ker (catalecticantMap B p u))
+      (pdim := 7) (adim := 3) (wdim := 9) hx ?_ ?_ ?_ ?_ ?_ ?_
+    · exact spanUQuad_le_ker_catalecticantMap hu hfocp
+    · exact range_linProductLeftMapOn_le_ker_of_le_linearAnnihilator
+        (B := B) (p := p) (u := u) (x := x) hAann
+    · rw [finrank_spanUQuad_eq_seven_of_relationPolyLin_ker_eq_bot hu hrelker]
+    · omega
+    · rw [finrank_ker_catalecticantMap_eq_nine_of_rank_one hrank]
+    · norm_num
+  have hNdim : 4 ≤ Module.finrank ℝ N := by
+    exact four_le_finrank_spanUQuad_inf_of_rank_one_ambient
+      (B := B) (p := p) (u := u) hu hfocp hrelker hrank
+      (U := symSquareSubmodule A)
+      (symSquareSubmodule_le_ker_of_le_linearAnnihilator
+        (B := B) (p := p) (u := u) hAann)
+      (by omega)
+  refine ⟨x, A, M, N, hAann, ?_, inf_le_left, inf_le_right, ?_,
+    hMne, hNdim, ?_, hSymdim, hneg⟩
+  · intro m
+    exact linProduct_mem_of_mem_linProductLeftPreimageWithin m.2
+  · exact linProductSubmodule_leftPreimageWithin_le_symSquare x A (spanUQuad hu)
+  · omega
+
 theorem hasPreimageProductSupportData_of_rank_one_ambient_bounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
