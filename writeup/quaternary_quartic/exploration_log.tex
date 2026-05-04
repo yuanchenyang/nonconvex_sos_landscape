@@ -383,4 +383,56 @@ low-rank case work remains the main mathematical gap.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Syzygy direction algebra}
+
+\paragraph{Largest gap selected.}
+The low-rank cases in the blueprint all produce product identities of the form
+\[
+\sum_j m_jn_j=sq.
+\]
+To use these identities in Lean, the proof needs a reusable construction of
+the corresponding rank-seven direction and a formal computation of its
+\(A_u\)-image.
+
+\paragraph{Lean progress.}
+Added \texttt{QuaternaryQuarticProof/Syzygy.lean} and imported it through the
+proof root chain.  The file defines
+\[
+\texttt{syzygyDirection}\ \alpha\ n\ \beta\ q
+\]
+with coordinates
+\[
+v_i=\sum_j \alpha_{j,i}n_j-\beta_i q.
+\]
+It proves:
+\[
+\texttt{syzygyDirection\_admissible}
+\]
+when the \(n_j\) and \(q\) are quadratic, and
+\[
+\texttt{A\_syzygyDirection}.
+\]
+The latter is the formal identity
+\[
+A_u(v)
+=\sum_j \texttt{relationPoly}\ u\ \alpha_j\cdot n_j
+  -\texttt{relationPoly}\ u\ \beta\cdot q.
+\]
+The corollary \texttt{A\_syzygyDirection\_eq\_zero} closes the \(A_u(v)=0\)
+goal from the product identity.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The next syzygy step is the residual-functional computation:
+under \(n_j\in K_\lambda\), prove that all terms involving the \(n_j\)'s vanish
+and only \(\sum_i\beta_i^2 B(q^2,R)\) remains.  This is the remaining generic
+negative-curvature mechanism before the rank \(1,2,3\) structural cases.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

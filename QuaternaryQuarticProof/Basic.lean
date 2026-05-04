@@ -1,4 +1,4 @@
-import QuaternaryQuarticProof.Catalecticant
+import QuaternaryQuarticProof.Syzygy
 
 set_option autoImplicit false
 set_option warningAsError true
