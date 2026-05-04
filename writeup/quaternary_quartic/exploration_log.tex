@@ -3495,4 +3495,40 @@ support-ambient lower bound for the selected pure-square direction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two support to negative certificate}
+
+\paragraph{Gap targeted.}
+The rank-two support bridge produced
+\(\texttt{HasPreimageProductSupportData}\), but the rank-case reducer consumes
+an actual negative syzygy certificate.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_rank\_two\_support}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It composes the rank-two
+support-data constructor with
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_preimageProductSupportData}.
+\]
+Thus the rank-two branch can now go directly from the support predicate, a
+negative pure square \(x^2\), the nonzero condition on \(x\), and the remaining
+ambient lower bound to the negative certificate required by the SOCP
+contradiction.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two certificate branch is now structurally packaged.  The unresolved
+inputs are the binary negative-square theorem and the ambient lower bound for
+the selected support direction.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -657,6 +657,29 @@ theorem hasPreimageProductSupportData_of_rank_two_support
     (x := x) (A := A)
     hx hAann (hUdim_ge A hAann hAfin) hAfin hneg
 
+theorem exists_negative_syzygyCertificate_of_rank_two_support
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2)
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 2)
+    {x : linSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hUdim_ge :
+      ∀ A : Submodule ℝ linSubmodule,
+        A ≤ linearAnnihilator B p u →
+          Module.finrank ℝ A = 2 →
+            5 ≤ Module.finrank ℝ (supportAmbient x A))
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    ∃ q : Poly, IsQuadratic q ∧
+      B (q^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q :=
+  exists_negative_syzygyCertificate_of_preimageProductSupportData
+    (B := B) (p := p) (u := u) (hu := hu)
+    (hasPreimageProductSupportData_of_rank_two_support
+      (B := B) (p := p) (u := u) (hu := hu)
+      hfocp hrelker hrank hsupp hx hUdim_ge hneg)
+
 theorem hasPreimageProductSupportData_of_rank_one_ambient_bounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
