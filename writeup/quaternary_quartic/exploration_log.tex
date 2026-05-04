@@ -3638,4 +3638,53 @@ by the certificate lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two ambient lower-bound criterion}
+
+\paragraph{Gap targeted.}
+The rank-two certificate constructor still required the lower bound
+\[
+5 \le \dim(\texttt{supportAmbient}\ x\ A),
+\]
+which is the formal version of the blueprint's direct-sum calculation
+\(\dim(xA\oplus\Sym^2 A)=2+3\).  The previous interface left this as a
+monolithic assumption.
+
+\paragraph{Lean progress.}
+Added \(\texttt{finrank\_supportAmbient\_eq\_add\_of\_disjoint}\) and the
+rank-two specialization
+\[
+\texttt{five\_le\_finrank\_supportAmbient\_of\_rank\_two\_components}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  The latter proves the
+needed lower bound from three component facts: \(x\ne0\), \(\dim A=2\), exact
+\(\dim\Sym^2 A=3\), and
+\[
+\texttt{range (linProductLeftMapOn x A) }\cap\texttt{ symSquareSubmodule A}
+=0.
+\]
+Added
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_supportAmbient\_of\_components}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}, so the rank-two branch can
+now consume these component facts directly instead of an opaque ambient lower
+bound.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+For rank two, the ambient-dimension gap is reduced to two algebraic component
+facts: exact dimension of \(\Sym^2 A\) for a two-dimensional linear subspace
+and disjointness of \(xA\) from \(\Sym^2A\) when \(x\notin A\).  The binary
+normal-form transport must still supply the negative pure square.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

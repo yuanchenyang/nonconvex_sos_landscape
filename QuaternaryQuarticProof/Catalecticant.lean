@@ -1310,6 +1310,40 @@ theorem supportAmbient_le_ker_of_le_linearAnnihilator
     (symSquareSubmodule_le_ker_of_le_linearAnnihilator
       (B := B) (p := p) (u := u) hA)
 
+theorem finrank_supportAmbient_eq_add_of_disjoint
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hdisj :
+      LinearMap.range (linProductLeftMapOn x A) ⊓ symSquareSubmodule A = ⊥) :
+    Module.finrank ℝ (supportAmbient x A) =
+      Module.finrank ℝ (LinearMap.range (linProductLeftMapOn x A)) +
+        Module.finrank ℝ (symSquareSubmodule A) := by
+  have hgrass :=
+    Submodule.finrank_sup_add_finrank_inf_eq
+      (LinearMap.range (linProductLeftMapOn x A)) (symSquareSubmodule A)
+  rw [hdisj] at hgrass
+  simpa [supportAmbient] using hgrass
+
+theorem finrank_supportAmbient_eq_five_of_rank_two_components
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hA : Module.finrank ℝ A = 2)
+    (hsym : Module.finrank ℝ (symSquareSubmodule A) = 3)
+    (hdisj :
+      LinearMap.range (linProductLeftMapOn x A) ⊓ symSquareSubmodule A = ⊥) :
+    Module.finrank ℝ (supportAmbient x A) = 5 := by
+  rw [finrank_supportAmbient_eq_add_of_disjoint hdisj]
+  rw [finrank_range_linProductLeftMapOn_eq hx, hA, hsym]
+
+theorem five_le_finrank_supportAmbient_of_rank_two_components
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hA : Module.finrank ℝ A = 2)
+    (hsym : Module.finrank ℝ (symSquareSubmodule A) = 3)
+    (hdisj :
+      LinearMap.range (linProductLeftMapOn x A) ⊓ symSquareSubmodule A = ⊥) :
+    5 ≤ Module.finrank ℝ (supportAmbient x A) := by
+  rw [finrank_supportAmbient_eq_five_of_rank_two_components hx hA hsym hdisj]
+
 theorem linProduct_mem_catalecticantKernel_of_mem_linearAnnihilator
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {a : linSubmodule}
