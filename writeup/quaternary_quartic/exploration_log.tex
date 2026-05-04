@@ -3963,4 +3963,38 @@ geometric component facts for the chosen complement.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one binary normal form to product data}
+
+\paragraph{Gap targeted.}
+The rank-one product-data constructor still expected a concrete linear form
+\(x\) with negative pure square.  The binary interface can produce such a
+linear form from a low-rank normal form plus the coefficient-evaluation
+identity.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankOneProductSupportData\_of\_binaryNormalForm}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It composes
+\(\texttt{exists\_negative\_pure\_square\_of\_binaryLowRankNormalForm}\) with
+\(\texttt{hasRankOneProductSupportData\_of\_annihilator\_symSquare}\).  As in
+the rank-two bridge, the selected support-plane direction is proved nonzero
+from the strict negative value.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-one and rank-two branches now both consume the same binary
+normal-form/evaluation interface.  The remaining proof work is concentrated in
+deriving that interface from the catalecticant rank cases and proving the
+polynomial component facts for \(\Sym^2 A\) and the rank-two direct sum.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

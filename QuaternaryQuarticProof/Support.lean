@@ -870,6 +870,39 @@ theorem hasRankOneProductSupportData_of_annihilator_symSquare
   · exact linProductSubmodule_leftPreimageWithin_le_symSquare x A (spanUQuad hu)
   · omega
 
+theorem hasRankOneProductSupportData_of_binaryNormalForm
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1)
+    {A : Submodule ℝ linSubmodule} {x y : linSubmodule}
+    {a b c d e : ℝ}
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hAdim : Module.finrank ℝ A = 3)
+    (hSymdim : Module.finrank ℝ (symSquareSubmodule A) = 6)
+    (hform : HasBinaryLowRankNegativeNormalForm a b c d e)
+    (heval : ∀ X Y : ℝ,
+      B ((linProduct (X • x + Y • y) (X • x + Y • y) : quadSubmodule).1^2)
+          (residual p u) =
+        binaryQuarticEval a b c d e X Y) :
+    HasRankOneProductSupportData B p u hu := by
+  rcases exists_negative_pure_square_of_binaryLowRankNormalForm
+      (B := B) (p := p) (u := u)
+      (x := x) (y := y) hform heval with
+    ⟨z, _hzspan, hneg⟩
+  have hz : (z : Poly) ≠ 0 := by
+    intro hzero
+    have hval_zero :
+        B ((linProduct z z : quadSubmodule).1^2) (residual p u) = 0 := by
+      simp [linProduct, hzero]
+    linarith
+  exact hasRankOneProductSupportData_of_annihilator_symSquare
+    (B := B) (p := p) (u := u) (hu := hu)
+    hfocp hrelker hrank
+    (x := z) (A := A)
+    hz hAann hAdim hSymdim hneg
+
 theorem hasPreimageProductSupportData_of_rank_one_ambient_bounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
