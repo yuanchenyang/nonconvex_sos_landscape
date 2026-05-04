@@ -24,6 +24,36 @@ def HasRankCaseNegativeCertificateFamily
         ∃ q : Poly, IsQuadratic q ∧
           B (q^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q)
 
+def HasRankCaseSupportData
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (hu : IsAdmissiblePoint u) : Prop :=
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+    HasPreimageProductSupportData B p u hu) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    HasPreimageProductSupportData B p u hu) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+    HasRankThreeAnnihilatorSupportData B p u)
+
+theorem hasRankCaseNegativeCertificateFamily_of_supportData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hdata : HasRankCaseSupportData B p u hu) :
+    HasRankCaseNegativeCertificateFamily B p u := by
+  intro _hres hker
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    exact exists_negative_syzygyCertificate_of_preimageProductSupportData
+      (B := B) (p := p) (u := u) (hu := hu) (hdata1 hrank1)
+  constructor
+  · intro hrank2
+    exact exists_negative_syzygyCertificate_of_preimageProductSupportData
+      (B := B) (p := p) (u := u) (hu := hu) (hdata2 hrank2)
+  · intro hrank3
+    exact exists_negative_syzygyCertificate_of_rank_three_supportData
+      (B := B) (p := p) (u := u) hu hfocp hker hrank3 (hdata3 hrank3)
+
 theorem residual_eq_zero_of_hasRankCaseNegativeCertificateFamily
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -33,6 +63,17 @@ theorem residual_eq_zero_of_hasRankCaseNegativeCertificateFamily
     residual p u = 0 :=
   residual_eq_zero_of_rank_case_exists_negative_syzygy_certificate
     (B := B) hu hp hsocp hcert
+
+theorem residual_eq_zero_of_rankCaseSupportData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata : HasRankCaseSupportData B p u hu) :
+    residual p u = 0 :=
+  residual_eq_zero_of_hasRankCaseNegativeCertificateFamily
+    (B := B) hu hp hsocp
+    (hasRankCaseNegativeCertificateFamily_of_supportData hu hsocp.1 hdata)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseNegativeCertificates
     (hcert :

@@ -1537,6 +1537,44 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Rank-case support data to certificate family}
+
+\paragraph{Largest gap selected.}
+The rank-one/rank-two and rank-three support-data predicates were connected
+to certificates separately.  The proof still needed one combined bridge from
+all branch support data to the named global certificate-family obligation.
+
+\paragraph{Lean progress.}
+In \texttt{Basic.lean}, defined
+\[
+\texttt{HasRankCaseSupportData}\ B\ p\ u\ hu,
+\]
+which provides \texttt{HasPreimageProductSupportData} in ranks \(1\) and
+\(2\), and \texttt{HasRankThreeAnnihilatorSupportData} in rank \(3\).  Proved
+\[
+\texttt{hasRankCaseNegativeCertificateFamily\_of\_supportData}
+\]
+and
+\[
+\texttt{residual\_eq\_zero\_of\_rankCaseSupportData}.
+\]
+Thus the main theorem is now conditionally reduced to producing
+\texttt{HasRankCaseSupportData} in the contradiction setting.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The branch endpoints are now uniformly connected to the global certificate
+family.  The remaining mathematical work is the construction of those branch
+support data from the low-rank support theorem and binary negative-pure-square
+theorem.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Preimage-product support data predicate}
 
 \paragraph{Largest gap selected.}
