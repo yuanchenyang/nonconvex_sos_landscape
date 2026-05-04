@@ -1038,6 +1038,16 @@ theorem linProduct_mem_catalecticantKernel_of_le_linearAnnihilator
     (linProduct a.1 e : quadSubmodule).1 ∈ catalecticantKernel B p u :=
   linProduct_mem_catalecticantKernel_of_mem_linearAnnihilator (hA a.2) e
 
+theorem linProduct_mem_catalecticantKernel_of_product_le_ker
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {A : Submodule ℝ linSubmodule}
+    (hAE : linProductSubmodule A ⊤ ≤ LinearMap.ker (catalecticantMap B p u))
+    (a : A) (e : linSubmodule) :
+    (linProduct a.1 e : quadSubmodule).1 ∈ catalecticantKernel B p u := by
+  exact mem_ker_catalecticantMap_iff.mp
+    (hAE (linProduct_mem_linProductSubmodule a
+      (⟨e, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))))
+
 theorem linProduct_comm_mem_catalecticantKernel_of_mem_linearAnnihilator
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {a : linSubmodule}
@@ -1054,6 +1064,15 @@ theorem linProduct_comm_mem_catalecticantKernel_of_le_linearAnnihilator
     (e : linSubmodule) (a : A) :
     (linProduct e a.1 : quadSubmodule).1 ∈ catalecticantKernel B p u :=
   linProduct_comm_mem_catalecticantKernel_of_mem_linearAnnihilator (hA a.2) e
+
+theorem linProduct_comm_mem_catalecticantKernel_of_product_le_ker
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {A : Submodule ℝ linSubmodule}
+    (hAE : linProductSubmodule A ⊤ ≤ LinearMap.ker (catalecticantMap B p u))
+    (e : linSubmodule) (a : A) :
+    (linProduct e a.1 : quadSubmodule).1 ∈ catalecticantKernel B p u := by
+  rw [linProduct_comm]
+  exact linProduct_mem_catalecticantKernel_of_product_le_ker hAE a e
 
 theorem catalecticantMap_rank_le_three_of_relationPolyLin_ker_eq_bot
     {B : DotForm} {p : Poly} {u : RankSevenVec}

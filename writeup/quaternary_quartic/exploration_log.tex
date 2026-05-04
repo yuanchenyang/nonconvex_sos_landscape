@@ -2510,4 +2510,36 @@ need once that theorem is available.
 
 No Julia numerical claims were used in this round.
 
+\section*{Pointwise kernel membership from product support}
+
+\paragraph{Gap targeted.}
+The support extraction now provides the submodule-level inclusion
+\(\texttt{linProductSubmodule A top <= ker(catalecticantMap)}\).  Several
+syzygy constructions, however, consume the pointwise polynomial predicate
+\(\texttt{catalecticantKernel}\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{linProduct\_mem\_catalecticantKernel\_of\_product\_le\_ker}
+\]
+and its commuted form to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.
+These lemmas turn the \(AE\subseteq K\) submodule inclusion into statements
+that each individual product \(ae\) lies in the polynomial catalecticant
+kernel.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-one and rank-two incidence constructions still need to thread the
+support decomposition through the preimage/intersection machinery.  This bridge
+removes one translation step between support data and syzygy input.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
