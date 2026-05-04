@@ -845,6 +845,15 @@ theorem finrank_supportAmbient_le_nine
     (x := x) (A := A) (m := 3) (n := 6) (c := 9)
     hrange hsym (by norm_num)
 
+theorem finrank_supportAmbient_le_nine_of_finrank_eq_three
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hA : Module.finrank ℝ A = 3) :
+    Module.finrank ℝ (supportAmbient x A) ≤ 9 :=
+  finrank_supportAmbient_le_nine
+    (x := x) (A := A)
+    (finrank_range_linProductLeftMapOn_le_three (a := x) (A := A) (by omega))
+    (finrank_symSquareSubmodule_le_six_of_finrank_eq_three hA)
+
 theorem linProductSubmodule_leftPreimageWithin_le_symSquare
     (x : linSubmodule) (A : Submodule ℝ linSubmodule)
     (P : Submodule ℝ quadSubmodule) :

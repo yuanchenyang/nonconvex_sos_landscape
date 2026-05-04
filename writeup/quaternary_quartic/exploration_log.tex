@@ -3244,4 +3244,35 @@ forms.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one support ambient upper bound}
+
+\paragraph{Gap targeted.}
+The rank-one normal-form branch uses the ambient \(xA+\operatorname{Sym}^2 A\)
+inside a nine-dimensional catalecticant kernel.  After proving
+\(\dim\operatorname{Sym}^2 A\le6\) for \(\dim A=3\), the corresponding ambient
+upper bound should be packaged.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{finrank\_supportAmbient\_le\_nine\_of\_finrank\_eq\_three}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  It combines the
+fixed-linear range bound \(\dim(xA)\le3\) with the symmetric-square bound
+\(\dim\operatorname{Sym}^2 A\le6\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-one branch still needs its exact normal-form decomposition and
+negative-square transport.  The ambient dimension bookkeeping is now available
+for the natural \(xA+\operatorname{Sym}^2A\) space.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
