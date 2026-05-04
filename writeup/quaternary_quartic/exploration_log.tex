@@ -905,4 +905,41 @@ identity data.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Affine-linear submodule formalized}
+
+\paragraph{Largest gap selected.}
+The low-rank support theorem in the blueprint is stated on the
+four-dimensional affine-linear space \(\Lin\), with products of linear forms
+landing in the quadratic space \(\Quad\).  The Lean development already had
+\(\Quad\), but not \(\Lin\).
+
+\paragraph{Lean progress.}
+Added \texttt{linSubmodule}, the submodule of polynomials of total degree at
+most one, and proved
+\[
+\texttt{finrank\_linSubmodule\_eq\_four}.
+\]
+The proof parallels the quadratic dimension proof, using the monomial basis of
+\texttt{MvPolynomial.restrictTotalDegree} and counting exponent vectors of
+total degree at most one in three variables.
+
+Also added
+\[
+\texttt{mul\_lin\_lin\_mem\_quad},
+\]
+which proves that products of affine-linear polynomials are quadratic.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The formal environment now has the finite-dimensional spaces \(\Lin\) and
+\(\Quad\) used by the support theorem.  The remaining work is to formalize the
+low-rank support reduction and the rank-specific product-space constructions.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

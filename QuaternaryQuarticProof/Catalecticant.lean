@@ -15,6 +15,90 @@ namespace QuaternaryQuartic
 
 open scoped BigOperators
 
+/-- The submodule of affine-chart polynomials of total degree at most one. -/
+def linSubmodule : Submodule ℝ Poly where
+  carrier := {q | q.totalDegree ≤ 1}
+  zero_mem' := by
+    simp
+  add_mem' := by
+    intro p q hp hq
+    exact (MvPolynomial.totalDegree_add p q).trans (max_le hp hq)
+  smul_mem' := by
+    intro a q hq
+    exact (MvPolynomial.totalDegree_smul_le a q).trans hq
+
+@[simp] theorem mem_linSubmodule {q : Poly} :
+    q ∈ linSubmodule ↔ q.totalDegree ≤ 1 := Iff.rfl
+
+theorem linSubmodule_eq_restrictTotalDegree :
+    linSubmodule = MvPolynomial.restrictTotalDegree (Fin 3) ℝ 1 := by
+  ext q
+  simp [linSubmodule, MvPolynomial.mem_restrictTotalDegree]
+
+instance instModuleFiniteLinSubmodule : Module.Finite ℝ linSubmodule := by
+  rw [linSubmodule_eq_restrictTotalDegree]
+  infer_instance
+
+private abbrev LinExponentSet :=
+  {s : Fin 3 →₀ ℕ // s.sum (fun _ e => e) ≤ 1}
+
+private abbrev BoundedFinTripleOne :=
+  {f : Fin 3 → Fin 2 // (∑ i, (f i).val) ≤ 1}
+
+private theorem finsupp_sum_eq_finset_sum (s : Fin 3 →₀ ℕ) :
+    s.sum (fun _ e => e) = ∑ i, s i := by
+  rw [Finsupp.sum_fintype]
+  intro i
+  simp
+
+private theorem finsupp_value_lt_two (s : Fin 3 →₀ ℕ)
+    (hs : s.sum (fun _ e => e) ≤ 1) (i : Fin 3) :
+    s i < 2 := by
+  have hle_sum : s i ≤ s.sum (fun _ e => e) := by
+    simpa using
+      (Finsupp.single_eval_le_sum (f := s) (g := fun n : ℕ => n)
+        (by simp) (fun n => Nat.zero_le n) i)
+  omega
+
+private theorem equivFunOnFinite_symm_sum_finTripleOne (f : Fin 3 → Fin 2) :
+    (Finsupp.equivFunOnFinite.symm (fun i => (f i).val)).sum (fun _ e => e) =
+      ∑ i, (f i).val := by
+  simpa using
+    (Finsupp.equivFunOnFinite_symm_sum (f := fun i : Fin 3 => (f i).val))
+
+private def linExponentEquivBoundedFinTripleOne :
+    LinExponentSet ≃ BoundedFinTripleOne where
+  toFun s := ⟨fun i => ⟨s.1 i, finsupp_value_lt_two s.1 s.2 i⟩, by
+    simpa [finsupp_sum_eq_finset_sum s.1] using s.2⟩
+  invFun f := ⟨Finsupp.equivFunOnFinite.symm (fun i => (f.1 i).val), by
+    simpa [equivFunOnFinite_symm_sum_finTripleOne f.1] using f.2⟩
+  left_inv := by
+    intro s
+    apply Subtype.ext
+    ext i
+    simp
+  right_inv := by
+    intro f
+    apply Subtype.ext
+    ext i
+    simp
+
+private theorem natCard_linExponentSet :
+    Nat.card LinExponentSet = 4 := by
+  rw [Nat.card_congr linExponentEquivBoundedFinTripleOne]
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+theorem finrank_linSubmodule_eq_four :
+    Module.finrank ℝ linSubmodule = 4 := by
+  rw [linSubmodule_eq_restrictTotalDegree]
+  change Module.finrank ℝ
+    (MvPolynomial.restrictSupport ℝ {n : Fin 3 →₀ ℕ | n.sum (fun _ e => e) ≤ 1}) = 4
+  rw [Module.finrank_eq_nat_card_basis
+    (MvPolynomial.basisRestrictSupport ℝ
+      {n : Fin 3 →₀ ℕ | n.sum (fun _ e => e) ≤ 1})]
+  exact natCard_linExponentSet
+
 /-- The submodule of affine-chart polynomials of total degree at most two. -/
 def quadSubmodule : Submodule ℝ Poly where
   carrier := {q | IsQuadratic q}
@@ -54,12 +138,6 @@ private theorem finsupp_value_lt_three (s : Fin 3 →₀ ℕ)
         (by simp) (fun n => Nat.zero_le n) i)
   omega
 
-private theorem finsupp_sum_eq_finset_sum (s : Fin 3 →₀ ℕ) :
-    s.sum (fun _ e => e) = ∑ i, s i := by
-  rw [Finsupp.sum_fintype]
-  intro i
-  simp
-
 private theorem equivFunOnFinite_symm_sum_finTriple (f : Fin 3 → Fin 3) :
     (Finsupp.equivFunOnFinite.symm (fun i => (f i).val)).sum (fun _ e => e) =
       ∑ i, (f i).val := by
@@ -98,6 +176,16 @@ theorem finrank_quadSubmodule_eq_ten :
     (MvPolynomial.basisRestrictSupport ℝ
       {n : Fin 3 →₀ ℕ | n.sum (fun _ e => e) ≤ 2})]
   exact natCard_quadExponentSet
+
+theorem mul_lin_lin_mem_quad {p q : Poly}
+    (hp : p ∈ linSubmodule) (hq : q ∈ linSubmodule) :
+    p * q ∈ quadSubmodule := by
+  have hmul : (p * q).totalDegree ≤ p.totalDegree + q.totalDegree :=
+    MvPolynomial.totalDegree_mul p q
+  have hp1 : p.totalDegree ≤ 1 := hp
+  have hq1 : q.totalDegree ≤ 1 := hq
+  change (p * q).totalDegree ≤ 2
+  omega
 
 /-- Span of the seven quadratic coordinates of a rank-seven point. -/
 def spanU (u : RankSevenVec) : Submodule ℝ Poly :=
