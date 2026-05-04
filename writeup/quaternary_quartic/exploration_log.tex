@@ -3306,4 +3306,39 @@ still required to instantiate the rank cases.
 
 No Julia numerical claims were used in this round.
 
+\section*{Exact-dimensional annihilator extraction}
+
+\paragraph{Gap targeted.}
+Rank-one and rank-two normal-form arguments need exact-dimensional
+annihilator subspaces, while the low-rank support predicate gives only lower
+bounds.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Support.lean}:
+\[
+\texttt{exists\_rank\_one\_exact\_annihilator},\quad
+\texttt{exists\_rank\_two\_exact\_annihilator},\quad
+\texttt{exists\_rank\_three\_exact\_annihilator}.
+\]
+These lemmas use the exact-subspace extraction from
+\texttt{QuaternaryQuarticProof/Dimension.lean} to choose annihilator subspaces
+of dimensions \(3,2,1\), respectively.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Dimension}
+\]
+followed by
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The lower-rank cases can now use exact-dimensional annihilator subspaces once
+the low-rank apolar support theorem supplies the support predicate.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

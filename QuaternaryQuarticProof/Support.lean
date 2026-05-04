@@ -175,6 +175,39 @@ theorem exists_rank_three_support_kernel_product
     exists_support_complement_kernel_product_of_hasLinearAnnihilatorCodimAtMost
       (B := B) (p := p) (u := u) (k := 3) (by norm_num) hsupp
 
+theorem exists_rank_one_exact_annihilator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 1) :
+    ∃ A : Submodule ℝ linSubmodule,
+      A ≤ linearAnnihilator B p u ∧ Module.finrank ℝ A = 3 := by
+  rcases hsupp with ⟨A₀, hAann, hAdim⟩
+  rcases exists_submodule_le_finrank_eq_three A₀ hAdim with
+    ⟨A, hAA₀, hAfin⟩
+  exact ⟨A, hAA₀.trans hAann, hAfin⟩
+
+theorem exists_rank_two_exact_annihilator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 2) :
+    ∃ A : Submodule ℝ linSubmodule,
+      A ≤ linearAnnihilator B p u ∧ Module.finrank ℝ A = 2 := by
+  rcases hsupp with ⟨A₀, hAann, hAdim⟩
+  rcases exists_submodule_le_finrank_eq_two A₀ hAdim with
+    ⟨A, hAA₀, hAfin⟩
+  exact ⟨A, hAA₀.trans hAann, hAfin⟩
+
+theorem exists_rank_three_exact_annihilator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 3) :
+    ∃ A : Submodule ℝ linSubmodule,
+      A ≤ linearAnnihilator B p u ∧ Module.finrank ℝ A = 1 := by
+  rcases hsupp with ⟨A₀, hAann, hAdim⟩
+  have hAdim_one : 1 ≤ Module.finrank ℝ A₀ := by
+    simpa using hAdim
+  rcases exists_submodule_le_finrank_eq_of_le
+      (K := ℝ) (V := linSubmodule) A₀ hAdim_one with
+    ⟨A, hAA₀, hAfin⟩
+  exact ⟨A, hAA₀.trans hAann, hAfin⟩
+
 theorem exists_nonzero_mem_linearAnnihilator_of_rank_three_support
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupp : HasLinearAnnihilatorCodimAtMost B p u 3) :
