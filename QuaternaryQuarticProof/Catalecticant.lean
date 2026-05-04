@@ -762,6 +762,11 @@ def catalecticantMap (B : DotForm) (p : Poly) (u : RankSevenVec) :
     catalecticantMap B p u q r = B (q.1 * r.1) (residual p u) :=
   rfl
 
+theorem catalecticantMap_pair_comm
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (q r : quadSubmodule) :
+    catalecticantMap B p u q r = catalecticantMap B p u r q := by
+  simp [mul_comm]
+
 theorem spanUQuad_le_ker_catalecticantMap {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
     (hfocp : IsFOCP B p u) :
@@ -791,6 +796,11 @@ theorem mem_ker_catalecticantMap_iff {B : DotForm} {p : Poly} {u : RankSevenVec}
     change catalecticantMap B p u q = 0
     ext r
     exact hq.2 r.1 r.2
+
+theorem catalecticantKernel_pair_comm {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {q r : Poly} :
+    B (q * r) (residual p u) = B (r * q) (residual p u) := by
+  rw [mul_comm]
 
 theorem linProductSubmodule_le_ker_catalecticantMap_of_generators
     {B : DotForm} {p : Poly} {u : RankSevenVec}

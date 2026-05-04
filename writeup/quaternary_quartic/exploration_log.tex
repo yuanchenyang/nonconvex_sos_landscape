@@ -1537,6 +1537,43 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Catalecticant symmetry lemmas}
+
+\paragraph{Largest gap selected.}
+The binary normal-form theorem treats the degree-two catalecticant as a
+symmetric Hankel form.  In Lean, this symmetry does not come from any symmetry
+assumption on \(B\); it comes only from commutativity of polynomial
+multiplication in the first argument of \(B\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{catalecticantMap\_pair\_comm}
+\]
+for the restricted map
+\(\texttt{catalecticantMap}\ B\ p\ u:\Quad\to\Quad^\ast\), and
+\[
+\texttt{catalecticantKernel\_pair\_comm}
+\]
+for the underlying polynomial product pairing.  These lemmas record
+\[
+B(qr,R)=B(rq,R)
+\]
+without requiring \(B\) itself to be symmetric.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The catalecticant symmetry fact is now explicit.  The remaining binary work is
+to connect concrete Hankel kernel normal forms to these pairings and to the
+scalar sign lemmas.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Explicit linear product generators}
 
 \paragraph{Largest gap selected.}
