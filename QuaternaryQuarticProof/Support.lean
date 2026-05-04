@@ -632,6 +632,31 @@ theorem hasPreimageProductSupportData_of_rank_two_supportAmbient_of_annihilator_
     (by omega)
     hneg
 
+theorem hasPreimageProductSupportData_of_rank_two_support
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2)
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 2)
+    {x : linSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hUdim_ge :
+      ∀ A : Submodule ℝ linSubmodule,
+        A ≤ linearAnnihilator B p u →
+          Module.finrank ℝ A = 2 →
+            5 ≤ Module.finrank ℝ (supportAmbient x A))
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    HasPreimageProductSupportData B p u hu := by
+  rcases exists_rank_two_exact_annihilator
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, hAann, hAfin⟩
+  exact hasPreimageProductSupportData_of_rank_two_supportAmbient_of_annihilator_finrank_eq
+    (B := B) (p := p) (u := u) (hu := hu)
+    hfocp hrelker hrank
+    (x := x) (A := A)
+    hx hAann (hUdim_ge A hAann hAfin) hAfin hneg
+
 theorem hasPreimageProductSupportData_of_rank_one_ambient_bounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

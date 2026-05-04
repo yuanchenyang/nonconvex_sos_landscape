@@ -3462,4 +3462,37 @@ ambient subspaces.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two support predicate to preimage data}
+
+\paragraph{Gap targeted.}
+The rank-two path had all the pieces to go from an exact two-dimensional
+annihilator to \(\texttt{HasPreimageProductSupportData}\), but callers still
+had to choose that exact annihilator manually from the support predicate.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_support}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It consumes
+\(\texttt{HasLinearAnnihilatorCodimAtMost}\) at rank two, chooses an exact
+two-dimensional annihilator subspace internally, and invokes the rank-two
+support-ambient constructor.  The remaining caller obligations are now the
+negative pure square, the nonzero condition on its linear factor, and the
+ambient lower bound \(\dim(\texttt{supportAmbient x A})\ge5\) for exact
+two-dimensional annihilator subspaces.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+This reduces the rank-two case to binary negative-square transport plus the
+support-ambient lower bound for the selected pure-square direction.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
