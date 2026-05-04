@@ -2407,4 +2407,35 @@ choose a negative quadratic inside the supported \(W\)-quadratic subspace.
 
 No Julia numerical claims were used in this round.
 
+\section*{Direct rank-three support certificate}
+
+\paragraph{Gap targeted.}
+The rank-three support branch had two separate formal steps: extract a nonzero
+annihilator element, then invoke the rank-three syzygy construction.  The main
+rank-case proof will be simpler if that composition is available as one lemma.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_rank\_three\_support}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It consumes
+\(\texttt{HasLinearAnnihilatorCodimAtMost}\) at \(k=3\), the rank-three
+catalecticant equality, and a negative quadratic in
+\(\texttt{linProductSubmodule W W}\), then returns the negative syzygy
+certificate required by the rank-case reduction.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-three case is now reduced to proving the low-rank support theorem and
+placing a negative square inside the supported quadratic subspace.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

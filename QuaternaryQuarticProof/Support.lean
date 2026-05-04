@@ -175,6 +175,23 @@ theorem exists_negative_syzygyCertificate_of_rank_three_supportData
     (B := B) (p := p) (u := u) (hu := hu) hfocp hker hrank
     hzann hzne hqWW hneg
 
+theorem exists_negative_syzygyCertificate_of_rank_three_support
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 3)
+    {W : Submodule ℝ linSubmodule} {q : quadSubmodule}
+    (hqWW : q ∈ linProductSubmodule W W)
+    (hneg : B (q.1^2) (residual p u) < 0) :
+    ∃ q' : Poly, IsQuadratic q' ∧
+      B (q'^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q' :=
+  exists_negative_syzygyCertificate_of_rank_three_supportData
+    (B := B) (p := p) (u := u) hu hfocp hker hrank
+    (hasRankThreeAnnihilatorSupportData_of_rank_three_support
+      (B := B) (p := p) (u := u) hsupp hqWW hneg)
+
 def HasPreimageProductSupportData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (hu : IsAdmissiblePoint u) : Prop :=
