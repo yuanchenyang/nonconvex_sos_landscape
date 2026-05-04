@@ -2147,4 +2147,49 @@ the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Preimage product support constructors}
+
+\paragraph{Gap targeted.}
+The rank-one and rank-two cases both need the same finite-dimensional
+intersection step: a product preimage is nonzero because two subspaces inside a
+fixed quadratic ambient space have dimensions whose sum exceeds the ambient
+dimension.  This was already available near the syzygy proof, but
+\(\texttt{HasPreimageProductSupportData}\) still required the nonzero
+preimage as an explicit field.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasPreimageProductSupportData\_of\_dimension}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It packages the intersection
+dimension inequality into the support-data predicate by invoking
+\[
+\texttt{linProductLeftPreimageWithin\_ne\_bot\_of\_finrank\_lt\_add}.
+\]
+Also added rank-specialized arithmetic wrappers for the blueprint's two lower
+rank cases:
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_dimensions}
+\]
+with dimensions \(4+2>5\), and
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_one\_dimensions}
+\]
+with dimensions \(4+3>6\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The next support gap is to instantiate these constructors from the actual
+rank-one and rank-two decompositions supplied by the low-rank apolar support
+theorem and the binary negative-square theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
