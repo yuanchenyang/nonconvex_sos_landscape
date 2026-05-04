@@ -63,6 +63,32 @@ theorem binaryRestriction_pow_eq_C
   simp [linProduct, Algebra.smul_def]
   ring_nf
 
+theorem residualEval_C_mul
+    (B : DotForm) (r : ℝ) (q s : Poly) :
+    B (MvPolynomial.C r * q) s = r * B q s := by
+  rw [show MvPolynomial.C r * q = r • q by
+    rw [← MvPolynomial.algebraMap_eq ℝ (Fin 3)]
+    exact (Algebra.smul_def r q).symm]
+  simp
+
+theorem residualEval_mul_four
+    (B : DotForm) (q s : Poly) :
+    B (q * (4 : Poly)) s = 4 * B q s := by
+  have hq : q * (4 : Poly) = q + q + q + q := by
+    ring
+  rw [hq]
+  simp
+  ring
+
+theorem residualEval_mul_six
+    (B : DotForm) (q s : Poly) :
+    B (q * (6 : Poly)) s = 6 * B q s := by
+  have hq : q * (6 : Poly) = q + q + q + q + q + q := by
+    ring
+  rw [hq]
+  simp
+  ring
+
 theorem binaryRestriction_eval_eq_of_pow_expansion
     (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule)
     (hpow : ∀ X Y : ℝ,

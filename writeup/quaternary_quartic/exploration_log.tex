@@ -4163,4 +4163,42 @@ statement.
 
 No Julia numerical claims were used in this round.
 
+\section*{Residual evaluation scalar lemmas}
+
+\paragraph{Gap targeted.}
+The \(\texttt{MvPolynomial.C}\)-coefficient expansion leaves scalar factors
+inside the first argument of the bilinear residual functional.  The next
+evaluation bridge needs reusable facts that expose those factors as real
+scalars outside \(B\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{residualEval\_C\_mul},\quad
+\texttt{residualEval\_mul\_four},\quad
+\texttt{residualEval\_mul\_six}
+\]
+to \texttt{QuaternaryQuarticProof/Binary.lean}.  The first lemma proves
+\[
+B((\texttt{MvPolynomial.C}\ r)q,s)=rB(q,s),
+\]
+and the numeric lemmas handle the polynomial numeral factors \(4\) and \(6\)
+that appear in the binomial expansion.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The remaining coefficient-evaluation task is now mostly rearrangement: use
+these scalar-extraction lemmas on the five terms in
+\(\texttt{binaryRestriction\_pow\_eq\_C}\) to derive the canonical
+\(\texttt{binaryQuarticEval}\) identity without an external expansion
+hypothesis.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
