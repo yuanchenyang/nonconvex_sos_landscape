@@ -935,6 +935,70 @@ def linearAnnihilator (B : DotForm) (p : Poly) (u : RankSevenVec) :
         linProduct a e ∈ LinearMap.ker (catalecticantMap B p u) :=
   Iff.rfl
 
+def linearAnnihilatorMap (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    linSubmodule →ₗ[ℝ]
+      linSubmodule →ₗ[ℝ]
+        (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) where
+  toFun a :=
+    { toFun := fun e =>
+        (LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct a e)
+      map_add' := by
+        intro e f
+        rw [linProduct_add_right]
+        simp
+      map_smul' := by
+        intro c e
+        rw [linProduct_smul_right]
+        simp }
+  map_add' := by
+    intro a b
+    ext e
+    change (LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct (a + b) e) =
+      (LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct a e) +
+        (LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct b e)
+    rw [linProduct_add_left]
+    simp
+  map_smul' := by
+    intro c a
+    ext e
+    change (LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct (c • a) e) =
+      c • (LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct a e)
+    rw [linProduct_smul_left]
+    simp
+
+@[simp] theorem linearAnnihilatorMap_apply
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (a e : linSubmodule) :
+    linearAnnihilatorMap B p u a e =
+      (LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct a e) :=
+  rfl
+
+theorem linearAnnihilator_eq_ker_linearAnnihilatorMap
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    linearAnnihilator B p u = LinearMap.ker (linearAnnihilatorMap B p u) := by
+  ext a
+  constructor
+  · intro ha
+    rw [LinearMap.mem_ker]
+    ext e
+    simp [ha e]
+  · intro ha e
+    have happ :
+        linearAnnihilatorMap B p u a e = 0 := by
+      have hzero : linearAnnihilatorMap B p u a = 0 := by
+        simpa [LinearMap.mem_ker] using ha
+      rw [hzero]
+      simp
+    simpa [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero] using happ
+
+theorem finrank_range_linearAnnihilatorMap_add_finrank_linearAnnihilator
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) +
+      Module.finrank ℝ (linearAnnihilator B p u) = 4 := by
+  rw [linearAnnihilator_eq_ker_linearAnnihilatorMap]
+  rw [LinearMap.finrank_range_add_finrank_ker]
+  exact finrank_linSubmodule_eq_four
+
 theorem linProductSubmodule_linearAnnihilator_top_le_ker
     {B : DotForm} {p : Poly} {u : RankSevenVec} :
     linProductSubmodule (linearAnnihilator B p u) ⊤ ≤

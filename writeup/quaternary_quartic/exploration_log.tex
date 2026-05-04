@@ -2192,4 +2192,46 @@ theorem and the binary negative-square theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Annihilator as a linear-map kernel}
+
+\paragraph{Gap targeted.}
+The low-rank apolar support theorem needs dimension control of the degree-one
+annihilator.  The previous formalization defined the annihilator extensionally
+as the set of linear forms whose products with all linear forms lie in the
+catalecticant kernel, but this was not yet connected to rank-nullity.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{linearAnnihilatorMap}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  This map sends a
+linear form \(a\) to the linear map \(e\mapsto ae\) modulo the degree-two
+catalecticant kernel.  Proved
+\[
+\texttt{linearAnnihilator\_eq\_ker\_linearAnnihilatorMap}
+\]
+and the rank-nullity consequence
+\[
+\texttt{finrank\_range\_linearAnnihilatorMap\_add\_finrank\_linearAnnihilator}.
+\]
+The latter records the formal identity
+\[
+\dim(\operatorname{range})+\dim(\operatorname{Ann}_1)=4.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The support theorem still needs a bound on the range of
+\(\texttt{linearAnnihilatorMap}\) from catalecticant rank at most three.  This
+round supplies the exact rank-nullity object that such a bound will feed into.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
