@@ -1537,6 +1537,42 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Quartic degree subspace}
+
+\paragraph{Largest gap selected.}
+The finite-dimensional polynomial-space inventory in the blueprint includes
+the quartic degree filtration and the closure fact
+\(\Quad\cdot\Quad\subseteq\Quart\).  The Lean proof had \(\Lin\) and
+\(\Quad\), but not the bundled quartic subspace.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{quarticSubmodule}\le\Poly
+\]
+with the membership simp lemma and equality to
+\[
+\texttt{MvPolynomial.restrictTotalDegree}\ (Fin\ 3)\ \mathbb R\ 4.
+\]
+Also added the finite-module instance and proved
+\[
+\texttt{mul\_quad\_quad\_mem\_quartic},\qquad
+\texttt{sq\_quad\_mem\_quartic}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The degree-filtration layer now includes \(\Quart\).  The harder remaining
+finite-dimensional inventory item is still the proof that products of
+affine-linear forms span all of \(\Quad\).
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Rank-case support data to certificate family}
 
 \paragraph{Largest gap selected.}

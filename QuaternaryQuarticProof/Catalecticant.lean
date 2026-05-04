@@ -179,6 +179,45 @@ theorem finrank_quadSubmodule_eq_ten :
       {n : Fin 3 →₀ ℕ | n.sum (fun _ e => e) ≤ 2})]
   exact natCard_quadExponentSet
 
+/-- The submodule of affine-chart polynomials of total degree at most four. -/
+def quarticSubmodule : Submodule ℝ Poly where
+  carrier := {q | IsQuartic q}
+  zero_mem' := by
+    simp [IsQuartic]
+  add_mem' := by
+    intro p q hp hq
+    exact (MvPolynomial.totalDegree_add p q).trans (max_le hp hq)
+  smul_mem' := by
+    intro a q hq
+    exact (MvPolynomial.totalDegree_smul_le a q).trans hq
+
+@[simp] theorem mem_quarticSubmodule {q : Poly} :
+    q ∈ quarticSubmodule ↔ IsQuartic q := Iff.rfl
+
+theorem quarticSubmodule_eq_restrictTotalDegree :
+    quarticSubmodule = MvPolynomial.restrictTotalDegree (Fin 3) ℝ 4 := by
+  ext q
+  simp [quarticSubmodule, IsQuartic, MvPolynomial.mem_restrictTotalDegree]
+
+instance instModuleFiniteQuarticSubmodule : Module.Finite ℝ quarticSubmodule := by
+  rw [quarticSubmodule_eq_restrictTotalDegree]
+  infer_instance
+
+theorem mul_quad_quad_mem_quartic {p q : Poly}
+    (hp : p ∈ quadSubmodule) (hq : q ∈ quadSubmodule) :
+    p * q ∈ quarticSubmodule := by
+  have hmul : (p * q).totalDegree ≤ p.totalDegree + q.totalDegree :=
+    MvPolynomial.totalDegree_mul p q
+  have hp2 : p.totalDegree ≤ 2 := hp
+  have hq2 : q.totalDegree ≤ 2 := hq
+  change (p * q).totalDegree ≤ 4
+  omega
+
+theorem sq_quad_mem_quartic {q : Poly}
+    (hq : q ∈ quadSubmodule) :
+    q^2 ∈ quarticSubmodule := by
+  simpa [pow_two] using mul_quad_quad_mem_quartic hq hq
+
 theorem mul_lin_lin_mem_quad {p q : Poly}
     (hp : p ∈ linSubmodule) (hq : q ∈ linSubmodule) :
     p * q ∈ quadSubmodule := by
