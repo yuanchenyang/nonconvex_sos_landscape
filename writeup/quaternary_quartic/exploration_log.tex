@@ -1537,6 +1537,45 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Low-rank support interface}
+
+\paragraph{Largest gap selected.}
+The low-rank support theorem is still the largest structural blocker.  Its
+output needs a precise Lean interface before the rank cases can consume it:
+a large annihilator subspace and a complementary support subspace.
+
+\paragraph{Lean progress.}
+Created \texttt{QuaternaryQuarticProof/Support.lean}.  Defined
+\[
+\texttt{HasLinearAnnihilatorCodimAtMost}\ B\ p\ u\ k,
+\]
+meaning there is \(A\le\texttt{linearAnnihilator}\ B\ p\ u\) with
+\[
+4-k\le\dim A.
+\]
+Proved
+\[
+\texttt{exists\_support\_complement\_of\_hasLinearAnnihilatorCodimAtMost},
+\]
+which chooses a complement \(W\) with \(\Lin=A\oplus W\) and
+\(\dim W\le k\).  Also added specialized rank-one, rank-two, and rank-three
+versions with the concrete dimension bounds \(3,2,1\) for \(A\).
+The new module is imported through \texttt{QuaternaryQuarticProof/Basic.lean}.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+This does not prove the support theorem itself, but it pins down the exact
+finite-dimensional output needed by the rank cases.  The next structural step
+is proving \texttt{HasLinearAnnihilatorCodimAtMost} from low catalecticant
+rank.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Complement dimension bookkeeping}
 
 \paragraph{Largest gap selected.}
