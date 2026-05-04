@@ -193,6 +193,41 @@ def linProduct (a b : linSubmodule) : quadSubmodule :=
 @[simp] theorem linProduct_val (a b : linSubmodule) :
     (linProduct a b : Poly) = a.1 * b.1 := rfl
 
+@[simp] theorem linProduct_add_left (a b c : linSubmodule) :
+    linProduct (a + b) c = linProduct a c + linProduct b c := by
+  ext
+  simp [linProduct, add_mul]
+
+@[simp] theorem linProduct_add_right (a b c : linSubmodule) :
+    linProduct a (b + c) = linProduct a b + linProduct a c := by
+  ext
+  simp [linProduct, mul_add]
+
+@[simp] theorem linProduct_smul_left (a : ℝ) (b c : linSubmodule) :
+    linProduct (a • b) c = a • linProduct b c := by
+  ext
+  simp [linProduct]
+
+@[simp] theorem linProduct_smul_right (a : ℝ) (b c : linSubmodule) :
+    linProduct b (a • c) = a • linProduct b c := by
+  ext
+  simp [linProduct]
+
+@[simp] theorem linProduct_zero_left (a : linSubmodule) :
+    linProduct 0 a = 0 := by
+  ext
+  simp [linProduct]
+
+@[simp] theorem linProduct_zero_right (a : linSubmodule) :
+    linProduct a 0 = 0 := by
+  ext
+  simp [linProduct]
+
+theorem linProduct_comm (a b : linSubmodule) :
+    linProduct a b = linProduct b a := by
+  ext
+  simp [linProduct, mul_comm]
+
 def linProductSubmodule (U V : Submodule ℝ linSubmodule) :
     Submodule ℝ quadSubmodule :=
   Submodule.span ℝ (Set.range fun x : U × V => linProduct x.1.1 x.2.1)
@@ -210,6 +245,20 @@ theorem linProductSubmodule_mono
   rintro q ⟨x, rfl⟩
   exact linProduct_mem_linProductSubmodule
     (⟨x.1.1, hU x.1.2⟩ : U₂) (⟨x.2.1, hV x.2.2⟩ : V₂)
+
+theorem linProductSubmodule_comm (U V : Submodule ℝ linSubmodule) :
+    linProductSubmodule U V = linProductSubmodule V U := by
+  apply le_antisymm
+  · refine Submodule.span_le.mpr ?_
+    rintro q ⟨x, rfl⟩
+    change linProduct x.1.1 x.2.1 ∈ linProductSubmodule V U
+    rw [linProduct_comm]
+    exact linProduct_mem_linProductSubmodule x.2 x.1
+  · refine Submodule.span_le.mpr ?_
+    rintro q ⟨x, rfl⟩
+    change linProduct x.1.1 x.2.1 ∈ linProductSubmodule U V
+    rw [linProduct_comm]
+    exact linProduct_mem_linProductSubmodule x.2 x.1
 
 theorem linProductSubmodule_le_of_generators
     {U V : Submodule ℝ linSubmodule} {W : Submodule ℝ quadSubmodule}
@@ -428,6 +477,49 @@ theorem linProductSubmodule_le_ker_catalecticantMap_of_generators
       linProduct a.1 b.1 ∈ LinearMap.ker (catalecticantMap B p u)) :
     linProductSubmodule U V ≤ LinearMap.ker (catalecticantMap B p u) :=
   linProductSubmodule_le_of_generators hgen
+
+/-- Affine-linear forms whose product with every affine-linear form lies in
+the degree-two catalecticant kernel.  This is the Lean analogue of
+`Ann_1(lambda)` in the blueprint. -/
+def linearAnnihilator (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    Submodule ℝ linSubmodule where
+  carrier := {a | ∀ e : linSubmodule,
+    linProduct a e ∈ LinearMap.ker (catalecticantMap B p u)}
+  zero_mem' := by
+    intro e
+    change linProduct (0 : linSubmodule) e ∈ LinearMap.ker (catalecticantMap B p u)
+    simp
+  add_mem' := by
+    intro a b ha hb e
+    rw [linProduct_add_left]
+    exact Submodule.add_mem _ (ha e) (hb e)
+  smul_mem' := by
+    intro r a ha e
+    rw [linProduct_smul_left]
+    exact Submodule.smul_mem _ r (ha e)
+
+@[simp] theorem mem_linearAnnihilator {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {a : linSubmodule} :
+    a ∈ linearAnnihilator B p u ↔
+      ∀ e : linSubmodule,
+        linProduct a e ∈ LinearMap.ker (catalecticantMap B p u) :=
+  Iff.rfl
+
+theorem linProductSubmodule_linearAnnihilator_top_le_ker
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    linProductSubmodule (linearAnnihilator B p u) ⊤ ≤
+      LinearMap.ker (catalecticantMap B p u) := by
+  refine linProductSubmodule_le_ker_catalecticantMap_of_generators ?_
+  intro a e
+  exact a.2 e.1
+
+theorem linProductSubmodule_le_ker_of_le_linearAnnihilator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {A : Submodule ℝ linSubmodule}
+    (hA : A ≤ linearAnnihilator B p u) :
+    linProductSubmodule A ⊤ ≤ LinearMap.ker (catalecticantMap B p u) :=
+  linProductSubmodule_mono hA le_rfl |>.trans
+    linProductSubmodule_linearAnnihilator_top_le_ker
 
 theorem catalecticantMap_rank_le_three_of_relationPolyLin_ker_eq_bot
     {B : DotForm} {p : Poly} {u : RankSevenVec}

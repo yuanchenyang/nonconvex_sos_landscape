@@ -986,4 +986,49 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Linear annihilator for support reduction}
+
+\paragraph{Largest gap selected.}
+The next structural blocker is the low-rank apolar support theorem, especially
+the bridge from its linear annihilator \(A\subseteq\Lin\) to the kernel
+inclusion \(A\Lin\subseteq K\).
+
+\paragraph{Lean progress.}
+Added product algebra lemmas for \texttt{linProduct}: additivity and scalar
+compatibility in each factor, zero-factor simplifications, commutativity, and
+\[
+\texttt{linProductSubmodule\_comm}.
+\]
+Defined
+\[
+\texttt{linearAnnihilator}\ B\ p\ u\le\Lin,
+\]
+the subspace of affine-linear forms \(a\) such that \(ae\) is in
+\(\ker(\texttt{catalecticantMap}\ B\ p\ u)\) for every \(e\in\Lin\).
+Also proved
+\[
+\texttt{linProductSubmodule\_linearAnnihilator\_top\_le\_ker}
+\]
+and the more flexible
+\[
+\texttt{linProductSubmodule\_le\_ker\_of\_le\_linearAnnihilator},
+\]
+which turn a subspace inclusion \(A\le\texttt{linearAnnihilator}\) into the
+formal version of \(A\Lin\subseteq K\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+This round formalizes the target object of the support theorem, but not the
+Macaulay/apolar Hilbert-function argument proving that a large enough
+\(\texttt{linearAnnihilator}\) exists at catalecticant rank at most three.
+The rank-one and rank-two arguments still need their finite-dimensional
+incidence and negative pure-square lemmas.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
