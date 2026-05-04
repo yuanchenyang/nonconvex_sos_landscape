@@ -2373,4 +2373,38 @@ Hankel/catalecticant kernel hypothesis.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three annihilator extraction}
+
+\paragraph{Gap targeted.}
+In the rank-three branch, once the low-rank support theorem supplies an
+annihilator of codimension at most three, the proof needs an explicit nonzero
+linear form \(z\) in that annihilator to build the syzygy identity.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_nonzero\_mem\_linearAnnihilator\_of\_rank\_three\_support}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It extracts a nonzero
+element from the annihilator subspace using the formal dimension lower bound
+\(\dim A\ge1\).  Also added
+\[
+\texttt{hasRankThreeAnnihilatorSupportData\_of\_rank\_three\_support},
+\]
+which packages such a \(z\) together with a negative quadratic supported on a
+chosen \(W\) into \(\texttt{HasRankThreeAnnihilatorSupportData}\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-three branch still needs the support theorem and a formal way to
+choose a negative quadratic inside the supported \(W\)-quadratic subspace.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

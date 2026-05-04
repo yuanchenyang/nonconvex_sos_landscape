@@ -124,6 +124,24 @@ theorem exists_rank_three_support_complement
     exists_support_complement_of_hasLinearAnnihilatorCodimAtMost
       (B := B) (p := p) (u := u) (k := 3) (by norm_num) hsupp
 
+theorem exists_nonzero_mem_linearAnnihilator_of_rank_three_support
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 3) :
+    ∃ z : linSubmodule, z ∈ linearAnnihilator B p u ∧ (z : Poly) ≠ 0 := by
+  rcases hsupp with ⟨A, hAann, hAdim⟩
+  have hAdim_one : 1 ≤ Module.finrank ℝ A := by
+    simpa using hAdim
+  have hAne : A ≠ ⊥ := by
+    intro hA_bot
+    have hfin : Module.finrank ℝ A = 0 := by
+      rw [hA_bot]
+      simp
+    omega
+  rcases Submodule.exists_mem_ne_zero_of_ne_bot hAne with ⟨z, hzA, hzne⟩
+  refine ⟨z, hAann hzA, ?_⟩
+  intro hzpoly
+  exact hzne (Subtype.ext hzpoly)
+
 def HasRankThreeAnnihilatorSupportData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   ∃ (z : linSubmodule) (W : Submodule ℝ linSubmodule) (q : quadSubmodule),
@@ -131,6 +149,17 @@ def HasRankThreeAnnihilatorSupportData
       (z : Poly) ≠ 0 ∧
         q ∈ linProductSubmodule W W ∧
           B (q.1^2) (residual p u) < 0
+
+theorem hasRankThreeAnnihilatorSupportData_of_rank_three_support
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 3)
+    {W : Submodule ℝ linSubmodule} {q : quadSubmodule}
+    (hqWW : q ∈ linProductSubmodule W W)
+    (hneg : B (q.1^2) (residual p u) < 0) :
+    HasRankThreeAnnihilatorSupportData B p u := by
+  rcases exists_nonzero_mem_linearAnnihilator_of_rank_three_support hsupp with
+    ⟨z, hzann, hzne⟩
+  exact ⟨z, W, q, hzann, hzne, hqWW, hneg⟩
 
 theorem exists_negative_syzygyCertificate_of_rank_three_supportData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
