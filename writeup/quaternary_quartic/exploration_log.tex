@@ -1537,4 +1537,48 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Binary negative-square sign lemmas}
+
+\paragraph{Largest gap selected.}
+One of the remaining structural blockers is the binary negative-pure-square
+theorem.  The blueprint's proof reduces several binary kernel normal forms to
+elementary real-variable sign claims, for example choosing \(t\) so that
+\(a+4bt<0\), \(4b(t-t^3)<0\), or
+\[
+a(1-6t^2+t^4)+4b(t-t^3)<0.
+\]
+
+\paragraph{Lean progress.}
+Created \texttt{QuaternaryQuarticProof/Binary.lean} and formalized these
+real sign lemmas:
+\[
+\texttt{exists\_linear\_combination\_lt\_zero},\quad
+\texttt{exists\_cubic\_tail\_lt\_zero},
+\]
+\[
+\texttt{exists\_quartic\_tail\_lt\_zero\_of\_nonzero\_linear},\quad
+\texttt{exists\_quartic\_tail\_lt\_zero\_of\_nonzero\_quadratic},
+\]
+and the combined
+\[
+\texttt{exists\_quartic\_tail\_lt\_zero}.
+\]
+Also recorded the exact values of the quartic tail at \(t=0\) and \(t=1\).
+The new module is imported through \texttt{QuaternaryQuarticProof/Basic.lean}
+so it is included in the editable proof build.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+These lemmas cover the real sign choices in the binary rank-two normal-form
+case split.  The remaining work for the binary theorem is to connect the
+Hankel matrix/kernel normal forms to these scalar coefficients and to package
+the resulting negative pure fourth power as a \(\texttt{linProduct}\)-square.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -1,4 +1,5 @@
 import QuaternaryQuarticProof.Dimension
+import QuaternaryQuarticProof.Binary
 import QuaternaryQuarticProof.Syzygy
 
 set_option autoImplicit false
