@@ -193,4 +193,24 @@ theorem binaryQuarticEval_exists_negative_of_lowRankNegativeNormalForm
   · rcases hell with ⟨rfl, rfl, rfl, hne⟩
     exact elliptic_kernel_binaryQuarticEval_exists_negative _ _ hne
 
+theorem exists_negative_pure_square_of_binaryLowRankNormalForm
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {a b c d e : ℝ} {x y : linSubmodule}
+    (hform : HasBinaryLowRankNegativeNormalForm a b c d e)
+    (heval : ∀ X Y : ℝ,
+      B ((linProduct (X • x + Y • y) (X • x + Y • y) : quadSubmodule).1^2)
+          (residual p u) =
+        binaryQuarticEval a b c d e X Y) :
+    ∃ z : linSubmodule,
+      z ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) ∧
+        B ((linProduct z z : quadSubmodule).1^2) (residual p u) < 0 := by
+  rcases binaryQuarticEval_exists_negative_of_lowRankNegativeNormalForm hform with
+    ⟨X, Y, hneg⟩
+  refine ⟨X • x + Y • y, ?_, ?_⟩
+  · exact Submodule.add_mem _
+      (Submodule.smul_mem _ X (Submodule.subset_span (by simp)))
+      (Submodule.smul_mem _ Y (Submodule.subset_span (by simp)))
+  · rw [heval X Y]
+    exact hneg
+
 end QuaternaryQuartic

@@ -3881,4 +3881,44 @@ two-dimensional support.
 
 No Julia numerical claims were used in this round.
 
+\section*{Transporting binary negativity to a support-plane square}
+
+\paragraph{Gap targeted.}
+After packaging the binary normal forms, the next bridge is turning a negative
+binary value at coordinates \((X,Y)\) into a quaternary linear form
+\(z=Xx+Yy\) whose pure square is negative under the residual functional.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_negative\_pure\_square\_of\_binaryLowRankNormalForm}
+\]
+to \texttt{QuaternaryQuarticProof/Binary.lean}.  Given
+\(\texttt{HasBinaryLowRankNegativeNormalForm}\) and an explicit evaluation
+identity identifying the quaternary residual value on
+\((Xx+Yy)^4\) with \(\texttt{binaryQuarticEval}\), it produces
+\[
+z\in\operatorname{span}\{x,y\}
+\quad\text{with}\quad
+\lambda(z^4)<0.
+\]
+This isolates the remaining transport work to proving the coefficient
+evaluation identity for the chosen support-plane basis.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The binary-to-quaternary negativity bridge is now available once the restricted
+functional coefficients are related to
+\(\texttt{binaryQuarticEval}\).  The proof still needs the actual restriction
+normal-form theorem and the polynomial dimension/disjointness facts for the
+rank-one and rank-two support spaces.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
