@@ -87,4 +87,25 @@ theorem exists_isCompl_finrank_add_eq
 
 end Complements
 
+section MacaulayNumerics
+
+theorem rankThreeMacaulayNumericalContradiction
+    {b : ℕ} (hbpos : 1 ≤ b) (hbtop : b ≤ 3) :
+    ¬ 4 - b ≤ 3 - b := by
+  omega
+
+theorem rankThreeMacaulayCaseOne :
+    ¬ 4 - 1 ≤ (3 - 1 : ℕ) := by
+  exact rankThreeMacaulayNumericalContradiction (by norm_num) (by norm_num)
+
+theorem rankThreeMacaulayCaseTwo :
+    ¬ 4 - 2 ≤ (3 - 2 : ℕ) := by
+  exact rankThreeMacaulayNumericalContradiction (by norm_num) (by norm_num)
+
+theorem rankThreeMacaulayCaseThree :
+    ¬ 4 - 3 ≤ (3 - 3 : ℕ) := by
+  exact rankThreeMacaulayNumericalContradiction (by norm_num) (by norm_num)
+
+end MacaulayNumerics
+
 end QuaternaryQuartic

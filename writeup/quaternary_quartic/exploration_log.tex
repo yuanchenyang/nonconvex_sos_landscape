@@ -2542,4 +2542,35 @@ removes one translation step between support data and syzygy input.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three Macaulay arithmetic core}
+
+\paragraph{Gap targeted.}
+The apolar support theorem's rank-three case uses a short Hilbert-function
+contradiction.  After choosing \(1\le b\le3\), Macaulay's degree-two bound would
+force \(4-b\le 3-b\), which is impossible.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{rankThreeMacaulayNumericalContradiction}
+\]
+to \texttt{QuaternaryQuarticProof/Dimension.lean}, with explicit case lemmas
+for \(b=1,2,3\).  These isolate the finite arithmetic part of the
+rank-three apolar-support proof from the still-missing Hilbert-function
+formalization.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Dimension.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The surrounding apolar algebra is still missing: formal Hilbert functions,
+Macaulay growth, and Gorenstein symmetry must be connected to this arithmetic
+contradiction to prove the support theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
