@@ -3596,4 +3596,46 @@ rather than relying on opaque finite reduction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Complement vectors from exact annihilators}
+
+\paragraph{Gap targeted.}
+The rank-one and rank-two support reductions had exact annihilator complements,
+but later binary-normal-form arguments need an actual nonzero linear form in
+the complementary support direction, together with a proof that it is not in
+the annihilator slice.
+
+\paragraph{Lean progress.}
+Added general complement-vector lemmas to
+\texttt{QuaternaryQuarticProof/Dimension.lean}: a positive-finrank submodule
+contains a nonzero vector, and a nonzero vector lying in one side of an
+\(\texttt{IsCompl}\) pair cannot lie in the other side.  Added support-specific
+extractors
+\[
+\texttt{exists\_rank\_one\_exact\_annihilator\_complement\_vector}
+\]
+and
+\[
+\texttt{exists\_rank\_two\_exact\_annihilator\_complement\_vector}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  These refine the existing
+exact complement lemmas by choosing \(x \in W\) with \((x:\texttt{Poly})\ne0\)
+and \(x\notin A\), preserving the exact annihilator and complement dimensions.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Dimension}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The largest remaining mathematical gap is still the binary normal-form
+transport: from the chosen complement direction, the proof must construct the
+negative pure square and the rank-specific ambient lower-bound hypotheses used
+by the certificate lemmas.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

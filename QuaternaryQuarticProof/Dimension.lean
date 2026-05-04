@@ -158,6 +158,42 @@ theorem exists_isCompl_finrank_add_eq
 
 end Complements
 
+section ComplementVectors
+
+variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
+
+theorem exists_mem_ne_zero_of_finrank_pos
+    {s : Submodule K V}
+    (hs : 0 < finrank K s) :
+    ∃ x : V, x ∈ s ∧ x ≠ 0 := by
+  have hsne : s ≠ ⊥ := by
+    intro hbot
+    rw [hbot] at hs
+    simp at hs
+  exact Submodule.exists_mem_ne_zero_of_ne_bot hsne
+
+theorem not_mem_left_of_isCompl_right_mem_ne_zero
+    {s t : Submodule K V} (hst : IsCompl s t)
+    {x : V} (hxt : x ∈ t) (hxne : x ≠ 0) :
+    x ∉ s := by
+  intro hxs
+  have hxinf : x ∈ s ⊓ t := ⟨hxs, hxt⟩
+  have hxbot : x ∈ (⊥ : Submodule K V) := by
+    simpa [hst.disjoint.eq_bot] using hxinf
+  exact hxne (by simpa using hxbot)
+
+theorem not_mem_right_of_isCompl_left_mem_ne_zero
+    {s t : Submodule K V} (hst : IsCompl s t)
+    {x : V} (hxs : x ∈ s) (hxne : x ≠ 0) :
+    x ∉ t := by
+  intro hxt
+  have hxinf : x ∈ s ⊓ t := ⟨hxs, hxt⟩
+  have hxbot : x ∈ (⊥ : Submodule K V) := by
+    simpa [hst.disjoint.eq_bot] using hxinf
+  exact hxne (by simpa using hxbot)
+
+end ComplementVectors
+
 section ExactSubspaces
 
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]

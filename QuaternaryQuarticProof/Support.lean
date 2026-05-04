@@ -202,6 +202,30 @@ theorem exists_rank_one_exact_annihilator_complement
   have hlin : Module.finrank ℝ linSubmodule = 4 := finrank_linSubmodule_eq_four
   omega
 
+theorem exists_rank_one_exact_annihilator_complement_vector
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 1) :
+    ∃ A W : Submodule ℝ linSubmodule,
+      ∃ x : linSubmodule,
+        A ≤ linearAnnihilator B p u ∧
+          IsCompl A W ∧
+            x ∈ W ∧
+              (x : Poly) ≠ 0 ∧
+                x ∉ A ∧
+                  Module.finrank ℝ A = 3 ∧
+                    Module.finrank ℝ W = 1 := by
+  rcases exists_rank_one_exact_annihilator_complement
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, W, hAann, hAW, hAfin, hWfin⟩
+  have hWpos : 0 < Module.finrank ℝ W := by omega
+  rcases exists_mem_ne_zero_of_finrank_pos (K := ℝ) (V := linSubmodule)
+      (s := W) hWpos with
+    ⟨x, hxW, hxne⟩
+  refine ⟨A, W, x, hAann, hAW, hxW, ?_, ?_, hAfin, hWfin⟩
+  · intro hxpoly
+    exact hxne (Subtype.ext hxpoly)
+  · exact not_mem_left_of_isCompl_right_mem_ne_zero hAW hxW hxne
+
 theorem exists_rank_two_exact_annihilator
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupp : HasLinearAnnihilatorCodimAtMost B p u 2) :
@@ -228,6 +252,30 @@ theorem exists_rank_two_exact_annihilator_complement
   refine ⟨A, W, hAann, hAW, hAfin, ?_⟩
   have hlin : Module.finrank ℝ linSubmodule = 4 := finrank_linSubmodule_eq_four
   omega
+
+theorem exists_rank_two_exact_annihilator_complement_vector
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 2) :
+    ∃ A W : Submodule ℝ linSubmodule,
+      ∃ x : linSubmodule,
+        A ≤ linearAnnihilator B p u ∧
+          IsCompl A W ∧
+            x ∈ W ∧
+              (x : Poly) ≠ 0 ∧
+                x ∉ A ∧
+                  Module.finrank ℝ A = 2 ∧
+                    Module.finrank ℝ W = 2 := by
+  rcases exists_rank_two_exact_annihilator_complement
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, W, hAann, hAW, hAfin, hWfin⟩
+  have hWpos : 0 < Module.finrank ℝ W := by omega
+  rcases exists_mem_ne_zero_of_finrank_pos (K := ℝ) (V := linSubmodule)
+      (s := W) hWpos with
+    ⟨x, hxW, hxne⟩
+  refine ⟨A, W, x, hAann, hAW, hxW, ?_, ?_, hAfin, hWfin⟩
+  · intro hxpoly
+    exact hxne (Subtype.ext hxpoly)
+  · exact not_mem_left_of_isCompl_right_mem_ne_zero hAW hxW hxne
 
 theorem exists_rank_two_exact_annihilator_supportAmbient
     {B : DotForm} {p : Poly} {u : RankSevenVec}
