@@ -167,4 +167,26 @@ theorem false_of_syzygy_negative_curvature
     nlinarith
   exact false_of_negative_curvature_direction hsocp hvadm hA hneg_sigma
 
+theorem residual_eq_zero_of_syzygy_certificates_for_negative_squares
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hcert :
+      ∀ q : Poly, IsQuadratic q → B (q^2) (residual p u) < 0 →
+        ∃ (ι : Type) (_ : Fintype ι),
+          ∃ (α : ι → Fin 7 → ℝ) (n : ι → Poly) (β : Fin 7 → ℝ),
+            (∀ j, n j ∈ catalecticantKernel B p u) ∧
+              (∑ j : ι, relationPoly u (α j) * n j) = relationPoly u β * q ∧
+                β ≠ 0) :
+    residual p u = 0 := by
+  by_contra hres
+  rcases exists_negative_sos_summand_of_nonzero_residual
+      (B := B) hu hp hsocp.1 hres with ⟨q, hq, hnegq⟩
+  rcases hcert q hq hnegq with ⟨ι, hι, α, n, β, hnK, hsyzygy, hβ⟩
+  letI : Fintype ι := hι
+  exact false_of_syzygy_negative_curvature
+    (B := B) (p := p) (u := u) (α := α) (n := n) (β := β) (q := q)
+    hsocp hnK hq hsyzygy hβ hnegq
+
 end QuaternaryQuartic
