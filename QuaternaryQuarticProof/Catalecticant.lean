@@ -690,6 +690,49 @@ theorem linProductLeftPreimageWithin_ne_bot_of_finrank_le_lt_add
     (linProductLeftPreimageOn_ne_bot_of_finrank_le_lt_add
       ha hPW hrangeW hPdim hAdim hWdim hgt)
 
+def supportAmbient (x : linSubmodule) (A : Submodule ℝ linSubmodule) :
+    Submodule ℝ quadSubmodule :=
+  LinearMap.range (linProductLeftMapOn x A) ⊔ symSquareSubmodule A
+
+theorem range_linProductLeftMapOn_le_supportAmbient
+    (x : linSubmodule) (A : Submodule ℝ linSubmodule) :
+    LinearMap.range (linProductLeftMapOn x A) ≤ supportAmbient x A :=
+  le_sup_left
+
+theorem symSquareSubmodule_le_supportAmbient
+    (x : linSubmodule) (A : Submodule ℝ linSubmodule) :
+    symSquareSubmodule A ≤ supportAmbient x A :=
+  le_sup_right
+
+theorem finrank_supportAmbient_le_of_bounds
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule} {m n c : ℕ}
+    (hrange : Module.finrank ℝ (LinearMap.range (linProductLeftMapOn x A)) ≤ m)
+    (hsym : Module.finrank ℝ (symSquareSubmodule A) ≤ n)
+    (hmn : m + n ≤ c) :
+    Module.finrank ℝ (supportAmbient x A) ≤ c :=
+  finrank_sup_le_of_le_add
+    (K := ℝ) (V := quadSubmodule)
+    (s := LinearMap.range (linProductLeftMapOn x A)) (t := symSquareSubmodule A)
+    hrange hsym hmn
+
+theorem finrank_supportAmbient_le_five
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hrange : Module.finrank ℝ (LinearMap.range (linProductLeftMapOn x A)) ≤ 2)
+    (hsym : Module.finrank ℝ (symSquareSubmodule A) ≤ 3) :
+    Module.finrank ℝ (supportAmbient x A) ≤ 5 :=
+  finrank_supportAmbient_le_of_bounds
+    (x := x) (A := A) (m := 2) (n := 3) (c := 5)
+    hrange hsym (by norm_num)
+
+theorem finrank_supportAmbient_le_nine
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hrange : Module.finrank ℝ (LinearMap.range (linProductLeftMapOn x A)) ≤ 3)
+    (hsym : Module.finrank ℝ (symSquareSubmodule A) ≤ 6) :
+    Module.finrank ℝ (supportAmbient x A) ≤ 9 :=
+  finrank_supportAmbient_le_of_bounds
+    (x := x) (A := A) (m := 3) (n := 6) (c := 9)
+    hrange hsym (by norm_num)
+
 theorem range_linProductLeftMapOn_le_linProductSubmodule
     {M A : Submodule ℝ linSubmodule} (m : M) :
     LinearMap.range (linProductLeftMapOn m.1 A) ≤ linProductSubmodule M A := by

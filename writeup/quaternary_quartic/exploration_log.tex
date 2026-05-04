@@ -2908,4 +2908,45 @@ just a single linear-map range bound.
 
 No Julia numerical claims were used in this round.
 
+\section*{Named support ambient subspace}
+
+\paragraph{Gap targeted.}
+The lower-rank incidence proofs use ambient subspaces built from a fixed
+linear product component \(xA\) and a symmetric-square component
+\(\operatorname{Sym}^2 A\).  These were not yet named in Lean, so later
+applications had to work directly with a repeated supremum expression.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{supportAmbient x A}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}, defined as
+\[
+\operatorname{range}(\texttt{linProductLeftMapOn x A})\ \sqcup\
+\texttt{symSquareSubmodule A}.
+\]
+Also added inclusion lemmas for both summands and dimension-bound wrappers:
+\[
+\texttt{finrank\_supportAmbient\_le\_of\_bounds},
+\]
+\[
+\texttt{finrank\_supportAmbient\_le\_five},\quad
+\texttt{finrank\_supportAmbient\_le\_nine}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The remaining ambient-dimension input is an upper bound on
+\(\texttt{symSquareSubmodule A}\), especially \(\le3\) for \(\dim A\le2\) and
+\(\le6\) for \(\dim A\le3\).
+
+No Julia numerical claims were used in this round.
+
 \end{document}
