@@ -1,4 +1,4 @@
-import QuaternaryQuarticProof.Syzygy
+import QuaternaryQuarticProof.Binary
 
 set_option autoImplicit false
 set_option warningAsError true
@@ -702,6 +702,44 @@ theorem hasPreimageProductSupportData_of_rank_two_supportAmbient_of_components
     hx hAann
     (five_le_finrank_supportAmbient_of_rank_two_components hx hAdim hsym hdisj)
     hAdim hneg
+
+theorem hasPreimageProductSupportData_of_rank_two_binaryNormalForm
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2)
+    {A : Submodule ℝ linSubmodule} {x y : linSubmodule}
+    {a b c d e : ℝ}
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hAdim : Module.finrank ℝ A = 2)
+    (hsym : Module.finrank ℝ (symSquareSubmodule A) = 3)
+    (hform : HasBinaryLowRankNegativeNormalForm a b c d e)
+    (heval : ∀ X Y : ℝ,
+      B ((linProduct (X • x + Y • y) (X • x + Y • y) : quadSubmodule).1^2)
+          (residual p u) =
+        binaryQuarticEval a b c d e X Y)
+    (hdisj :
+      ∀ z : linSubmodule,
+        z ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) →
+          (z : Poly) ≠ 0 →
+            LinearMap.range (linProductLeftMapOn z A) ⊓ symSquareSubmodule A = ⊥) :
+    HasPreimageProductSupportData B p u hu := by
+  rcases exists_negative_pure_square_of_binaryLowRankNormalForm
+      (B := B) (p := p) (u := u)
+      (x := x) (y := y) hform heval with
+    ⟨z, hzspan, hneg⟩
+  have hz : (z : Poly) ≠ 0 := by
+    intro hzero
+    have hval_zero :
+        B ((linProduct z z : quadSubmodule).1^2) (residual p u) = 0 := by
+      simp [linProduct, hzero]
+    linarith
+  exact hasPreimageProductSupportData_of_rank_two_supportAmbient_of_components
+    (B := B) (p := p) (u := u) (hu := hu)
+    hfocp hrelker hrank
+    (x := z) (A := A)
+    hz hAann hAdim hsym (hdisj z hzspan hz) hneg
 
 theorem hasPreimageProductSupportData_of_rank_two_support
     {B : DotForm} {p : Poly} {u : RankSevenVec}

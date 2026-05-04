@@ -3921,4 +3921,46 @@ rank-one and rank-two support spaces.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two binary normal form to support data}
+
+\paragraph{Gap targeted.}
+The rank-two branch had two separated pieces: the binary normal-form theorem
+could produce a negative support-plane square, while the rank-two support
+constructor needed a concrete negative direction plus exact component data for
+\(\texttt{supportAmbient}\).
+
+\paragraph{Lean progress.}
+Changed \texttt{QuaternaryQuarticProof/Support.lean} to import the binary
+interface and added
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_binaryNormalForm}.
+\]
+This theorem composes
+\[
+\texttt{exists\_negative\_pure\_square\_of\_binaryLowRankNormalForm}
+\]
+with
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_supportAmbient\_of\_components}.
+\]
+It also proves the selected support direction is nonzero from the strict
+negative value.  The remaining assumptions are now precisely the transport
+inputs: the restricted binary normal form, the coefficient-evaluation identity,
+exact \(\dim\Sym^2 A=3\), and disjointness of \(zA\) from \(\Sym^2A\) for
+nonzero support-plane \(z\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two certificate path is now wired from binary normal form to support
+data.  What remains is proving the normal form/evaluation identity and the
+geometric component facts for the chosen complement.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
