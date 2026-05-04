@@ -2473,4 +2473,41 @@ branch.
 
 No Julia numerical claims were used in this round.
 
+\section*{Kernel-product conclusion from support data}
+
+\paragraph{Gap targeted.}
+The low-rank support theorem in the blueprint is used through the concrete
+geometric conclusion \(AE\subseteq K\).  The Lean support predicate already
+stored \(A\le\operatorname{Ann}_1\), but downstream rank-case proofs still had
+to recover the product-kernel inclusion separately.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_support\_complement\_kernel\_product\_of\_hasLinearAnnihilatorCodimAtMost}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It extracts a complement
+\(E=A\oplus W\), the dimension bounds \(\dim W\le k\) and
+\(\dim A\ge 4-k\), and the formal inclusion
+\[
+\texttt{linProductSubmodule A top <= ker(catalecticantMap B p u)}.
+\]
+Also added rank-one, rank-two, and rank-three specializations matching the
+case split in the blueprint.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The apolar support theorem still has to produce
+\(\texttt{HasLinearAnnihilatorCodimAtMost}\) from low catalecticant rank.  This
+round packages the exact conclusion all later rank-case incidence arguments
+need once that theorem is available.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
