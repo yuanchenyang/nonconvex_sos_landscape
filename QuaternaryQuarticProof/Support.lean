@@ -509,6 +509,29 @@ theorem hasPreimageProductSupportData_of_rank_two_supportAmbient_of_annihilator_
     (finrank_range_linProductLeftMapOn_le_two (a := x) (A := A) hAdim_le)
     hsymDim hAdim_ge hneg
 
+theorem hasPreimageProductSupportData_of_rank_two_supportAmbient_of_annihilator_finrank_eq
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2)
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hUdim_ge : 5 ≤ Module.finrank ℝ (supportAmbient x A))
+    (hAdim : Module.finrank ℝ A = 2)
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    HasPreimageProductSupportData B p u hu := by
+  exact hasPreimageProductSupportData_of_rank_two_supportAmbient_of_annihilator_dim
+    (B := B) (p := p) (u := u) (hu := hu)
+    hfocp hrelker hrank
+    (x := x) (A := A)
+    hx hAann hUdim_ge
+    (by omega)
+    (finrank_symSquareSubmodule_le_three_of_finrank_eq_two hAdim)
+    (by omega)
+    hneg
+
 theorem hasPreimageProductSupportData_of_rank_one_ambient_bounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

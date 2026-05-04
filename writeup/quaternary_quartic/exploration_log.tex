@@ -3175,4 +3175,41 @@ such an \(A\), plus binary transport of a negative pure square.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two support wrapper using \texorpdfstring{\(\dim A=2\)}{dim A=2}}
+
+\paragraph{Gap targeted.}
+After proving the symmetric-square bound for two-dimensional support
+subspaces, the rank-two support-data wrapper no longer needs callers to pass
+that bound separately.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_supportAmbient\_of\_annihilator\_finrank\_eq}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It consumes
+\(\dim A=2\) and derives both the fixed-linear range bound and the
+\(\operatorname{Sym}^2A\) bound internally, using
+\[
+\texttt{finrank\_symSquareSubmodule\_le\_three\_of\_finrank\_eq\_two}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+followed by
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two branch now needs the support theorem to provide a
+two-dimensional annihilator subspace and the binary theorem to provide the
+negative pure square and ambient lower bound.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
