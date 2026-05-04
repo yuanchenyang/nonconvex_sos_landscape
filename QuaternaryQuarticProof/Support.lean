@@ -195,6 +195,23 @@ theorem exists_rank_two_exact_annihilator
     ⟨A, hAA₀, hAfin⟩
   exact ⟨A, hAA₀.trans hAann, hAfin⟩
 
+theorem exists_rank_two_exact_annihilator_supportAmbient
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 2)
+    (x : linSubmodule) :
+    ∃ A : Submodule ℝ linSubmodule,
+      A ≤ linearAnnihilator B p u ∧
+        Module.finrank ℝ A = 2 ∧
+          supportAmbient x A ≤ LinearMap.ker (catalecticantMap B p u) ∧
+            Module.finrank ℝ (supportAmbient x A) ≤ 5 := by
+  rcases exists_rank_two_exact_annihilator
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, hAann, hAfin⟩
+  exact ⟨A, hAann, hAfin,
+    supportAmbient_le_ker_of_le_linearAnnihilator
+      (B := B) (p := p) (u := u) (x := x) hAann,
+    finrank_supportAmbient_le_five_of_finrank_eq_two (x := x) hAfin⟩
+
 theorem exists_rank_three_exact_annihilator
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupp : HasLinearAnnihilatorCodimAtMost B p u 3) :

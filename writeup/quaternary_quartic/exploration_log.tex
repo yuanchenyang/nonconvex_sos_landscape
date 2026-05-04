@@ -3341,4 +3341,47 @@ the low-rank apolar support theorem supplies the support predicate.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two exact support ambient extraction}
+
+\paragraph{Gap targeted.}
+The rank-two branch needs an exact two-dimensional annihilator subspace and
+the routine ambient facts for \(xA+\operatorname{Sym}^2 A\): kernel inclusion
+and dimension at most five.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{finrank\_supportAmbient\_le\_five\_of\_finrank\_eq\_two}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  It combines the
+fixed-linear range bound with the two-dimensional symmetric-square bound.
+
+Added
+\[
+\texttt{exists\_rank\_two\_exact\_annihilator\_supportAmbient}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  From
+\(\texttt{HasLinearAnnihilatorCodimAtMost}\) at rank two and a chosen \(x\), it
+extracts an annihilator subspace \(A\) with \(\dim A=2\), proves
+\(\texttt{supportAmbient x A}\subseteq K\), and proves
+\(\dim(\texttt{supportAmbient x A})\le5\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+followed by
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two case now mainly needs the binary negative-square transport and
+the lower bound \(\dim(\texttt{supportAmbient x A})\ge5\) for the selected
+support data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

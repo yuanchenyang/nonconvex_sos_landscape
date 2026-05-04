@@ -836,6 +836,15 @@ theorem finrank_supportAmbient_le_five
     (x := x) (A := A) (m := 2) (n := 3) (c := 5)
     hrange hsym (by norm_num)
 
+theorem finrank_supportAmbient_le_five_of_finrank_eq_two
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    (hA : Module.finrank ℝ A = 2) :
+    Module.finrank ℝ (supportAmbient x A) ≤ 5 :=
+  finrank_supportAmbient_le_five
+    (x := x) (A := A)
+    (finrank_range_linProductLeftMapOn_le_two (a := x) (A := A) (by omega))
+    (finrank_symSquareSubmodule_le_three_of_finrank_eq_two hA)
+
 theorem finrank_supportAmbient_le_nine
     {x : linSubmodule} {A : Submodule ℝ linSubmodule}
     (hrange : Module.finrank ℝ (LinearMap.range (linProductLeftMapOn x A)) ≤ 3)
