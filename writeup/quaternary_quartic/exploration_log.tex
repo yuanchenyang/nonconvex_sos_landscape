@@ -3848,4 +3848,37 @@ disjointness statement, and transport the binary negative-square normal forms.
 
 No Julia numerical claims were used in this round.
 
+\section*{Binary low-rank normal-form interface}
+
+\paragraph{Gap targeted.}
+The binary negative-square proof had individual Lean lemmas for each normal
+form, but the later transport step needs one reusable interface that says the
+restricted binary quartic is in one of the blueprint's low-rank normal forms.
+
+\paragraph{Lean progress.}
+Added \(\texttt{HasBinaryLowRankNegativeNormalForm}\) and
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_lowRankNegativeNormalForm}
+\]
+to \texttt{QuaternaryQuarticProof/Binary.lean}.  The normal-form predicate has
+four cases: rank-one outer product with negative scalar, \(xy\)-kernel
+diagonal form with an indefinite quadratic witness, \(y^2\)-kernel form with
+nonzero linear coefficient, and elliptic \(x^2+y^2\)-kernel form.  The theorem
+dispatches each case to the existing case-specific binary negativity lemma.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The binary branch is now packaged as a single target.  The unresolved transport
+step is to derive \(\texttt{HasBinaryLowRankNegativeNormalForm}\) for the
+quartic functional obtained by restricting the catalecticant to the chosen
+two-dimensional support.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

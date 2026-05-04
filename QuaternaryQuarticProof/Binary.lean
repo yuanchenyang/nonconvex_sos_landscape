@@ -10,6 +10,20 @@ namespace QuaternaryQuartic
 def binaryQuarticEval (a b c d e x y : ℝ) : ℝ :=
   a * x^4 + 4 * b * x^3 * y + 6 * c * x^2 * y^2 + 4 * d * x * y^3 + e * y^4
 
+def HasBinaryLowRankNegativeNormalForm (a b c d e : ℝ) : Prop :=
+  (∃ ρ α β : ℝ,
+    ρ < 0 ∧
+      (α ≠ 0 ∨ β ≠ 0) ∧
+        a = ρ * α^4 ∧
+          b = ρ * α^3 * β ∧
+            c = ρ * α^2 * β^2 ∧
+              d = ρ * α * β^3 ∧
+                e = ρ * β^4) ∨
+  (b = 0 ∧ c = 0 ∧ d = 0 ∧
+    ∃ r t : ℝ, a * r^2 + e * t^2 < 0) ∨
+  (c = 0 ∧ d = 0 ∧ e = 0 ∧ b ≠ 0) ∨
+  (c = -a ∧ d = -b ∧ e = a ∧ (a ≠ 0 ∨ b ≠ 0))
+
 theorem diagonal_form_negative_pure_of_negative
     {a e : ℝ} (hneg : ∃ x y : ℝ, a * x^2 + e * y^2 < 0) :
     a < 0 ∨ e < 0 := by
@@ -163,5 +177,20 @@ theorem elliptic_kernel_binaryQuarticEval_exists_negative_of_nonzero_hankel
       a * r^2 + 2 * b * r * s - 2 * a * r * t - 2 * b * s * t + a * t^2 < 0) :
     ∃ x y : ℝ, binaryQuarticEval a b (-a) (-b) a x y < 0 :=
   elliptic_kernel_binaryQuarticEval_exists_negative a b hne
+
+theorem binaryQuarticEval_exists_negative_of_lowRankNegativeNormalForm
+    {a b c d e : ℝ}
+    (hform : HasBinaryLowRankNegativeNormalForm a b c d e) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 := by
+  rcases hform with hRankOne | hxy | hySq | hell
+  · rcases hRankOne with
+      ⟨ρ, α, β, hρ, hvec, rfl, rfl, rfl, rfl, rfl⟩
+    exact rank_one_binaryQuarticEval_exists_negative hρ hvec
+  · rcases hxy with ⟨rfl, rfl, rfl, hneg⟩
+    exact xy_kernel_binaryQuarticEval_exists_negative hneg
+  · rcases hySq with ⟨rfl, rfl, rfl, hb⟩
+    exact y_sq_kernel_binaryQuarticEval_exists_negative _ _ hb
+  · rcases hell with ⟨rfl, rfl, rfl, hne⟩
+    exact elliptic_kernel_binaryQuarticEval_exists_negative _ _ hne
 
 end QuaternaryQuartic
