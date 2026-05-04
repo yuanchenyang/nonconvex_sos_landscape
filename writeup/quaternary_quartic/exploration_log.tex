@@ -1537,6 +1537,41 @@ incidence and negative pure-square lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Linear annihilator to polynomial kernel}
+
+\paragraph{Largest gap selected.}
+The low-rank support theorem is expected to produce subspaces
+\(A\le\texttt{linearAnnihilator}\), while the syzygy certificate wrappers need
+pointwise polynomial-kernel facts \(xA\subseteq K\).  The Lean development
+needed this conversion as a reusable lemma.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{linProduct\_mem\_catalecticantKernel\_of\_mem\_linearAnnihilator}
+\]
+and
+\[
+\texttt{linProduct\_mem\_catalecticantKernel\_of\_le\_linearAnnihilator}.
+\]
+They convert membership in \(\texttt{linearAnnihilator}\) through
+\texttt{mem\_ker\_catalecticantMap\_iff} into the polynomial kernel statement
+used by the negative-curvature certificate constructors.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+Once a formal low-rank support theorem supplies \(A\le
+\texttt{linearAnnihilator}\), these lemmas now feed its output directly into
+the rank-one/rank-two certificate wrappers.  The existence proof for such an
+\(A\) remains the major structural gap.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Catalecticant symmetry lemmas}
 
 \paragraph{Largest gap selected.}

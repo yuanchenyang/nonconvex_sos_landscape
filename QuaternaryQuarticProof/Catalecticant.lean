@@ -853,6 +853,22 @@ theorem linProductSubmodule_le_ker_of_le_linearAnnihilator
   linProductSubmodule_mono hA le_rfl |>.trans
     linProductSubmodule_linearAnnihilator_top_le_ker
 
+theorem linProduct_mem_catalecticantKernel_of_mem_linearAnnihilator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {a : linSubmodule}
+    (ha : a ∈ linearAnnihilator B p u)
+    (e : linSubmodule) :
+    (linProduct a e : quadSubmodule).1 ∈ catalecticantKernel B p u := by
+  exact mem_ker_catalecticantMap_iff.mp (ha e)
+
+theorem linProduct_mem_catalecticantKernel_of_le_linearAnnihilator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {A : Submodule ℝ linSubmodule}
+    (hA : A ≤ linearAnnihilator B p u)
+    (a : A) (e : linSubmodule) :
+    (linProduct a.1 e : quadSubmodule).1 ∈ catalecticantKernel B p u :=
+  linProduct_mem_catalecticantKernel_of_mem_linearAnnihilator (hA a.2) e
+
 theorem catalecticantMap_rank_le_three_of_relationPolyLin_ker_eq_bot
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
