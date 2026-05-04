@@ -479,4 +479,43 @@ that produce the required \(\alpha,n,\beta,q\) data.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Catalecticant rank trichotomy}
+
+\paragraph{Largest gap selected.}
+The blueprint uses the facts \(k\le3\) and \(k\ne0\) to split into the
+rank \(1,2,3\) cases.  The upper bound was formalized earlier; the nonzero
+rank conclusion from a negative square was still missing.
+
+\paragraph{Lean progress.}
+Extended \texttt{QuaternaryQuarticProof/Catalecticant.lean} with:
+\[
+\texttt{catalecticantMap\_rank\_pos\_of\_negative\_square}
+\]
+and
+\[
+\texttt{catalecticantMap\_rank\_eq\_one\_or\_two\_or\_three}.
+\]
+The first theorem proves that if some quadratic \(q\) satisfies
+\[
+B(q^2,\texttt{residual}\ p\ u)<0,
+\]
+then the restricted catalecticant map has nonzero range.  The second combines
+this with the full-rank \(k\le3\) theorem to produce the exact Lean case split
+\[
+k=1\ \vee\ k=2\ \vee\ k=3.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The main full-rank proof can now enter the same three cases as the blueprint.
+The remaining gap is to prove the rank-specific structural/syzygy existence
+lemmas for \(k=1,2,3\).
+
+No Julia numerical claims were used in this round.
+
 \end{document}

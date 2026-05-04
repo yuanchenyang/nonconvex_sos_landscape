@@ -289,6 +289,49 @@ theorem catalecticantMap_rank_le_three_of_relationPolyLin_ker_eq_bot
     finrank_quadSubmodule_eq_ten
   omega
 
+theorem catalecticantMap_rank_pos_of_negative_square
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {q : Poly}
+    (hq : IsQuadratic q)
+    (hneg : B (q^2) (residual p u) < 0) :
+    0 < Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) := by
+  rw [Nat.pos_iff_ne_zero]
+  intro hrank_zero
+  have hrange_bot : LinearMap.range (catalecticantMap B p u) = ⊥ := by
+    exact Submodule.finrank_eq_zero.mp hrank_zero
+  let qQuad : quadSubmodule := ⟨q, hq⟩
+  have hmap_mem : catalecticantMap B p u qQuad ∈
+      LinearMap.range (catalecticantMap B p u) := by
+    exact ⟨qQuad, rfl⟩
+  have hmap_zero : catalecticantMap B p u qQuad = 0 := by
+    have : catalecticantMap B p u qQuad ∈ (⊥ : Submodule ℝ (Module.Dual ℝ quadSubmodule)) := by
+      simpa [hrange_bot] using hmap_mem
+    simpa using this
+  have hval_zero :
+      B (q * q) (residual p u) = 0 := by
+    have hcongr := congrArg (fun φ : Module.Dual ℝ quadSubmodule => φ qQuad) hmap_zero
+    simpa [qQuad] using hcongr
+  have : B (q^2) (residual p u) = 0 := by
+    simpa [pow_two] using hval_zero
+  linarith
+
+theorem catalecticantMap_rank_eq_one_or_two_or_three
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {q : Poly}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hq : IsQuadratic q)
+    (hneg : B (q^2) (residual p u) < 0) :
+    Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 ∨
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 ∨
+        Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 := by
+  have hpos :
+      0 < Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) :=
+    catalecticantMap_rank_pos_of_negative_square hq hneg
+  have hle :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) ≤ 3 :=
+    catalecticantMap_rank_le_three_of_relationPolyLin_ker_eq_bot hu hfocp hker
+  omega
+
 section ResidualFunctional
 
 variable {B : DotForm} [Fact B.toQuadraticMap.PosDef]
