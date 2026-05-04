@@ -679,4 +679,41 @@ blueprint.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Rank-three kernel equality}
+
+\paragraph{Largest gap selected.}
+The rank-three case in the blueprint starts from
+\[
+\dim K=7=\dim L,\qquad L\subseteq K,
+\]
+and concludes \(L=K\).  This equality is needed to treat all product terms
+coming from the low-rank support reduction as elements of the coordinate span.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{spanUQuad\_eq\_ker\_catalecticantMap\_of\_rank\_three}.
+\]
+It proves that in the full-rank coordinate case, if the restricted
+catalecticant range has finrank \(3\), then
+\[
+\texttt{spanUQuad}\ hu
+=\ker(\texttt{catalecticantMap}\ B\ p\ u).
+\]
+The proof combines the existing inclusion \(L\subseteq K\), the full-rank
+dimension \(\dim L=7\), rank-nullity, and \(\dim\Quad=10\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The rank-three case still needs the low-rank support theorem to produce the
+linear form \(z\) and the supported negative quadratic \(q_W\), but the
+dimension equality \(L=K\) is now available in Lean.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

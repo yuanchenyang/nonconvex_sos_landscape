@@ -332,6 +332,26 @@ theorem catalecticantMap_rank_eq_one_or_two_or_three
     catalecticantMap_rank_le_three_of_relationPolyLin_ker_eq_bot hu hfocp hker
   omega
 
+theorem spanUQuad_eq_ker_catalecticantMap_of_rank_three
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3) :
+    spanUQuad hu = LinearMap.ker (catalecticantMap B p u) := by
+  have hle : spanUQuad hu ≤ LinearMap.ker (catalecticantMap B p u) :=
+    spanUQuad_le_ker_catalecticantMap hu hfocp
+  have hspan : Module.finrank ℝ (spanUQuad hu) = 7 :=
+    finrank_spanUQuad_eq_seven_of_relationPolyLin_ker_eq_bot hu hker
+  have hnullity :=
+    LinearMap.finrank_range_add_finrank_ker (catalecticantMap B p u)
+  have hquad : Module.finrank ℝ quadSubmodule = 10 :=
+    finrank_quadSubmodule_eq_ten
+  have hker_finrank :
+      Module.finrank ℝ (LinearMap.ker (catalecticantMap B p u)) = 7 := by
+    omega
+  exact Submodule.eq_of_le_of_finrank_eq hle (by rw [hspan, hker_finrank])
+
 section ResidualFunctional
 
 variable {B : DotForm} [Fact B.toQuadraticMap.PosDef]
