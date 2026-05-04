@@ -3813,4 +3813,39 @@ three-dimensional annihilator/support subspace \(A\), prove
 
 No Julia numerical claims were used in this round.
 
+\section*{Exact three-dimensional symmetric square}
+
+\paragraph{Gap targeted.}
+The rank-one product-data constructor needs exact
+\(\dim\Sym^2A=6\) for a three-dimensional subspace \(A\).  As in the rank-two
+case, this should follow from independence of the unordered products of a
+basis.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{finrank\_symSquareSubmodule\_eq\_six\_of\_basis\_products\_linearIndependent}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  For a basis
+\(\beta:\texttt{Fin 3}\to A\), it proves exact dimension \(6\) from linear
+independence of the six products \(\beta_i\beta_j\) with \(i\le j\).  The proof
+matches the rank-two exact-dimension lemma: the six independent products give
+a six-dimensional subspace of \(\Sym^2A\), while the existing spanning lemma
+gives the upper bound.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+Both exact symmetric-square dimension requirements are now reduced to
+polynomial independence of basis products.  The remaining rank-one and
+rank-two work is to prove those independence facts, prove the rank-two
+disjointness statement, and transport the binary negative-square normal forms.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
