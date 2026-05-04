@@ -986,6 +986,45 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Rank-three support product decomposition}
+
+\paragraph{Largest gap selected.}
+The rank-three branch uses a different product identity from the rank-one and
+rank-two branches.  If \(q\in WW\), \(zW\subseteq L\cap K\), and
+\(z^2\in L\setminus\{0\}\), then a finite decomposition
+\(q=\sum \ell_jm_j\) gives
+\[
+\sum (z\ell_j)(zm_j)=z^2 q.
+\]
+This needed its own certificate constructor.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasSyzygyCertificate\_of\_support\_product\_decomposition}.
+\]
+The lemma extracts a finitely supported representation of
+\(q\in\texttt{linProductSubmodule}\ W\ W\), multiplies both factors by the
+fixed \(z\), and builds the \texttt{HasSyzygyCertificate} from the resulting
+identity.  Its hypotheses are exactly the rank-three endpoint data:
+\[
+zW\subseteq L,\qquad zW\subseteq K,\qquad z^2\in L\setminus\{0\}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+This packages the rank-three finite decomposition once the low-rank support
+theorem supplies \(z\) and \(W\), and once the negative square is reduced to a
+quadratic in \(WW\).  The support theorem and the rank-specific decomposition
+of the negative square remain unformalized.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Dimension-to-certificate wrapper}
 
 \paragraph{Largest gap selected.}

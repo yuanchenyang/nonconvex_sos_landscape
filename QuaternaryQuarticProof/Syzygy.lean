@@ -453,6 +453,89 @@ theorem exists_negative_syzygyCertificate_of_preimage_product_dimension
     (x := x) (A := A) (S := S) (s := s)
     hS_L hxA_K hsS (fun hszero => hsne (Subtype.ext hszero)) hsMA hneg
 
+theorem hasSyzygyCertificate_of_support_product_decomposition
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    {z : linSubmodule} {W : Submodule ℝ linSubmodule} {q s : quadSubmodule}
+    (hzW_L : ∀ w : W, linProduct z w.1 ∈ spanUQuad hu)
+    (hzW_K : ∀ w : W, (linProduct z w.1 : quadSubmodule).1 ∈ catalecticantKernel B p u)
+    (hsL : s ∈ spanUQuad hu)
+    (hsne : s.1 ≠ 0)
+    (hs : s = linProduct z z)
+    (hqWW : q ∈ linProductSubmodule W W) :
+    HasSyzygyCertificate B p u q.1 := by
+  classical
+  rcases Finsupp.mem_span_range_iff_exists_finsupp.mp hqWW with ⟨c, hc⟩
+  let ι := {y : W × W // y ∈ c.support}
+  letI : Fintype ι := Finset.fintypeCoeSort c.support
+  let m : ι → quadSubmodule := fun j => linProduct z j.1.1.1
+  let n : ι → Poly := fun j => c j.1 • (linProduct z j.1.2.1 : quadSubmodule).1
+  refine hasSyzygyCertificate_of_product_identity
+    (B := B) (p := p) (u := u) (hu := hu)
+    (m := m) (n := n) (s := s) (q := q.1) ?_ ?_ hsL hsne ?_
+  · intro j
+    exact hzW_L j.1.1
+  · intro j
+    exact Submodule.smul_mem _ (c j.1) (hzW_K j.1.2)
+  · have hcSubtype :
+        (∑ j : ι, c j.1 • (linProduct j.1.1.1 j.1.2.1 : quadSubmodule)) = q := by
+      rw [← hc]
+      change
+        (∑ j : {y : W × W // y ∈ c.support},
+            c j.1 • (linProduct j.1.1.1 j.1.2.1 : quadSubmodule)) =
+          ∑ y ∈ c.support, c y • (linProduct y.1.1 y.2.1 : quadSubmodule)
+      rw [show (Finset.univ : Finset {y : W × W // y ∈ c.support}) =
+          c.support.attach by
+        ext y
+        simp]
+      simpa using
+        (Finset.sum_attach c.support
+          (fun y : W × W => c y • (linProduct y.1.1 y.2.1 : quadSubmodule)))
+    have hcPoly :
+        (∑ j : ι, c j.1 • (linProduct j.1.1.1 j.1.2.1 : quadSubmodule).1) = q.1 := by
+      calc
+        (∑ j : ι, c j.1 • (linProduct j.1.1.1 j.1.2.1 : quadSubmodule).1) =
+            ((∑ j : ι,
+              c j.1 • (linProduct j.1.1.1 j.1.2.1 : quadSubmodule)) : quadSubmodule).1 := by
+              change
+                Finset.sum (Finset.univ : Finset ι)
+                    (fun j =>
+                      (quadSubmodule.subtype)
+                        (c j.1 • (linProduct j.1.1.1 j.1.2.1 : quadSubmodule))) =
+                  (quadSubmodule.subtype)
+                    (Finset.sum (Finset.univ : Finset ι)
+                      (fun j =>
+                        c j.1 • (linProduct j.1.1.1 j.1.2.1 : quadSubmodule)))
+              exact
+                (map_sum (quadSubmodule.subtype)
+                  (fun j : ι =>
+                    c j.1 • (linProduct j.1.1.1 j.1.2.1 : quadSubmodule))
+                  Finset.univ).symm
+        _ = q.1 := congrArg (fun r : quadSubmodule => (r : Poly)) hcSubtype
+    calc
+      (∑ j : ι, (m j).1 * n j) =
+          ∑ j : ι,
+            (linProduct z j.1.1.1 : quadSubmodule).1 *
+              (c j.1 • (linProduct z j.1.2.1 : quadSubmodule).1) := by
+            rfl
+      _ = ∑ j : ι,
+            c j.1 • ((linProduct j.1.1.1 j.1.2.1 : quadSubmodule).1 *
+              (linProduct z z : quadSubmodule).1) := by
+            refine Finset.sum_congr rfl ?_
+            intro j _hj
+            simp [linProduct, mul_comm, mul_left_comm]
+      _ = (∑ j : ι,
+            c j.1 • (linProduct j.1.1.1 j.1.2.1 : quadSubmodule).1) *
+              (linProduct z z : quadSubmodule).1 := by
+            rw [Finset.sum_mul]
+            refine Finset.sum_congr rfl ?_
+            intro j _hj
+            simp
+      _ = q.1 * s.1 := by
+            rw [hcPoly, hs]
+      _ = s.1 * q.1 := by
+            rw [mul_comm]
+
 theorem hasSyzygyCertificate_of_rank_three_kernel_product_identity
     {ι : Type} [Fintype ι] {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
