@@ -986,6 +986,51 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Incidence witness to negative certificate}
+
+\paragraph{Largest gap selected.}
+The rank-one and rank-two cases now have enough subspace plumbing to produce
+an incidence witness \(0\neq s\in M A\), where
+\[
+M=\{a\in A:xa\in S\}.
+\]
+The next gap was to package this witness directly into the flexible rank-case
+output: a negative quadratic square together with a syzygy certificate.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasSyzygyCertificate\_of\_preimage\_product\_incidence}.
+\]
+If \(S\subseteq L\), \(xA\subseteq K\), \(s\in S\setminus\{0\}\), and
+\[
+s\in \texttt{linProductSubmodule}\,
+  (\texttt{linProductLeftPreimageWithin}\ x\ A\ S)\,A,
+\]
+then Lean constructs a \texttt{HasSyzygyCertificate} for \(x^2\).
+Also added
+\[
+\texttt{exists\_negative\_syzygyCertificate\_of\_preimage\_product\_incidence},
+\]
+which combines that certificate with a negativity hypothesis
+\(\lambda(x^4)<0\) to produce the exact existential used by
+\texttt{residual\_eq\_zero\_of\_rank\_case\_exists\_negative\_syzygy\_certificate}.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The rank-one/rank-two branches can now end once their subspace hypotheses and
+negative pure square are available.  The largest remaining gaps are the
+low-rank support theorem, the binary negative-pure-square theorem, and the
+rank-specific instantiation of \(S,A,x\) and the ambient symmetric-square
+subspaces.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Preimages as linear subspaces}
 
 \paragraph{Largest gap selected.}

@@ -389,6 +389,44 @@ theorem hasSyzygyCertificate_of_mem_linProductSubmodule
       _ = s.1 * (linProduct x x : quadSubmodule).1 := by
             rw [hcPoly]
 
+theorem hasSyzygyCertificate_of_preimage_product_incidence
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {S : Submodule ℝ quadSubmodule} {s : quadSubmodule}
+    (hS_L : S ≤ spanUQuad hu)
+    (hxA_K : ∀ a : A, (linProduct x a.1 : quadSubmodule).1 ∈ catalecticantKernel B p u)
+    (hsS : s ∈ S)
+    (hsne : s.1 ≠ 0)
+    (hsMA : s ∈ linProductSubmodule (linProductLeftPreimageWithin x A S) A) :
+    HasSyzygyCertificate B p u (linProduct x x).1 := by
+  refine hasSyzygyCertificate_of_mem_linProductSubmodule
+    (B := B) (p := p) (u := u) (hu := hu)
+    (x := x) (M := linProductLeftPreimageWithin x A S) (A := A) (s := s)
+    ?_ hxA_K (hS_L hsS) hsne hsMA
+  intro m
+  exact hS_L (linProduct_mem_of_mem_linProductLeftPreimageWithin m.2)
+
+theorem exists_negative_syzygyCertificate_of_preimage_product_incidence
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    {x : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {S : Submodule ℝ quadSubmodule} {s : quadSubmodule}
+    (hS_L : S ≤ spanUQuad hu)
+    (hxA_K : ∀ a : A, (linProduct x a.1 : quadSubmodule).1 ∈ catalecticantKernel B p u)
+    (hsS : s ∈ S)
+    (hsne : s.1 ≠ 0)
+    (hsMA : s ∈ linProductSubmodule (linProductLeftPreimageWithin x A S) A)
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    ∃ q : Poly, IsQuadratic q ∧
+      B (q^2) (residual p u) < 0 ∧ HasSyzygyCertificate B p u q := by
+  refine ⟨(linProduct x x : quadSubmodule).1, (linProduct x x : quadSubmodule).2,
+    hneg, ?_⟩
+  exact hasSyzygyCertificate_of_preimage_product_incidence
+    (B := B) (p := p) (u := u) (hu := hu)
+    (x := x) (A := A) (S := S) (s := s)
+    hS_L hxA_K hsS hsne hsMA
+
 theorem hasSyzygyCertificate_of_rank_three_kernel_product_identity
     {ι : Type} [Fintype ι] {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
