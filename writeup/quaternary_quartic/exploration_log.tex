@@ -2113,4 +2113,38 @@ the resulting negative pure fourth power as a \(\texttt{linProduct}\)-square.
 
 No Julia numerical claims were used in this round.
 
+\section*{Quartic ambient dimension}
+
+\paragraph{Gap targeted.}
+The catalecticant rank and support arguments ultimately compare kernels and
+images inside the quartic ambient space.  Earlier rounds had formal dimension
+counts for linear and quadratic forms, but the quartic space itself was still
+only named as a filtered submodule.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{finrank\_quarticSubmodule\_eq\_thirtyFive}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  The proof identifies
+degree-\(\leq 4\) monomials in four variables with bounded triples
+\((a,b,c)\in\{0,\ldots,4\}^3\) satisfying \(a+b+c\leq 4\), then lets
+\texttt{decide} compute the finite cardinality \(35\).  This is the
+quaternary quartic analogue of the existing four-dimensional linear and
+ten-dimensional quadratic counts.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run after this log entry; the only
+expected remaining failure is the root theorem's placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The largest gap remains the structural support theorem: deriving the rank-case
+support data from the catalecticant/kernel hypotheses, then using it to replace
+the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

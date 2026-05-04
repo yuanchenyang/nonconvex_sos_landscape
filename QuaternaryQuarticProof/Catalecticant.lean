@@ -203,6 +203,60 @@ instance instModuleFiniteQuarticSubmodule : Module.Finite ℝ quarticSubmodule :
   rw [quarticSubmodule_eq_restrictTotalDegree]
   infer_instance
 
+private abbrev QuarticExponentSet :=
+  {s : Fin 3 →₀ ℕ // s.sum (fun _ e => e) ≤ 4}
+
+private abbrev BoundedFinTripleFour :=
+  {f : Fin 3 → Fin 5 // (∑ i, (f i).val) ≤ 4}
+
+private theorem finsupp_value_lt_five (s : Fin 3 →₀ ℕ)
+    (hs : s.sum (fun _ e => e) ≤ 4) (i : Fin 3) :
+    s i < 5 := by
+  have hle_sum : s i ≤ s.sum (fun _ e => e) := by
+    simpa using
+      (Finsupp.single_eval_le_sum (f := s) (g := fun n : ℕ => n)
+        (by simp) (fun n => Nat.zero_le n) i)
+  omega
+
+private theorem equivFunOnFinite_symm_sum_finTripleFour (f : Fin 3 → Fin 5) :
+    (Finsupp.equivFunOnFinite.symm (fun i => (f i).val)).sum (fun _ e => e) =
+      ∑ i, (f i).val := by
+  simpa using
+    (Finsupp.equivFunOnFinite_symm_sum (f := fun i : Fin 3 => (f i).val))
+
+private def quarticExponentEquivBoundedFinTripleFour :
+    QuarticExponentSet ≃ BoundedFinTripleFour where
+  toFun s := ⟨fun i => ⟨s.1 i, finsupp_value_lt_five s.1 s.2 i⟩, by
+    simpa [finsupp_sum_eq_finset_sum s.1] using s.2⟩
+  invFun f := ⟨Finsupp.equivFunOnFinite.symm (fun i => (f.1 i).val), by
+    simpa [equivFunOnFinite_symm_sum_finTripleFour f.1] using f.2⟩
+  left_inv := by
+    intro s
+    apply Subtype.ext
+    ext i
+    simp
+  right_inv := by
+    intro f
+    apply Subtype.ext
+    ext i
+    simp
+
+private theorem natCard_quarticExponentSet :
+    Nat.card QuarticExponentSet = 35 := by
+  rw [Nat.card_congr quarticExponentEquivBoundedFinTripleFour]
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+theorem finrank_quarticSubmodule_eq_thirtyFive :
+    Module.finrank ℝ quarticSubmodule = 35 := by
+  rw [quarticSubmodule_eq_restrictTotalDegree]
+  change Module.finrank ℝ
+    (MvPolynomial.restrictSupport ℝ {n : Fin 3 →₀ ℕ | n.sum (fun _ e => e) ≤ 4}) = 35
+  rw [Module.finrank_eq_nat_card_basis
+    (MvPolynomial.basisRestrictSupport ℝ
+      {n : Fin 3 →₀ ℕ | n.sum (fun _ e => e) ≤ 4})]
+  exact natCard_quarticExponentSet
+
 theorem mul_quad_quad_mem_quartic {p q : Poly}
     (hp : p ∈ quadSubmodule) (hq : q ∈ quadSubmodule) :
     p * q ∈ quarticSubmodule := by
