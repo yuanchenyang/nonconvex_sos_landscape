@@ -2689,4 +2689,46 @@ range/product inclusions from the rank-case support decomposition.
 
 No Julia numerical claims were used in this round.
 
+\section*{Grassmann lower bounds for incidence intersections}
+
+\paragraph{Gap targeted.}
+The rank-one and rank-two incidence arguments require lower bounds such as
+\(\dim(L\cap U)\ge4\), derived from \(\dim L=7\), a support ambient dimension,
+and the catalecticant kernel dimension.  The previous Grassmann lemmas mainly
+produced nonzero intersections, not explicit lower bounds.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{finrank\_inf\_ge\_add\_sub\_of\_le}
+\]
+to \texttt{QuaternaryQuarticProof/Dimension.lean}.  It proves the general
+finite-dimensional inequality
+\[
+a+b-c \le \dim(s\cap t)
+\]
+from \(s,t\le w\), lower bounds \(a\le\dim s\), \(b\le\dim t\), and an upper
+bound \(\dim w\le c\).  Also added the blueprint-specific specializations
+\[
+\texttt{four\_le\_finrank\_inf\_of\_seven\_five\_eight}
+\]
+and
+\[
+\texttt{four\_le\_finrank\_inf\_of\_seven\_six\_nine}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Dimension.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The incidence proof still needs to define the rank-one/rank-two support
+ambient subspaces \(U\) and prove their dimension upper bounds.  This round
+supplies the Grassmann step once those subspaces are available.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

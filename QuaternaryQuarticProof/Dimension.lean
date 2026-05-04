@@ -62,6 +62,38 @@ theorem exists_mem_inf_ne_zero_of_finrank_eq_and_lt_add
   refine exists_mem_inf_ne_zero_of_finrank_lt_add (K := K) (V := V) hsw htw ?_
   nlinarith
 
+theorem finrank_inf_ge_add_sub_of_le
+    {s t w : Submodule K V} {a b c : ℕ}
+    (hsw : s ≤ w) (htw : t ≤ w)
+    (hs : a ≤ finrank K s) (ht : b ≤ finrank K t)
+    (hw : finrank K w ≤ c) :
+    a + b - c ≤ finrank K ↥(s ⊓ t) := by
+  have hbound :=
+    finrank_add_le_finrank_add_finrank_inf_of_le (K := K) (V := V) hsw htw
+  omega
+
+theorem four_le_finrank_inf_of_seven_five_eight
+    {s t w : Submodule K V}
+    (hsw : s ≤ w) (htw : t ≤ w)
+    (hs : 7 ≤ finrank K s) (ht : 5 ≤ finrank K t)
+    (hw : finrank K w ≤ 8) :
+    4 ≤ finrank K ↥(s ⊓ t) := by
+  simpa using
+    finrank_inf_ge_add_sub_of_le
+      (K := K) (V := V) (s := s) (t := t) (w := w)
+      (a := 7) (b := 5) (c := 8) hsw htw hs ht hw
+
+theorem four_le_finrank_inf_of_seven_six_nine
+    {s t w : Submodule K V}
+    (hsw : s ≤ w) (htw : t ≤ w)
+    (hs : 7 ≤ finrank K s) (ht : 6 ≤ finrank K t)
+    (hw : finrank K w ≤ 9) :
+    4 ≤ finrank K ↥(s ⊓ t) := by
+  simpa using
+    finrank_inf_ge_add_sub_of_le
+      (K := K) (V := V) (s := s) (t := t) (w := w)
+      (a := 7) (b := 6) (c := 9) hsw htw hs ht hw
+
 end Grassmann
 
 section Complements
