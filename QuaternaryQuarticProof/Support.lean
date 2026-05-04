@@ -741,6 +741,49 @@ theorem hasPreimageProductSupportData_of_rank_two_binaryNormalForm
     (x := z) (A := A)
     hz hAann hAdim hsym (hdisj z hzspan hz) hneg
 
+theorem hasPreimageProductSupportData_of_rank_two_binaryRestriction
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2)
+    {A : Submodule ℝ linSubmodule} {x y : linSubmodule}
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hAdim : Module.finrank ℝ A = 2)
+    (hsym : Module.finrank ℝ (symSquareSubmodule A) = 3)
+    (hform :
+      HasBinaryLowRankNegativeNormalForm
+        (binaryRestrictionCoeffA B p u x)
+        (binaryRestrictionCoeffB B p u x y)
+        (binaryRestrictionCoeffC B p u x y)
+        (binaryRestrictionCoeffD B p u x y)
+        (binaryRestrictionCoeffE B p u y))
+    (hpow : ∀ X Y : ℝ,
+      (linProduct (X • x + Y • y) (X • x + Y • y) :
+          quadSubmodule).1^2 =
+        X^4 • (linProduct x x : quadSubmodule).1^2 +
+          (4 * X^3 * Y) •
+            ((linProduct x x : quadSubmodule).1 *
+              (linProduct x y : quadSubmodule).1) +
+            (6 * X^2 * Y^2) • (linProduct x y : quadSubmodule).1^2 +
+              (4 * X * Y^3) •
+                ((linProduct x y : quadSubmodule).1 *
+                  (linProduct y y : quadSubmodule).1) +
+                Y^4 • (linProduct y y : quadSubmodule).1^2)
+    (hdisj :
+      ∀ z : linSubmodule,
+        z ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) →
+          (z : Poly) ≠ 0 →
+            LinearMap.range (linProductLeftMapOn z A) ⊓ symSquareSubmodule A = ⊥) :
+    HasPreimageProductSupportData B p u hu :=
+  hasPreimageProductSupportData_of_rank_two_binaryNormalForm
+    (B := B) (p := p) (u := u) (hu := hu)
+    hfocp hrelker hrank
+    (A := A) (x := x) (y := y)
+    hAann hAdim hsym hform
+    (binaryRestriction_eval_eq_of_pow_expansion B p u x y hpow)
+    hdisj
+
 theorem hasPreimageProductSupportData_of_rank_two_support
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -902,6 +945,43 @@ theorem hasRankOneProductSupportData_of_binaryNormalForm
     hfocp hrelker hrank
     (x := z) (A := A)
     hz hAann hAdim hSymdim hneg
+
+theorem hasRankOneProductSupportData_of_binaryRestriction
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1)
+    {A : Submodule ℝ linSubmodule} {x y : linSubmodule}
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hAdim : Module.finrank ℝ A = 3)
+    (hSymdim : Module.finrank ℝ (symSquareSubmodule A) = 6)
+    (hform :
+      HasBinaryLowRankNegativeNormalForm
+        (binaryRestrictionCoeffA B p u x)
+        (binaryRestrictionCoeffB B p u x y)
+        (binaryRestrictionCoeffC B p u x y)
+        (binaryRestrictionCoeffD B p u x y)
+        (binaryRestrictionCoeffE B p u y))
+    (hpow : ∀ X Y : ℝ,
+      (linProduct (X • x + Y • y) (X • x + Y • y) :
+          quadSubmodule).1^2 =
+        X^4 • (linProduct x x : quadSubmodule).1^2 +
+          (4 * X^3 * Y) •
+            ((linProduct x x : quadSubmodule).1 *
+              (linProduct x y : quadSubmodule).1) +
+            (6 * X^2 * Y^2) • (linProduct x y : quadSubmodule).1^2 +
+              (4 * X * Y^3) •
+                ((linProduct x y : quadSubmodule).1 *
+                  (linProduct y y : quadSubmodule).1) +
+                Y^4 • (linProduct y y : quadSubmodule).1^2) :
+    HasRankOneProductSupportData B p u hu :=
+  hasRankOneProductSupportData_of_binaryNormalForm
+    (B := B) (p := p) (u := u) (hu := hu)
+    hfocp hrelker hrank
+    (A := A) (x := x) (y := y)
+    hAann hAdim hSymdim hform
+    (binaryRestriction_eval_eq_of_pow_expansion B p u x y hpow)
 
 theorem hasPreimageProductSupportData_of_rank_one_ambient_bounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}

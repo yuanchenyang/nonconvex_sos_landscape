@@ -4085,4 +4085,43 @@ dimension/disjointness facts remain open.
 
 No Julia numerical claims were used in this round.
 
+\section*{Canonical binary restriction support constructors}
+
+\paragraph{Gap targeted.}
+The rank-one and rank-two binary-normal-form constructors still accepted an
+arbitrary five-coefficient evaluation identity.  After defining canonical
+restriction coefficients, this can be reduced to a normal form for those
+coefficients plus the pure polynomial expansion of \((Xx+Yy)^4\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_binaryRestriction}
+\]
+and
+\[
+\texttt{hasRankOneProductSupportData\_of\_binaryRestriction}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  These constructors take
+\(\texttt{HasBinaryLowRankNegativeNormalForm}\) for the canonical coefficients
+\(\texttt{binaryRestrictionCoeffA},\ldots,\texttt{binaryRestrictionCoeffE}\)
+and use
+\(\texttt{binaryRestriction\_eval\_eq\_of\_pow\_expansion}\) to discharge the
+evaluation identity required by the previous binary-normal-form bridges.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-one/rank-two binary transport now has canonical coefficients.  The
+remaining evaluation obligation is only the polynomial expansion of
+\((Xx+Yy)^4\), while the normal-form classification must be proved for those
+canonical coefficients.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
