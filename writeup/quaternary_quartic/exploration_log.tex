@@ -830,4 +830,45 @@ the concrete incidence/product-space constructions that create these
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Rank-three kernel products give certificates}
+
+\paragraph{Largest gap selected.}
+In the rank-three case the blueprint uses \(K=L\) to turn kernel product data
+into a coordinate-span syzygy.  The equality \(K=L\) was formalized, but the
+certificate-producing bridge had not yet been connected.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasSyzygyCertificate\_of\_rank\_three\_kernel\_product\_identity}.
+\]
+Assuming full scalar rank, FOCP, and catalecticant range rank \(3\), this
+theorem takes finite product data
+\[
+m_j\in\ker C_\lambda,\qquad n_j\in K_\lambda,\qquad
+0\ne s\in\ker C_\lambda,\qquad \sum_j m_jn_j=sq,
+\]
+and returns \(\texttt{HasSyzygyCertificate}\).  Internally it uses the
+rank-three equality
+\[
+\texttt{spanUQuad}=\ker(\texttt{catalecticantMap})
+\]
+and the general product-identity-to-certificate theorem.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Syzygy.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The rank-three case is now reduced to producing the product data from the
+low-rank support theorem: the formal analogue of choosing \(z\in A\), writing
+the supported negative quadratic \(q_W\) as \(\sum_j \ell_jm_j\), and setting
+\[
+m_j=z\ell_j,\qquad n_j=zm_j,\qquad s=z^2.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}

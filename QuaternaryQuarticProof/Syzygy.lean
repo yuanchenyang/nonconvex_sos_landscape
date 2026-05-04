@@ -257,4 +257,30 @@ theorem hasSyzygyCertificate_of_product_identity
     _ = s.1 * q := hprod
     _ = relationPoly u β * q := by rw [hβeq]
 
+theorem hasSyzygyCertificate_of_rank_three_kernel_product_identity
+    {ι : Type} [Fintype ι] {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    {m : ι → quadSubmodule} {n : ι → Poly} {s : quadSubmodule} {q : Poly}
+    (hmK : ∀ j, m j ∈ LinearMap.ker (catalecticantMap B p u))
+    (hnK : ∀ j, n j ∈ catalecticantKernel B p u)
+    (hsK : s ∈ LinearMap.ker (catalecticantMap B p u))
+    (hsne : s.1 ≠ 0)
+    (hprod : (∑ j : ι, (m j).1 * n j) = s.1 * q) :
+    HasSyzygyCertificate B p u q := by
+  have hspan_eq_ker :
+      spanUQuad hu = LinearMap.ker (catalecticantMap B p u) :=
+    spanUQuad_eq_ker_catalecticantMap_of_rank_three
+      (B := B) (p := p) (u := u) hu hfocp hrelker hrank
+  refine hasSyzygyCertificate_of_product_identity
+    (B := B) (p := p) (u := u) (hu := hu)
+    (m := m) (n := n) (s := s) (q := q) ?_ hnK ?_ hsne hprod
+  · intro j
+    rw [hspan_eq_ker]
+    exact hmK j
+  · rw [hspan_eq_ker]
+    exact hsK
+
 end QuaternaryQuartic
