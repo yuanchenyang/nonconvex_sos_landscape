@@ -5,6 +5,7 @@ import Mathlib.Algebra.BigOperators.Finsupp.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 import Mathlib.Data.Fintype.Pi
 import QuaternaryQuarticProof.Certificate
+import QuaternaryQuarticProof.Dimension
 
 set_option autoImplicit false
 set_option warningAsError true
@@ -359,6 +360,23 @@ theorem finrank_left_le_finrank_linProductSubmodule_of_right_ne_bot
     Module.finrank ℝ M ≤ Module.finrank ℝ (linProductSubmodule M A) := by
   rw [linProductSubmodule_comm]
   exact finrank_right_le_finrank_linProductSubmodule_of_left_ne_bot hA
+
+theorem exists_mem_inf_linProductSubmodule_ne_zero_of_finrank_lt_add
+    {N W : Submodule ℝ quadSubmodule} {M A : Submodule ℝ linSubmodule}
+    (hNW : N ≤ W)
+    (hMAW : linProductSubmodule M A ≤ W)
+    (hM : M ≠ ⊥)
+    {n a c : ℕ}
+    (hN : n ≤ Module.finrank ℝ N)
+    (hA : a ≤ Module.finrank ℝ A)
+    (hW : Module.finrank ℝ W = c)
+    (hgt : c < n + a) :
+    ∃ x : quadSubmodule, x ∈ N ∧ x ∈ linProductSubmodule M A ∧ x ≠ 0 := by
+  have hprod :
+      a ≤ Module.finrank ℝ (linProductSubmodule M A) :=
+    hA.trans (finrank_right_le_finrank_linProductSubmodule_of_left_ne_bot hM)
+  exact exists_mem_inf_ne_zero_of_finrank_eq_and_lt_add
+    (K := ℝ) (V := quadSubmodule) hNW hMAW hN hprod hW hgt
 
 /-- Span of the seven quadratic coordinates of a rank-seven point. -/
 def spanU (u : RankSevenVec) : Submodule ℝ Poly :=

@@ -986,6 +986,40 @@ low-rank support theorem that asserts \(AE\subseteq K\).
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Product incidence intersection}
+
+\paragraph{Largest gap selected.}
+The rank-one and rank-two arguments require a nonzero element in intersections
+such as \(N\cap MA\) and \(N\cap MB\).  After the product-space dimension
+lower bounds, the remaining formal step is a Grassmann dimension argument
+inside a chosen ambient quadratic subspace.
+
+\paragraph{Lean progress.}
+Imported the general Grassmann lemmas from \texttt{Dimension.lean} into
+\texttt{Catalecticant.lean} and proved
+\[
+\texttt{exists\_mem\_inf\_linProductSubmodule\_ne\_zero\_of\_finrank\_lt\_add}.
+\]
+The lemma says that if \(N\le W\), \(MA\le W\), \(M\neq0\), and the lower
+bounds on \(\dim N\) and \(\dim A\) add to more than \(\dim W\), then there is
+a nonzero quadratic in \(N\cap MA\).  This packages the blueprint's final
+incidence step for both \(N\cap MA\) and \(N\cap MB\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.
+
+\paragraph{Remaining blockers.}
+The finite-dimensional intersection mechanism is now available, but the rank
+cases still need definitions tying the blueprint's \(P\), \(M\), \(N\), and
+ambient \(\operatorname{Sym}^2A\) or \(\operatorname{Sym}^2B\) to concrete
+Lean submodules.  The low-rank support theorem and the binary negative
+pure-square theorem remain unformalized.
+
+No Julia numerical claims were used in this round.
+
 \section*{2026-05-04: Product-space lower bounds}
 
 \paragraph{Largest gap selected.}
