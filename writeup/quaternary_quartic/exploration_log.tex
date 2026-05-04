@@ -83,4 +83,63 @@ steps are:
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Catalecticant setup and negative SOS summand}
+
+\paragraph{Largest gap selected.}
+After the rank-deficient branch, the next full-rank prerequisite in the
+blueprint is the residual functional and catalecticant kernel setup.  This
+precedes the low-rank support theorem and is needed in every \(k=1,2,3\)
+case.
+
+\paragraph{Lean progress.}
+Added \texttt{QuaternaryQuarticProof/Catalecticant.lean} and wired it through
+\texttt{QuaternaryQuarticProof/Basic.lean}.  The new module defines:
+\[
+\texttt{quadSubmodule},\qquad
+\texttt{spanU}\ u=\operatorname{span}\{u_i\},\qquad
+\texttt{catalecticantKernel}\ B\ p\ u.
+\]
+The catalecticant kernel is the submodule of quadratic polynomials \(q\) such
+that
+\[
+  B(qr,\texttt{residual}\ p\ u)=0
+  \quad\text{for every quadratic }r.
+\]
+
+\paragraph{Formalized lemmas.}
+The theorem
+\texttt{spanU\_le\_catalecticantKernel} proves the blueprint lemma
+\(L_u\subseteq K_\lambda\) from FOCP, by testing the single-coordinate
+direction \(v=\texttt{Pi.single}\ i\ r\).
+
+The theorem \texttt{target\_dot\_residual\_negative} proves that if
+\(\texttt{residual}\ p\ u\ne0\), then
+\[
+  B(p,\texttt{residual}\ p\ u)<0.
+\]
+The theorem \texttt{exists\_negative\_sos\_summand} then extracts a quadratic
+SOS summand \(q\) with
+\[
+  B(q^2,\texttt{residual}\ p\ u)<0.
+\]
+The combined theorem
+\texttt{exists\_negative\_sos\_summand\_of\_nonzero\_residual} packages these
+two steps for later use.
+
+\paragraph{Verification.}
+The new module and root proof file typecheck:
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean},\qquad
+\texttt{lake env lean QuaternaryQuarticProof.lean}.
+\]
+
+\paragraph{Remaining blockers.}
+The largest remaining gap is now the finite-dimensional full-rank bridge:
+connect \(\ker(\texttt{relationPolyLin}\ u)=\bot\) with
+\(\dim(\texttt{spanU}\ u)=7\), restrict the catalecticant quotient to the
+10-dimensional quadratic submodule, and prove or import the low-rank
+support/syzygy constructions without axioms.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

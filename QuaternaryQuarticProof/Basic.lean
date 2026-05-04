@@ -1,4 +1,4 @@
-import QuaternaryQuarticProof.Certificate
+import QuaternaryQuarticProof.Catalecticant
 
 set_option autoImplicit false
 set_option warningAsError true
