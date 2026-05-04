@@ -1,3 +1,4 @@
+import Mathlib.LinearAlgebra.Dimension.Constructions
 import QuaternaryQuarticProof.Certificate
 
 set_option autoImplicit false
@@ -91,6 +92,40 @@ theorem spanU_le_catalecticantKernel {B : DotForm} {p : Poly} {u : RankSevenVec}
     have hdir : IsAdmissibleDirection (Pi.single i r : RankSevenVec) :=
       singleDirection_admissible i hr
     simpa [A_singleDirection] using hfocp (Pi.single i r) hdir
+
+theorem spanU_le_quadSubmodule {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u) :
+    spanU u ≤ quadSubmodule := by
+  refine Submodule.span_le.mpr ?_
+  rintro q ⟨i, rfl⟩
+  exact hu i
+
+/-- Trivial kernel of the scalar-relation map is the full-rank condition for
+the seven quadratic coordinates. -/
+theorem linearIndependent_u_of_relationPolyLin_ker_eq_bot {u : RankSevenVec}
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥) :
+    LinearIndependent ℝ u := by
+  rw [Fintype.linearIndependent_iff]
+  intro g hg i
+  have hgker : g ∈ LinearMap.ker (relationPolyLin u) := by
+    change relationPolyLin u g = 0
+    simpa [relationPolyLin, relationPoly] using hg
+  have hgzero : g = 0 := by
+    have : g ∈ (⊥ : Submodule ℝ (Fin 7 → ℝ)) := by
+      simpa [hker] using hgker
+    simpa using this
+  exact congrFun hgzero i
+
+theorem finrank_spanU_eq_seven_of_relationPolyLin_ker_eq_bot {u : RankSevenVec}
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥) :
+    Module.finrank ℝ (spanU u) = 7 := by
+  have hli : LinearIndependent ℝ u :=
+    linearIndependent_u_of_relationPolyLin_ker_eq_bot hker
+  calc
+    Module.finrank ℝ (spanU u) =
+        Module.finrank ℝ (Submodule.span ℝ (Set.range u)) := rfl
+    _ = Fintype.card (Fin 7) := finrank_span_eq_card hli
+    _ = 7 := by simp
 
 section ResidualFunctional
 

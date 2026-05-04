@@ -142,4 +142,45 @@ support/syzygy constructions without axioms.
 
 No Julia numerical claims were used in this round.
 
+\section*{2026-05-04: Full-rank span dimension bridge}
+
+\paragraph{Largest gap selected.}
+The full-rank branch needs a formal way to turn ``the seven coordinates have
+no scalar relation'' into the dimension statement \(\dim L_u=7\).  This is the
+input used with \(L_u\subseteq K_\lambda\) to force catalecticant rank at most
+three.
+
+\paragraph{Lean progress.}
+Extended \texttt{QuaternaryQuarticProof/Catalecticant.lean} with:
+\[
+\texttt{spanU\_le\_quadSubmodule},\qquad
+\texttt{linearIndependent\_u\_of\_relationPolyLin\_ker\_eq\_bot},\qquad
+\texttt{finrank\_spanU\_eq\_seven\_of\_relationPolyLin\_ker\_eq\_bot}.
+\]
+The last theorem proves
+\[
+  \ker(\texttt{relationPolyLin}\ u)=\bot
+  \Longrightarrow
+  \operatorname{finrank}_{\mathbb R}(\texttt{spanU}\ u)=7.
+\]
+
+\paragraph{Verification.}
+The modified catalecticant module and root proof file typecheck:
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean},\qquad
+\texttt{lake env lean QuaternaryQuarticProof.lean}.
+\]
+
+\paragraph{Remaining blockers.}
+The next largest gap is to make the rank bound precise on the quadratic
+submodule: define the restricted catalecticant map
+\[
+  \texttt{quadSubmodule}\to(\texttt{quadSubmodule}\to_{\mathbb R}\mathbb R)
+\]
+and prove that \(L_u\subseteq K_\lambda\) and \(\dim L_u=7\) imply rank at most
+three.  After that, the main remaining mathematical input is the low-rank
+support theorem and the rank \(1,2,3\) syzygy constructions.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
