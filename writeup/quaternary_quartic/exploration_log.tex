@@ -2655,4 +2655,38 @@ decomposition and binary negative-square theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-specific ambient bound wrappers}
+
+\paragraph{Gap targeted.}
+After adding the general upper-bound support-data constructor, the rank-one
+and rank-two cases still needed convenient wrappers for the blueprint's fixed
+ambient bounds \(5\) and \(6\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_dimension\_bounds}
+\]
+and
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_one\_dimension\_bounds}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  They package the arithmetic
+\(5<4+2\) and \(6<4+3\) while accepting upper bounds
+\(\dim W\le5\) and \(\dim W\le6\), respectively.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The remaining incidence work is now concentrated in proving the inputs to
+these wrappers: the \(S\)-dimension lower bound, the ambient bound, and the
+range/product inclusions from the rank-case support decomposition.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
