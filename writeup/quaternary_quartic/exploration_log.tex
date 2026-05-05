@@ -6942,4 +6942,55 @@ remain open.
 
 No Julia numerical claims were used in this round.
 
+\section*{Canonical binary Hankel kernel vectors}
+
+\paragraph{Gap targeted.}
+The consolidated branch certificate still assumed the branch equations
+directly.  The blueprint obtains those equations from the canonical generators
+\[
+xy,\qquad y^2,\qquad x^2+y^2
+\]
+of the one-dimensional Hankel kernel after a real binary change of basis.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{binaryHankelMul}
+\]
+for the action of the scalar Hankel matrix on a coefficient triple.  Proved
+that the three canonical kernel vectors
+\[
+(0,1,0),\qquad (0,0,1),\qquad (1,0,1)
+\]
+give the expected branch equations via
+\[
+\texttt{xy\_kernel\_equations\_of\_binaryHankelMul\_eq\_zero},
+\]
+\[
+\texttt{ySq\_kernel\_equations\_of\_binaryHankelMul\_eq\_zero},
+\]
+and
+\[
+\texttt{elliptic\_kernel\_equations\_of\_binaryHankelMul\_eq\_zero}.
+\]
+Added constructors from these canonical kernel equations to
+\[
+\texttt{HasBinaryKernelBranchCertificate}.
+\]
+
+\paragraph{Strategy change.}
+The remaining binary classification can now target canonical kernel vectors
+for the scalar Hankel matrix, instead of re-proving the downstream coefficient
+equations in every branch.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The binary theorem still needs the real change-of-basis classification of a
+one-dimensional binary quadratic kernel.  The low-rank apolar support theorem
+remains open.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

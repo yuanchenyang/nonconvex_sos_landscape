@@ -13,6 +13,11 @@ def binaryQuarticEval (a b c d e x y : ℝ) : ℝ :=
 def binaryHankelQuad (a b c d e r s t : ℝ) : ℝ :=
   a * r^2 + 2 * b * r * s + 2 * c * r * t + c * s^2 + 2 * d * s * t + e * t^2
 
+def binaryHankelMul (a b c d e : ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
+  ![a * v 0 + b * v 1 + c * v 2,
+    b * v 0 + c * v 1 + d * v 2,
+    c * v 0 + d * v 1 + e * v 2]
+
 def HasBinaryHankelNegativeValue (a b c d e : ℝ) : Prop :=
   ∃ r s t : ℝ, binaryHankelQuad a b c d e r s t < 0
 
@@ -24,6 +29,66 @@ def HasBinaryKernelBranchCertificate (a b c d e : ℝ) : Prop :=
       ![(![a, b, 0] : Fin 3 → ℝ), (![b, 0, 0] : Fin 3 → ℝ)]) ∨
   (c = -a ∧ d = -b ∧ e = a ∧
     HasBinaryHankelNegativeValue a b c d e)
+
+theorem xy_kernel_equations_of_binaryHankelMul_eq_zero
+    {a b c d e : ℝ}
+    (hker : binaryHankelMul a b c d e (![0, 1, 0] : Fin 3 → ℝ) = 0) :
+    b = 0 ∧ c = 0 ∧ d = 0 := by
+  have h0 := congrArg (fun v : Fin 3 → ℝ => v 0) hker
+  have h1 := congrArg (fun v : Fin 3 → ℝ => v 1) hker
+  have h2 := congrArg (fun v : Fin 3 → ℝ => v 2) hker
+  simp [binaryHankelMul] at h0 h1 h2
+  exact ⟨h0, h1, h2⟩
+
+theorem ySq_kernel_equations_of_binaryHankelMul_eq_zero
+    {a b c d e : ℝ}
+    (hker : binaryHankelMul a b c d e (![0, 0, 1] : Fin 3 → ℝ) = 0) :
+    c = 0 ∧ d = 0 ∧ e = 0 := by
+  have h0 := congrArg (fun v : Fin 3 → ℝ => v 0) hker
+  have h1 := congrArg (fun v : Fin 3 → ℝ => v 1) hker
+  have h2 := congrArg (fun v : Fin 3 → ℝ => v 2) hker
+  simp [binaryHankelMul] at h0 h1 h2
+  exact ⟨h0, h1, h2⟩
+
+theorem elliptic_kernel_equations_of_binaryHankelMul_eq_zero
+    {a b c d e : ℝ}
+    (hker : binaryHankelMul a b c d e (![1, 0, 1] : Fin 3 → ℝ) = 0) :
+    c = -a ∧ d = -b ∧ e = a := by
+  have h0 := congrArg (fun v : Fin 3 → ℝ => v 0) hker
+  have h1 := congrArg (fun v : Fin 3 → ℝ => v 1) hker
+  have h2 := congrArg (fun v : Fin 3 → ℝ => v 2) hker
+  simp [binaryHankelMul] at h0 h1 h2
+  constructor
+  · linarith
+  constructor
+  · linarith
+  · linarith
+
+theorem binaryKernelBranchCertificate_of_xy_kernel
+    {a b c d e : ℝ}
+    (hker : binaryHankelMul a b c d e (![0, 1, 0] : Fin 3 → ℝ) = 0)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    HasBinaryKernelBranchCertificate a b c d e := by
+  rcases xy_kernel_equations_of_binaryHankelMul_eq_zero hker with ⟨hb, hc, hd⟩
+  exact Or.inl ⟨hb, hc, hd, hneg⟩
+
+theorem binaryKernelBranchCertificate_of_ySq_kernel
+    {a b c d e : ℝ}
+    (hker : binaryHankelMul a b c d e (![0, 0, 1] : Fin 3 → ℝ) = 0)
+    (hLI : LinearIndependent ℝ
+      ![(![a, b, 0] : Fin 3 → ℝ), (![b, 0, 0] : Fin 3 → ℝ)]) :
+    HasBinaryKernelBranchCertificate a b c d e := by
+  rcases ySq_kernel_equations_of_binaryHankelMul_eq_zero hker with ⟨hc, hd, he⟩
+  exact Or.inr (Or.inl ⟨hc, hd, he, hLI⟩)
+
+theorem binaryKernelBranchCertificate_of_elliptic_kernel
+    {a b c d e : ℝ}
+    (hker : binaryHankelMul a b c d e (![1, 0, 1] : Fin 3 → ℝ) = 0)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    HasBinaryKernelBranchCertificate a b c d e := by
+  rcases elliptic_kernel_equations_of_binaryHankelMul_eq_zero hker with
+    ⟨hc, hd, he⟩
+  exact Or.inr (Or.inr ⟨hc, hd, he, hneg⟩)
 
 def HasBinaryLowRankNegativeNormalForm (a b c d e : ℝ) : Prop :=
   (∃ ρ α β : ℝ,
