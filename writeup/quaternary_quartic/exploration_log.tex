@@ -11577,4 +11577,50 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Branch pullbacks to negative binary quartic values}
+
+\paragraph{Gap targeted.}
+The branch canonical-data lemmas still lived on transformed coefficient
+systems.  To use them in the binary negative-pure-square theorem, each branch
+also needs the matching quartic pullback back to the original coefficients.
+
+\paragraph{Lean progress.}
+Added end-to-end coefficient theorems:
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_parabolic\_shearY\_swap\_dual},
+\]
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_hyperbolic\_shearY\_shearX\_dual},
+\]
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_hyperbolic\_zero\_xCoeff\_shearY\_dual},
+\]
+and
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_elliptic\_shearY\_diagonal\_dual}.
+\]
+Each theorem composes the appropriate quartic pullbacks (shear, swap, or
+diagonal scaling), uses the transported canonical kernel data for the
+normalized coefficients, and applies the generic pullback/canonical-data bridge
+to produce a negative value of the original binary quartic.
+
+\paragraph{Strategy change.}
+The binary discriminant branches now produce the final coefficient-level
+negative evaluation for the original binary quartic.  The remaining binary
+work is a dispatcher from a nonzero Hankel kernel and discriminant case to one
+of these branch theorems; after that, the largest remaining gap is the apolar
+support theorem that supplies the binary restriction data.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}

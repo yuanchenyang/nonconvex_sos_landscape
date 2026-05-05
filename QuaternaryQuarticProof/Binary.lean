@@ -2869,6 +2869,129 @@ theorem binaryQuarticEval_exists_negative_of_rankTwoNormalizedKernelClassificati
     ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 :=
   binaryQuarticEval_exists_negative_of_canonicalKernelData (hclass hneg hrank)
 
+theorem binaryQuarticEval_exists_negative_of_parabolic_shearY_swap_dual
+    {a b c d e r s t : ℝ}
+    (hr : r ≠ 0)
+    (hdisc : binaryKernelDiscriminant r s t = 0)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 := by
+  let tau := s / (2 * r)
+  let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+  let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+  let C := c + 2 * d * tau + e * tau^2
+  let D := d + e * tau
+  have hcanon : HasBinaryCanonicalKernelData e D C B A := by
+    simpa [tau, A, B, C, D] using
+      canonicalKernelData_of_parabolic_shearY_swap_dual
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc hker hneg
+  have hpull₁ : IsBinaryQuarticPullback a b c d e A B C D e 1 0 tau 1 := by
+    simpa [tau, A, B, C, D] using
+      isBinaryQuarticPullback_shearY a b c d e tau
+  have hpull₂ : IsBinaryQuarticPullback A B C D e e D C B A 0 1 1 0 :=
+    isBinaryQuarticPullback_swap A B C D e
+  exact binaryQuarticEval_exists_negative_of_pullback_canonicalKernelData
+    (hpull₁.comp hpull₂) hcanon
+
+theorem binaryQuarticEval_exists_negative_of_hyperbolic_shearY_shearX_dual
+    {a b c d e r s t : ℝ}
+    (hr : r ≠ 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 := by
+  let disc := binaryKernelDiscriminant r s t
+  let tau := (s - Real.sqrt disc) / (2 * r)
+  let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+  let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+  let C := c + 2 * d * tau + e * tau^2
+  let D := d + e * tau
+  let mu := r / Real.sqrt disc
+  have hcanon :
+      HasBinaryCanonicalKernelData
+        A
+        (A * mu + B)
+        (A * mu^2 + 2 * B * mu + C)
+        (A * mu^3 + 3 * B * mu^2 + 3 * C * mu + D)
+        (A * mu^4 + 4 * B * mu^3 + 6 * C * mu^2 + 4 * D * mu + e) := by
+    simpa [disc, tau, A, B, C, D, mu] using
+      canonicalKernelData_of_hyperbolic_shearY_shearX_dual
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc_pos hker hneg
+  have hpull₁ : IsBinaryQuarticPullback a b c d e A B C D e 1 0 tau 1 := by
+    simpa [tau, A, B, C, D] using
+      isBinaryQuarticPullback_shearY a b c d e tau
+  have hpull₂ :
+      IsBinaryQuarticPullback A B C D e
+        A
+        (A * mu + B)
+        (A * mu^2 + 2 * B * mu + C)
+        (A * mu^3 + 3 * B * mu^2 + 3 * C * mu + D)
+        (A * mu^4 + 4 * B * mu^3 + 6 * C * mu^2 + 4 * D * mu + e)
+        1 mu 0 1 :=
+    isBinaryQuarticPullback_shearX A B C D e mu
+  exact binaryQuarticEval_exists_negative_of_pullback_canonicalKernelData
+    (hpull₁.comp hpull₂) hcanon
+
+theorem binaryQuarticEval_exists_negative_of_hyperbolic_zero_xCoeff_shearY_dual
+    {a b c d e r s t : ℝ}
+    (hr : r = 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 := by
+  let tau := t / s
+  let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+  let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+  let C := c + 2 * d * tau + e * tau^2
+  let D := d + e * tau
+  have hcanon : HasBinaryCanonicalKernelData A B C D e := by
+    simpa [tau, A, B, C, D] using
+      canonicalKernelData_of_hyperbolic_zero_xCoeff_shearY_dual
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc_pos hker hneg
+  have hpull : IsBinaryQuarticPullback a b c d e A B C D e 1 0 tau 1 := by
+    simpa [tau, A, B, C, D] using
+      isBinaryQuarticPullback_shearY a b c d e tau
+  exact binaryQuarticEval_exists_negative_of_pullback_canonicalKernelData
+    hpull hcanon
+
+theorem binaryQuarticEval_exists_negative_of_elliptic_shearY_diagonal_dual
+    {a b c d e r s t : ℝ}
+    (hdisc_neg : binaryKernelDiscriminant r s t < 0)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 := by
+  let T := -binaryKernelDiscriminant r s t / (4 * r)
+  let tau := s / (2 * r)
+  let scale := Real.sqrt (r / T)
+  let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+  let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+  let C := c + 2 * d * tau + e * tau^2
+  let D := d + e * tau
+  have hcanon :
+      HasBinaryCanonicalKernelData
+        (A * scale^4) (B * scale^3) (C * scale^2) (D * scale) e := by
+    simpa [T, tau, scale, A, B, C, D] using
+      canonicalKernelData_of_elliptic_shearY_diagonal_dual
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hdisc_neg hker hneg
+  have hpull₁ : IsBinaryQuarticPullback a b c d e A B C D e 1 0 tau 1 := by
+    simpa [tau, A, B, C, D] using
+      isBinaryQuarticPullback_shearY a b c d e tau
+  have hpull₂ :
+      IsBinaryQuarticPullback A B C D e
+        (A * scale^4) (B * scale^3) (C * scale^2) (D * scale) e
+        scale 0 0 1 := by
+    convert isBinaryQuarticPullback_diagonal A B C D e scale 1 using 1
+    · ring
+    · ring
+    · ring
+    · ring
+  exact binaryQuarticEval_exists_negative_of_pullback_canonicalKernelData
+    (hpull₁.comp hpull₂) hcanon
+
 theorem exists_negative_pure_square_of_binaryLowRankNormalForm
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {a b c d e : ℝ} {x y : linSubmodule}
