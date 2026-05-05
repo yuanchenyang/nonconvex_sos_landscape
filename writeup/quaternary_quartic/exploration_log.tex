@@ -13444,4 +13444,52 @@ one route to that contradiction, while the quotient bound is equivalent to it.
 
 No Julia numerical claims were used in this round.
 
+\section*{Three-component quotient-local data}
+
+\paragraph{Gap targeted.}
+After naming the rank-three bad-branch contradiction, the local blueprint data
+could be simplified: the rank-three shape and Macaulay-bound components only
+serve to prove that contradiction.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasLowRankApolarQuotientLocalData},
+\]
+the conjunction of:
+\[
+\texttt{HasRankTwoApolarGorensteinSymmetryData},
+\quad
+\texttt{HasRankTwoApolarMacaulayGrowthBound},
+\quad
+\texttt{HasRankThreeApolarBadBranchContradiction}.
+\]
+Proved:
+\[
+\texttt{lowRankApolarEssentialQuotientBounds\_of\_rankTwoSymmetryAndGrowth\_rankThreeBadBranchContradiction},
+\]
+\[
+\texttt{lowRankApolarEssentialQuotientBounds\_of\_lowRankApolarQuotientLocalData},
+\]
+\[
+\texttt{lowRankApolarEssentialQuotientTheorem\_of\_lowRankApolarQuotientLocalData},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarQuotientLocalData\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarQuotientLocalData\_direct}.
+\]
+
+\paragraph{Strategy change.}
+The shortest remaining local route now has three components: rank-two
+Gorenstein symmetry, rank-two Macaulay growth, and rank-three bad-branch
+contradiction.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
