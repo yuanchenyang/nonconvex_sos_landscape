@@ -9357,4 +9357,53 @@ kernel-position component for the rank-two branch.
 
 No Julia numerical claims were used in this round.
 
+\section*{Normalized-position route no longer assumes Hankel negativity}
+
+\paragraph{Gap targeted.}
+After deriving universal rank-two Hankel negativity from the point hypotheses,
+the high-level reductions still exposed Hankel negativity as an explicit
+assumption alongside support bounds and normalized kernel position.
+
+\paragraph{Lean progress.}
+Added residual-level reductions
+\[
+\texttt{residual\_eq\_zero\_of\_apolarSupportBounds\_and\_universalNormalizedPosition},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarSupportTheorem\_and\_universalNormalizedPosition},
+\]
+and
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarSupportDecomposition\_and\_universalNormalizedPosition}.
+\]
+Each invokes
+\(\texttt{hasRankTwoUniversalHankelNegativeData\_of\_point}\), using the
+first-order component of \(\texttt{IsSOCP}\), and then calls the existing
+normalized-position-plus-Hankel reductions.
+
+Added the corresponding theorem-level reductions for
+\(\texttt{QuaternaryQuarticRankSevenNoSpuriousSOCP}\), so the main route now
+requires only rank-case support bounds and universal normalized kernel position.
+
+\paragraph{Strategy change.}
+The largest remaining assumptions on the main route are now exactly:
+rank-case apolar support bounds and the universal rank-two normalized
+kernel-position component.  Universal Hankel negativity has been eliminated as
+an external input for genuine SOCP points.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove rank-case apolar support bounds and construct the universal normalized
+kernel-position component for the rank-two branch.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
