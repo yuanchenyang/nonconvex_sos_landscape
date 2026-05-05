@@ -808,6 +808,13 @@ def HasUniversalBinaryRankTwoNegativePureSquareTheorem : Prop :=
       Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2 →
         ∃ X Y : ℝ, binaryQuarticEval a b c d e X Y < 0
 
+theorem hasUniversalBinaryRankTwoNegativePureSquareTheorem_of_classification
+    (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification) :
+    HasUniversalBinaryRankTwoNegativePureSquareTheorem := by
+  intro a b c d e hneg hrank
+  exact binaryQuarticEval_exists_negative_of_rankTwoNormalizedKernelClassification
+    (hclass a b c d e) hneg hrank
+
 def HasRankTwoExistentialScalarHankelFacts
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →

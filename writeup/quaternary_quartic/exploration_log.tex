@@ -10410,4 +10410,48 @@ rank-two binary pure-square theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Universal pure-square bridge}
+
+\paragraph{Gap targeted.}
+The final route now asks for a universal binary rank-two pure-square theorem,
+while older development used a universal normalized-kernel classification.
+These should not remain separate downstream obligations once the
+classification side is proved.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_rankTwoNormalizedKernelClassification}
+\]
+in \texttt{QuaternaryQuarticProof/Binary.lean}, converting a coefficient-level
+rank-two normalized-kernel classification into a negative value of the binary
+quartic.  Added:
+\[
+\texttt{hasUniversalBinaryRankTwoNegativePureSquareTheorem\_of\_classification}
+\]
+in \texttt{QuaternaryQuarticProof/Basic.lean}, lifting that bridge to the
+universal interface used by the current final theorem route.
+
+\paragraph{Strategy change.}
+The binary side now has a single pure-square interface for final use, but the
+existing normalized-kernel classification route is still reusable.  Completing
+the coordinate-free rank-two binary classification will automatically discharge
+the pure-square theorem.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support and the
+coordinate-free rank-two binary classification/pure-square theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

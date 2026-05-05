@@ -1406,6 +1406,15 @@ theorem binaryQuarticEval_exists_negative_of_normalizedKernelPosition
   binaryQuarticEval_exists_negative_of_canonicalKernelData
     (binaryCanonicalKernelData_of_normalizedKernelPosition hpos hneg)
 
+theorem binaryQuarticEval_exists_negative_of_rankTwoNormalizedKernelClassification
+    {a b c d e : ℝ}
+    (hclass : HasBinaryRankTwoNormalizedKernelClassification a b c d e)
+    (hneg : HasBinaryHankelNegativeValue a b c d e)
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 :=
+  binaryQuarticEval_exists_negative_of_canonicalKernelData (hclass hneg hrank)
+
 theorem exists_negative_pure_square_of_binaryLowRankNormalForm
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {a b c d e : ℝ} {x y : linSubmodule}
