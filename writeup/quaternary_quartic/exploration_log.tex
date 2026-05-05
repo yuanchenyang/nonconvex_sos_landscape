@@ -7153,4 +7153,41 @@ theorem and the rank-two canonical kernel data theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Product-kernel support decomposition}
+
+\paragraph{Gap targeted.}
+The blueprint states the low-rank support decomposition both as
+\(A\le\Ann_1(\lambda)\) and equivalently as \(AE\subseteq K\).  The latter is
+often the more direct algebraic statement after constructing \(A\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{le\_linearAnnihilator\_of\_linProductSubmodule\_top\_le\_ker}
+\]
+in \texttt{Catalecticant.lean}, proving that the product-kernel condition
+\[
+\texttt{linProductSubmodule A top <= ker catalecticantMap}
+\]
+implies \(A\le\Ann_1(\lambda)\).  Added
+\[
+\texttt{HasLowRankApolarProductKernelDecomposition}
+\]
+and proved bridges from this product-kernel form to the existing
+decomposition/support interfaces, residual-zero theorem, and root reduction.
+
+\paragraph{Strategy change.}
+The support blocker can now be attacked in the exact \(AE\subseteq K\)
+form from Lemma~\ref{lem:low-rank-support}; the conversion to the linear
+annihilator interface is formalized.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The open inputs are the product-kernel low-rank support decomposition and the
+rank-two canonical kernel data theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

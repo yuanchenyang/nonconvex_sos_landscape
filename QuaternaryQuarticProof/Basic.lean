@@ -385,6 +385,17 @@ def HasLowRankApolarSupportDecomposition
               Module.finrank ℝ W ≤ k ∧
                 4 - k ≤ Module.finrank ℝ A
 
+def HasLowRankApolarProductKernelDecomposition
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  ∀ k : ℕ,
+    k ≤ 3 →
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) ≤ k →
+        ∃ A W : Submodule ℝ linSubmodule,
+          linProductSubmodule A ⊤ ≤ LinearMap.ker (catalecticantMap B p u) ∧
+            IsCompl A W ∧
+              Module.finrank ℝ W ≤ k ∧
+                4 - k ≤ Module.finrank ℝ A
+
 def HasRankTwoNegativeSquareData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
@@ -1540,6 +1551,24 @@ theorem hasRankCaseApolarSupportBounds_of_lowRankApolarSupportDecomposition
   hasRankCaseApolarSupportBounds_of_lowRankApolarSupportTheorem
     (hasLowRankApolarSupportTheorem_of_decomposition hdecomp)
 
+theorem hasLowRankApolarSupportDecomposition_of_productKernelDecomposition
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hprod : HasLowRankApolarProductKernelDecomposition B p u) :
+    HasLowRankApolarSupportDecomposition B p u := by
+  intro k hk hrank_le
+  rcases hprod k hk hrank_le with
+    ⟨A, W, hAE, hAW, hWdim, hAdim⟩
+  exact ⟨A, W,
+    le_linearAnnihilator_of_linProductSubmodule_top_le_ker hAE,
+    hAW, hWdim, hAdim⟩
+
+theorem hasLowRankApolarSupportTheorem_of_productKernelDecomposition
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hprod : HasLowRankApolarProductKernelDecomposition B p u) :
+    HasLowRankApolarSupportTheorem B p u :=
+  hasLowRankApolarSupportTheorem_of_decomposition
+    (hasLowRankApolarSupportDecomposition_of_productKernelDecomposition hprod)
+
 theorem hasRankTwoExistentialBinaryFormData_of_kernelEquationData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hcases : HasRankTwoExistentialKernelEquationData B p u) :
@@ -2104,6 +2133,19 @@ theorem residual_eq_zero_of_lowRankApolarSupportDecomposition_and_canonicalKerne
     (B := B) hu hp hsocp hdecomp
     (hasRankTwoExistentialKernelBranchData_of_canonicalKernelData hcanon)
 
+theorem residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hprod : HasLowRankApolarProductKernelDecomposition B p u)
+    (hcanon : HasRankTwoExistentialCanonicalKernelData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarSupportDecomposition_and_canonicalKernelData
+    (B := B) hu hp hsocp
+    (hasLowRankApolarSupportDecomposition_of_productKernelDecomposition hprod)
+    hcanon
+
 theorem residual_eq_zero_of_rankCaseSupportData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -2461,6 +2503,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportDeco
   exact residual_eq_zero_of_lowRankApolarSupportDecomposition_and_canonicalKernelData
     (B := B) hu hp hsocp
     (hdecomp B p u hu hB hp hsocp)
+    (hcanon B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
+    (hprod :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarProductKernelDecomposition B p u)
+    (hcanon :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialCanonicalKernelData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
+    (B := B) hu hp hsocp
+    (hprod B p u hu hB hp hsocp)
     (hcanon B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseSupportData

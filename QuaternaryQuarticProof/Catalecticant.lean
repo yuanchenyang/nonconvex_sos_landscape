@@ -2113,6 +2113,16 @@ theorem linProductSubmodule_le_ker_of_le_linearAnnihilator
   linProductSubmodule_mono hA le_rfl |>.trans
     linProductSubmodule_linearAnnihilator_top_le_ker
 
+theorem le_linearAnnihilator_of_linProductSubmodule_top_le_ker
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {A : Submodule ℝ linSubmodule}
+    (hAE : linProductSubmodule A ⊤ ≤ LinearMap.ker (catalecticantMap B p u)) :
+    A ≤ linearAnnihilator B p u := by
+  intro a ha e
+  exact hAE
+    (linProduct_mem_linProductSubmodule
+      (⟨a, ha⟩ : A) (⟨e, trivial⟩ : (⊤ : Submodule ℝ linSubmodule)))
+
 theorem exists_catalecticantKernel_decomposition_of_annihilator_complement
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {A W : Submodule ℝ linSubmodule}
