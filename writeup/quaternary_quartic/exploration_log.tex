@@ -7924,4 +7924,56 @@ of the rank-two kernel-equation cases from the binary change-of-basis argument.
 
 No Julia numerical claims were used in this round.
 
+\section*{Extract exact bounds and binary data from kernel decomposition}
+
+\paragraph{Gap targeted.}
+The older rank-case kernel-decomposition package already contained the exact
+annihilator-map bounds and the rank-two kernel-equation cases, but these facts
+were not exposed to the newer root-route interfaces.
+
+\paragraph{Lean progress.}
+Added projections from
+\[
+\texttt{HasRankCaseKernelDecompositionApolarData}
+\]
+to
+\[
+\texttt{HasRankCaseAnnihilatorMapBounds}
+\]
+and
+\[
+\texttt{HasRankTwoExistentialKernelEquationData}.
+\]
+Then reused the kernel-equation bridge to derive
+\[
+\texttt{HasRankTwoExistentialCanonicalKernelData}
+\]
+and
+\[
+\texttt{HasRankTwoExistentialNormalizedHankelData}
+\]
+from the same rank-case kernel-decomposition input.
+
+\paragraph{Strategy change.}
+The rank-case kernel-decomposition package is now compatible with the newest
+support and binary routes: it supplies both support-side exact bounds and the
+rank-two canonical/normalized binary data.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The remaining mathematical work is to prove one of the high-level rank-case
+packages, especially the exact-rank annihilator-map bounds and rank-two kernel
+equation cases, from the blueprint's apolar and binary change-of-basis
+arguments.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

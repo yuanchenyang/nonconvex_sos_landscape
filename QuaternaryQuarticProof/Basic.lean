@@ -2087,6 +2087,50 @@ theorem hasRankCaseBinaryFormAndAnnihilatorData_of_kernelDecompositionApolarData
   · intro hrank3
     exact (hdata3 hrank3).1
 
+theorem hasRankCaseAnnihilatorMapBounds_of_kernelDecompositionApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseKernelDecompositionApolarData B p u hu) :
+    HasRankCaseAnnihilatorMapBounds B p u := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    exact (hdata1 hrank1).1
+  constructor
+  · intro hrank2
+    exact (hdata2 hrank2).1
+  · intro hrank3
+    exact (hdata3 hrank3).1
+
+theorem hasRankTwoExistentialKernelEquationData_of_kernelDecompositionApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseKernelDecompositionApolarData B p u hu) :
+    HasRankTwoExistentialKernelEquationData B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases hdata with ⟨_hdata1, hdata2, _hdata3⟩
+  rcases exists_rank_two_complement_second_direction
+      (W := W) (x := x) hx hWdim with
+    ⟨y, hyW, hynot⟩
+  exact ⟨y, hyW, hynot,
+    (hdata2 hrank2).2.1 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim⟩
+
+theorem hasRankTwoExistentialCanonicalKernelData_of_kernelDecompositionApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseKernelDecompositionApolarData B p u hu) :
+    HasRankTwoExistentialCanonicalKernelData B p u :=
+  hasRankTwoExistentialCanonicalKernelData_of_kernelEquationData
+    (hasRankTwoExistentialKernelEquationData_of_kernelDecompositionApolarData hdata)
+
+theorem hasRankTwoExistentialNormalizedHankelData_of_kernelDecompositionApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseKernelDecompositionApolarData B p u hu) :
+    HasRankTwoExistentialNormalizedHankelData B p u :=
+  hasRankTwoExistentialNormalizedHankelData_of_kernelEquationData
+    (hasRankTwoExistentialKernelEquationData_of_kernelDecompositionApolarData hdata)
+
 theorem hasRankCaseApolarComponentData_of_kernelDecompositionApolarData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
