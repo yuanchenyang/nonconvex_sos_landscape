@@ -7072,4 +7072,43 @@ support theorem and the binary Hankel kernel-branch classification.
 
 No Julia numerical claims were used in this round.
 
+\section*{Hankel quadratic form and matrix action}
+
+\paragraph{Gap targeted.}
+The binary classification proof needs to move between a negative value of the
+Hankel quadratic form and the kernel/image behavior of the Hankel matrix.
+
+\paragraph{Lean progress.}
+Proved
+\[
+\texttt{binaryHankelQuad\_eq\_dot\_binaryHankelMul}
+\]
+identifying the scalar quadratic form with the dot product of a coefficient
+triple and its image under
+\[
+\texttt{binaryHankelMul}.
+\]
+Derived
+\[
+\texttt{binaryHankelQuad\_eq\_zero\_of\_binaryHankelMul\_eq\_zero}
+\]
+and
+\[
+\texttt{binaryHankelMul\_ne\_zero\_of\_binaryHankelQuad\_neg}.
+\]
+
+\paragraph{Strategy change.}
+The future binary classification can reason with the explicit linear action of
+the Hankel matrix while retaining access to the negative quadratic-value
+hypothesis.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The binary kernel-branch classification and the decomposition-level low-rank
+apolar support theorem remain open.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

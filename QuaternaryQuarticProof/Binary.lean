@@ -18,6 +18,32 @@ def binaryHankelMul (a b c d e : ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
     b * v 0 + c * v 1 + d * v 2,
     c * v 0 + d * v 1 + e * v 2]
 
+theorem binaryHankelQuad_eq_dot_binaryHankelMul
+    (a b c d e r s t : ℝ) :
+    binaryHankelQuad a b c d e r s t =
+      r * (binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ)) 0 +
+        s * (binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ)) 1 +
+          t * (binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ)) 2 := by
+  simp [binaryHankelQuad, binaryHankelMul]
+  ring
+
+theorem binaryHankelQuad_eq_zero_of_binaryHankelMul_eq_zero
+    {a b c d e r s t : ℝ}
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0) :
+    binaryHankelQuad a b c d e r s t = 0 := by
+  rw [binaryHankelQuad_eq_dot_binaryHankelMul]
+  rw [hker]
+  simp
+
+theorem binaryHankelMul_ne_zero_of_binaryHankelQuad_neg
+    {a b c d e r s t : ℝ}
+    (hneg : binaryHankelQuad a b c d e r s t < 0) :
+    binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) ≠ 0 := by
+  intro hker
+  have hzero : binaryHankelQuad a b c d e r s t = 0 :=
+    binaryHankelQuad_eq_zero_of_binaryHankelMul_eq_zero hker
+  linarith
+
 def HasBinaryHankelNegativeValue (a b c d e : ℝ) : Prop :=
   ∃ r s t : ℝ, binaryHankelQuad a b c d e r s t < 0
 
