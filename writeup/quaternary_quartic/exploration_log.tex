@@ -15742,4 +15742,50 @@ then through the existing rank-three obstruction pipeline.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two growth bound from cubic inverse system}
+
+\paragraph{Gap targeted.}
+After closing the q=2 Macaulay branch, the next gap was wiring that local
+inverse-system bound into the rank-two apolar growth datum used by the global
+proof pipeline.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, added the proof-serving map
+\[
+\texttt{linearAnnihilatorCubicMap}
+\]
+which sends a linear form \(a\) to the cubic inverse-system functional
+\[
+c\mapsto B(a\,c,\operatorname{residual}(p,u)).
+\]
+Proved
+\[
+\texttt{linearAnnihilatorCubicMap\_ker\_eq}
+\]
+so its kernel is exactly the linear annihilator, and then derived
+\[
+\texttt{finrank\_quotient\_linearAnnihilator\_le\_cubicProductAnnihilator\_top\_ker}.
+\]
+In \texttt{QuaternaryQuarticProof.Basic}, used this bridge plus the q=2
+cubic-annihilator bound to prove
+\[
+\texttt{rankTwoMacaulayGrowthBound\_direct}
+\]
+and the global wrapper
+\[
+\texttt{globalRankTwoApolarMacaulayGrowthBound\_direct}.
+\]
+
+\paragraph{Strategy status.}
+The rank-two side no longer depends on a scaffolded growth assumption.  The
+largest remaining proof gap is now the rank-three bad-branch Macaulay bound
+for the left-multiplication exact sequence, after which the existing global
+quotient-core route should be able to replace the root placeholder.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

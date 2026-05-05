@@ -4717,6 +4717,151 @@ theorem linearAnnihilator_eq_ker_linearAnnihilatorMap
       simp
     simpa [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero] using happ
 
+def linearAnnihilatorCubicMap (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    linSubmodule →ₗ[ℝ]
+      cubicProductAnnihilator (⊤ : Submodule ℝ linSubmodule)
+        (LinearMap.ker (catalecticantMap B p u)) where
+  toFun a :=
+    ⟨{ toFun := fun z => B (a.1 * (z.1 : cubicSubmodule).1) (residual p u)
+       map_add' := by
+        intro z w
+        simp [mul_add]
+       map_smul' := by
+        intro r z
+        simp },
+      by
+        change
+          _ ∈
+            ((linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule)
+                (LinearMap.ker (catalecticantMap B p u))).comap
+              (linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule)
+                (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule))).subtype).dualAnnihilator
+        rw [Submodule.mem_dualAnnihilator]
+        intro z hz
+        change B (a.1 * (z.1 : cubicSubmodule).1) (residual p u) = 0
+        have hzero :
+            ∀ y ∈ linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule)
+                (LinearMap.ker (catalecticantMap B p u)),
+              B (a.1 * y.1) (residual p u) = 0 := by
+          intro y hy
+          refine Submodule.span_induction
+            (p := fun y hy => B (a.1 * y.1) (residual p u) = 0)
+            ?_ ?_ ?_ ?_ hy
+          · intro y hygen
+            rcases hygen with ⟨eq, rfl⟩
+            let e : linSubmodule := eq.1.1
+            let q : quadSubmodule := eq.2.1
+            have hq : q ∈ LinearMap.ker (catalecticantMap B p u) := eq.2.2
+            have hval := congrArg
+              (fun φ : Module.Dual ℝ quadSubmodule => φ (linProduct a e)) hq
+            change B (a.1 * (e.1 * q.1)) (residual p u) = 0
+            calc
+              B (a.1 * (e.1 * q.1)) (residual p u) =
+                  B (q.1 * (linProduct a e).1) (residual p u) := by
+                    simp [linProduct, mul_comm, mul_left_comm]
+              _ = 0 := by
+                    simpa using hval
+          · simp
+          · intro x y hx hy hxzero hyzero
+            change B (a.1 * (x.1 + y.1)) (residual p u) = 0
+            simp [mul_add, hxzero, hyzero]
+          · intro r x hx hxzero
+            change B (a.1 * (r • x.1)) (residual p u) = 0
+            simp [hxzero]
+        exact hzero z.1 hz⟩
+  map_add' a b := by
+    ext z
+    change B ((a.1 + b.1) * (z.1 : cubicSubmodule).1) (residual p u) =
+      B (a.1 * (z.1 : cubicSubmodule).1) (residual p u) +
+        B (b.1 * (z.1 : cubicSubmodule).1) (residual p u)
+    simp [add_mul]
+  map_smul' r a := by
+    ext z
+    change B ((r • a.1) * (z.1 : cubicSubmodule).1) (residual p u) =
+      r * B (a.1 * (z.1 : cubicSubmodule).1) (residual p u)
+    simp
+
+@[simp] theorem linearAnnihilatorCubicMap_apply
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (a : linSubmodule)
+    (z : linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule)
+      (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule))) :
+    (linearAnnihilatorCubicMap B p u a).1 z =
+      B (a.1 * (z.1 : cubicSubmodule).1) (residual p u) :=
+  rfl
+
+theorem linearAnnihilatorCubicMap_ker_eq
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    LinearMap.ker (linearAnnihilatorCubicMap B p u) =
+      linearAnnihilator B p u := by
+  ext a
+  constructor
+  · intro ha e
+    change catalecticantMap B p u (linProduct a e) = 0
+    ext q
+    let z : linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule)
+        (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule)) :=
+      ⟨linQuadProduct e q,
+        linQuadProduct_mem_linQuadProductSubmodule
+          (U := (⊤ : Submodule ℝ linSubmodule))
+          (P := symSquareSubmodule (⊤ : Submodule ℝ linSubmodule))
+          ⟨e, trivial⟩
+          ⟨q, by
+            rw [symSquareSubmodule, linProductSubmodule_top_top_eq_top]
+            trivial⟩⟩
+    have hmap : linearAnnihilatorCubicMap B p u a = 0 := by
+      simpa [LinearMap.mem_ker] using ha
+    have hval := congrArg
+      (fun φ : cubicProductAnnihilator (⊤ : Submodule ℝ linSubmodule)
+          (LinearMap.ker (catalecticantMap B p u)) => φ.1 z) hmap
+    change B ((linProduct a e).1 * q.1) (residual p u) = 0
+    calc
+      B ((linProduct a e).1 * q.1) (residual p u) =
+          B (a.1 * (z.1 : cubicSubmodule).1) (residual p u) := by
+            simp [z, linProduct, linQuadProduct, mul_comm, mul_left_comm]
+      _ = 0 := by
+            simpa using hval
+  · intro ha
+    change linearAnnihilatorCubicMap B p u a = 0
+    ext z
+    refine Submodule.span_induction
+      (p := fun y hy => B (a.1 * y.1) (residual p u) = 0)
+      ?_ ?_ ?_ ?_ z.2
+    · intro y hygen
+      rcases hygen with ⟨eq, rfl⟩
+      let e : linSubmodule := eq.1.1
+      let q : quadSubmodule := eq.2.1
+      have hker : linProduct a e ∈ LinearMap.ker (catalecticantMap B p u) :=
+        ha e
+      have hval := congrArg
+        (fun φ : Module.Dual ℝ quadSubmodule => φ q) hker
+      change B (a.1 * (e.1 * q.1)) (residual p u) = 0
+      calc
+        B (a.1 * (e.1 * q.1)) (residual p u) =
+            B ((linProduct a e).1 * q.1) (residual p u) := by
+              simp [linProduct, mul_comm, mul_left_comm]
+        _ = 0 := by
+              simpa using hval
+    · simp
+    · intro x y hx hy hxzero hyzero
+      change B (a.1 * (x.1 + y.1)) (residual p u) = 0
+      simp [mul_add, hxzero, hyzero]
+    · intro r x hx hxzero
+      change B (a.1 * (r • x.1)) (residual p u) = 0
+      simp [hxzero]
+
+theorem finrank_quotient_linearAnnihilator_le_cubicProductAnnihilator_top_ker
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) ≤
+      Module.finrank ℝ
+        (cubicProductAnnihilator (⊤ : Submodule ℝ linSubmodule)
+          (LinearMap.ker (catalecticantMap B p u))) := by
+  have hquot :=
+    (linearAnnihilatorCubicMap B p u).quotKerEquivRange.finrank_eq
+  rw [linearAnnihilatorCubicMap_ker_eq] at hquot
+  rw [hquot]
+  exact (LinearMap.range (linearAnnihilatorCubicMap B p u)).finrank_le
+
 theorem finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap
     (B : DotForm) (p : Poly) (u : RankSevenVec) :
     Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) =

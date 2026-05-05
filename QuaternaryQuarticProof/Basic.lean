@@ -2721,6 +2721,54 @@ theorem rankTwoApolarGorensteinSymmetryData_direct
   intro _hrank2
   exact ⟨Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u), rfl⟩
 
+theorem rankTwoMacaulayGrowthBound_direct
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    HasRankTwoApolarMacaulayGrowthBound B p u := by
+  intro hrank2 h3 hh3
+  have hlin_le_cubic :=
+    finrank_quotient_linearAnnihilator_le_cubicProductAnnihilator_top_ker B p u
+  have hdegree_two :
+      Module.finrank ℝ
+          (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) = 2 :=
+    finrank_quotient_ker_catalecticantMap_eq_two_of_rank_two hrank2
+  have hsym_quot :
+      Module.finrank ℝ
+        (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule) ⧸
+          (LinearMap.ker (catalecticantMap B p u)).comap
+            (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule)).subtype) = 2 := by
+    let T := symSquareSubmodule (⊤ : Submodule ℝ linSubmodule)
+    let Pker := LinearMap.ker (catalecticantMap B p u)
+    let S : Submodule ℝ T := Pker.comap T.subtype
+    have hTtop : T = ⊤ := by
+      simpa [T, symSquareSubmodule] using linProductSubmodule_top_top_eq_top
+    have hP_le : Pker ≤ T := by
+      rw [hTtop]
+      exact le_top
+    have hSfin : Module.finrank ℝ S = Module.finrank ℝ Pker := by
+      exact (Submodule.comapSubtypeEquivOfLe hP_le).finrank_eq
+    have hTfin : Module.finrank ℝ T = Module.finrank ℝ quadSubmodule := by
+      rw [hTtop, finrank_top]
+    change Module.finrank ℝ (T ⧸ S) = 2
+    rw [Submodule.finrank_quotient, hSfin, hTfin]
+    rw [Submodule.finrank_quotient] at hdegree_two
+    exact hdegree_two
+  have hdual :
+      Module.finrank ℝ
+        (((LinearMap.ker (catalecticantMap B p u)).comap
+          (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule)).subtype).dualAnnihilator) = 2 := by
+    rw [← finrank_quotient_eq_finrank_dualAnnihilator
+      ((LinearMap.ker (catalecticantMap B p u)).comap
+        (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule)).subtype)]
+    exact hsym_quot
+  have hcubic_le :
+      Module.finrank ℝ
+          (cubicProductAnnihilator (⊤ : Submodule ℝ linSubmodule)
+            (LinearMap.ker (catalecticantMap B p u))) ≤ 2 :=
+    finrank_cubicProductAnnihilator_le_two_of_dualAnnihilator_finrank_eq_two
+      (A := (⊤ : Submodule ℝ linSubmodule))
+      (P := LinearMap.ker (catalecticantMap B p u)) hdual
+  omega
+
 theorem rankTwoQuotientGrowthData_of_symmetry_and_macaulayGrowth
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsymm : HasRankTwoApolarGorensteinSymmetryData B p u)
@@ -8763,6 +8811,11 @@ theorem globalRankTwoApolarMacaulayGrowthBound_of_globalRankTwoApolarQuotientGro
   intro B p u hu hB hp hsocp
   exact rankTwoMacaulayGrowthBound_of_rankTwoQuotientGrowthData
     (hdata B p u hu hB hp hsocp)
+
+theorem globalRankTwoApolarMacaulayGrowthBound_direct :
+    HasGlobalRankTwoApolarMacaulayGrowthBound := by
+  intro B p u _hu _hB _hp _hsocp
+  exact rankTwoMacaulayGrowthBound_direct B p u
 
 theorem globalRankTwoApolarQuotientGrowthData_iff_globalRankTwoApolarMacaulayGrowthBound :
     HasGlobalRankTwoApolarQuotientGrowthData ↔
