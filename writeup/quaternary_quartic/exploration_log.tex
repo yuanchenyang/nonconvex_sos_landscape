@@ -9015,4 +9015,45 @@ support and branch certificates; then replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Low-rank support to product geometry}
+
+\paragraph{Gap targeted.}
+The blueprint's main structural lemma is the low-rank apolar support reduction,
+but the newer Lean product-geometry route was only connected to annihilator-map
+bounds.  This left an avoidable interface gap between the blueprint statement
+and the product-independence component path.
+
+\paragraph{Lean progress.}
+Added conversions deriving
+\[
+\texttt{HasRankCaseProductIndependenceGeometryData}
+\]
+from rank-case apolar support bounds, from
+\[
+\texttt{HasLowRankApolarSupportTheorem},
+\]
+and from the equivalent support-decomposition package.  These conversions use
+the already proved passage from support bounds to annihilator-map bounds and
+the new geometry-from-annihilator-bounds theorem.
+
+\paragraph{Strategy change.}
+Once the low-rank support theorem from Lemma~\ref{lem:low-rank-support} is
+formalized, it now feeds both the support-bound route and the product-geometry
+route directly.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The low-rank support theorem itself remains the main structural gap, alongside
+the universal rank-two normalized position and Hankel negativity certificates.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

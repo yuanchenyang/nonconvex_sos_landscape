@@ -2371,6 +2371,39 @@ theorem hasLowRankApolarProductKernelDecomposition_iff_supportDecomposition
   ⟨hasLowRankApolarSupportDecomposition_of_productKernelDecomposition,
     hasLowRankApolarProductKernelDecomposition_of_supportDecomposition⟩
 
+theorem hasRankCaseProductIndependenceGeometryData_of_apolarSupportBounds
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hsupport : HasRankCaseApolarSupportBounds B p u) :
+    HasRankCaseProductIndependenceGeometryData B p u hu :=
+  hasRankCaseProductIndependenceGeometryData_of_annihilatorMapBounds
+    (B := B) (p := p) (u := u) (hu := hu) hp hfocp
+    (hasRankCaseAnnihilatorMapBounds_of_apolarSupportBounds hsupport)
+
+theorem hasRankCaseProductIndependenceGeometryData_of_lowRankApolarSupportTheorem
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hsupport : HasLowRankApolarSupportTheorem B p u) :
+    HasRankCaseProductIndependenceGeometryData B p u hu :=
+  hasRankCaseProductIndependenceGeometryData_of_apolarSupportBounds
+    (B := B) (p := p) (u := u) (hu := hu) hp hfocp
+    (hasRankCaseApolarSupportBounds_of_lowRankApolarSupportTheorem hsupport)
+
+theorem hasRankCaseProductIndependenceGeometryData_of_lowRankApolarSupportDecomposition
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hdecomp : HasLowRankApolarSupportDecomposition B p u) :
+    HasRankCaseProductIndependenceGeometryData B p u hu :=
+  hasRankCaseProductIndependenceGeometryData_of_lowRankApolarSupportTheorem
+    (B := B) (p := p) (u := u) (hu := hu) hp hfocp
+    (hasLowRankApolarSupportTheorem_of_decomposition hdecomp)
+
 theorem hasRankTwoExistentialBinaryFormData_of_kernelEquationData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hcases : HasRankTwoExistentialKernelEquationData B p u) :
