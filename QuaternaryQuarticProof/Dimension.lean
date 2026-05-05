@@ -365,6 +365,81 @@ theorem finrank_range_le_one_of_symmetric_rank_one_identity
 
 end RankOneBilinear
 
+section Postcomposition
+
+variable {K U V W W' : Type*} [Field K]
+variable [AddCommGroup U] [Module K U]
+variable [AddCommGroup V] [Module K V]
+variable [AddCommGroup W] [Module K W]
+variable [AddCommGroup W'] [Module K W']
+
+def linearMapPostcomp (T : W →ₗ[K] W') :
+    (V →ₗ[K] W) →ₗ[K] V →ₗ[K] W' where
+  toFun f := T.comp f
+  map_add' := by
+    intro f g
+    ext x
+    simp
+  map_smul' := by
+    intro c f
+    ext x
+    simp
+
+theorem linearMapPostcomp_injective {T : W →ₗ[K] W'}
+    (hT : LinearMap.ker T = ⊥) :
+    Function.Injective (linearMapPostcomp (V := V) T) := by
+  intro f g hfg
+  ext x
+  have hTx : T (f x) = T (g x) := by
+    exact congrArg (fun F : V →ₗ[K] W' => F x) hfg
+  exact (LinearMap.ker_eq_bot.mp hT) hTx
+
+theorem finrank_range_eq_of_injective_postcomp
+    (T : W →ₗ[K] W')
+    (hT : LinearMap.ker T = ⊥)
+    (M : U →ₗ[K] V →ₗ[K] W) :
+    Module.finrank K (LinearMap.range M) =
+      Module.finrank K
+        (LinearMap.range ((linearMapPostcomp (V := V) T).comp M)) := by
+  let P := linearMapPostcomp (V := V) T
+  let Psub :
+      LinearMap.range M →ₗ[K] LinearMap.range (P.comp M) :=
+  {
+    toFun f := ⟨P f.1, by
+      rcases f.2 with ⟨u, hu⟩
+      exact ⟨u, congrArg (fun g : V →ₗ[K] W => P g) hu⟩⟩
+    map_add' := by
+      intro f g
+      ext x
+      simp [P]
+    map_smul' := by
+      intro c f
+      ext x
+      simp [P]
+  }
+  have hPsub_inj : Function.Injective Psub := by
+    intro f g hfg
+    apply Subtype.ext
+    exact (linearMapPostcomp_injective (V := V) hT)
+      (Subtype.ext_iff.mp hfg)
+  have hPsub_surj : Function.Surjective Psub := by
+    rintro ⟨φ, u, rfl⟩
+    exact ⟨⟨M u, ⟨u, rfl⟩⟩, rfl⟩
+  exact (LinearEquiv.ofBijective Psub ⟨hPsub_inj, hPsub_surj⟩).finrank_eq
+
+theorem finrank_range_le_one_of_scalarized_postcomp
+    (T : W →ₗ[K] W')
+    (hT : LinearMap.ker T = ⊥)
+    (M : U →ₗ[K] V →ₗ[K] W)
+    (hscalar :
+      Module.finrank K
+        (LinearMap.range ((linearMapPostcomp (V := V) T).comp M)) ≤ 1) :
+    Module.finrank K (LinearMap.range M) ≤ 1 := by
+  rw [finrank_range_eq_of_injective_postcomp (V := V) T hT M]
+  exact hscalar
+
+end Postcomposition
+
 section ExactSubspaces
 
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]

@@ -11898,4 +11898,40 @@ annihilator-map bound, hence the rank-one annihilator dimension bound.
 
 No Julia numerical claims were used in this round.
 
+\section*{Injective scalarization of row spaces}
+
+\paragraph{Gap targeted.}
+The rank-one quotient step needs to move between a quotient-valued row map
+\(V\to (E\to Q/K)\) and a scalar row map obtained by applying a coordinate on
+the one-dimensional quotient.  If that coordinate is injective, the scalarized
+row space has the same dimension as the original row space.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof.Dimension}:
+\[
+\texttt{linearMapPostcomp},
+\quad
+\texttt{linearMapPostcomp\_injective},
+\]
+\[
+\texttt{finrank\_range\_eq\_of\_injective\_postcomp},
+\quad
+\texttt{finrank\_range\_le\_one\_of\_scalarized\_postcomp}.
+\]
+These lemmas show that postcomposition by an injective linear map preserves the
+finrank of the range of a row-space map.  In the intended rank-one apolar
+application, the injective map is a coordinate functional on \(\Quad/K\).
+
+\paragraph{Strategy change.}
+Together with the scalar rank-one bilinear core, the remaining rank-one bridge
+is now narrower: construct an injective scalar coordinate on the one-dimensional
+quotient and prove the scalar reassociation identity for the postcomposed
+linear-annihilator map.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Dimension} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
