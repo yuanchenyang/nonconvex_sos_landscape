@@ -6741,4 +6741,48 @@ and the rank-two existential binary normal-form theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Reducing binary forms to kernel equation cases}
+
+\paragraph{Gap targeted.}
+The rank-two binary input still assumed the completed low-rank negative normal
+form.  The blueprint's proof reaches that normal form by classifying the
+one-dimensional Hankel kernel into the cases \(xy\), \(y^2\), and
+\(x^2+y^2\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankTwoExistentialKernelEquationData}
+\]
+for the rank-two statement that every nonzero support direction can be
+completed to a second support direction satisfying one of the existing
+\[
+\texttt{HasBinaryRestrictionKernelEquationCase}
+\]
+branches.  Proved
+\[
+\texttt{hasRankTwoExistentialBinaryFormData\_of\_kernelEquationData}
+\]
+using the already-formalized implication from kernel equations to
+\[
+\texttt{HasBinaryLowRankNegativeNormalForm}.
+\]
+Added residual and root reduction theorems through apolar support bounds plus
+these kernel-equation cases.
+
+\paragraph{Strategy change.}
+The binary blocker is now reduced to the actual Hankel-kernel classification
+step: produce the three kernel-equation alternatives in a support basis.  The
+downstream negative-square and syzygy machinery no longer needs to know how the
+case was obtained.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The two remaining mathematical inputs are low-rank apolar support bounds and
+the rank-two Hankel-kernel classification/existence of a support basis.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
