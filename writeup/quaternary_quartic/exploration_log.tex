@@ -14228,4 +14228,35 @@ the apolar Hilbert-function gap currently represented in Lean.
 
 No Julia numerical claims were used in this round.
 
+\section*{Consolidate two-three dimension target}
+
+\paragraph{Gap targeted.}
+The remaining dimension theorem was split into separate global rank-two and
+rank-three packages.  The proof state is clearer if this is represented as one
+global two-three annihilator-dimension theorem and linked to the existing
+annihilator-map target.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasGlobalRankTwoThreeApolarAnnihilatorDimensionBounds}.
+\]
+Proved its equivalence with the split rank-two/rank-three dimension packages
+and with the global two-three annihilator-map package.  Added the root
+equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoThreeApolarAnnihilatorDimensionBounds}.
+\]
+
+\paragraph{Strategy change.}
+The largest remaining gap now has a single canonical statement: prove the
+two-three annihilator-dimension bounds globally from the SOCP hypotheses.  All
+support, quotient, Hilbert, Macaulay, and bad-branch formulations are connected
+back to this statement.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

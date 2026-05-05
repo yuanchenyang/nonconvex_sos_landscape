@@ -895,6 +895,14 @@ def HasGlobalRankThreeApolarAnnihilatorDimensionBound : Prop :=
         IsSOCP B p u →
           HasRankThreeApolarAnnihilatorDimensionBound B p u
 
+def HasGlobalRankTwoThreeApolarAnnihilatorDimensionBounds : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankTwoThreeApolarAnnihilatorDimensionBounds B p u
+
 def HasGlobalRankTwoThreeApolarEssentialQuotientBounds : Prop :=
   ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u),
@@ -8503,6 +8511,32 @@ theorem globalRankTwoThreeApolarAnnihilatorMapBounds_iff_globalRankCaseAnnihilat
   ⟨globalRankCaseAnnihilatorMapBounds_of_globalRankTwoThreeApolarAnnihilatorMapBounds,
     globalRankTwoThreeApolarAnnihilatorMapBounds_of_globalRankCaseAnnihilatorMapBounds⟩
 
+theorem globalRankTwoThreeApolarAnnihilatorMapBounds_of_globalRankTwoThreeApolarAnnihilatorDimensionBounds
+    (hdims : HasGlobalRankTwoThreeApolarAnnihilatorDimensionBounds) :
+    HasGlobalRankTwoThreeApolarAnnihilatorMapBounds := by
+  intro B p u hu hB hp hsocp
+  exact ⟨
+    rankTwoApolarAnnihilatorMapBound_of_rankTwoDimensionBound
+      (hdims B p u hu hB hp hsocp).1,
+    rankThreeApolarAnnihilatorMapBound_of_rankThreeDimensionBound
+      (hdims B p u hu hB hp hsocp).2⟩
+
+theorem globalRankTwoThreeApolarAnnihilatorDimensionBounds_of_globalRankTwoThreeApolarAnnihilatorMapBounds
+    (hbounds : HasGlobalRankTwoThreeApolarAnnihilatorMapBounds) :
+    HasGlobalRankTwoThreeApolarAnnihilatorDimensionBounds := by
+  intro B p u hu hB hp hsocp
+  exact ⟨
+    rankTwoDimensionBound_of_rankTwoApolarAnnihilatorMapBound
+      (hbounds B p u hu hB hp hsocp).1,
+    rankThreeDimensionBound_of_rankThreeApolarAnnihilatorMapBound
+      (hbounds B p u hu hB hp hsocp).2⟩
+
+theorem globalRankTwoThreeApolarAnnihilatorDimensionBounds_iff_globalRankTwoThreeApolarAnnihilatorMapBounds :
+    HasGlobalRankTwoThreeApolarAnnihilatorDimensionBounds ↔
+      HasGlobalRankTwoThreeApolarAnnihilatorMapBounds :=
+  ⟨globalRankTwoThreeApolarAnnihilatorMapBounds_of_globalRankTwoThreeApolarAnnihilatorDimensionBounds,
+    globalRankTwoThreeApolarAnnihilatorDimensionBounds_of_globalRankTwoThreeApolarAnnihilatorMapBounds⟩
+
 theorem globalRankCaseApolarSupportBounds_of_globalRankTwoThreeApolarSupportBounds
     (hsupport : HasGlobalRankTwoThreeApolarSupportBounds) :
     HasGlobalRankCaseApolarSupportBounds := by
@@ -9067,6 +9101,54 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeDimen
   · intro hdata
     exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeDimensionBounds
       hdata.1 hdata.2
+
+theorem globalRankTwoThreeApolarAnnihilatorDimensionBounds_of_splitGlobalRankTwoThreeDimensionBounds
+    (hdim2 : HasGlobalRankTwoApolarAnnihilatorDimensionBound)
+    (hdim3 : HasGlobalRankThreeApolarAnnihilatorDimensionBound) :
+    HasGlobalRankTwoThreeApolarAnnihilatorDimensionBounds := by
+  intro B p u hu hB hp hsocp
+  exact ⟨hdim2 B p u hu hB hp hsocp,
+    hdim3 B p u hu hB hp hsocp⟩
+
+theorem splitGlobalRankTwoThreeDimensionBounds_of_globalRankTwoThreeApolarAnnihilatorDimensionBounds
+    (hdims : HasGlobalRankTwoThreeApolarAnnihilatorDimensionBounds) :
+    HasGlobalRankTwoApolarAnnihilatorDimensionBound ∧
+      HasGlobalRankThreeApolarAnnihilatorDimensionBound := by
+  exact ⟨
+    fun B p u hu hB hp hsocp => (hdims B p u hu hB hp hsocp).1,
+    fun B p u hu hB hp hsocp => (hdims B p u hu hB hp hsocp).2⟩
+
+theorem globalRankTwoThreeApolarAnnihilatorDimensionBounds_iff_splitGlobalRankTwoThreeDimensionBounds :
+    HasGlobalRankTwoThreeApolarAnnihilatorDimensionBounds ↔
+      HasGlobalRankTwoApolarAnnihilatorDimensionBound ∧
+        HasGlobalRankThreeApolarAnnihilatorDimensionBound :=
+  ⟨splitGlobalRankTwoThreeDimensionBounds_of_globalRankTwoThreeApolarAnnihilatorDimensionBounds,
+    fun hdata =>
+      globalRankTwoThreeApolarAnnihilatorDimensionBounds_of_splitGlobalRankTwoThreeDimensionBounds
+        hdata.1 hdata.2⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarAnnihilatorDimensionBounds
+    (hdims : HasGlobalRankTwoThreeApolarAnnihilatorDimensionBounds) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  have hsplit :=
+    splitGlobalRankTwoThreeDimensionBounds_of_globalRankTwoThreeApolarAnnihilatorDimensionBounds
+      hdims
+  exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeDimensionBounds
+    hsplit.1 hsplit.2
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeApolarAnnihilatorDimensionBounds :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoThreeApolarAnnihilatorDimensionBounds := by
+  constructor
+  · intro hmain
+    exact globalRankTwoThreeApolarAnnihilatorDimensionBounds_of_splitGlobalRankTwoThreeDimensionBounds
+      ((quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeDimensionBounds).mp
+        hmain).1
+      ((quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeDimensionBounds).mp
+        hmain).2
+  · intro hdims
+    exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarAnnihilatorDimensionBounds
+      hdims
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch
     (hgrowth2 : HasGlobalRankTwoApolarMacaulayGrowthBound)
