@@ -2719,6 +2719,35 @@ theorem hasRankTwoExistentialKernelEquationData_of_universalKernelEquationData
   exact ⟨y, hyW, hynot,
     hcases hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim⟩
 
+theorem hasRankTwoExistentialKernelBranchData_of_universalKernelBranchData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbranches : HasRankTwoUniversalKernelBranchData B p u) :
+    HasRankTwoExistentialKernelBranchData B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases exists_rank_two_complement_second_direction
+      (W := W) (x := x) hx hWdim with
+    ⟨y, hyW, hynot⟩
+  exact ⟨y, hyW, hynot,
+    hbranches hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim⟩
+
+theorem hasRankTwoExistentialNormalizedHankelData_of_universalNormalizedHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoUniversalNormalizedHankelData B p u) :
+    HasRankTwoExistentialNormalizedHankelData B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases exists_rank_two_complement_second_direction
+      (W := W) (x := x) hx hWdim with
+    ⟨y, hyW, hynot⟩
+  exact ⟨y, hyW, hynot,
+    hdata hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim⟩
+
+theorem hasRankTwoExistentialNormalizedHankelData_of_universalKernelBranchData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbranches : HasRankTwoUniversalKernelBranchData B p u) :
+    HasRankTwoExistentialNormalizedHankelData B p u :=
+  hasRankTwoExistentialNormalizedHankelData_of_universalNormalizedHankelData
+    (hasRankTwoUniversalNormalizedHankelData_of_universalKernelBranchData hbranches)
+
 theorem hasRankTwoExistentialKernelEquationData_of_kernelEquationApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
