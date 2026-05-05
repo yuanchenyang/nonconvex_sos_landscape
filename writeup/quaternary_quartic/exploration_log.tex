@@ -12418,4 +12418,53 @@ is formalized.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three exact-sequence data}
+
+\paragraph{Gap targeted.}
+The previous rank-three interface compressed the exact-sequence argument into
+the final forbidden inequality.  The blueprint, however, constructs quotient
+Hilbert entries \(q_2=3-b\) and \(q_3=4-b\) and then applies the Macaulay
+inequality \(q_3\le q_2\).  Exposing these entries makes the remaining
+formalization target closer to the written proof.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasRankThreeApolarExactSequenceData},
+\]
+which records the bad-case exact-sequence output:
+\[
+1\le b\le3,\qquad q_2=3-b,\qquad q_3=4-b,\qquad q_3\le q_2.
+\]
+Proved:
+\[
+\texttt{rankThreeMacaulayObstruction\_of\_rankThreeExactSequenceData},
+\]
+\[
+\texttt{rankThreeHilbertFirstBound\_of\_rankThreeExactSequenceData},
+\qquad
+\texttt{rankThreeDimensionBound\_of\_rankThreeExactSequenceData}.
+\]
+
+Added direct wrappers reducing the top-level theorem to the two blueprint
+Hilbert interfaces:
+\[
+\texttt{HasRankTwoApolarMacaulayGrowthData}
+\]
+and:
+\[
+\texttt{HasRankThreeApolarExactSequenceData}.
+\]
+
+\paragraph{Strategy change.}
+The rank-three gap is now the construction of exact-sequence Hilbert data from
+the apolar algebra in the \(h_1=4\) branch.  Once that data is supplied, the
+Macaulay contradiction and all downstream dimension/map/residual reductions
+are already formalized.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
