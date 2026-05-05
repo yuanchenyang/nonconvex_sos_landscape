@@ -7294,4 +7294,40 @@ the scalar/rank-two canonical Hankel classification theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two scalar Hankel data interface}
+
+\paragraph{Gap targeted.}
+The rank-two proof still bundled the scalar classification result into
+canonical kernel data.  The scalar classification interface should be
+separated from the local restricted-Hankel rank and negativity facts.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankTwoExistentialScalarHankelData}
+\]
+for the rank-two statement that one can choose a second support direction
+whose restricted coefficients satisfy:
+the scalar canonical-kernel classification theorem, a negative Hankel value,
+and range dimension at most two for
+\[
+\texttt{binaryHankelLinearMap}.
+\]
+Proved bridges from this scalar Hankel data to canonical kernel data, binary
+normal-form data, residual zero, and the root reduction theorem.
+
+\paragraph{Strategy change.}
+The rank-two blocker is now split into scalar classification plus two
+restricted-Hankel facts, instead of requiring canonical data as a monolithic
+input.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The open inputs are the product-kernel low-rank support decomposition and the
+rank-two scalar Hankel data theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

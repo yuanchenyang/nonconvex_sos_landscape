@@ -484,6 +484,40 @@ def HasRankTwoExistentialCanonicalKernelData
                           (binaryRestrictionCoeffD B p u x y)
                           (binaryRestrictionCoeffE B p u y)
 
+def HasRankTwoExistentialScalarHankelData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+      A ≤ linearAnnihilator B p u →
+        IsCompl A W →
+          x ∈ W →
+            (x : Poly) ≠ 0 →
+              Module.finrank ℝ A = 2 →
+                Module.finrank ℝ W = 2 →
+                  ∃ y : linSubmodule,
+                    y ∈ W ∧
+                      y ∉ ℝ ∙ x ∧
+                        HasBinaryRankTwoCanonicalKernelClassification
+                          (binaryRestrictionCoeffA B p u x)
+                          (binaryRestrictionCoeffB B p u x y)
+                          (binaryRestrictionCoeffC B p u x y)
+                          (binaryRestrictionCoeffD B p u x y)
+                          (binaryRestrictionCoeffE B p u y) ∧
+                        HasBinaryHankelNegativeValue
+                          (binaryRestrictionCoeffA B p u x)
+                          (binaryRestrictionCoeffB B p u x y)
+                          (binaryRestrictionCoeffC B p u x y)
+                          (binaryRestrictionCoeffD B p u x y)
+                          (binaryRestrictionCoeffE B p u y) ∧
+                        Module.finrank ℝ
+                          (LinearMap.range
+                            (binaryHankelLinearMap
+                              (binaryRestrictionCoeffA B p u x)
+                              (binaryRestrictionCoeffB B p u x y)
+                              (binaryRestrictionCoeffC B p u x y)
+                              (binaryRestrictionCoeffD B p u x y)
+                              (binaryRestrictionCoeffE B p u y))) ≤ 2
+
 def HasRankCaseKernelDecompositionApolarData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u) : Prop :=
@@ -1599,6 +1633,15 @@ theorem hasRankTwoExistentialKernelBranchData_of_canonicalKernelData
   exact ⟨y, hyW, hynot,
     binaryKernelBranchCertificate_of_canonicalKernelData hcanon_y⟩
 
+theorem hasRankTwoExistentialCanonicalKernelData_of_scalarHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hscalar : HasRankTwoExistentialScalarHankelData B p u) :
+    HasRankTwoExistentialCanonicalKernelData B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases hscalar hrank2 A W x hAann hAW hxW hx hAdim hWdim with
+    ⟨y, hyW, hynot, hclass, hneg, hrank⟩
+  exact ⟨y, hyW, hynot, hclass hneg hrank⟩
+
 theorem hasRankTwoExistentialBinaryFormData_of_canonicalKernelData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hcanon : HasRankTwoExistentialCanonicalKernelData B p u) :
@@ -1608,6 +1651,13 @@ theorem hasRankTwoExistentialBinaryFormData_of_canonicalKernelData
     ⟨y, hyW, hynot, hcanon_y⟩
   exact ⟨y, hyW, hynot,
     binaryRestriction_lowRankNegativeNormalForm_of_canonicalKernelData hcanon_y⟩
+
+theorem hasRankTwoExistentialBinaryFormData_of_scalarHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hscalar : HasRankTwoExistentialScalarHankelData B p u) :
+    HasRankTwoExistentialBinaryFormData B p u :=
+  hasRankTwoExistentialBinaryFormData_of_canonicalKernelData
+    (hasRankTwoExistentialCanonicalKernelData_of_scalarHankelData hscalar)
 
 theorem hasRankTwoNegativeSquareData_of_existentialBinaryFormData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -2149,6 +2199,18 @@ theorem residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_canonica
     (hasLowRankApolarSupportDecomposition_of_productKernelDecomposition hprod)
     hcanon
 
+theorem residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_scalarHankelData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hprod : HasLowRankApolarProductKernelDecomposition B p u)
+    (hscalar : HasRankTwoExistentialScalarHankelData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
+    (B := B) hu hp hsocp hprod
+    (hasRankTwoExistentialCanonicalKernelData_of_scalarHankelData hscalar)
+
 theorem residual_eq_zero_of_rankCaseSupportData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -2530,6 +2592,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarProductKern
     (B := B) hu hp hsocp
     (hprod B p u hu hB hp hsocp)
     (hcanon B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarProductKernelDecomposition_and_scalarHankelData
+    (hprod :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarProductKernelDecomposition B p u)
+    (hscalar :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialScalarHankelData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_scalarHankelData
+    (B := B) hu hp hsocp
+    (hprod B p u hu hB hp hsocp)
+    (hscalar B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseSupportData
     (hdata :
