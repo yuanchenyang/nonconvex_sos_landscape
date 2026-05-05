@@ -11157,4 +11157,62 @@ kernel data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Dual transport for binary Hankel kernels}
+
+\paragraph{Gap targeted.}
+The binary rank-two branch needs to carry a Hankel kernel through the same
+coordinate changes used to normalize its discriminant.  A direct same-direction
+quadratic pullback is not the right statement: the quartic coefficients move by
+pullback, while the catalecticant kernel moves by the dual inverse action on
+second-order differential operators.
+
+\paragraph{Lean progress.}
+Added elementary coefficient-level transport lemmas:
+\[
+\texttt{binaryHankelMul\_swap\_dual\_kernel},
+\quad
+\texttt{binaryHankelMul\_diagonal\_dual\_kernel},
+\]
+\[
+\texttt{binaryHankelMul\_shearX\_dual\_kernel},
+\quad
+\texttt{binaryHankelMul\_shearY\_dual\_kernel}.
+\]
+For example, if
+\[
+(r,s,t)\in\ker
+\begin{pmatrix}
+a&b&c\\ b&c&d\\ c&d&e
+\end{pmatrix}
+\]
+and the quartic coefficients are transformed by
+\[
+f(X,Y)=f_0(X+\tau Y,Y),
+\]
+then the transported kernel is
+\[
+(r-s\tau+t\tau^2,\ s-2t\tau,\ t).
+\]
+The row equations are proved explicitly as polynomial identities in Lean, so
+the lemmas do not introduce any new assumptions.
+
+\paragraph{Strategy change.}
+Future normal-form work should compose these dual transport lemmas with the
+previous discriminant-normalization calculations.  The remaining rank-two
+binary task is now to package the parabolic, hyperbolic, and elliptic cases so
+the transported scalar kernels are converted to the existing canonical branch
+certificates.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -758,6 +758,152 @@ theorem binaryHankelMul_eq_zero_iff
     ext i
     fin_cases i <;> simp [binaryHankelMul, h.1, h.2.1, h.2.2]
 
+theorem binaryHankelMul_swap_dual_kernel
+    {a b c d e r s t : ℝ}
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0) :
+    binaryHankelMul e d c b a (![t, s, r] : Fin 3 → ℝ) = 0 := by
+  rcases (binaryHankelMul_eq_zero_iff a b c d e r s t).1 hker with
+    ⟨h0, h1, h2⟩
+  exact (binaryHankelMul_eq_zero_iff e d c b a t s r).2
+    ⟨by simpa [add_comm, add_left_comm, add_assoc] using h2,
+      by simpa [add_comm, add_left_comm, add_assoc] using h1,
+      by simpa [add_comm, add_left_comm, add_assoc] using h0⟩
+
+theorem binaryHankelMul_diagonal_dual_kernel
+    {a b c d e r s t α δ : ℝ}
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0) :
+    binaryHankelMul
+        (a * α^4) (b * α^3 * δ) (c * α^2 * δ^2)
+        (d * α * δ^3) (e * δ^4)
+        (![r * δ^2, s * α * δ, t * α^2] : Fin 3 → ℝ) = 0 := by
+  rcases (binaryHankelMul_eq_zero_iff a b c d e r s t).1 hker with
+    ⟨h0, h1, h2⟩
+  refine (binaryHankelMul_eq_zero_iff
+    (a * α^4) (b * α^3 * δ) (c * α^2 * δ^2)
+    (d * α * δ^3) (e * δ^4)
+    (r * δ^2) (s * α * δ) (t * α^2)).2 ?_
+  constructor
+  · have hrow :
+        a * α^4 * (r * δ^2) + b * α^3 * δ * (s * α * δ) +
+            c * α^2 * δ^2 * (t * α^2) =
+          α^4 * δ^2 * (a * r + b * s + c * t) := by
+      ring
+    rw [hrow, h0]
+    ring
+  constructor
+  · have hrow :
+        b * α^3 * δ * (r * δ^2) + c * α^2 * δ^2 * (s * α * δ) +
+            d * α * δ^3 * (t * α^2) =
+          α^3 * δ^3 * (b * r + c * s + d * t) := by
+      ring
+    rw [hrow, h1]
+    ring
+  · have hrow :
+        c * α^2 * δ^2 * (r * δ^2) + d * α * δ^3 * (s * α * δ) +
+            e * δ^4 * (t * α^2) =
+          α^2 * δ^4 * (c * r + d * s + e * t) := by
+      ring
+    rw [hrow, h2]
+    ring
+
+theorem binaryHankelMul_shearX_dual_kernel
+    {a b c d e r s t tau : ℝ}
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0) :
+    binaryHankelMul
+        a
+        (a * tau + b)
+        (a * tau^2 + 2 * b * tau + c)
+        (a * tau^3 + 3 * b * tau^2 + 3 * c * tau + d)
+        (a * tau^4 + 4 * b * tau^3 + 6 * c * tau^2 + 4 * d * tau + e)
+        (![r - s * tau + t * tau^2, s - 2 * t * tau, t] : Fin 3 → ℝ) = 0 := by
+  rcases (binaryHankelMul_eq_zero_iff a b c d e r s t).1 hker with
+    ⟨h0, h1, h2⟩
+  refine (binaryHankelMul_eq_zero_iff
+    a
+    (a * tau + b)
+    (a * tau^2 + 2 * b * tau + c)
+    (a * tau^3 + 3 * b * tau^2 + 3 * c * tau + d)
+    (a * tau^4 + 4 * b * tau^3 + 6 * c * tau^2 + 4 * d * tau + e)
+    (r - s * tau + t * tau^2) (s - 2 * t * tau) t).2 ?_
+  constructor
+  · have hrow :
+        a * (r - s * tau + t * tau^2) +
+            (a * tau + b) * (s - 2 * t * tau) +
+              (a * tau^2 + 2 * b * tau + c) * t =
+          a * r + b * s + c * t := by
+      ring
+    rwa [hrow]
+  constructor
+  · have hrow :
+        (a * tau + b) * (r - s * tau + t * tau^2) +
+            (a * tau^2 + 2 * b * tau + c) * (s - 2 * t * tau) +
+              (a * tau^3 + 3 * b * tau^2 + 3 * c * tau + d) * t =
+          tau * (a * r + b * s + c * t) + (b * r + c * s + d * t) := by
+      ring
+    rw [hrow, h0, h1]
+    ring
+  · have hrow :
+        (a * tau^2 + 2 * b * tau + c) * (r - s * tau + t * tau^2) +
+            (a * tau^3 + 3 * b * tau^2 + 3 * c * tau + d) *
+              (s - 2 * t * tau) +
+              (a * tau^4 + 4 * b * tau^3 + 6 * c * tau^2 + 4 * d * tau + e) *
+                t =
+          tau^2 * (a * r + b * s + c * t) +
+            2 * tau * (b * r + c * s + d * t) +
+              (c * r + d * s + e * t) := by
+      ring
+    rw [hrow, h0, h1, h2]
+    ring
+
+theorem binaryHankelMul_shearY_dual_kernel
+    {a b c d e r s t tau : ℝ}
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0) :
+    binaryHankelMul
+        (a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4)
+        (b + 3 * c * tau + 3 * d * tau^2 + e * tau^3)
+        (c + 2 * d * tau + e * tau^2)
+        (d + e * tau)
+        e
+        (![r, s - 2 * r * tau, r * tau^2 - s * tau + t] : Fin 3 → ℝ) = 0 := by
+  rcases (binaryHankelMul_eq_zero_iff a b c d e r s t).1 hker with
+    ⟨h0, h1, h2⟩
+  refine (binaryHankelMul_eq_zero_iff
+    (a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4)
+    (b + 3 * c * tau + 3 * d * tau^2 + e * tau^3)
+    (c + 2 * d * tau + e * tau^2)
+    (d + e * tau)
+    e
+    r (s - 2 * r * tau) (r * tau^2 - s * tau + t)).2 ?_
+  constructor
+  · have hrow :
+        (a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4) * r +
+            (b + 3 * c * tau + 3 * d * tau^2 + e * tau^3) *
+              (s - 2 * r * tau) +
+              (c + 2 * d * tau + e * tau^2) * (r * tau^2 - s * tau + t) =
+          (a * r + b * s + c * t) +
+            2 * tau * (b * r + c * s + d * t) +
+              tau^2 * (c * r + d * s + e * t) := by
+      ring
+    rw [hrow, h0, h1, h2]
+    ring
+  constructor
+  · have hrow :
+        (b + 3 * c * tau + 3 * d * tau^2 + e * tau^3) * r +
+            (c + 2 * d * tau + e * tau^2) * (s - 2 * r * tau) +
+              (d + e * tau) * (r * tau^2 - s * tau + t) =
+          (b * r + c * s + d * t) +
+            tau * (c * r + d * s + e * t) := by
+      ring
+    rw [hrow, h1, h2]
+    ring
+  · have hrow :
+        (c + 2 * d * tau + e * tau^2) * r +
+            (d + e * tau) * (s - 2 * r * tau) +
+              e * (r * tau^2 - s * tau + t) =
+          c * r + d * s + e * t := by
+      ring
+    rwa [hrow]
+
 theorem ySq_kernel_of_parabolic_zero_xCoeff_kernel_equations
     {a b c d e r s t : ℝ}
     (hr : r = 0)
