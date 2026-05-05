@@ -12121,4 +12121,44 @@ convert this reassociation equality into the scalar product identity.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one reduction to nonzero quotient pairing}
+
+\paragraph{Gap targeted.}
+The quotient product reassociation theorem provided equality of catalecticant
+pairings, but the scalar coordinate lemma also needs a nonzero quotient
+pairing in order to cancel the bilinear scale factor.  This round connected
+that nonzero-pairing witness to the rank-one annihilator-map bound.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{scalarizedLinearAnnihilatorMap\_rank\_one\_identity\_of\_quotientPairing\_nonzero},
+\]
+and:
+\[
+\texttt{finrank\_range\_linearAnnihilatorMap\_le\_one\_of\_rank\_one\_quotientPairing\_nonzero}.
+\]
+The first theorem derives the scalarized reassociation identity from a nonzero
+quotient catalecticant pairing and the product reassociation equality.  The
+second packages this into the rank-one annihilator-map bound.
+
+\paragraph{Strategy change.}
+The rank-one apolar support case is now isolated to a single nonvanishing
+statement: under
+\[
+\dim \operatorname{range}(\texttt{catalecticantMap})=1,
+\]
+every injective coordinate on \(\Quad/K\) admits a pair \(r,s\) with
+\[
+\texttt{quotientCatalecticantMap}\ r\ s\ne0.
+\]
+Once this is proved, the rank-one branch of
+\texttt{HasRankCaseAnnihilatorMapBounds} follows through the existing bridge.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

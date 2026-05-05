@@ -2284,6 +2284,42 @@ theorem finrank_range_linearAnnihilatorMap_le_one_of_rank_one_scalarization
   exact finrank_range_linearAnnihilatorMap_le_one_of_scalarized_rank_one_identity
     (B := B) (p := p) (u := u) T hT (hidentity T hT)
 
+theorem scalarizedLinearAnnihilatorMap_rank_one_identity_of_quotientPairing_nonzero
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (T :
+      (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) →ₗ[ℝ] ℝ)
+    (hT : LinearMap.ker T = ⊥)
+    {r s : quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)}
+    (hrs : quotientCatalecticantMap B p u r s ≠ 0) :
+    ∀ w x y z : linSubmodule,
+      scalarizedLinearAnnihilatorMap B p u T w x *
+          scalarizedLinearAnnihilatorMap B p u T y z =
+        scalarizedLinearAnnihilatorMap B p u T w y *
+          scalarizedLinearAnnihilatorMap B p u T x z := by
+  intro w x y z
+  exact coordinate_mul_eq_of_bilin_eq_of_ker_eq_bot
+    (T := T) hT (quotientCatalecticantMap B p u) hrs
+    (quotientCatalecticantMap_linearProducts_reassociate B p u w x y z)
+
+theorem finrank_range_linearAnnihilatorMap_le_one_of_rank_one_quotientPairing_nonzero
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1)
+    (hnonzero :
+      ∀ T :
+          (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) →ₗ[ℝ] ℝ,
+        LinearMap.ker T = ⊥ →
+          ∃ r s : quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u),
+            quotientCatalecticantMap B p u r s ≠ 0) :
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 1 :=
+  finrank_range_linearAnnihilatorMap_le_one_of_rank_one_scalarization
+    (B := B) (p := p) (u := u) hrank
+    (by
+      intro T hT
+      rcases hnonzero T hT with ⟨r, s, hrs⟩
+      exact scalarizedLinearAnnihilatorMap_rank_one_identity_of_quotientPairing_nonzero
+        (B := B) (p := p) (u := u) T hT hrs)
+
 theorem linProductSubmodule_linearAnnihilator_top_le_ker
     {B : DotForm} {p : Poly} {u : RankSevenVec} :
     linProductSubmodule (linearAnnihilator B p u) ⊤ ≤
