@@ -8110,4 +8110,47 @@ change-of-basis arguments.
 
 No Julia numerical claims were used in this round.
 
+\section*{Kernel-equation routes for free apolar packages}
+
+\paragraph{Gap targeted.}
+The product-free and rank-one-free root routes still traveled through older
+negative-square/apolar-component reductions, even though these packages now
+project to the minimal kernel-equation apolar interface.
+
+\paragraph{Lean progress.}
+Added residual and root reductions
+\[
+\texttt{residual\_eq\_zero\_of\_productFreeApolarData\_via\_kernelEquationData},
+\quad
+\texttt{residual\_eq\_zero\_of\_rankOneFreeApolarData\_via\_kernelEquationData},
+\]
+and the corresponding
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_productFreeApolarData\_via\_kernelEquationData}
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_rankOneFreeApolarData\_via\_kernelEquationData}.
+\]
+
+\paragraph{Strategy change.}
+The broader free-apolar packages can now feed the final theorem through the
+same minimal kernel-equation route, keeping the current proof architecture
+centered on exact annihilator bounds plus rank-two kernel equations.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The remaining mathematical work is still proving the minimal
+kernel-equation apolar data, or any stronger package that projects to it.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

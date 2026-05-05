@@ -2866,6 +2866,17 @@ theorem residual_eq_zero_of_productFreeApolarData
     (B := B) hu hp hsocp
     (hasRankCaseApolarComponentData_of_productFreeApolarData hdata)
 
+theorem residual_eq_zero_of_productFreeApolarData_via_kernelEquationData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata : HasRankCaseProductFreeApolarData B p u hu) :
+    residual p u = 0 :=
+  residual_eq_zero_of_kernelEquationApolarData
+    (B := B) hu hp hsocp
+    (hasRankCaseKernelEquationApolarData_of_productFreeApolarData hdata)
+
 theorem residual_eq_zero_of_rankOneFreeApolarData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -2877,6 +2888,17 @@ theorem residual_eq_zero_of_rankOneFreeApolarData
     (B := B) hu hp hsocp
     (hasRankCaseProductFreeApolarData_of_rankOneFreeApolarData
       (B := B) hp hsocp.1 hdata)
+
+theorem residual_eq_zero_of_rankOneFreeApolarData_via_kernelEquationData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata : HasRankCaseRankOneFreeApolarData B p u hu) :
+    residual p u = 0 :=
+  residual_eq_zero_of_kernelEquationApolarData
+    (B := B) hu hp hsocp
+    (hasRankCaseKernelEquationApolarData_of_rankOneFreeApolarData hdata)
 
 theorem residual_eq_zero_of_binaryFormApolarData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
@@ -3542,6 +3564,20 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_productFreeApolarData
   exact residual_eq_zero_of_productFreeApolarData
     (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
 
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_productFreeApolarData_via_kernelEquationData
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseProductFreeApolarData B p u hu) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_productFreeApolarData_via_kernelEquationData
+    (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
+
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankOneFreeApolarData
     (hdata :
       ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
@@ -3554,6 +3590,20 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankOneFreeApolarData
   intro B p u hB hp hu hsocp
   letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
   exact residual_eq_zero_of_rankOneFreeApolarData
+    (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankOneFreeApolarData_via_kernelEquationData
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseRankOneFreeApolarData B p u hu) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_rankOneFreeApolarData_via_kernelEquationData
     (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_binaryFormApolarData
