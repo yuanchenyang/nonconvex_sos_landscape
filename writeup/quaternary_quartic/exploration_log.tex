@@ -6081,4 +6081,49 @@ the rank-one/rank-two combined product-independence obligations.
 
 No Julia numerical claims were used in this round.
 
+\section*{Adapted complement bases}
+
+\paragraph{Gap targeted.}
+The full affine-linear product-independence theorem applies to a
+\(\texttt{Fin 4}\)-indexed basis of \(\Lin\).  The remaining rank-one and
+rank-two product-independence obligations use bases of an annihilator
+subspace \(A\) together with complement directions in \(W\), so the missing
+formal step was assembling these data into a full basis of \(\Lin\).
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{exists\_rank\_one\_adapted\_basis}
+\]
+and
+\[
+\texttt{exists\_rank\_two\_adapted\_basis}.
+\]
+The rank-one theorem takes \(A\oplus W\), a \(\texttt{Fin 3}\)-basis of
+\(A\), and a generator \(x\) with \(\mathbb R x=W\), and returns a
+\(\texttt{Fin 4}\)-basis whose first three vectors are the \(A\)-basis and
+whose last vector is \(x\).  The rank-two theorem similarly takes a
+\(\texttt{Fin 2}\)-basis of \(A\) and complement directions \(x,y\) with
+\(\Span\{x,y\}=W\), and returns a \(\texttt{Fin 4}\)-basis with those four
+prescribed vectors.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+and
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+complete successfully.  The full quaternary harness is run for the commit; the
+expected remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The basis-assembly step is now isolated.  The next proof step is extracting
+the required rank-one and rank-two product subfamilies from
+\(\texttt{linearIndependent\_basis\_products\_fin\_four}\) after rewriting by
+these adapted-basis equalities.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

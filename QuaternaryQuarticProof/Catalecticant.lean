@@ -810,6 +810,123 @@ theorem linearIndependent_basis_products_fin_four
   rw [finrank_top, finrank_quadSubmodule_eq_ten]
   decide
 
+theorem exists_rank_one_adapted_basis
+    {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = W) :
+    ∃ β4 : Module.Basis (Fin 4) ℝ linSubmodule,
+      (∀ i : Fin 3, β4 (Fin.castSucc i) = (β i).1) ∧
+        β4 ⟨3, by norm_num⟩ = x := by
+  let v : Fin 4 → linSubmodule := fun i =>
+    if h : i.1 < 3 then (β ⟨i.1, h⟩).1 else x
+  have hv_cast : ∀ i : Fin 3, v (Fin.castSucc i) = (β i).1 := by
+    intro i
+    simp [v, Fin.castSucc]
+  have hv_last : v ⟨3, by norm_num⟩ = x := by
+    simp [v]
+  have hA_le : A ≤ Submodule.span ℝ (Set.range v) := by
+    intro a ha
+    let aA : A := ⟨a, ha⟩
+    have hrepr := β.sum_repr aA
+    have hsum : (∑ i : Fin 3, β.repr aA i • (β i).1) = a := by
+      change (fun z : A => (z : linSubmodule))
+          (∑ i : Fin 3, β.repr aA i • β i) = (a : linSubmodule)
+      exact congrArg (fun z : A => (z : linSubmodule)) hrepr
+    rw [← hsum]
+    refine Submodule.sum_mem _ ?_
+    intro i _hi
+    refine Submodule.smul_mem _ _ ?_
+    rw [← hv_cast i]
+    exact Submodule.subset_span ⟨Fin.castSucc i, rfl⟩
+  have hW_le : W ≤ Submodule.span ℝ (Set.range v) := by
+    rw [← hxspan]
+    refine Submodule.span_le.mpr ?_
+    intro y hy
+    rw [Set.mem_singleton_iff] at hy
+    rw [hy, ← hv_last]
+    exact Submodule.subset_span ⟨⟨3, by norm_num⟩, rfl⟩
+  have htop_le : ⊤ ≤ Submodule.span ℝ (Set.range v) := by
+    have hsup_le : A ⊔ W ≤ Submodule.span ℝ (Set.range v) := sup_le hA_le hW_le
+    simpa [hAW.codisjoint.eq_top] using hsup_le
+  have hLI : LinearIndependent ℝ v :=
+    linearIndependent_of_top_le_span_of_card_eq_finrank htop_le (by
+      rw [Fintype.card_fin, finrank_linSubmodule_eq_four])
+  let β4 : Module.Basis (Fin 4) ℝ linSubmodule := Module.Basis.mk hLI htop_le
+  refine ⟨β4, ?_, ?_⟩
+  · intro i
+    rw [show β4 (Fin.castSucc i) = v (Fin.castSucc i) by
+      exact Module.Basis.mk_apply hLI htop_le (Fin.castSucc i)]
+    exact hv_cast i
+  · rw [show β4 ⟨3, by norm_num⟩ = v ⟨3, by norm_num⟩ by
+      exact Module.Basis.mk_apply hLI htop_le ⟨3, by norm_num⟩]
+    exact hv_last
+
+theorem exists_rank_two_adapted_basis
+    {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
+    (β : Module.Basis (Fin 2) ℝ A) {x y : linSubmodule}
+    (hxyspan : Submodule.span ℝ ({x, y} : Set linSubmodule) = W) :
+    ∃ β4 : Module.Basis (Fin 4) ℝ linSubmodule,
+      (∀ i : Fin 2,
+        β4 (Fin.castLE (by norm_num : (2 : ℕ) ≤ 4) i) = (β i).1) ∧
+        β4 ⟨2, by norm_num⟩ = x ∧
+          β4 ⟨3, by norm_num⟩ = y := by
+  let v : Fin 4 → linSubmodule := fun i =>
+    if h : i.1 < 2 then (β ⟨i.1, h⟩).1 else if i.1 = 2 then x else y
+  have hv_cast :
+      ∀ i : Fin 2,
+        v (Fin.castLE (by norm_num : (2 : ℕ) ≤ 4) i) = (β i).1 := by
+    intro i
+    fin_cases i <;> simp [v, Fin.castLE]
+  have hv_two : v ⟨2, by norm_num⟩ = x := by
+    simp [v]
+  have hv_three : v ⟨3, by norm_num⟩ = y := by
+    simp [v]
+  have hA_le : A ≤ Submodule.span ℝ (Set.range v) := by
+    intro a ha
+    let aA : A := ⟨a, ha⟩
+    have hrepr := β.sum_repr aA
+    have hsum : (∑ i : Fin 2, β.repr aA i • (β i).1) = a := by
+      change (fun z : A => (z : linSubmodule))
+          (∑ i : Fin 2, β.repr aA i • β i) = (a : linSubmodule)
+      exact congrArg (fun z : A => (z : linSubmodule)) hrepr
+    rw [← hsum]
+    refine Submodule.sum_mem _ ?_
+    intro i _hi
+    refine Submodule.smul_mem _ _ ?_
+    rw [← hv_cast i]
+    exact Submodule.subset_span
+      ⟨Fin.castLE (by norm_num : (2 : ℕ) ≤ 4) i, rfl⟩
+  have hW_le : W ≤ Submodule.span ℝ (Set.range v) := by
+    rw [← hxyspan]
+    refine Submodule.span_le.mpr ?_
+    intro z hz
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hz
+    rcases hz with rfl | rfl
+    · rw [← hv_two]
+      exact Submodule.subset_span ⟨⟨2, by norm_num⟩, rfl⟩
+    · rw [← hv_three]
+      exact Submodule.subset_span ⟨⟨3, by norm_num⟩, rfl⟩
+  have htop_le : ⊤ ≤ Submodule.span ℝ (Set.range v) := by
+    have hsup_le : A ⊔ W ≤ Submodule.span ℝ (Set.range v) := sup_le hA_le hW_le
+    simpa [hAW.codisjoint.eq_top] using hsup_le
+  have hLI : LinearIndependent ℝ v :=
+    linearIndependent_of_top_le_span_of_card_eq_finrank htop_le (by
+      rw [Fintype.card_fin, finrank_linSubmodule_eq_four])
+  let β4 : Module.Basis (Fin 4) ℝ linSubmodule := Module.Basis.mk hLI htop_le
+  refine ⟨β4, ?_, ?_, ?_⟩
+  · intro i
+    rw [show β4 (Fin.castLE (by norm_num : (2 : ℕ) ≤ 4) i) =
+        v (Fin.castLE (by norm_num : (2 : ℕ) ≤ 4) i) by
+      exact Module.Basis.mk_apply hLI htop_le
+        (Fin.castLE (by norm_num : (2 : ℕ) ≤ 4) i)]
+    exact hv_cast i
+  · rw [show β4 ⟨2, by norm_num⟩ = v ⟨2, by norm_num⟩ by
+      exact Module.Basis.mk_apply hLI htop_le ⟨2, by norm_num⟩]
+    exact hv_two
+  · rw [show β4 ⟨3, by norm_num⟩ = v ⟨3, by norm_num⟩ by
+      exact Module.Basis.mk_apply hLI htop_le ⟨3, by norm_num⟩]
+    exact hv_three
+
 theorem linProduct_mem_sup_of_isCompl
     {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
     (x y : linSubmodule) :
