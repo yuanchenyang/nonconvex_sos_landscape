@@ -333,6 +333,12 @@ theorem hyperbolic_zero_xCoeff_shearX_ySqCoeff_eq_zero
   field_simp [hs]
   ring
 
+theorem hyperbolic_zero_xCoeff_dual_shearY_ySqCoeff_eq_zero
+    {s t : ℝ} (hs : s ≠ 0) :
+    -s * (t / s) + t = 0 := by
+  field_simp [hs]
+  ring
+
 theorem isBinaryQuadraticPullback_hyperbolic_zero_xCoeff_to_xy
     {r s t : ℝ} (hr : r = 0)
     (hdisc_pos : 0 < binaryKernelDiscriminant r s t) :
@@ -1286,6 +1292,46 @@ theorem elliptic_kernel_of_elliptic_shearY_diagonal_dual_kernel
   exact elliptic_kernel_of_nonzero_scalar_elliptic_kernel
     (a := A * scale^4) (b := B * scale^3) (c := C * scale^2)
     (d := D * scale) (e := e) (R := r) hr hcanonical
+
+theorem xy_kernel_of_hyperbolic_zero_xCoeff_shearY_dual_kernel
+    {a b c d e r s t : ℝ}
+    (hr : r = 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0) :
+    binaryHankelMul
+        (a + 4 * b * (t / s) + 6 * c * (t / s)^2 +
+          4 * d * (t / s)^3 + e * (t / s)^4)
+        (b + 3 * c * (t / s) + 3 * d * (t / s)^2 + e * (t / s)^3)
+        (c + 2 * d * (t / s) + e * (t / s)^2)
+        (d + e * (t / s))
+        e
+        (![0, 1, 0] : Fin 3 → ℝ) = 0 := by
+  have hs : s ≠ 0 :=
+    hyperbolic_zero_xCoeff_mixedCoeff_ne_zero (r := r) (s := s) (t := t)
+      hr hdisc_pos
+  have htransport := binaryHankelMul_shearY_dual_kernel
+    (a := a) (b := b) (c := c) (d := d) (e := e)
+    (r := r) (s := s) (t := t) (tau := t / s) hker
+  have hx : r = 0 := hr
+  have hy : -(s * (t / s)) + t = 0 := by
+    simpa using hyperbolic_zero_xCoeff_dual_shearY_ySqCoeff_eq_zero
+      (s := s) (t := t) hs
+  have hxy :
+      binaryHankelMul
+          (a + 4 * b * (t / s) + 6 * c * (t / s)^2 +
+            4 * d * (t / s)^3 + e * (t / s)^4)
+          (b + 3 * c * (t / s) + 3 * d * (t / s)^2 + e * (t / s)^3)
+          (c + 2 * d * (t / s) + e * (t / s)^2)
+          (d + e * (t / s))
+          e
+          (![0, s, 0] : Fin 3 → ℝ) = 0 := by
+    simpa [hx, hy] using htransport
+  exact xy_kernel_of_nonzero_scalar_xy_kernel
+    (a := a + 4 * b * (t / s) + 6 * c * (t / s)^2 +
+      4 * d * (t / s)^3 + e * (t / s)^4)
+    (b := b + 3 * c * (t / s) + 3 * d * (t / s)^2 + e * (t / s)^3)
+    (c := c + 2 * d * (t / s) + e * (t / s)^2)
+    (d := d + e * (t / s)) (e := e) (S := s) hs hxy
 
 theorem exists_nonzero_binaryHankel_kernel_equations_of_finrank_range_le_two
     {a b c d e : ℝ}

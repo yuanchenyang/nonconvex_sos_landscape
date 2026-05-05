@@ -11351,4 +11351,41 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Zero-leading hyperbolic binary kernel transport}
+
+\paragraph{Gap targeted.}
+The hyperbolic branch also has a zero-leading case.  If \(r=0\) and
+\(D=s^2-4rt>0\), then \(s\ne0\).  The dual shear by \(t/s\) sends the kernel
+\((0,s,t)\) directly to a nonzero scalar multiple of the canonical \(xy\)
+kernel.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{hyperbolic\_zero\_xCoeff\_dual\_shearY\_ySqCoeff\_eq\_zero},
+\quad
+\texttt{xy\_kernel\_of\_hyperbolic\_zero\_xCoeff\_shearY\_dual\_kernel}.
+\]
+The final theorem applies the dual shear transport lemma, proves the final
+coefficient is zero, and removes the nonzero scalar \(s\) to obtain the exact
+canonical vector \((0,1,0)\).
+
+\paragraph{Strategy change.}
+All hyperbolic transport branches now land in the existing \(xy\) canonical
+branch.  Together with the parabolic and elliptic packages, the binary work is
+now ready for a discriminant-case classifier that produces canonical kernel
+data after the appropriate transformed coefficients are chosen.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}
