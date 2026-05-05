@@ -13295,4 +13295,40 @@ bundled exact-sequence-data interface.
 
 No Julia numerical claims were used in this round.
 
+\section*{Direct local-data to quotient route}
+
+\paragraph{Gap targeted.}
+After proving the rank-three quotient bound directly from the bad-branch
+contradiction, the four-piece local blueprint data still fed the residual
+pipeline through the older bundled Hilbert-data route.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{lowRankApolarEssentialQuotientBounds\_of\_lowRankApolarBlueprintLocalData}.
+\]
+Updated:
+\[
+\texttt{lowRankApolarEssentialQuotientTheorem\_of\_lowRankApolarBlueprintLocalData}
+\]
+to use this direct quotient-bound route.  Also rewired:
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarBlueprintLocalData\_direct}
+\]
+to pass through
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarEssentialQuotientBounds\_direct}.
+\]
+
+\paragraph{Strategy change.}
+The four local blueprint components now imply the root theorem through the
+essential quotient bounds directly.  The bundled Hilbert-data package remains
+available, but it is no longer on the shortest route from the local blueprint
+components to the landscape theorem.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

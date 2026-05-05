@@ -2691,6 +2691,13 @@ theorem lowRankApolarEssentialQuotientBounds_of_rankTwoSymmetryAndGrowth_rankThr
   ⟨rankTwoEssentialQuotientBound_of_symmetry_and_macaulayGrowth hsymm2 hgrowth2,
     rankThreeEssentialQuotientBound_of_shape_and_macaulayBound hshape3 hmac3⟩
 
+theorem lowRankApolarEssentialQuotientBounds_of_lowRankApolarBlueprintLocalData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasLowRankApolarBlueprintLocalData B p u) :
+    HasLowRankApolarEssentialQuotientBounds B p u :=
+  lowRankApolarEssentialQuotientBounds_of_rankTwoSymmetryAndGrowth_rankThreeShapeAndMacaulayBound
+    hdata.1 hdata.2.1 hdata.2.2.1 hdata.2.2.2
+
 theorem lowRankApolarHilbertData_of_lowRankApolarBlueprintLocalData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hdata : HasLowRankApolarBlueprintLocalData B p u) :
@@ -2992,8 +2999,8 @@ theorem lowRankApolarEssentialQuotientTheorem_of_lowRankApolarBlueprintLocalData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hdata : HasLowRankApolarBlueprintLocalData B p u) :
     HasLowRankApolarEssentialQuotientTheorem B p u :=
-  lowRankApolarEssentialQuotientTheorem_of_lowRankApolarBlueprintHilbertData
-    (lowRankApolarBlueprintHilbertData_of_lowRankApolarBlueprintLocalData hdata)
+  lowRankApolarEssentialQuotientTheorem_of_bounds
+    (lowRankApolarEssentialQuotientBounds_of_lowRankApolarBlueprintLocalData hdata)
 
 theorem lowRankApolarBlueprintLocalData_iff_lowRankApolarEssentialQuotientTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec} :
@@ -5561,9 +5568,9 @@ theorem residual_eq_zero_of_lowRankApolarBlueprintLocalData_direct
     (hsocp : IsSOCP B p u)
     (hdata : HasLowRankApolarBlueprintLocalData B p u) :
     residual p u = 0 :=
-  residual_eq_zero_of_lowRankApolarHilbertData_direct
+  residual_eq_zero_of_lowRankApolarEssentialQuotientBounds_direct
     (B := B) hu hp hsocp
-    (lowRankApolarHilbertData_of_lowRankApolarBlueprintLocalData hdata)
+    (lowRankApolarEssentialQuotientBounds_of_lowRankApolarBlueprintLocalData hdata)
 
 theorem residual_eq_zero_of_supportDecomposition_and_normalizedHankelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
