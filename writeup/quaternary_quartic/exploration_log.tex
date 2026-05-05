@@ -9993,4 +9993,50 @@ two largest unproved inputs.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two negative-square package from kernel data}
+
+\paragraph{Gap targeted.}
+The rank-two branch has an older route through
+\texttt{HasRankTwoNegativeSquareData}.  Newer work often produces normalized
+Hankel data or universal kernel-equation data instead, so the negative-square
+package needed direct conversion lemmas from those inputs.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{hasRankTwoNegativeSquareData\_of\_existentialNormalizedHankelData},
+\]
+\[
+\texttt{hasRankTwoNegativeSquareData\_of\_universalNormalizedHankelData},
+\]
+\[
+\texttt{hasRankTwoNegativeSquareData\_of\_universalKernelBranchData},
+\]
+and
+\[
+\texttt{hasRankTwoNegativeSquareData\_of\_universalKernelEquationData}.
+\]
+These compose the already formalized pure-square construction through the
+existing existential binary-form route.
+
+\paragraph{Strategy change.}
+The rank-two part of the final proof can now be consumed either as normalized
+Hankel data, kernel branch data, kernel-equation data, or directly as negative
+square data.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The core remaining inputs are still the low-rank apolar theorem and the actual
+normalization/kernel-equation construction for the binary rank-two case.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

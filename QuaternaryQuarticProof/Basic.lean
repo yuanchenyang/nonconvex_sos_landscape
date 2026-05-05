@@ -3283,6 +3283,35 @@ theorem hasRankTwoExistentialNormalizedHankelData_of_universalKernelBranchData
   hasRankTwoExistentialNormalizedHankelData_of_universalNormalizedHankelData
     (hasRankTwoUniversalNormalizedHankelData_of_universalKernelBranchData hbranches)
 
+theorem hasRankTwoNegativeSquareData_of_existentialNormalizedHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoExistentialNormalizedHankelData B p u) :
+    HasRankTwoNegativeSquareData B p u :=
+  hasRankTwoNegativeSquareData_of_existentialBinaryFormData
+    (hasRankTwoExistentialBinaryFormData_of_normalizedHankelData hdata)
+
+theorem hasRankTwoNegativeSquareData_of_universalNormalizedHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoUniversalNormalizedHankelData B p u) :
+    HasRankTwoNegativeSquareData B p u :=
+  hasRankTwoNegativeSquareData_of_existentialNormalizedHankelData
+    (hasRankTwoExistentialNormalizedHankelData_of_universalNormalizedHankelData hdata)
+
+theorem hasRankTwoNegativeSquareData_of_universalKernelBranchData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbranches : HasRankTwoUniversalKernelBranchData B p u) :
+    HasRankTwoNegativeSquareData B p u :=
+  hasRankTwoNegativeSquareData_of_universalNormalizedHankelData
+    (hasRankTwoUniversalNormalizedHankelData_of_universalKernelBranchData hbranches)
+
+theorem hasRankTwoNegativeSquareData_of_universalKernelEquationData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hcases : HasRankTwoUniversalKernelEquationData B p u) :
+    HasRankTwoNegativeSquareData B p u :=
+  hasRankTwoNegativeSquareData_of_existentialBinaryFormData
+    (hasRankTwoExistentialBinaryFormData_of_kernelEquationData
+      (hasRankTwoExistentialKernelEquationData_of_universalKernelEquationData hcases))
+
 theorem hasRankTwoExistentialKernelEquationData_of_kernelEquationApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
