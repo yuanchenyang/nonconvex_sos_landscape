@@ -5779,6 +5779,18 @@ theorem residual_eq_zero_of_lowRankApolarQuotientCoreData_direct
     (B := B) hu hp hsocp
     (lowRankApolarQuotientLocalData_of_coreData hdata)
 
+theorem residual_eq_zero_of_quotientCoreComponents_direct
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hgrowth2 : HasRankTwoApolarMacaulayGrowthBound B p u)
+    (hbad3 : HasRankThreeApolarBadBranchContradiction B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarQuotientCoreData_direct
+    (B := B) hu hp hsocp
+    ⟨hgrowth2, hbad3⟩
+
 theorem residual_eq_zero_of_quotientLocalComponents_direct
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -7831,6 +7843,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarQuotientCor
   exact residual_eq_zero_of_lowRankApolarQuotientCoreData_direct
     (B := B) hu hp hsocp
     (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_quotientCoreComponents_direct
+    (hgrowth2 :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoApolarMacaulayGrowthBound B p u)
+    (hbad3 :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankThreeApolarBadBranchContradiction B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_quotientCoreComponents_direct
+    (B := B) hu hp hsocp
+    (hgrowth2 B p u hu hB hp hsocp)
+    (hbad3 B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_quotientLocalComponents_direct
     (hsymm2 :
