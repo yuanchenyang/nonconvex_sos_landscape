@@ -15379,4 +15379,45 @@ lex-containment normal form.
 
 No Julia numerical claims were used in this round.
 
+\section*{Contraction map for cubic product annihilators}
+
+\paragraph{Gap targeted.}
+The direct inverse-system proof needs to compare a cubic functional
+annihilating \(A\cdot P\) with its contractions by elements of \(A\).  These
+contractions land in the dual annihilator of the quadratic subspace \(P\).
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, defined
+\[
+\texttt{cubicProductAnnihilatorContraction}.
+\]
+For
+\(\Phi\in\texttt{cubicProductAnnihilator}\ A\ P\) and \(a\in A\), this sends
+\(\Phi\) to the quadratic functional
+\[
+q\mapsto \Phi(aq).
+\]
+The proof shows this functional vanishes on \(P\), hence lies in the dual
+annihilator of \(P\subseteq\operatorname{Sym}^2(A)\).  Proved
+\[
+\texttt{cubicProductAnnihilatorContraction\_ker\_eq\_bot}
+\]
+and
+\[
+\texttt{cubicProductAnnihilatorContraction\_injective}.
+\]
+Thus a cubic product annihilator is determined by all of its contractions.
+
+\paragraph{Strategy change.}
+The remaining small Macaulay theorem can now be attacked through the image of
+this injective contraction map.  The next missing algebraic constraint is the
+symmetry/integrability condition on the contraction image, which should
+improve the crude Hom-space bound to the desired quotient-dimension bound.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

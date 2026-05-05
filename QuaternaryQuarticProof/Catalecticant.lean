@@ -2011,6 +2011,216 @@ def cubicProductAnnihilator
   ((linQuadProductSubmodule A P).comap
     (linQuadProductSubmodule A (symSquareSubmodule A)).subtype).dualAnnihilator
 
+def cubicProductAnnihilatorContraction
+    (A : Submodule ℝ linSubmodule) (P : Submodule ℝ quadSubmodule) :
+    cubicProductAnnihilator A P →ₗ[ℝ]
+      A →ₗ[ℝ] (P.comap (symSquareSubmodule A).subtype).dualAnnihilator where
+  toFun φ :=
+    { toFun := fun a =>
+        ⟨({ toFun := fun q =>
+              φ.1
+                ⟨linQuadProduct a.1 q.1,
+                  linQuadProduct_mem_linQuadProductSubmodule a q⟩
+            map_add' := by
+              intro q r
+              have hsub :
+                  (⟨linQuadProduct a.1 ((q + r : symSquareSubmodule A) : quadSubmodule),
+                    linQuadProduct_mem_linQuadProductSubmodule a (q + r)⟩ :
+                      linQuadProductSubmodule A (symSquareSubmodule A)) =
+                    ⟨linQuadProduct a.1 q.1,
+                      linQuadProduct_mem_linQuadProductSubmodule a q⟩ +
+                    ⟨linQuadProduct a.1 r.1,
+                      linQuadProduct_mem_linQuadProductSubmodule a r⟩ := by
+                apply Subtype.ext
+                simp [linQuadProduct_add_right]
+              change φ.1
+                  ⟨linQuadProduct a.1 ((q + r : symSquareSubmodule A) : quadSubmodule),
+                    linQuadProduct_mem_linQuadProductSubmodule a (q + r)⟩ =
+                φ.1
+                  ⟨linQuadProduct a.1 q.1,
+                    linQuadProduct_mem_linQuadProductSubmodule a q⟩ +
+                  φ.1
+                    ⟨linQuadProduct a.1 r.1,
+                      linQuadProduct_mem_linQuadProductSubmodule a r⟩
+              rw [hsub]
+              exact φ.1.map_add
+                ⟨linQuadProduct a.1 q.1,
+                  linQuadProduct_mem_linQuadProductSubmodule a q⟩
+                ⟨linQuadProduct a.1 r.1,
+                  linQuadProduct_mem_linQuadProductSubmodule a r⟩
+            map_smul' := by
+              intro c q
+              have hsub :
+                  (⟨linQuadProduct a.1 ((c • q : symSquareSubmodule A) : quadSubmodule),
+                    linQuadProduct_mem_linQuadProductSubmodule a (c • q)⟩ :
+                      linQuadProductSubmodule A (symSquareSubmodule A)) =
+                    c • ⟨linQuadProduct a.1 q.1,
+                      linQuadProduct_mem_linQuadProductSubmodule a q⟩ := by
+                apply Subtype.ext
+                simp [linQuadProduct_smul_right]
+              change φ.1
+                  ⟨linQuadProduct a.1 ((c • q : symSquareSubmodule A) : quadSubmodule),
+                    linQuadProduct_mem_linQuadProductSubmodule a (c • q)⟩ =
+                c • φ.1
+                  ⟨linQuadProduct a.1 q.1,
+                    linQuadProduct_mem_linQuadProductSubmodule a q⟩
+              rw [hsub]
+              exact φ.1.map_smul c
+                ⟨linQuadProduct a.1 q.1,
+                  linQuadProduct_mem_linQuadProductSubmodule a q⟩ } : Module.Dual ℝ (symSquareSubmodule A)),
+          by
+            rw [Submodule.mem_dualAnnihilator]
+            intro q hq
+            have hprodP :
+                linQuadProduct a.1 (q.1 : quadSubmodule) ∈
+                  linQuadProductSubmodule A P := by
+              exact linQuadProduct_mem_linQuadProductSubmodule a
+                (⟨(q.1 : quadSubmodule), hq⟩ : P)
+            have hprodF :
+                linQuadProduct a.1 (q.1 : quadSubmodule) ∈
+                  linQuadProductSubmodule A (symSquareSubmodule A) :=
+              linQuadProduct_mem_linQuadProductSubmodule
+                (U := A) (P := symSquareSubmodule A) a q
+            have hmem :
+                (⟨linQuadProduct a.1 (q.1 : quadSubmodule), hprodF⟩ :
+                  linQuadProductSubmodule A (symSquareSubmodule A)) ∈
+                (linQuadProductSubmodule A P).comap
+                  (linQuadProductSubmodule A (symSquareSubmodule A)).subtype :=
+              hprodP
+            exact (Submodule.mem_dualAnnihilator φ.1).mp φ.2
+              ⟨linQuadProduct a.1 (q.1 : quadSubmodule), hprodF⟩ hmem⟩
+      map_add' := by
+        intro a b
+        apply Subtype.ext
+        apply LinearMap.ext
+        intro q
+        have hsub :
+            (⟨linQuadProduct (a + b).1 q.1,
+              linQuadProduct_mem_linQuadProductSubmodule (a + b) q⟩ :
+                linQuadProductSubmodule A (symSquareSubmodule A)) =
+              ⟨linQuadProduct a.1 q.1,
+                linQuadProduct_mem_linQuadProductSubmodule a q⟩ +
+              ⟨linQuadProduct b.1 q.1,
+                linQuadProduct_mem_linQuadProductSubmodule b q⟩ := by
+          apply Subtype.ext
+          simp [linQuadProduct_add_left]
+        change φ.1
+            ⟨linQuadProduct (a + b).1 q.1,
+              linQuadProduct_mem_linQuadProductSubmodule (a + b) q⟩ =
+          (φ.1
+              ⟨linQuadProduct a.1 q.1,
+                linQuadProduct_mem_linQuadProductSubmodule a q⟩ +
+            φ.1
+              ⟨linQuadProduct b.1 q.1,
+                linQuadProduct_mem_linQuadProductSubmodule b q⟩)
+        rw [hsub]
+        exact φ.1.map_add
+          ⟨linQuadProduct a.1 q.1,
+            linQuadProduct_mem_linQuadProductSubmodule a q⟩
+          ⟨linQuadProduct b.1 q.1,
+            linQuadProduct_mem_linQuadProductSubmodule b q⟩
+      map_smul' := by
+        intro c a
+        apply Subtype.ext
+        apply LinearMap.ext
+        intro q
+        have hsub :
+            (⟨linQuadProduct (c • a).1 q.1,
+              linQuadProduct_mem_linQuadProductSubmodule (c • a) q⟩ :
+                linQuadProductSubmodule A (symSquareSubmodule A)) =
+              c • ⟨linQuadProduct a.1 q.1,
+                linQuadProduct_mem_linQuadProductSubmodule a q⟩ := by
+          apply Subtype.ext
+          simp [linQuadProduct_smul_left]
+        change φ.1
+            ⟨linQuadProduct (c • a).1 q.1,
+              linQuadProduct_mem_linQuadProductSubmodule (c • a) q⟩ =
+          c • φ.1
+            ⟨linQuadProduct a.1 q.1,
+              linQuadProduct_mem_linQuadProductSubmodule a q⟩
+        rw [hsub]
+        exact φ.1.map_smul c
+          ⟨linQuadProduct a.1 q.1,
+            linQuadProduct_mem_linQuadProductSubmodule a q⟩ }
+  map_add' := by
+    intro φ ψ
+    apply LinearMap.ext
+    intro a
+    apply Subtype.ext
+    apply LinearMap.ext
+    intro q
+    rfl
+  map_smul' := by
+    intro c φ
+    apply LinearMap.ext
+    intro a
+    apply Subtype.ext
+    apply LinearMap.ext
+    intro q
+    rfl
+
+theorem cubicProductAnnihilatorContraction_ker_eq_bot
+    (A : Submodule ℝ linSubmodule) (P : Submodule ℝ quadSubmodule) :
+    LinearMap.ker (cubicProductAnnihilatorContraction A P) = ⊥ := by
+  apply LinearMap.ker_eq_bot.mpr
+  intro φ ψ hφψ
+  apply Subtype.ext
+  apply LinearMap.ext
+  intro y
+  change φ.1 y = ψ.1 y
+  refine Submodule.span_induction
+    (p := fun z hz =>
+      φ.1
+        (⟨z, hz⟩ : linQuadProductSubmodule A (symSquareSubmodule A)) =
+      ψ.1
+        (⟨z, hz⟩ : linQuadProductSubmodule A (symSquareSubmodule A)))
+    ?_ ?_ ?_ ?_ y.2
+  · intro z hz
+    rcases hz with ⟨aq, rfl⟩
+    have hfun := congrArg
+      (fun F : A →ₗ[ℝ] (P.comap (symSquareSubmodule A).subtype).dualAnnihilator =>
+        F aq.1) hφψ
+    have hval := congrArg
+      (fun η : (P.comap (symSquareSubmodule A).subtype).dualAnnihilator =>
+        η.1 aq.2) hfun
+    simpa [cubicProductAnnihilatorContraction] using hval
+  · change φ.1 (0 : linQuadProductSubmodule A (symSquareSubmodule A)) =
+      ψ.1 (0 : linQuadProductSubmodule A (symSquareSubmodule A))
+    simp
+  · intro z w hz hw hφz hφw
+    change φ.1
+        (⟨z + w, Submodule.add_mem _ hz hw⟩ :
+          linQuadProductSubmodule A (symSquareSubmodule A)) =
+      ψ.1
+        (⟨z + w, Submodule.add_mem _ hz hw⟩ :
+          linQuadProductSubmodule A (symSquareSubmodule A))
+    have hsub :
+        (⟨z + w, Submodule.add_mem _ hz hw⟩ :
+          linQuadProductSubmodule A (symSquareSubmodule A)) =
+          (⟨z, hz⟩ : linQuadProductSubmodule A (symSquareSubmodule A)) +
+            ⟨w, hw⟩ := rfl
+    rw [hsub]
+    simp [hφz, hφw]
+  · intro c z hz hφz
+    change φ.1
+        (⟨c • z, Submodule.smul_mem _ c hz⟩ :
+          linQuadProductSubmodule A (symSquareSubmodule A)) =
+      ψ.1
+        (⟨c • z, Submodule.smul_mem _ c hz⟩ :
+          linQuadProductSubmodule A (symSquareSubmodule A))
+    have hsub :
+        (⟨c • z, Submodule.smul_mem _ c hz⟩ :
+          linQuadProductSubmodule A (symSquareSubmodule A)) =
+          c • (⟨z, hz⟩ : linQuadProductSubmodule A (symSquareSubmodule A)) := rfl
+    rw [hsub]
+    simp [hφz]
+
+theorem cubicProductAnnihilatorContraction_injective
+    (A : Submodule ℝ linSubmodule) (P : Submodule ℝ quadSubmodule) :
+    Function.Injective (cubicProductAnnihilatorContraction A P) := by
+  rw [← LinearMap.ker_eq_bot]
+  exact cubicProductAnnihilatorContraction_ker_eq_bot A P
+
 theorem finrank_linQuadProductSubmodule_quotient_eq_finrank_cubicProductAnnihilator
     {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule} :
     Module.finrank ℝ
