@@ -2460,6 +2460,25 @@ theorem rankThreeDimensionBound_of_rankThreeEssentialQuotientBound
   rankThreeDimensionBound_of_rankThreeHilbertFirstBound
     (rankThreeHilbertFirstBound_of_rankThreeEssentialQuotientBound hquot)
 
+theorem rankThreeEssentialQuotientBound_of_shape_and_macaulayBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hshape : HasRankThreeApolarBadBranchExactSequenceShape B p u)
+    (hmac : HasRankThreeApolarBadBranchMacaulayBound B p u) :
+    HasRankThreeApolarEssentialQuotientBound B p u := by
+  intro hrank3
+  by_contra hnot
+  have hgt :
+      3 < Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) := by
+    omega
+  have hle4 := finrank_quotient_linearAnnihilator_le_four B p u
+  have hbad :
+      Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4 := by
+    omega
+  rcases hshape hrank3 hbad with ⟨b, q2, q3, hbpos, hbtop, hq2, hq3⟩
+  have hineq := hmac hrank3 hbad b q2 q3 hbpos hbtop hq2 hq3
+  exact rankThreeExactSequenceNumericalContradiction
+    hbpos hbtop hq2 hq3 hineq
+
 theorem rankThreeExactSequenceData_of_rankThreeEssentialQuotientBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hquot : HasRankThreeApolarEssentialQuotientBound B p u) :
@@ -2661,6 +2680,16 @@ theorem lowRankApolarHilbertData_of_rankTwoSymmetryAndGrowth_rankThreeShapeAndMa
   lowRankApolarHilbertData_of_rankTwoSymmetryAndGrowth_rankThreeBadBranchExactSequenceData
     hsymm2 hgrowth2
     (rankThreeBadBranchExactSequenceData_of_shape_and_macaulayBound hshape3 hmac3)
+
+theorem lowRankApolarEssentialQuotientBounds_of_rankTwoSymmetryAndGrowth_rankThreeShapeAndMacaulayBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsymm2 : HasRankTwoApolarGorensteinSymmetryData B p u)
+    (hgrowth2 : HasRankTwoApolarMacaulayGrowthBound B p u)
+    (hshape3 : HasRankThreeApolarBadBranchExactSequenceShape B p u)
+    (hmac3 : HasRankThreeApolarBadBranchMacaulayBound B p u) :
+    HasLowRankApolarEssentialQuotientBounds B p u :=
+  ⟨rankTwoEssentialQuotientBound_of_symmetry_and_macaulayGrowth hsymm2 hgrowth2,
+    rankThreeEssentialQuotientBound_of_shape_and_macaulayBound hshape3 hmac3⟩
 
 theorem lowRankApolarHilbertData_of_lowRankApolarBlueprintLocalData
     {B : DotForm} {p : Poly} {u : RankSevenVec}

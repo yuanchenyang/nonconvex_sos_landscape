@@ -13254,4 +13254,45 @@ name.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three quotient bound from bad-branch contradiction}
+
+\paragraph{Gap targeted.}
+The rank-three local data previously fed the pipeline by constructing bundled
+bad-branch exact-sequence data.  A sharper bridge is to prove the rank-three
+essential quotient bound directly: if the quotient dimension were larger than
+three, it would equal four and trigger the bad-branch shape plus Macaulay
+contradiction.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof.Catalecticant}:
+\[
+\texttt{finrank\_quotient\_linearAnnihilator\_le\_four}.
+\]
+
+Added to \texttt{QuaternaryQuarticProof.Basic}:
+\[
+\texttt{rankThreeEssentialQuotientBound\_of\_shape\_and\_macaulayBound}.
+\]
+The proof uses the four-dimensional quotient upper bound, turns
+\(\neg(h_1\le3)\) into \(h_1=4\), invokes the bad-branch shape and Macaulay
+bound, and closes with
+\[
+\texttt{rankThreeExactSequenceNumericalContradiction}.
+\]
+Also added:
+\[
+\texttt{lowRankApolarEssentialQuotientBounds\_of\_rankTwoSymmetryAndGrowth\_rankThreeShapeAndMacaulayBound}.
+\]
+
+\paragraph{Strategy change.}
+The four local blueprint pieces now imply the low-rank essential quotient
+bounds directly.  The rank-three part no longer needs to detour through the
+bundled exact-sequence-data interface.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

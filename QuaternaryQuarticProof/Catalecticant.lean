@@ -2134,6 +2134,12 @@ theorem finrank_quotient_linearAnnihilator_eq_sub
       4 - Module.finrank ℝ (linearAnnihilator B p u) := by
   rw [Submodule.finrank_quotient, finrank_linSubmodule_eq_four]
 
+theorem finrank_quotient_linearAnnihilator_le_four
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) ≤ 4 := by
+  rw [finrank_quotient_linearAnnihilator_eq_sub]
+  omega
+
 theorem finrank_quotient_linearAnnihilator_eq_four_of_finrank_linearAnnihilator_eq_zero
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hzero : Module.finrank ℝ (linearAnnihilator B p u) = 0) :
