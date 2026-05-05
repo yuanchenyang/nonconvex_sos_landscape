@@ -11669,4 +11669,45 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Direct Basic integration of binary rank-two classifier}
+
+\paragraph{Gap targeted.}
+The Basic layer still routed rank-two negative-square construction through the
+older universal normalized-kernel-classification assumption.  After the direct
+coefficient-level binary classifier was formalized, this assumption could be
+removed from the pure-square bridge.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{hasUniversalBinaryRankTwoNegativePureSquareTheorem\_direct},
+\quad
+\texttt{hasRankTwoNegativeSquareData\_of\_point},
+\]
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_annihilatorBounds\_of\_point},
+\quad
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_lowRankApolarSupportTheorem\_of\_point}.
+\]
+These theorems instantiate the universal binary pure-square theorem directly
+from \texttt{binaryQuarticEval\_exists\_negative\_of\_finrank\_range\_le\_two}
+and thread it into the existing rank-two apolar negative-square pipeline.
+
+\paragraph{Strategy change.}
+The normalized binary classification assumption is no longer needed for the
+rank-two negative-square construction.  The dominant remaining blocker is now
+the structural apolar support theorem that supplies the annihilator/support
+bounds used by this pipeline.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}
