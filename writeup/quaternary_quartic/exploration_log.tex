@@ -15117,4 +15117,48 @@ codimension at most one or two.
 
 No Julia numerical claims were used in this round.
 
+\section*{Lex codimension-one cubic product count}
+
+\paragraph{Gap targeted.}
+The largest remaining algebraic gap is the special three-variable Macaulay
+count.  After the \(q_2=0\) case, the next concrete obstruction is the
+codimension-one model where the quadratic subspace is spanned by all sorted
+quadratic products except one square.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, added the lex-model
+subspaces
+\[
+\texttt{spanPairProductsExceptZeroZero},
+\qquad
+\texttt{spanCubicProductsExceptZeroZeroZero}.
+\]
+Proved
+\[
+\texttt{spanCubicProductsExceptZeroZeroZero\_le\_linQuadProductSubmodule\_exceptZeroZero},
+\]
+showing that the nine sorted cubic products except \(x_0^3\) lie in the
+product span of the codimension-one quadratic model.  The independence theorem
+for sorted cubic products then gives
+\[
+\texttt{finrank\_spanCubicProductsExceptZeroZeroZero\_eq\_nine\_of\_isCompl\_line},
+\]
+and hence
+\[
+\texttt{nine\_le\_finrank\_linQuadProductSubmodule\_exceptZeroZero\_of\_isCompl\_line}.
+\]
+
+\paragraph{Strategy change.}
+This closes the finite product lower bound for the lex \(q_2=1\) model:
+removing one quadratic generator still leaves at least nine independent cubic
+products.  The next central algebraic step is the analogous lex \(q_2=2\)
+count, followed by the reduction from arbitrary low-codimension quadratic
+subspaces to these concrete models.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
