@@ -15631,4 +15631,43 @@ force the image of contraction evaluation to be one-dimensional as well.
 
 No Julia numerical claims were used in this round.
 
+\section*{Kernel and injective image split for q=2}
+
+\paragraph{Gap targeted.}
+The q=2 branch needs a tight rank-nullity argument for contraction
+evaluation.  This round made the split explicit: either contraction evaluation
+is injective, or its kernel is the one-dimensional exceptional branch that
+still needs a separate image bound.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, refined the square-evaluation
+and contraction-evaluation maps into named proof-serving definitions:
+\[
+\texttt{cubicProductAnnihilatorContractionEval},\qquad
+\texttt{dualAnnihilatorSquareEval}.
+\]
+Then proved the kernel injection into the square-evaluation slice and the
+dimension bound
+\[
+\texttt{finrank\_ker\_cubicProductAnnihilatorContractionEval\_le\_one\_of\_dualAnnihilator\_finrank\_eq\_two}.
+\]
+Also closed the injective branch via
+\[
+\texttt{finrank\_cubicProductAnnihilator\_le\_two\_of\_contractionEval\_ker\_eq\_bot}.
+\]
+
+\paragraph{Strategy status.}
+The only remaining q=2 algebraic branch is now sharply isolated: contraction
+evaluation has a one-dimensional kernel.  To finish q=2, it remains to prove
+that this nonzero-kernel branch forces the image of contraction evaluation to
+have dimension at most one, so rank-nullity gives \(1+1=2\).
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded before this
+log entry; the verification harness remains expected to fail only at the
+placeholder axiom until the final theorem is rewired.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
