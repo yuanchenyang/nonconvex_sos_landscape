@@ -8623,4 +8623,50 @@ package, then replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Low-rank support through universal branch data}
+
+\paragraph{Gap targeted.}
+The newest universal branch route accepted rank-case apolar support bounds, but
+the blueprint also phrases the global geometry as a low-rank apolar support
+theorem or as a support decomposition.  Those formulations still required a
+manual conversion before the branch certificate route could be used.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarSupportTheorem\_and\_universalKernelBranchData}
+\]
+and
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarSupportDecomposition\_and\_universalKernelBranchData}.
+\]
+Added the corresponding root reductions
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarSupportTheorem\_and\_universalKernelBranchData}
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarSupportDecomposition\_and\_universalKernelBranchData}.
+\]
+
+\paragraph{Strategy change.}
+The global proof can now combine the low-rank support theorem from the apolar
+geometry part of the blueprint directly with the universal rank-two branch
+certificate package.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the low-rank apolar support theorem or decomposition and a universal
+rank-two branch certificate package, then replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
