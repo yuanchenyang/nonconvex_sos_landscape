@@ -277,6 +277,21 @@ theorem span_pair_eq_of_mem_of_notMem_span_singleton_of_finrank_two
     rw [finrank_span_pair_eq_two_of_notMem_span_singleton
       (K := K) (V := V) hxne hy, hW])
 
+theorem span_singleton_eq_of_mem_of_finrank_one
+    {W : Submodule K V} {x : V}
+    (hxne : x ≠ 0)
+    (hxW : x ∈ W)
+    (hW : finrank K W = 1) :
+    K ∙ x = W := by
+  have hspan_le : K ∙ x ≤ W := by
+    exact Submodule.span_le.mpr (by
+      intro z hz
+      rw [Set.mem_singleton_iff] at hz
+      rw [hz]
+      exact hxW)
+  exact Submodule.eq_of_le_of_finrank_eq hspan_le (by
+    rw [finrank_span_singleton hxne, hW])
+
 end SubspaceChoice
 
 section ExactSubspaces

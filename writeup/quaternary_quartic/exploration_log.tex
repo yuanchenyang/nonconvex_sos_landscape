@@ -4783,4 +4783,40 @@ apolar kernel-equation case split and the product-disjointness theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Identifying a rank-one complement from a nonzero support vector}
+
+\paragraph{Gap targeted.}
+The rank-one normal-form branch uses a one-dimensional support complement.
+Once a nonzero \(x\in W\) is extracted, later code should be able to replace
+\(W\) by the line \(\mathbb{R}x\) without repeating a dimension argument.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{span\_singleton\_eq\_of\_mem\_of\_finrank\_one}
+\]
+to \texttt{QuaternaryQuarticProof/Dimension.lean}.  It proves that if
+\(x\ne0\), \(x\in W\), and \(\dim W=1\), then \(Kx=W\).  Added the
+quaternary support wrapper
+\[
+\texttt{span\_rank\_one\_support\_vector\_eq}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Dimension}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the known
+remaining failure is still the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-one support branch can now identify the complement line from the
+extracted vector.  It still needs the apolar normal-form proof giving exact
+\(\dim\Sym^2A=6\) and the negative pure-square coefficient.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
