@@ -9056,4 +9056,42 @@ the universal rank-two normalized position and Hankel negativity certificates.
 
 No Julia numerical claims were used in this round.
 
+\section*{Scalar Hankel facts with universal normalized position}
+
+\paragraph{Gap targeted.}
+One rank-two route still required a universal binary normalized-kernel
+classification, even though the chosen scalar Hankel facts already provide the
+negative value and Hankel rank bound.  The only missing ingredient for the
+normalized-Hankel package is normalized kernel position.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankTwoExistentialNormalizedHankelData\_of\_universalNormalizedPosition\_and\_facts}.
+\]
+It combines universal normalized position with the existential scalar Hankel
+facts for the same selected second direction.  Added residual and root
+reductions for the support-decomposition and low-rank-support routes using
+universal normalized position plus scalar Hankel facts.
+
+\paragraph{Strategy change.}
+The rank-two binary route can now avoid the stronger universal classification
+predicate whenever scalar Hankel facts are available.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Formalize the structural low-rank support theorem and prove either universal
+normalized position with scalar Hankel facts, or the stronger universal
+normalized-Hankel package.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
