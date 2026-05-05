@@ -1142,6 +1142,20 @@ theorem binaryKernelBranchCertificate_iff_normalizedKernelPosition_and_hankelNeg
     exact binaryKernelBranchCertificate_of_normalizedKernelPosition
       hdata.1 hdata.2
 
+theorem binaryCanonicalKernelData_iff_normalizedKernelPosition_and_hankelNegative
+    {a b c d e : ℝ} :
+    HasBinaryCanonicalKernelData a b c d e ↔
+      HasBinaryNormalizedKernelPosition a b c d e ∧
+        HasBinaryHankelNegativeValue a b c d e := by
+  constructor
+  · intro hcanon
+    exact ⟨
+      binaryNormalizedKernelPosition_of_canonicalKernelData hcanon,
+      binaryHankelNegativeValue_of_canonicalKernelData hcanon⟩
+  · intro hdata
+    exact binaryCanonicalKernelData_of_normalizedKernelPosition
+      hdata.1 hdata.2
+
 theorem y_sq_kernel_binaryQuarticEval_exists_negative_of_rank_two
     (a b : ℝ) (_hneg : ∃ r s : ℝ, a * r^2 + 2 * b * r * s < 0)
     (hb : b ≠ 0) :

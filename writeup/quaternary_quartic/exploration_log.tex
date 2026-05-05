@@ -9896,4 +9896,47 @@ their actual mathematical formalizations.
 
 No Julia numerical claims were used in this round.
 
+\section*{Canonical and normalized rank-two Hankel interfaces}
+
+\paragraph{Gap targeted.}
+The rank-two binary branch uses several equivalent data packages:
+canonical kernel data, normalized kernel position with a negative Hankel value,
+and normalized Hankel data.  The conversions were present as separate
+directions, but the equivalences were not named.
+
+\paragraph{Lean progress.}
+Added the scalar equivalence
+\[
+\texttt{binaryCanonicalKernelData\_iff\_normalizedKernelPosition\_and\_hankelNegative}.
+\]
+Added the data-package equivalences
+\[
+\texttt{hasRankTwoExistentialCanonicalKernelData\_iff\_normalizedHankelData}
+\]
+and
+\[
+\texttt{hasRankTwoUniversalCanonicalKernelData\_iff\_universalNormalizedHankelData}.
+\]
+
+\paragraph{Strategy change.}
+The remaining rank-two binary formalization can now switch cleanly between the
+canonical and normalized-Hankel formulations without reproving projection
+lemmas each time.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded, rebuilding
+\texttt{Binary}, \texttt{Support}, and \texttt{Basic}.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The actual normalized-basis construction for the rank-two binary catalecticant
+and the low-rank apolar theorem remain unproved.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

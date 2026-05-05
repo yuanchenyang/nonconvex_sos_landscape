@@ -2662,6 +2662,13 @@ theorem hasRankTwoExistentialCanonicalKernelData_of_normalizedHankelData
   hasRankTwoExistentialCanonicalKernelData_of_scalarHankelData
     (hasRankTwoExistentialScalarHankelData_of_normalizedHankelData hdata)
 
+theorem hasRankTwoExistentialCanonicalKernelData_iff_normalizedHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankTwoExistentialCanonicalKernelData B p u ↔
+      HasRankTwoExistentialNormalizedHankelData B p u :=
+  ⟨hasRankTwoExistentialNormalizedHankelData_of_canonicalKernelData,
+    hasRankTwoExistentialCanonicalKernelData_of_normalizedHankelData⟩
+
 theorem hasRankTwoExistentialBinaryFormData_of_canonicalKernelData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hcanon : HasRankTwoExistentialCanonicalKernelData B p u) :
@@ -3108,6 +3115,13 @@ theorem hasRankTwoUniversalCanonicalKernelData_of_universalNormalizedHankelData
   rcases hdata hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim with
     ⟨hpos, hneg, _hrank⟩
   exact binaryCanonicalKernelData_of_normalizedKernelPosition hpos hneg
+
+theorem hasRankTwoUniversalCanonicalKernelData_iff_universalNormalizedHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankTwoUniversalCanonicalKernelData B p u ↔
+      HasRankTwoUniversalNormalizedHankelData B p u :=
+  ⟨hasRankTwoUniversalNormalizedHankelData_of_universalCanonicalKernelData,
+    hasRankTwoUniversalCanonicalKernelData_of_universalNormalizedHankelData⟩
 
 theorem hasRankTwoUniversalKernelBranchData_of_universalNormalizedHankelData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
