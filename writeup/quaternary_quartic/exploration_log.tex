@@ -5525,4 +5525,46 @@ the low-rank apolar support theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Tightening the product-independence apolar data package}
+
+\paragraph{Gap targeted.}
+After adding a rank-one constructor from combined product independence, the
+packaged data interface still used the older rank-one symmetric-product
+independence input.  The package should expose the strongest reduced form:
+combined product independence in both rank one and rank two.
+
+\paragraph{Lean progress.}
+Updated
+\[
+\texttt{HasRankCaseProductIndependenceApolarData}
+\]
+in \texttt{QuaternaryQuarticProof/Basic.lean}.  Its rank-one branch now asks
+for linear independence of
+\[
+\{x\beta_i\}_{i=1}^3\cup\{\beta_i\beta_j:i\le j\}
+\]
+rather than only the symmetric product subfamily.  The bridge theorem
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_productIndependenceApolarData}
+\]
+now routes through
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_combined\_productLI\_component\_obligations}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The reduced apolar package now mirrors the direct-sum product decompositions in
+the blueprint: rank one uses \(xA\oplus\Sym^2A\), and rank two uses the binary
+plane together with \(zA\oplus\Sym^2A\).  The open structural task is proving
+these combined product-independence facts from \(E=A\oplus W\).
+
+No Julia numerical claims were used in this round.
+
 \end{document}

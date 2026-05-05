@@ -148,8 +148,11 @@ def HasRankCaseProductIndependenceApolarData
                   Module.finrank ℝ W = 1 →
                     ∃ β : Module.Basis (Fin 3) ℝ A,
                       LinearIndependent ℝ
-                        (fun ij : {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2} =>
-                          linProduct (β ij.1.1).1 (β ij.1.2).1)) ∧
+                        (Sum.elim
+                          (fun i : Fin 3 => linProduct x (β i).1)
+                          (fun ij :
+                              {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2} =>
+                            linProduct (β ij.1.1).1 (β ij.1.2).1))) ∧
         ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
           A ≤ linearAnnihilator B p u →
             IsCompl A W →
@@ -861,7 +864,7 @@ theorem hasRankCaseApolarComponentData_of_productIndependenceApolarData
     (hdata : HasRankCaseProductIndependenceApolarData B p u hu) :
     HasRankCaseApolarComponentData B p u hu := by
   rcases hdata with ⟨hdata1, hdata2, hdata3⟩
-  exact hasRankCaseApolarComponentData_of_rank_two_productLI_component_obligations
+  exact hasRankCaseApolarComponentData_of_combined_productLI_component_obligations
     (B := B) (p := p) (u := u) (hu := hu)
     (fun hrank1 => (hdata1 hrank1).1)
     (fun hrank1 => (hdata1 hrank1).2.1)
