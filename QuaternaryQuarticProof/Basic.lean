@@ -2355,6 +2355,19 @@ theorem residual_eq_zero_of_lowRankApolarSupportDecomposition_and_canonicalKerne
     (B := B) hu hp hsocp hdecomp
     (hasRankTwoExistentialKernelBranchData_of_canonicalKernelData hcanon)
 
+theorem residual_eq_zero_of_lowRankApolarSupportTheorem_and_canonicalKernelData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hsupport : HasLowRankApolarSupportTheorem B p u)
+    (hcanon : HasRankTwoExistentialCanonicalKernelData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarSupportDecomposition_and_canonicalKernelData
+    (B := B) hu hp hsocp
+    (hasLowRankApolarSupportDecomposition_of_lowRankApolarSupportTheorem hsupport)
+    hcanon
+
 theorem residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -2789,6 +2802,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportDeco
   exact residual_eq_zero_of_lowRankApolarSupportDecomposition_and_canonicalKernelData
     (B := B) hu hp hsocp
     (hdecomp B p u hu hB hp hsocp)
+    (hcanon B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheorem_and_canonicalKernelData
+    (hsupport :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarSupportTheorem B p u)
+    (hcanon :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialCanonicalKernelData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarSupportTheorem_and_canonicalKernelData
+    (B := B) hu hp hsocp
+    (hsupport B p u hu hB hp hsocp)
     (hcanon B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData

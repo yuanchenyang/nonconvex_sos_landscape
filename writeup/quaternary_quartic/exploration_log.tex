@@ -7655,4 +7655,45 @@ theorem and the rank-two normalized Hankel data theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Support theorem plus canonical kernel route}
+
+\paragraph{Gap targeted.}
+After reducing the support input to the low-rank apolar support theorem, the
+root-facing canonical-kernel route still exposed the stronger support
+decomposition form.  This made the canonical and normalized routes slightly
+misaligned.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarSupportTheorem\_and\_canonicalKernelData}
+\]
+and the corresponding root reduction
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarSupportTheorem\_and\_canonicalKernelData}.
+\]
+The proof uses the existing complement construction from the support theorem
+and then invokes the established decomposition-level canonical-kernel route.
+
+\paragraph{Strategy change.}
+Future work can now finish the proof from the blueprint's low-rank apolar
+support theorem together with either canonical kernel data or the normalized
+Hankel data package.  The canonical route no longer requires separately
+constructing the support complement.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The open mathematical inputs remain the low-rank apolar support theorem and the
+rank-two canonical/normalized binary kernel construction.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
