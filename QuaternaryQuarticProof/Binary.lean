@@ -278,6 +278,48 @@ theorem exists_nonzero_binaryHankelMul_kernel_of_finrank_range_le_two
     ⟨v, hv, hker⟩
   exact ⟨v, hv, by simpa using hker⟩
 
+theorem binaryHankelMul_eq_zero_iff
+    (a b c d e r s t : ℝ) :
+    binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0 ↔
+      a * r + b * s + c * t = 0 ∧
+        b * r + c * s + d * t = 0 ∧
+          c * r + d * s + e * t = 0 := by
+  constructor
+  · intro hker
+    have h0 := congrArg (fun v : Fin 3 → ℝ => v 0) hker
+    have h1 := congrArg (fun v : Fin 3 → ℝ => v 1) hker
+    have h2 := congrArg (fun v : Fin 3 → ℝ => v 2) hker
+    simp [binaryHankelMul] at h0 h1 h2
+    exact ⟨h0, h1, h2⟩
+  · intro h
+    ext i
+    fin_cases i <;> simp [binaryHankelMul, h.1, h.2.1, h.2.2]
+
+theorem exists_nonzero_binaryHankel_kernel_equations_of_finrank_range_le_two
+    {a b c d e : ℝ}
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2) :
+    ∃ r s t : ℝ,
+      (r ≠ 0 ∨ s ≠ 0 ∨ t ≠ 0) ∧
+        a * r + b * s + c * t = 0 ∧
+          b * r + c * s + d * t = 0 ∧
+            c * r + d * s + e * t = 0 := by
+  rcases exists_nonzero_binaryHankelMul_kernel_of_finrank_range_le_two
+      (a := a) (b := b) (c := c) (d := d) (e := e) hrank with
+    ⟨v, hv, hker⟩
+  refine ⟨v 0, v 1, v 2, ?_, ?_⟩
+  · by_contra hzero
+    push Not at hzero
+    exact hv (by
+      ext i
+      fin_cases i <;> simp [hzero.1, hzero.2.1, hzero.2.2])
+  · exact (binaryHankelMul_eq_zero_iff a b c d e (v 0) (v 1) (v 2)).1
+      (by
+        have hvec : (![v 0, v 1, v 2] : Fin 3 → ℝ) = v := by
+          ext i
+          fin_cases i <;> simp
+        rwa [hvec])
+
 theorem binaryHankelLinearMap_finrank_range_le_two_of_xy_kernel
     {a b c d e : ℝ}
     (hker : binaryHankelMul a b c d e (![0, 1, 0] : Fin 3 → ℝ) = 0) :

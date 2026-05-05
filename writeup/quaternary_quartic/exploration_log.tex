@@ -10371,4 +10371,43 @@ rank-two binary pure-square theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Binary kernel scalar equations}
+
+\paragraph{Gap targeted.}
+After producing a nonzero binary Hankel kernel vector, the pure-square theorem
+needs the coordinate equations for that kernel vector before splitting into
+the discriminant cases.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{binaryHankelMul\_eq\_zero\_iff}
+\]
+and
+\[
+\texttt{exists\_nonzero\_binaryHankel\_kernel\_equations\_of\_finrank\_range\_le\_two}.
+\]
+The latter packages rank at most two as scalars \(r,s,t\), not all zero, with
+the three Hankel kernel equations.
+
+\paragraph{Strategy change.}
+The binary pure-square theorem can now proceed by discriminant case analysis on
+the explicit kernel quadratic \(rX^2+sXY+tY^2\).
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support and the
+rank-two binary pure-square theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
