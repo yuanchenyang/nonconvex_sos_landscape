@@ -5191,4 +5191,48 @@ derive the binary kernel-equation cases.
 
 No Julia numerical claims were used in this round.
 
+\section*{Threading product linear independence into rank-two support}
+
+\paragraph{Gap targeted.}
+The previous round reduced \(zA\cap\Sym^2A=0\) to linear independence of a
+combined product family, but the rank-two support constructor still expected a
+disjointness equality.  The support-level proof should accept the more
+concrete product-linear-independence obligation directly.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankTwoSupportComponentHypothesis\_of\_independent\_binary\_plane\_cases\_and\_productLI}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It takes the rank-two
+binary-plane component data plus, for each relevant nonzero
+\(z\in\operatorname{span}\{x,y\}\), a basis \(\beta\) of \(A\) such that the
+family
+\[
+\{z\beta_i\}_{i=1}^2
+\cup
+\{\beta_i\beta_j:i\le j\}
+\]
+is linearly independent.  It converts this into the required disjointness using
+\[
+\texttt{range\_linProductLeftMapOn\_inf\_symSquare\_eq\_bot\_of\_basis\_products\_linearIndependent}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two support branch can now be supplied by product linear independence
+rather than an abstract intersection proof.  The remaining structural task is
+to prove that independence from \(E=A\oplus W\), and to derive the binary
+kernel-equation alternatives.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
