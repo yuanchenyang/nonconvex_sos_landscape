@@ -6620,4 +6620,39 @@ binary support plane.
 
 No Julia numerical claims were used in this round.
 
+\section*{Separating apolar support from binary negative square}
+
+\paragraph{Gap targeted.}
+The negative-square apolar interface combined two conceptually distinct
+blueprint inputs: the low-rank apolar support bounds and the binary rank-two
+negative-square statement.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankCaseAnnihilatorMapBounds}
+\]
+for the three rank-case annihilator-map bounds, and
+\[
+\texttt{HasRankTwoNegativeSquareData}
+\]
+for the rank-two negative pure-square input.  Proved
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_annihilatorBounds\_and\_rankTwo}
+\]
+and added residual/root reduction theorems through these two separated inputs.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+completes successfully.
+
+\paragraph{Remaining blockers.}
+The remaining proof is now explicitly split into the two structural blueprint
+lemmas: low-rank support/annihilator bounds and the rank-two binary
+negative-square theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
