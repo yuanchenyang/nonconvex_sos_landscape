@@ -2206,6 +2206,13 @@ theorem hasRankCaseApolarSupportBounds_of_annihilatorDimensionBounds
   · intro hrank3
     exact ⟨linearAnnihilator B p u, le_rfl, hdim3 hrank3⟩
 
+theorem hasRankCaseApolarSupportBounds_of_annihilatorMapBounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbounds : HasRankCaseAnnihilatorMapBounds B p u) :
+    HasRankCaseApolarSupportBounds B p u :=
+  hasRankCaseApolarSupportBounds_of_annihilatorDimensionBounds
+    (dimensionBounds_of_hasRankCaseAnnihilatorMapBounds hbounds)
+
 theorem finrank_range_linearAnnihilatorMap_eq_zero_of_catalecticantMap_rank_zero
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hrank :
@@ -2878,6 +2885,14 @@ theorem hasRankCaseAnnihilatorMapBounds_of_kernelEquationApolarData
     exact (hdata2 hrank2).1
   · intro hrank3
     exact hdata3 hrank3
+
+theorem hasRankCaseApolarSupportBounds_of_kernelEquationApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseKernelEquationApolarData B p u hu) :
+    HasRankCaseApolarSupportBounds B p u :=
+  hasRankCaseApolarSupportBounds_of_annihilatorMapBounds
+    (hasRankCaseAnnihilatorMapBounds_of_kernelEquationApolarData hdata)
 
 theorem hasRankTwoUniversalKernelEquationData_of_kernelEquationApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}

@@ -9557,4 +9557,43 @@ kernel-equation cases or universal rank-two normalized kernel position.
 
 No Julia numerical claims were used in this round.
 
+\section*{Apolar support bounds from annihilator-map bounds}
+
+\paragraph{Gap targeted.}
+Several rank-case data packages carry annihilator-map bounds, while the current
+main scaffold asks for apolar support bounds.  The conversion through
+annihilator dimension bounds existed in pieces but was not exposed directly.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseApolarSupportBounds\_of\_annihilatorMapBounds}
+\]
+and
+\[
+\texttt{hasRankCaseApolarSupportBounds\_of\_kernelEquationApolarData}.
+\]
+These compose the existing rank-nullity conversion from annihilator-map bounds
+to annihilator dimension bounds with the existing support-bound construction.
+
+\paragraph{Strategy change.}
+Any future proof that produces rank-case annihilator-map bounds can now feed
+directly into the support-bound side of the final scaffold.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove a rank-case source of annihilator-map/support bounds and either universal
+rank-two binary kernel-equation cases or universal rank-two normalized kernel
+position.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
