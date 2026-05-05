@@ -2134,6 +2134,20 @@ theorem finrank_quotient_linearAnnihilator_eq_sub
       4 - Module.finrank ℝ (linearAnnihilator B p u) := by
   rw [Submodule.finrank_quotient, finrank_linSubmodule_eq_four]
 
+theorem finrank_quotient_linearAnnihilator_eq_four_of_finrank_linearAnnihilator_eq_zero
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hzero : Module.finrank ℝ (linearAnnihilator B p u) = 0) :
+    Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4 := by
+  rw [finrank_quotient_linearAnnihilator_eq_sub, hzero]
+
+theorem finrank_linearAnnihilator_eq_zero_of_finrank_quotient_linearAnnihilator_eq_four
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4) :
+    Module.finrank ℝ (linearAnnihilator B p u) = 0 := by
+  have hquot_sub := finrank_quotient_linearAnnihilator_eq_sub B p u
+  rw [hquot] at hquot_sub
+  omega
+
 @[simp] theorem mem_linearAnnihilator {B : DotForm} {p : Poly} {u : RankSevenVec}
     {a : linSubmodule} :
     a ∈ linearAnnihilator B p u ↔

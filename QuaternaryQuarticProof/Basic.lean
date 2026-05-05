@@ -517,6 +517,16 @@ def HasRankThreeApolarExactSequenceData
             q3 = 4 - b ∧
               q3 ≤ q2
 
+def HasRankThreeApolarBadBranchExactSequenceData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+    Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4 →
+      ∃ b q2 q3 : ℕ,
+        1 ≤ b ∧ b ≤ 3 ∧
+          q2 = 3 - b ∧
+            q3 = 4 - b ∧
+              q3 ≤ q2
+
 def HasLowRankApolarHilbertData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   HasRankTwoApolarMacaulayGrowthData B p u ∧
@@ -2398,6 +2408,22 @@ theorem rankThreeExactSequenceData_of_rankThreeEssentialQuotientBound
     rw [finrank_quotient_linearAnnihilator_eq_sub, hzero]
   omega
 
+theorem rankThreeExactSequenceData_of_rankThreeBadBranchExactSequenceData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankThreeApolarBadBranchExactSequenceData B p u) :
+    HasRankThreeApolarExactSequenceData B p u := by
+  intro hrank3 hzero
+  exact hdata hrank3
+    (finrank_quotient_linearAnnihilator_eq_four_of_finrank_linearAnnihilator_eq_zero hzero)
+
+theorem rankThreeBadBranchExactSequenceData_of_rankThreeExactSequenceData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankThreeApolarExactSequenceData B p u) :
+    HasRankThreeApolarBadBranchExactSequenceData B p u := by
+  intro hrank3 hquot
+  exact hdata hrank3
+    (finrank_linearAnnihilator_eq_zero_of_finrank_quotient_linearAnnihilator_eq_four hquot)
+
 theorem rankThreeHilbertFirstBound_of_rankThreeMacaulayObstruction
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hobstruction : HasRankThreeApolarMacaulayObstruction B p u) :
@@ -2532,6 +2558,15 @@ theorem lowRankApolarHilbertData_of_rankTwoQuotientGrowthData_rankThreeExactSequ
     (rankTwoEssentialQuotientBound_of_rankTwoQuotientGrowthData hdata2)
     (rankThreeEssentialQuotientBound_of_rankThreeHilbertFirstBound
       (rankThreeHilbertFirstBound_of_rankThreeExactSequenceData hdata3))
+
+theorem lowRankApolarHilbertData_of_rankTwoQuotientGrowthData_rankThreeBadBranchExactSequenceData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata2 : HasRankTwoApolarQuotientGrowthData B p u)
+    (hdata3 : HasRankThreeApolarBadBranchExactSequenceData B p u) :
+    HasLowRankApolarHilbertData B p u :=
+  lowRankApolarHilbertData_of_rankTwoQuotientGrowthData_rankThreeExactSequenceData
+    hdata2
+    (rankThreeExactSequenceData_of_rankThreeBadBranchExactSequenceData hdata3)
 
 theorem hasRankCaseAnnihilatorMapBounds_of_rankTwoMacaulayGrowthData_rankThreeMacaulayObstruction
     {B : DotForm} {p : Poly} {u : RankSevenVec}

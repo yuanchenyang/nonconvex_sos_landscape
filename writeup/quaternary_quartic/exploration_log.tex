@@ -12914,4 +12914,46 @@ matches the blueprint's Artinian Gorenstein Hilbert-function proof.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three bad-branch exact-sequence interface}
+
+\paragraph{Gap targeted.}
+The blueprint phrases the rank-three contradiction branch as \(h_1=4\), while
+the Lean exact-sequence interface used \(\dim\Ann_1=0\).  These are equivalent
+through the essential quotient identity, but the conversion was not named.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof.Catalecticant}:
+\[
+\texttt{finrank\_quotient\_linearAnnihilator\_eq\_four\_of\_finrank\_linearAnnihilator\_eq\_zero},
+\]
+and:
+\[
+\texttt{finrank\_linearAnnihilator\_eq\_zero\_of\_finrank\_quotient\_linearAnnihilator\_eq\_four}.
+\]
+
+Added to \texttt{QuaternaryQuarticProof.Basic}:
+\[
+\texttt{HasRankThreeApolarBadBranchExactSequenceData},
+\]
+which states the exact-sequence data under the bad branch
+\[
+\dim(\texttt{linSubmodule}/\texttt{linearAnnihilator})=4.
+\]
+Proved conversions between this interface and
+\texttt{HasRankThreeApolarExactSequenceData}, and added:
+\[
+\texttt{lowRankApolarHilbertData\_of\_rankTwoQuotientGrowthData\_rankThreeBadBranchExactSequenceData}.
+\]
+
+\paragraph{Strategy change.}
+The rank-three remaining task can now be stated exactly as in the blueprint:
+assuming rank three and \(h_1=4\), construct the exact-sequence quotient
+Hilbert data that violates Macaulay growth.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
