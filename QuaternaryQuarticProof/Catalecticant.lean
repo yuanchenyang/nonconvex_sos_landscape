@@ -861,6 +861,81 @@ theorem exists_rank_one_adapted_basis
       exact Module.Basis.mk_apply hLI htop_le ⟨3, by norm_num⟩]
     exact hv_last
 
+theorem linearIndependent_rank_one_combined_products_of_isCompl
+    {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = W) :
+    LinearIndependent ℝ
+      (Sum.elim
+        (fun i : Fin 3 => linProduct x (β i).1)
+        (fun ij : {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2} =>
+          linProduct (β ij.1.1).1 (β ij.1.2).1)) := by
+  rcases exists_rank_one_adapted_basis hAW β hxspan with ⟨β4, hβA, hβx⟩
+  let last : Fin 4 := ⟨3, by norm_num⟩
+  let Pair3 := {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2}
+  let Pair4 := {ij : Fin 4 × Fin 4 // ij.1 ≤ ij.2}
+  let φ : (Fin 3 ⊕ Pair3) → Pair4 :=
+    Sum.elim
+      (fun i : Fin 3 =>
+        ⟨(Fin.castSucc i, last), le_of_lt (Fin.castSucc_lt_last i)⟩)
+      (fun ij : Pair3 =>
+        ⟨(Fin.castSucc ij.1.1, Fin.castSucc ij.1.2),
+          Fin.castSucc_le_castSucc_iff.mpr ij.2⟩)
+  have hφinj : Function.Injective φ := by
+    intro a b h
+    cases a with
+    | inl i =>
+        cases b with
+        | inl j =>
+            have hp := congrArg Subtype.val h
+            have hi : Fin.castSucc i = Fin.castSucc j := congrArg Prod.fst hp
+            exact congrArg Sum.inl ((Fin.castSucc_injective 3) hi)
+        | inr ij =>
+            have hp := congrArg Subtype.val h
+            have hsec : last = Fin.castSucc ij.1.2 := congrArg Prod.snd hp
+            have hlt : Fin.castSucc ij.1.2 < last := Fin.castSucc_lt_last ij.1.2
+            rw [← hsec] at hlt
+            exact False.elim ((lt_self_iff_false last).mp hlt)
+    | inr ij =>
+        cases b with
+        | inl j =>
+            have hp := congrArg Subtype.val h
+            have hsec : Fin.castSucc ij.1.2 = last := congrArg Prod.snd hp
+            have hlt : Fin.castSucc ij.1.2 < last := Fin.castSucc_lt_last ij.1.2
+            rw [hsec] at hlt
+            exact False.elim ((lt_self_iff_false last).mp hlt)
+        | inr kl =>
+            have hp := congrArg Subtype.val h
+            have hfst : Fin.castSucc ij.1.1 = Fin.castSucc kl.1.1 :=
+              congrArg Prod.fst hp
+            have hsnd : Fin.castSucc ij.1.2 = Fin.castSucc kl.1.2 :=
+              congrArg Prod.snd hp
+            have hij : ij.1 = kl.1 :=
+              Prod.ext ((Fin.castSucc_injective 3) hfst)
+                ((Fin.castSucc_injective 3) hsnd)
+            exact congrArg Sum.inr (Subtype.ext hij)
+  have hsub := (linearIndependent_basis_products_fin_four β4).comp φ hφinj
+  let target : (Fin 3 ⊕ Pair3) → quadSubmodule :=
+    Sum.elim
+      (fun i : Fin 3 => linProduct x (β i).1)
+      (fun ij : Pair3 => linProduct (β ij.1.1).1 (β ij.1.2).1)
+  let pulled : (Fin 3 ⊕ Pair3) → quadSubmodule :=
+    fun t => linProduct (β4 (φ t).1.1) (β4 (φ t).1.2)
+  have hlast : β4 (3 : Fin 4) = x := by
+    simpa [last] using hβx
+  have hpulled : pulled = target := by
+    funext t
+    cases t with
+    | inl i =>
+        dsimp [pulled, target, φ, last]
+        rw [hβA i, hlast, linProduct_comm]
+    | inr ij =>
+        dsimp [pulled, target, φ]
+        rw [hβA ij.1.1, hβA ij.1.2]
+  change LinearIndependent ℝ pulled at hsub
+  change LinearIndependent ℝ target
+  exact hpulled ▸ hsub
+
 theorem exists_rank_two_adapted_basis
     {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
     (β : Module.Basis (Fin 2) ℝ A) {x y : linSubmodule}

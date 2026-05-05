@@ -6126,4 +6126,56 @@ these adapted-basis equalities.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one product-independence extraction}
+
+\paragraph{Gap targeted.}
+After constructing bases adapted to \(A\oplus W\), the next missing formal
+step was to turn full \(\texttt{Fin 4}\)-basis product independence into the
+rank-one family used by the support component hypotheses:
+\[
+\{x\beta_i\}_{i<3}\cup\{\beta_i\beta_j\}_{i\le j<3}.
+\]
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{linearIndependent\_rank\_one\_combined\_products\_of\_isCompl}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  The proof embeds the
+rank-one index family into the ten products of an adapted \(\texttt{Fin 4}\)
+basis, proves that embedding injective, and pulls linear independence back
+from
+\[
+\texttt{linearIndependent\_basis\_products\_fin\_four}.
+\]
+Added
+\[
+\texttt{exists\_rank\_one\_combined\_product\_independence}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  This packages the extraction
+for any rank-one complement \(W\), using
+\(\mathbb R x=W\) from the existing one-dimensional span lemma.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+and
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+complete successfully.  The full quaternary verification harness reaches the
+final axiom audit; the only remaining extra dependency is still
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The rank-one product-independence obligation no longer needs to be carried as
+a separate algebraic assumption once a one-dimensional complement generator is
+available.  The analogous rank-two extraction remains the next largest
+product-independence gap.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

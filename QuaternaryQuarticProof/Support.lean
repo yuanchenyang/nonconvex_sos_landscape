@@ -467,6 +467,25 @@ theorem span_rank_one_support_vector_eq
       exact hx (congrArg (fun z : linSubmodule => (z : Poly)) h))
     hxW hW
 
+theorem exists_rank_one_combined_product_independence
+    {A W : Submodule ℝ linSubmodule} {x : linSubmodule}
+    (hAW : IsCompl A W)
+    (hxW : x ∈ W)
+    (hx : (x : Poly) ≠ 0)
+    (hAdim : Module.finrank ℝ A = 3)
+    (hWdim : Module.finrank ℝ W = 1) :
+    ∃ β : Module.Basis (Fin 3) ℝ A,
+      LinearIndependent ℝ
+        (Sum.elim
+          (fun i : Fin 3 => linProduct x (β i).1)
+          (fun ij : {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2} =>
+            linProduct (β ij.1.1).1 (β ij.1.2).1)) := by
+  letI : Module.Free ℝ A := Module.Free.of_divisionRing ℝ A
+  let β : Module.Basis (Fin 3) ℝ A := Module.finBasisOfFinrankEq ℝ A hAdim
+  have hxspan : ℝ ∙ x = W :=
+    span_rank_one_support_vector_eq hx hxW hWdim
+  exact ⟨β, linearIndependent_rank_one_combined_products_of_isCompl hAW β hxspan⟩
+
 theorem not_mem_left_of_support_complement_mem_ne_zero
     {A W : Submodule ℝ linSubmodule} {z : linSubmodule}
     (hAW : IsCompl A W)
