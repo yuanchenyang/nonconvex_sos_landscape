@@ -457,6 +457,15 @@ def HasRankTwoApolarHilbertFirstBound
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
     4 - Module.finrank ℝ (linearAnnihilator B p u) ≤ 2
 
+def HasRankTwoApolarMacaulayGrowthData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∃ h1 h2 h3 : ℕ,
+      h1 = 4 - Module.finrank ℝ (linearAnnihilator B p u) ∧
+        h2 = 2 ∧
+          h1 = h3 ∧
+            h3 ≤ h2
+
 def HasRankThreeApolarHilbertFirstBound
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
@@ -2215,6 +2224,21 @@ theorem rankTwoDimensionBound_of_rankTwoHilbertFirstBound
   have hh := hhilbert hrank2
   omega
 
+theorem rankTwoHilbertFirstBound_of_rankTwoMacaulayGrowthData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoApolarMacaulayGrowthData B p u) :
+    HasRankTwoApolarHilbertFirstBound B p u := by
+  intro hrank2
+  rcases hdata hrank2 with ⟨h1, h2, h3, hh1, hh2, hsymm, hgrowth⟩
+  omega
+
+theorem rankTwoDimensionBound_of_rankTwoMacaulayGrowthData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoApolarMacaulayGrowthData B p u) :
+    HasRankTwoApolarAnnihilatorDimensionBound B p u :=
+  rankTwoDimensionBound_of_rankTwoHilbertFirstBound
+    (rankTwoHilbertFirstBound_of_rankTwoMacaulayGrowthData hdata)
+
 theorem rankThreeDimensionBound_of_rankThreeHilbertFirstBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hhilbert : HasRankThreeApolarHilbertFirstBound B p u) :
@@ -2274,6 +2298,15 @@ theorem hasRankCaseAnnihilatorMapBounds_of_rankTwoHilbertFirstBound_rankThreeMac
     HasRankCaseAnnihilatorMapBounds B p u :=
   hasRankCaseAnnihilatorMapBounds_of_rankTwoDimensionBound_rankThreeMacaulayObstruction
     (rankTwoDimensionBound_of_rankTwoHilbertFirstBound hhilbert2)
+    hobstruction
+
+theorem hasRankCaseAnnihilatorMapBounds_of_rankTwoMacaulayGrowthData_rankThreeMacaulayObstruction
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata2 : HasRankTwoApolarMacaulayGrowthData B p u)
+    (hobstruction : HasRankThreeApolarMacaulayObstruction B p u) :
+    HasRankCaseAnnihilatorMapBounds B p u :=
+  hasRankCaseAnnihilatorMapBounds_of_rankTwoHilbertFirstBound_rankThreeMacaulayObstruction
+    (rankTwoHilbertFirstBound_of_rankTwoMacaulayGrowthData hdata2)
     hobstruction
 
 theorem hasRankCaseAnnihilatorMapBounds_of_dimensionBounds
@@ -4823,6 +4856,19 @@ theorem residual_eq_zero_of_rankTwoHilbertFirstBound_rankThreeMacaulayObstructio
     (hasRankCaseAnnihilatorMapBounds_of_rankTwoHilbertFirstBound_rankThreeMacaulayObstruction
       hhilbert2 hobstruction)
 
+theorem residual_eq_zero_of_rankTwoMacaulayGrowthData_rankThreeMacaulayObstruction_direct
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata2 : HasRankTwoApolarMacaulayGrowthData B p u)
+    (hobstruction : HasRankThreeApolarMacaulayObstruction B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_rankCaseAnnihilatorMapBounds_direct
+    (B := B) hu hp hsocp
+    (hasRankCaseAnnihilatorMapBounds_of_rankTwoMacaulayGrowthData_rankThreeMacaulayObstruction
+      hdata2 hobstruction)
+
 theorem residual_eq_zero_of_supportDecomposition_and_normalizedHankelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -6647,6 +6693,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankTwoHilbertFirstBound
   exact residual_eq_zero_of_rankTwoHilbertFirstBound_rankThreeMacaulayObstruction_direct
     (B := B) hu hp hsocp
     (hhilbert2 B p u hu hB hp hsocp)
+    (hobstruction B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankTwoMacaulayGrowthData_rankThreeMacaulayObstruction_direct
+    (hdata2 :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoApolarMacaulayGrowthData B p u)
+    (hobstruction :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankThreeApolarMacaulayObstruction B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_rankTwoMacaulayGrowthData_rankThreeMacaulayObstruction_direct
+    (B := B) hu hp hsocp
+    (hdata2 B p u hu hB hp hsocp)
     (hobstruction B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheorem_and_universalNormalizedPosition_and_scalarFacts

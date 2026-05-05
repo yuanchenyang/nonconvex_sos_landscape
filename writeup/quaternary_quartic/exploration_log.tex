@@ -12374,4 +12374,48 @@ exact-sequence construction of the forbidden Macaulay case in the bad
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two Macaulay-growth data}
+
+\paragraph{Gap targeted.}
+For rank two, the blueprint uses Gorenstein symmetry and Macaulay growth:
+\[
+h_1=h_3,\qquad h_3\le h_2,\qquad h_2=2.
+\]
+Together these give \(h_1\le2\), which is the Hilbert first-entry bound needed
+to obtain \(\dim\Ann_1\ge2\).  This rank-two Hilbert data had not been
+separated from the final dimension-bound statement.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasRankTwoApolarMacaulayGrowthData},
+\]
+which records the formal rank-two output of the symmetry and Macaulay-growth
+step, and proved:
+\[
+\texttt{rankTwoHilbertFirstBound\_of\_rankTwoMacaulayGrowthData},
+\qquad
+\texttt{rankTwoDimensionBound\_of\_rankTwoMacaulayGrowthData}.
+\]
+
+Added direct wrappers reducing the top-level theorem to:
+\[
+\texttt{HasRankTwoApolarMacaulayGrowthData}
+\]
+and:
+\[
+\texttt{HasRankThreeApolarMacaulayObstruction}.
+\]
+
+\paragraph{Strategy change.}
+The remaining apolar Hilbert-function work is now expressed in two blueprint
+interfaces: rank-two Macaulay growth data and rank-three Macaulay obstruction
+data.  The arithmetic conversion from those data to the annihilator-map bounds
+is formalized.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
