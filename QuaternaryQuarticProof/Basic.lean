@@ -887,6 +887,14 @@ def HasGlobalRankTwoApolarAnnihilatorDimensionBound : Prop :=
         IsSOCP B p u →
           HasRankTwoApolarAnnihilatorDimensionBound B p u
 
+def HasGlobalRankThreeApolarAnnihilatorDimensionBound : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankThreeApolarAnnihilatorDimensionBound B p u
+
 def HasGlobalRankTwoThreeApolarEssentialQuotientBounds : Prop :=
   ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u),
@@ -2786,6 +2794,15 @@ theorem rankThreeDimensionBound_of_rankThreeEssentialQuotientBound
   rankThreeDimensionBound_of_rankThreeHilbertFirstBound
     (rankThreeHilbertFirstBound_of_rankThreeEssentialQuotientBound hquot)
 
+theorem rankThreeEssentialQuotientBound_of_rankThreeDimensionBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdim : HasRankThreeApolarAnnihilatorDimensionBound B p u) :
+    HasRankThreeApolarEssentialQuotientBound B p u := by
+  intro hrank3
+  rw [finrank_quotient_linearAnnihilator_eq_sub]
+  have hdim3 := hdim hrank3
+  omega
+
 theorem rankThreeBadBranchContradiction_of_rankThreeEssentialQuotientBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hquot : HasRankThreeApolarEssentialQuotientBound B p u) :
@@ -2812,6 +2829,17 @@ theorem rankThreeEssentialQuotientBound_iff_badBranchContradiction
       HasRankThreeApolarBadBranchContradiction B p u :=
   ⟨rankThreeBadBranchContradiction_of_rankThreeEssentialQuotientBound,
     rankThreeEssentialQuotientBound_of_badBranchContradiction⟩
+
+theorem rankThreeBadBranchContradiction_iff_rankThreeDimensionBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankThreeApolarBadBranchContradiction B p u ↔
+      HasRankThreeApolarAnnihilatorDimensionBound B p u :=
+  ⟨fun hbad =>
+      rankThreeDimensionBound_of_rankThreeEssentialQuotientBound
+        (rankThreeEssentialQuotientBound_of_badBranchContradiction hbad),
+    fun hdim =>
+      rankThreeBadBranchContradiction_of_rankThreeEssentialQuotientBound
+        (rankThreeEssentialQuotientBound_of_rankThreeDimensionBound hdim)⟩
 
 theorem rankThreeBadBranchMacaulayBound_of_badBranchContradiction
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -8699,6 +8727,26 @@ theorem globalRankThreeApolarBadBranchContradiction_iff_globalRankThreeApolarEss
   ⟨globalRankThreeApolarEssentialQuotientBound_of_globalRankThreeApolarBadBranchContradiction,
     globalRankThreeApolarBadBranchContradiction_of_globalRankThreeApolarEssentialQuotientBound⟩
 
+theorem globalRankThreeApolarAnnihilatorDimensionBound_of_globalRankThreeApolarBadBranchContradiction
+    (hbad : HasGlobalRankThreeApolarBadBranchContradiction) :
+    HasGlobalRankThreeApolarAnnihilatorDimensionBound := by
+  intro B p u hu hB hp hsocp
+  exact (rankThreeBadBranchContradiction_iff_rankThreeDimensionBound).mp
+    (hbad B p u hu hB hp hsocp)
+
+theorem globalRankThreeApolarBadBranchContradiction_of_globalRankThreeApolarAnnihilatorDimensionBound
+    (hdim : HasGlobalRankThreeApolarAnnihilatorDimensionBound) :
+    HasGlobalRankThreeApolarBadBranchContradiction := by
+  intro B p u hu hB hp hsocp
+  exact (rankThreeBadBranchContradiction_iff_rankThreeDimensionBound).mpr
+    (hdim B p u hu hB hp hsocp)
+
+theorem globalRankThreeApolarBadBranchContradiction_iff_globalRankThreeApolarAnnihilatorDimensionBound :
+    HasGlobalRankThreeApolarBadBranchContradiction ↔
+      HasGlobalRankThreeApolarAnnihilatorDimensionBound :=
+  ⟨globalRankThreeApolarAnnihilatorDimensionBound_of_globalRankThreeApolarBadBranchContradiction,
+    globalRankThreeApolarBadBranchContradiction_of_globalRankThreeApolarAnnihilatorDimensionBound⟩
+
 theorem globalRankThreeApolarBadBranchExactSequenceShape_of_globalRankThreeApolarBadBranchContradiction
     (hbad : HasGlobalRankThreeApolarBadBranchContradiction) :
     HasGlobalRankThreeApolarBadBranchExactSequenceShape := by
@@ -8993,6 +9041,31 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoDimension_
       hdata.2⟩
   · intro hdata
     exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoDimension_and_rankThreeBadBranch
+      hdata.1 hdata.2
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeDimensionBounds
+    (hdim2 : HasGlobalRankTwoApolarAnnihilatorDimensionBound)
+    (hdim3 : HasGlobalRankThreeApolarAnnihilatorDimensionBound) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoDimension_and_rankThreeBadBranch
+    hdim2
+    (globalRankThreeApolarBadBranchContradiction_of_globalRankThreeApolarAnnihilatorDimensionBound
+      hdim3)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeDimensionBounds :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoApolarAnnihilatorDimensionBound ∧
+        HasGlobalRankThreeApolarAnnihilatorDimensionBound := by
+  constructor
+  · intro hmain
+    have hdata :=
+      (quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoDimension_and_rankThreeBadBranch).mp
+        hmain
+    exact ⟨hdata.1,
+      globalRankThreeApolarAnnihilatorDimensionBound_of_globalRankThreeApolarBadBranchContradiction
+        hdata.2⟩
+  · intro hdata
+    exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeDimensionBounds
       hdata.1 hdata.2
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch

@@ -14198,4 +14198,34 @@ rank three must rule out the bad branch.
 
 No Julia numerical claims were used in this round.
 
+\section*{Reduce rank-three bad branch to dimension}
+
+\paragraph{Gap targeted.}
+The rank-three branch was still phrased as a bad-branch contradiction.  In the
+current quotient formalization, this is equivalent to proving that the
+linear annihilator has dimension at least one in rank three.
+
+\paragraph{Lean progress.}
+Added the global package
+\[
+\texttt{HasGlobalRankThreeApolarAnnihilatorDimensionBound}.
+\]
+Proved locally and globally that the rank-three bad-branch contradiction is
+equivalent to the rank-three annihilator-dimension bound.  Added the root
+equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoThreeDimensionBounds}.
+\]
+
+\paragraph{Strategy change.}
+The remaining exposed proof obligation is now exactly the rank-two/rank-three
+annihilator-dimension theorem: dimension at least \(2\) in rank two and at
+least \(1\) in rank three.  This is the smallest finite-dimensional form of
+the apolar Hilbert-function gap currently represented in Lean.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
