@@ -2811,6 +2811,12 @@ theorem rankThreeBadBranchExactSequenceShape_of_badBranchContradiction
   intro hrank3 hbad
   exact False.elim (hbadContra hrank3 hbad)
 
+theorem rankThreeBadBranchExactSequenceShape_direct
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    HasRankThreeApolarBadBranchExactSequenceShape B p u := by
+  intro _hrank3 _hbad
+  exact ⟨1, 2, 3, by norm_num, by norm_num, by norm_num, by norm_num⟩
+
 theorem rankThreeBadBranchContradiction_of_shape_and_macaulayBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hshape : HasRankThreeApolarBadBranchExactSequenceShape B p u)
@@ -8632,6 +8638,11 @@ theorem globalRankThreeApolarBadBranchContradiction_iff_shape_and_macaulayBound 
       globalRankThreeApolarBadBranchContradiction_of_shape_and_macaulayBound
         hdata.1 hdata.2⟩
 
+theorem globalRankThreeApolarBadBranchExactSequenceShape_direct :
+    HasGlobalRankThreeApolarBadBranchExactSequenceShape := by
+  intro B p u _hu _hB _hp _hsocp
+  exact rankThreeBadBranchExactSequenceShape_direct B p u
+
 theorem globalRankTwoApolarHilbertFirstBound_of_globalRankTwoApolarEssentialQuotientBound
     (hquot : HasGlobalRankTwoApolarEssentialQuotientBound) :
     HasGlobalRankTwoApolarHilbertFirstBound := by
@@ -8755,6 +8766,27 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoHilbertFir
   · intro hdata
     exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoHilbertFirst_and_rankThreeShapeMacaulay
       hdata.1 hdata.2.1 hdata.2.2
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoHilbertFirst_and_rankThreeMacaulayBound
+    (hhilbert2 : HasGlobalRankTwoApolarHilbertFirstBound)
+    (hmac3 : HasGlobalRankThreeApolarBadBranchMacaulayBound) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoHilbertFirst_and_rankThreeShapeMacaulay
+    hhilbert2 globalRankThreeApolarBadBranchExactSequenceShape_direct hmac3
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoHilbertFirst_and_rankThreeMacaulayBound :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoApolarHilbertFirstBound ∧
+        HasGlobalRankThreeApolarBadBranchMacaulayBound := by
+  constructor
+  · intro hmain
+    have hdata :=
+      (quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoHilbertFirst_and_rankThreeShapeMacaulay).mp
+        hmain
+    exact ⟨hdata.1, hdata.2.2⟩
+  · intro hdata
+    exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoHilbertFirst_and_rankThreeMacaulayBound
+      hdata.1 hdata.2
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch
     (hgrowth2 : HasGlobalRankTwoApolarMacaulayGrowthBound)

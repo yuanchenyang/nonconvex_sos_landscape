@@ -14073,4 +14073,36 @@ input in the apolar algebra.
 
 No Julia numerical claims were used in this round.
 
+\section*{Discharge rank-three shape package}
+
+\paragraph{Gap targeted.}
+The previous round split the rank-three bad branch into exact-sequence shape
+and Macaulay bound.  Under the current Lean abstraction, the shape package only
+records the numerical parameters \(b,q_2,q_3\), so it should be closed
+directly.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{rankThreeBadBranchExactSequenceShape\_direct}
+\]
+and its global lift
+\[
+\texttt{globalRankThreeApolarBadBranchExactSequenceShape\_direct}.
+\]
+Used this to prove the tighter root equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoHilbertFirst\_and\_rankThreeMacaulayBound}.
+\]
+
+\paragraph{Strategy change.}
+The exact-sequence shape no longer counts as an open Lean gap in the current
+abstraction.  The remaining exposed apolar obligations are rank-two
+Hilbert-first and rank-three Macaulay/O-sequence growth.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
