@@ -4471,4 +4471,47 @@ nondegeneracy/negativity facts from the catalecticant kernel.
 
 No Julia numerical claims were used in this round.
 
+\section*{Choosing a second rank-two complement direction}
+
+\paragraph{Gap targeted.}
+The rank-two binary normal-form classification needs a genuine two-dimensional
+support plane.  After extracting a nonzero \(x\in W\) from the complement, the
+proof still needs a second direction in \(W\) outside the line spanned by \(x\).
+
+\paragraph{Lean progress.}
+Added general dimension lemmas to \texttt{QuaternaryQuarticProof/Dimension.lean}:
+\[
+\texttt{exists\_mem\_notMem\_of\_finrank\_lt}
+\]
+and
+\[
+\texttt{exists\_mem\_notMem\_span\_singleton\_of\_finrank\_two}.
+\]
+The first extracts a vector in a larger subspace but outside a smaller one;
+the second specializes this to a two-dimensional subspace and a nonzero vector.
+
+Added the support-level wrapper
+\[
+\texttt{exists\_rank\_two\_complement\_second\_direction}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}, specialized to
+\(\texttt{linSubmodule}\).  This will let the rank-two component theorem choose
+a second binary coordinate \(y\in W\) with \(y\notin\mathbb{R}x\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Dimension}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+Rank two still needs the coefficient normal-form classification and the
+direct-sum disjointness proof, but the basic choice of an independent second
+support direction is now formalized.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

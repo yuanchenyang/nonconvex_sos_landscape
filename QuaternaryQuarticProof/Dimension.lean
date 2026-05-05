@@ -194,6 +194,34 @@ theorem not_mem_right_of_isCompl_left_mem_ne_zero
 
 end ComplementVectors
 
+section SubspaceChoice
+
+variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
+variable [FiniteDimensional K V]
+
+theorem exists_mem_notMem_of_finrank_lt
+    {s t : Submodule K V}
+    (hlt : finrank K t < finrank K s) :
+    ∃ x : V, x ∈ s ∧ x ∉ t := by
+  by_contra h
+  push Not at h
+  have hs_le_t : s ≤ t := by
+    intro x hx
+    exact h x hx
+  have hle := Submodule.finrank_mono hs_le_t
+  omega
+
+theorem exists_mem_notMem_span_singleton_of_finrank_two
+    {W : Submodule K V} {x : V}
+    (hxne : x ≠ 0)
+    (hW : finrank K W = 2) :
+    ∃ y : V, y ∈ W ∧ y ∉ K ∙ x := by
+  have hline : finrank K (K ∙ x) = 1 := finrank_span_singleton hxne
+  have hlt : finrank K (K ∙ x) < finrank K W := by omega
+  exact exists_mem_notMem_of_finrank_lt (K := K) (V := V) hlt
+
+end SubspaceChoice
+
 section ExactSubspaces
 
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]

@@ -380,6 +380,19 @@ def HasRankTwoSupportComponentHypothesis
                                   symSquareSubmodule A =
                                 ⊥
 
+theorem exists_rank_two_complement_second_direction
+    {W : Submodule ℝ linSubmodule} {x : linSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hW : Module.finrank ℝ W = 2) :
+    ∃ y : linSubmodule, y ∈ W ∧ y ∉ ℝ ∙ x :=
+  exists_mem_notMem_span_singleton_of_finrank_two
+    (K := ℝ) (V := linSubmodule)
+    (W := W) (x := x)
+    (by
+      intro h
+      exact hx (congrArg (fun z : linSubmodule => (z : Poly)) h))
+    hW
+
 theorem hasRankOneSupportComponentHypothesis_of_self_negative
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hSym :
