@@ -6900,4 +6900,46 @@ apolar support theorem remains open.
 
 No Julia numerical claims were used in this round.
 
+\section*{Consolidated binary kernel branch certificate}
+
+\paragraph{Gap targeted.}
+The binary rank-two classification should hand downstream proof code one of
+three kernel branches together with the minimal branch-specific side
+certificate.  Previously those branches were split across several constructors.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasBinaryKernelBranchCertificate}
+\]
+with branches for the \(xy\)-kernel, \(y^2\)-kernel, and elliptic kernel cases.
+Proved
+\[
+\texttt{binaryLowRankNegativeNormalForm\_of\_kernelBranchCertificate}
+\]
+and its binary-restriction specialization.  Added
+\[
+\texttt{HasRankTwoExistentialKernelBranchData}
+\]
+and proved that it implies
+\[
+\texttt{HasRankTwoExistentialBinaryFormData}.
+\]
+Added residual and root reductions through apolar support bounds plus these
+rank-two branch certificates.
+
+\paragraph{Strategy change.}
+The remaining binary input is now a classification theorem that produces a
+single branch certificate in a support basis.  All branch-specific conversion
+to negative normal forms is formalized.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The binary Hankel-kernel classification and the low-rank apolar support theorem
+remain open.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

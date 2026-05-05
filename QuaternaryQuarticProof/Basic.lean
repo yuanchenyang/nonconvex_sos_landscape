@@ -415,6 +415,26 @@ def HasRankTwoExistentialKernelEquationData
                       y ∉ ℝ ∙ x ∧
                         HasBinaryRestrictionKernelEquationCase B p u x y
 
+def HasRankTwoExistentialKernelBranchData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+      A ≤ linearAnnihilator B p u →
+        IsCompl A W →
+          x ∈ W →
+            (x : Poly) ≠ 0 →
+              Module.finrank ℝ A = 2 →
+                Module.finrank ℝ W = 2 →
+                  ∃ y : linSubmodule,
+                    y ∈ W ∧
+                      y ∉ ℝ ∙ x ∧
+                        HasBinaryKernelBranchCertificate
+                          (binaryRestrictionCoeffA B p u x)
+                          (binaryRestrictionCoeffB B p u x y)
+                          (binaryRestrictionCoeffC B p u x y)
+                          (binaryRestrictionCoeffD B p u x y)
+                          (binaryRestrictionCoeffE B p u y)
+
 def HasRankCaseKernelDecompositionApolarData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u) : Prop :=
@@ -1463,6 +1483,16 @@ theorem hasRankTwoExistentialBinaryFormData_of_kernelEquationData
   exact ⟨y, hyW, hynot,
     binaryRestriction_lowRankNegativeNormalForm_of_kernelEquationCase hcase⟩
 
+theorem hasRankTwoExistentialBinaryFormData_of_kernelBranchData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbranches : HasRankTwoExistentialKernelBranchData B p u) :
+    HasRankTwoExistentialBinaryFormData B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases hbranches hrank2 A W x hAann hAW hxW hx hAdim hWdim with
+    ⟨y, hyW, hynot, hcert⟩
+  exact ⟨y, hyW, hynot,
+    binaryRestriction_lowRankNegativeNormalForm_of_kernelBranchCertificate hcert⟩
+
 theorem hasRankTwoNegativeSquareData_of_existentialBinaryFormData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hforms : HasRankTwoExistentialBinaryFormData B p u) :
@@ -1940,6 +1970,18 @@ theorem residual_eq_zero_of_apolarSupportBounds_and_kernelEquationCases
     (B := B) hu hp hsocp hsupport
     (hasRankTwoExistentialBinaryFormData_of_kernelEquationData hcases)
 
+theorem residual_eq_zero_of_apolarSupportBounds_and_kernelBranches
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hsupport : HasRankCaseApolarSupportBounds B p u)
+    (hbranches : HasRankTwoExistentialKernelBranchData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_apolarSupportBounds_and_binaryForms
+    (B := B) hu hp hsocp hsupport
+    (hasRankTwoExistentialBinaryFormData_of_kernelBranchData hbranches)
+
 theorem residual_eq_zero_of_rankCaseSupportData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -2206,6 +2248,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_apolarSupportBounds_and_
     (B := B) hu hp hsocp
     (hsupport B p u hu hB hp hsocp)
     (hcases B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_apolarSupportBounds_and_kernelBranches
+    (hsupport :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseApolarSupportBounds B p u)
+    (hbranches :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialKernelBranchData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_apolarSupportBounds_and_kernelBranches
+    (B := B) hu hp hsocp
+    (hsupport B p u hu hB hp hsocp)
+    (hbranches B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseSupportData
     (hdata :

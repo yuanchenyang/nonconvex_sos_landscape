@@ -16,6 +16,15 @@ def binaryHankelQuad (a b c d e r s t : ℝ) : ℝ :=
 def HasBinaryHankelNegativeValue (a b c d e : ℝ) : Prop :=
   ∃ r s t : ℝ, binaryHankelQuad a b c d e r s t < 0
 
+def HasBinaryKernelBranchCertificate (a b c d e : ℝ) : Prop :=
+  (b = 0 ∧ c = 0 ∧ d = 0 ∧
+    HasBinaryHankelNegativeValue a b c d e) ∨
+  (c = 0 ∧ d = 0 ∧ e = 0 ∧
+    LinearIndependent ℝ
+      ![(![a, b, 0] : Fin 3 → ℝ), (![b, 0, 0] : Fin 3 → ℝ)]) ∨
+  (c = -a ∧ d = -b ∧ e = a ∧
+    HasBinaryHankelNegativeValue a b c d e)
+
 def HasBinaryLowRankNegativeNormalForm (a b c d e : ℝ) : Prop :=
   (∃ ρ α β : ℝ,
     ρ < 0 ∧
@@ -276,6 +285,44 @@ theorem binaryRestriction_lowRankNegativeNormalForm_of_kernelEquationCase
   · rcases hell with ⟨hc, hd, he, hne⟩
     exact binaryRestriction_lowRankNegativeNormalForm_of_ellipticKernel_equations
       hc hd he hne
+
+theorem binaryLowRankNegativeNormalForm_of_kernelBranchCertificate
+    {a b c d e : ℝ}
+    (hcert : HasBinaryKernelBranchCertificate a b c d e) :
+    HasBinaryLowRankNegativeNormalForm a b c d e := by
+  rcases hcert with hxy | hySq | hell
+  · rcases hxy with ⟨hb, hc, hd, hneg⟩
+    subst b
+    subst c
+    subst d
+    exact HasBinaryLowRankNegativeNormalForm.xyKernel_of_negative_hankel hneg
+  · rcases hySq with ⟨hc, hd, he, hLI⟩
+    subst c
+    subst d
+    subst e
+    exact HasBinaryLowRankNegativeNormalForm.ySqKernel_of_column_linearIndependent hLI
+  · rcases hell with ⟨hc, hd, he, hneg⟩
+    subst c
+    subst d
+    subst e
+    exact HasBinaryLowRankNegativeNormalForm.ellipticKernel_of_negative_hankel hneg
+
+theorem binaryRestriction_lowRankNegativeNormalForm_of_kernelBranchCertificate
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}
+    (hcert :
+      HasBinaryKernelBranchCertificate
+        (binaryRestrictionCoeffA B p u x)
+        (binaryRestrictionCoeffB B p u x y)
+        (binaryRestrictionCoeffC B p u x y)
+        (binaryRestrictionCoeffD B p u x y)
+        (binaryRestrictionCoeffE B p u y)) :
+    HasBinaryLowRankNegativeNormalForm
+      (binaryRestrictionCoeffA B p u x)
+      (binaryRestrictionCoeffB B p u x y)
+      (binaryRestrictionCoeffC B p u x y)
+      (binaryRestrictionCoeffD B p u x y)
+      (binaryRestrictionCoeffE B p u y) :=
+  binaryLowRankNegativeNormalForm_of_kernelBranchCertificate hcert
 
 theorem binaryRestriction_pow_eq_C
     (x y : linSubmodule) (X Y : ℝ) :
