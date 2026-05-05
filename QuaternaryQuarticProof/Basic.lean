@@ -561,6 +561,12 @@ def HasRankThreeApolarBadBranchMacaulayBound
               q3 = 4 - b →
                 q3 ≤ q2
 
+def HasRankThreeApolarBadBranchContradiction
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+    Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4 →
+      False
+
 def HasLowRankApolarHilbertData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   HasRankTwoApolarMacaulayGrowthData B p u ∧
@@ -2460,24 +2466,58 @@ theorem rankThreeDimensionBound_of_rankThreeEssentialQuotientBound
   rankThreeDimensionBound_of_rankThreeHilbertFirstBound
     (rankThreeHilbertFirstBound_of_rankThreeEssentialQuotientBound hquot)
 
+theorem rankThreeBadBranchContradiction_of_rankThreeEssentialQuotientBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasRankThreeApolarEssentialQuotientBound B p u) :
+    HasRankThreeApolarBadBranchContradiction B p u := by
+  intro hrank3 hbad
+  have hle := hquot hrank3
+  omega
+
+theorem rankThreeEssentialQuotientBound_of_badBranchContradiction
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbadContra : HasRankThreeApolarBadBranchContradiction B p u) :
+    HasRankThreeApolarEssentialQuotientBound B p u := by
+  intro hrank3
+  by_contra hnot
+  have hle4 := finrank_quotient_linearAnnihilator_le_four B p u
+  have hbad :
+      Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4 := by
+    omega
+  exact hbadContra hrank3 hbad
+
+theorem rankThreeEssentialQuotientBound_iff_badBranchContradiction
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankThreeApolarEssentialQuotientBound B p u ↔
+      HasRankThreeApolarBadBranchContradiction B p u :=
+  ⟨rankThreeBadBranchContradiction_of_rankThreeEssentialQuotientBound,
+    rankThreeEssentialQuotientBound_of_badBranchContradiction⟩
+
+theorem rankThreeBadBranchMacaulayBound_of_badBranchContradiction
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbadContra : HasRankThreeApolarBadBranchContradiction B p u) :
+    HasRankThreeApolarBadBranchMacaulayBound B p u := by
+  intro hrank3 hbad b q2 q3 _hbpos _hbtop _hq2 _hq3
+  exfalso
+  exact hbadContra hrank3 hbad
+
+theorem rankThreeBadBranchContradiction_of_shape_and_macaulayBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hshape : HasRankThreeApolarBadBranchExactSequenceShape B p u)
+    (hmac : HasRankThreeApolarBadBranchMacaulayBound B p u) :
+    HasRankThreeApolarBadBranchContradiction B p u := by
+  intro hrank3 hbad
+  rcases hshape hrank3 hbad with ⟨b, q2, q3, hbpos, hbtop, hq2, hq3⟩
+  exact rankThreeExactSequenceNumericalContradiction
+    hbpos hbtop hq2 hq3 (hmac hrank3 hbad b q2 q3 hbpos hbtop hq2 hq3)
+
 theorem rankThreeEssentialQuotientBound_of_shape_and_macaulayBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hshape : HasRankThreeApolarBadBranchExactSequenceShape B p u)
     (hmac : HasRankThreeApolarBadBranchMacaulayBound B p u) :
     HasRankThreeApolarEssentialQuotientBound B p u := by
-  intro hrank3
-  by_contra hnot
-  have hgt :
-      3 < Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) := by
-    omega
-  have hle4 := finrank_quotient_linearAnnihilator_le_four B p u
-  have hbad :
-      Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4 := by
-    omega
-  rcases hshape hrank3 hbad with ⟨b, q2, q3, hbpos, hbtop, hq2, hq3⟩
-  have hineq := hmac hrank3 hbad b q2 q3 hbpos hbtop hq2 hq3
-  exact rankThreeExactSequenceNumericalContradiction
-    hbpos hbtop hq2 hq3 hineq
+  exact rankThreeEssentialQuotientBound_of_badBranchContradiction
+    (rankThreeBadBranchContradiction_of_shape_and_macaulayBound hshape hmac)
 
 theorem rankThreeExactSequenceData_of_rankThreeEssentialQuotientBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}

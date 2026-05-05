@@ -13399,4 +13399,49 @@ essential quotient bounds, annihilator-map bounds, and support bounds.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three bad-branch contradiction interface}
+
+\paragraph{Gap targeted.}
+The rank-three Macaulay-bound component is fundamentally a contradiction in
+the bad branch \(h_1=4\).  Naming that contradiction makes the role of the
+Macaulay/O-sequence step clearer and prevents the quotient-bound proof from
+mixing dimension and exact-sequence details.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasRankThreeApolarBadBranchContradiction}.
+\]
+Proved:
+\[
+\texttt{rankThreeBadBranchContradiction\_of\_rankThreeEssentialQuotientBound},
+\]
+\[
+\texttt{rankThreeEssentialQuotientBound\_of\_badBranchContradiction},
+\]
+and:
+\[
+\texttt{rankThreeEssentialQuotientBound\_iff\_badBranchContradiction}.
+\]
+Also added:
+\[
+\texttt{rankThreeBadBranchMacaulayBound\_of\_badBranchContradiction},
+\]
+and:
+\[
+\texttt{rankThreeBadBranchContradiction\_of\_shape\_and\_macaulayBound}.
+\]
+The existing rank-three quotient-bound theorem from shape and Macaulay bound
+now factors through this contradiction interface.
+
+\paragraph{Strategy change.}
+The rank-three local proof target can now be phrased as ruling out the bad
+branch directly.  The exact-sequence shape plus Macaulay/O-sequence bound is
+one route to that contradiction, while the quotient bound is equivalent to it.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
