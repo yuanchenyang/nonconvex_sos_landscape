@@ -13044,4 +13044,49 @@ package.  The two targets are formally equivalent.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two symmetry and growth split}
+
+\paragraph{Gap targeted.}
+The rank-two quotient-growth interface bundled the two blueprint inputs:
+Gorenstein symmetry, identifying the degree-one and degree-three Hilbert
+entries, and Macaulay growth, bounding the degree-three entry by the
+degree-two quotient dimension.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasRankTwoApolarGorensteinSymmetryData}
+\]
+and:
+\[
+\texttt{HasRankTwoApolarMacaulayGrowthBound}.
+\]
+The first records the existence of the degree-three entry equal to the
+essential quotient dimension; the second records the Macaulay growth bound
+against
+\[
+\texttt{quadSubmodule}/\ker(\texttt{catalecticantMap}).
+\]
+Proved:
+\[
+\texttt{rankTwoQuotientGrowthData\_of\_symmetry\_and\_macaulayGrowth},
+\]
+\[
+\texttt{rankTwoEssentialQuotientBound\_of\_symmetry\_and\_macaulayGrowth},
+\]
+and:
+\[
+\texttt{lowRankApolarHilbertData\_of\_rankTwoSymmetryAndGrowth\_rankThreeBadBranchExactSequenceData}.
+\]
+
+\paragraph{Strategy change.}
+The rank-two part of the remaining Hilbert proof is now split into exactly the
+two conceptual ingredients in the blueprint: Gorenstein symmetry and Macaulay
+growth.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

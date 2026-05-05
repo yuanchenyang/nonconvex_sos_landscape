@@ -470,6 +470,20 @@ def HasRankTwoApolarQuotientGrowthData
         h3 ≤ Module.finrank ℝ
           (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u))
 
+def HasRankTwoApolarGorensteinSymmetryData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∃ h3 : ℕ,
+      Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = h3
+
+def HasRankTwoApolarMacaulayGrowthBound
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∀ h3 : ℕ,
+      Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = h3 →
+        h3 ≤ Module.finrank ℝ
+          (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u))
+
 def HasRankTwoApolarMacaulayGrowthData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
@@ -2320,6 +2334,23 @@ theorem rankTwoEssentialQuotientBound_of_rankTwoQuotientGrowthData
     finrank_quotient_ker_catalecticantMap_eq_two_of_rank_two hrank2
   omega
 
+theorem rankTwoQuotientGrowthData_of_symmetry_and_macaulayGrowth
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsymm : HasRankTwoApolarGorensteinSymmetryData B p u)
+    (hgrowth : HasRankTwoApolarMacaulayGrowthBound B p u) :
+    HasRankTwoApolarQuotientGrowthData B p u := by
+  intro hrank2
+  rcases hsymm hrank2 with ⟨h3, hh3⟩
+  exact ⟨h3, hh3, hgrowth hrank2 h3 hh3⟩
+
+theorem rankTwoEssentialQuotientBound_of_symmetry_and_macaulayGrowth
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsymm : HasRankTwoApolarGorensteinSymmetryData B p u)
+    (hgrowth : HasRankTwoApolarMacaulayGrowthBound B p u) :
+    HasRankTwoApolarEssentialQuotientBound B p u :=
+  rankTwoEssentialQuotientBound_of_rankTwoQuotientGrowthData
+    (rankTwoQuotientGrowthData_of_symmetry_and_macaulayGrowth hsymm hgrowth)
+
 theorem rankTwoMacaulayGrowthData_of_rankTwoEssentialQuotientBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hquot : HasRankTwoApolarEssentialQuotientBound B p u) :
@@ -2572,6 +2603,16 @@ theorem lowRankApolarHilbertData_of_rankTwoQuotientGrowthData_rankThreeBadBranch
   lowRankApolarHilbertData_of_rankTwoQuotientGrowthData_rankThreeExactSequenceData
     hdata2
     (rankThreeExactSequenceData_of_rankThreeBadBranchExactSequenceData hdata3)
+
+theorem lowRankApolarHilbertData_of_rankTwoSymmetryAndGrowth_rankThreeBadBranchExactSequenceData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsymm2 : HasRankTwoApolarGorensteinSymmetryData B p u)
+    (hgrowth2 : HasRankTwoApolarMacaulayGrowthBound B p u)
+    (hdata3 : HasRankThreeApolarBadBranchExactSequenceData B p u) :
+    HasLowRankApolarHilbertData B p u :=
+  lowRankApolarHilbertData_of_rankTwoQuotientGrowthData_rankThreeBadBranchExactSequenceData
+    (rankTwoQuotientGrowthData_of_symmetry_and_macaulayGrowth hsymm2 hgrowth2)
+    hdata3
 
 theorem lowRankApolarHilbertData_of_lowRankApolarBlueprintHilbertData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
