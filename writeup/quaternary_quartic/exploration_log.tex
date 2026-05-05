@@ -14259,4 +14259,35 @@ back to this statement.
 
 No Julia numerical claims were used in this round.
 
+\section*{Expose low-annihilator contradiction form}
+
+\paragraph{Gap targeted.}
+The two-three dimension theorem can be attacked by contradiction: rule out
+rank two with annihilator dimension at most one, and rule out rank three with
+zero annihilator.
+
+\paragraph{Lean progress.}
+Added local packages
+\[
+\texttt{HasRankTwoApolarLowAnnihilatorContradiction},
+\quad
+\texttt{HasRankThreeApolarZeroAnnihilatorContradiction},
+\]
+and their combined local/global packages.  Proved these contradiction packages
+equivalent to the corresponding annihilator-dimension bounds.  Added the root
+equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoThreeApolarAnnihilatorContradictions}.
+\]
+
+\paragraph{Strategy change.}
+The largest remaining gap is now expressible as excluding two explicit
+low-annihilator counterexample shapes under the SOCP hypotheses.  This is the
+most direct contradiction-oriented form of the current dimension target.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
