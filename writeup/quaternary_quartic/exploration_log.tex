@@ -15208,4 +15208,53 @@ lex product counts, without introducing non-proof-serving infrastructure.
 
 No Julia numerical claims were used in this round.
 
+\section*{Lex model cokernel Macaulay inequalities}
+
+\paragraph{Gap targeted.}
+The finite lex product counts had to be converted into the actual cokernel
+comparison used by the Macaulay obstruction: the cubic quotient dimension
+must be bounded by the quadratic quotient dimension.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved the two lex
+quadratic subspaces lie in \(\operatorname{Sym}^2(A)\):
+\[
+\texttt{spanPairProductsExceptZeroZero\_le\_symSquareSubmodule},
+\qquad
+\texttt{spanPairProductsExceptZeroZeroZeroOne\_le\_symSquareSubmodule}.
+\]
+Using pair-product independence, proved their dimensions are \(5\) and \(4\):
+\[
+\texttt{finrank\_spanPairProductsExceptZeroZero\_eq\_five\_of\_isCompl\_line},
+\qquad
+\texttt{finrank\_spanPairProductsExceptZeroZeroZeroOne\_eq\_four\_of\_isCompl\_line}.
+\]
+Together with \(\dim \operatorname{Sym}^2(A)=6\), this gives quadratic
+quotient dimensions \(1\) and \(2\).  The cubic product lower bounds and the
+ten-dimensional full cubic product space give the corresponding cubic
+quotient bounds:
+\[
+\texttt{finrank\_linQuadProductSubmodule\_quotient\_le\_one\_of\_eq\_spanPairProductsExceptZeroZero},
+\]
+\[
+\texttt{finrank\_linQuadProductSubmodule\_quotient\_le\_two\_of\_eq\_spanPairProductsExceptZeroZeroZeroOne}.
+\]
+Finally these were packaged as the lex model Macaulay inequalities
+\[
+\texttt{macaulay\_cokernel\_bound\_of\_eq\_spanPairProductsExceptZeroZero},
+\qquad
+\texttt{macaulay\_cokernel\_bound\_of\_eq\_spanPairProductsExceptZeroZeroZeroOne}.
+\]
+
+\paragraph{Strategy change.}
+The lex \(q_2=0,1,2\) cases now have cokernel-form Macaulay bounds.  The
+remaining central algebraic work is the reduction from an arbitrary
+low-codimension quadratic subspace to one of these lex-normal models.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -1454,6 +1454,24 @@ def spanCubicProductsExceptZeroZeroZeroZeroOne
       linQuadProduct (β ijk.1.1.1.1).1
         (linProduct (β ijk.1.1.1.2).1 (β ijk.1.1.2).1))
 
+theorem spanPairProductsExceptZeroZero_le_symSquareSubmodule
+    {A : Submodule ℝ linSubmodule} (β : Module.Basis (Fin 3) ℝ A) :
+    spanPairProductsExceptZeroZero β ≤ symSquareSubmodule A := by
+  refine Submodule.span_le.mpr ?_
+  rintro q ⟨ij, rfl⟩
+  exact linProduct_mem_linProductSubmodule
+    (⟨(β ij.1.1.1).1, (β ij.1.1.1).2⟩ : A)
+    (⟨(β ij.1.1.2).1, (β ij.1.1.2).2⟩ : A)
+
+theorem spanPairProductsExceptZeroZeroZeroOne_le_symSquareSubmodule
+    {A : Submodule ℝ linSubmodule} (β : Module.Basis (Fin 3) ℝ A) :
+    spanPairProductsExceptZeroZeroZeroOne β ≤ symSquareSubmodule A := by
+  refine Submodule.span_le.mpr ?_
+  rintro q ⟨ij, rfl⟩
+  exact linProduct_mem_linProductSubmodule
+    (⟨(β ij.1.1.1).1, (β ij.1.1.1).2⟩ : A)
+    (⟨(β ij.1.1.2).1, (β ij.1.1.2).2⟩ : A)
+
 theorem spanCubicProductsExceptZeroZeroZero_le_linQuadProductSubmodule_exceptZeroZero
     {A : Submodule ℝ linSubmodule} (β : Module.Basis (Fin 3) ℝ A) :
     spanCubicProductsExceptZeroZeroZero β ≤
@@ -1710,6 +1728,59 @@ theorem linearIndependent_basis_pair_products_fin_three_of_isCompl_line
     exact Sum.inr.inj h
   exact hcombined.comp φ hφinj
 
+theorem finrank_spanPairProductsExceptZeroZero_eq_five_of_isCompl_line
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) :
+    Module.finrank ℝ (spanPairProductsExceptZeroZero β) = 5 := by
+  have hLIall :=
+    linearIndependent_basis_pair_products_fin_three_of_isCompl_line hAL β hxspan
+  let f : {ij : Pair3Idx // ij ≠ pair3ZeroZero} → quadSubmodule :=
+    fun ij => linProduct (β ij.1.1.1).1 (β ij.1.1.2).1
+  have hLI : LinearIndependent ℝ f :=
+    hLIall.comp (fun ij : {ij : Pair3Idx // ij ≠ pair3ZeroZero} => ij.1)
+      (fun a b h => Subtype.ext h)
+  have hcard :
+      Fintype.card {ij : Pair3Idx // ij ≠ pair3ZeroZero} = 5 := by
+    decide
+  have hspan :
+      Module.finrank ℝ (Submodule.span ℝ (Set.range f)) = 5 := by
+    have hcard_eq :
+        Fintype.card {ij : Pair3Idx // ij ≠ pair3ZeroZero} =
+          Module.finrank ℝ (Submodule.span ℝ (Set.range f)) := by
+      exact (linearIndependent_iff_card_eq_finrank_span (R := ℝ) (b := f)).mp hLI
+    omega
+  simpa [spanPairProductsExceptZeroZero, f] using hspan
+
+theorem finrank_spanPairProductsExceptZeroZeroZeroOne_eq_four_of_isCompl_line
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) :
+    Module.finrank ℝ (spanPairProductsExceptZeroZeroZeroOne β) = 4 := by
+  have hLIall :=
+    linearIndependent_basis_pair_products_fin_three_of_isCompl_line hAL β hxspan
+  let f :
+      {ij : Pair3Idx // ij ≠ pair3ZeroZero ∧ ij ≠ pair3ZeroOne} → quadSubmodule :=
+    fun ij => linProduct (β ij.1.1.1).1 (β ij.1.1.2).1
+  have hLI : LinearIndependent ℝ f :=
+    hLIall.comp
+      (fun ij : {ij : Pair3Idx // ij ≠ pair3ZeroZero ∧ ij ≠ pair3ZeroOne} =>
+        ij.1)
+      (fun a b h => Subtype.ext h)
+  have hcard :
+      Fintype.card
+        {ij : Pair3Idx // ij ≠ pair3ZeroZero ∧ ij ≠ pair3ZeroOne} = 4 := by
+    decide
+  have hspan :
+      Module.finrank ℝ (Submodule.span ℝ (Set.range f)) = 4 := by
+    have hcard_eq :
+        Fintype.card
+          {ij : Pair3Idx // ij ≠ pair3ZeroZero ∧ ij ≠ pair3ZeroOne} =
+          Module.finrank ℝ (Submodule.span ℝ (Set.range f)) := by
+      exact (linearIndependent_iff_card_eq_finrank_span (R := ℝ) (b := f)).mp hLI
+    omega
+  simpa [spanPairProductsExceptZeroZeroZeroOne, f] using hspan
+
 theorem finrank_symSquareSubmodule_eq_six_of_isCompl_line
     {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
     (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
@@ -1924,6 +1995,152 @@ theorem macaulay_cokernel_bound_of_finrank_symSquare_quotient_eq_zero
           P.comap (symSquareSubmodule A).subtype) := by
   exact macaulay_cokernel_bound_of_eq_symSquare
     (eq_symSquare_of_finrank_symSquare_quotient_eq_zero hP_le hquot)
+
+theorem finrank_symSquare_quotient_eq_one_of_eq_spanPairProductsExceptZeroZero
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) {P : Submodule ℝ quadSubmodule}
+    (hP : P = spanPairProductsExceptZeroZero β) :
+    Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 1 := by
+  subst P
+  let S : Submodule ℝ (symSquareSubmodule A) :=
+    (spanPairProductsExceptZeroZero β).comap (symSquareSubmodule A).subtype
+  have hle := spanPairProductsExceptZeroZero_le_symSquareSubmodule β
+  have hSfin :
+      Module.finrank ℝ S =
+        Module.finrank ℝ (spanPairProductsExceptZeroZero β) := by
+    exact (Submodule.comapSubtypeEquivOfLe hle).finrank_eq
+  have hquot := Submodule.finrank_quotient (R := ℝ) (S := ℝ) S
+  have hsym := finrank_symSquareSubmodule_eq_six_of_isCompl_line hAL β hxspan
+  have hPfin := finrank_spanPairProductsExceptZeroZero_eq_five_of_isCompl_line
+    hAL β hxspan
+  rw [hSfin, hPfin, hsym] at hquot
+  omega
+
+theorem finrank_symSquare_quotient_eq_two_of_eq_spanPairProductsExceptZeroZeroZeroOne
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) {P : Submodule ℝ quadSubmodule}
+    (hP : P = spanPairProductsExceptZeroZeroZeroOne β) :
+    Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 2 := by
+  subst P
+  let S : Submodule ℝ (symSquareSubmodule A) :=
+    (spanPairProductsExceptZeroZeroZeroOne β).comap
+      (symSquareSubmodule A).subtype
+  have hle := spanPairProductsExceptZeroZeroZeroOne_le_symSquareSubmodule β
+  have hSfin :
+      Module.finrank ℝ S =
+        Module.finrank ℝ (spanPairProductsExceptZeroZeroZeroOne β) := by
+    exact (Submodule.comapSubtypeEquivOfLe hle).finrank_eq
+  have hquot := Submodule.finrank_quotient (R := ℝ) (S := ℝ) S
+  have hsym := finrank_symSquareSubmodule_eq_six_of_isCompl_line hAL β hxspan
+  have hPfin :=
+    finrank_spanPairProductsExceptZeroZeroZeroOne_eq_four_of_isCompl_line
+      hAL β hxspan
+  rw [hSfin, hPfin, hsym] at hquot
+  omega
+
+theorem finrank_linQuadProductSubmodule_quotient_le_one_of_eq_spanPairProductsExceptZeroZero
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) {P : Submodule ℝ quadSubmodule}
+    (hP : P = spanPairProductsExceptZeroZero β) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤ 1 := by
+  subst P
+  let F := linQuadProductSubmodule A (symSquareSubmodule A)
+  let G := linQuadProductSubmodule A (spanPairProductsExceptZeroZero β)
+  have hleG : G ≤ F := by
+    exact linQuadProductSubmodule_mono le_rfl
+      (spanPairProductsExceptZeroZero_le_symSquareSubmodule β)
+  let S : Submodule ℝ F := G.comap F.subtype
+  have hSfin : Module.finrank ℝ S = Module.finrank ℝ G := by
+    exact (Submodule.comapSubtypeEquivOfLe hleG).finrank_eq
+  have hFfin := finrank_linQuadProductSubmodule_symSquare_eq_ten_of_isCompl_line
+    hAL β hxspan
+  have hGfin :=
+    nine_le_finrank_linQuadProductSubmodule_exceptZeroZero_of_isCompl_line
+      hAL β hxspan
+  have hGfin' : 9 ≤ Module.finrank ℝ G := by
+    simpa [G] using hGfin
+  change Module.finrank ℝ (F ⧸ S) ≤ 1
+  rw [Submodule.finrank_quotient, hSfin, hFfin]
+  omega
+
+theorem finrank_linQuadProductSubmodule_quotient_le_two_of_eq_spanPairProductsExceptZeroZeroZeroOne
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) {P : Submodule ℝ quadSubmodule}
+    (hP : P = spanPairProductsExceptZeroZeroZeroOne β) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤ 2 := by
+  subst P
+  let F := linQuadProductSubmodule A (symSquareSubmodule A)
+  let G := linQuadProductSubmodule A (spanPairProductsExceptZeroZeroZeroOne β)
+  have hleG : G ≤ F := by
+    exact linQuadProductSubmodule_mono le_rfl
+      (spanPairProductsExceptZeroZeroZeroOne_le_symSquareSubmodule β)
+  let S : Submodule ℝ F := G.comap F.subtype
+  have hSfin : Module.finrank ℝ S = Module.finrank ℝ G := by
+    exact (Submodule.comapSubtypeEquivOfLe hleG).finrank_eq
+  have hFfin := finrank_linQuadProductSubmodule_symSquare_eq_ten_of_isCompl_line
+    hAL β hxspan
+  have hGfin :=
+    eight_le_finrank_linQuadProductSubmodule_exceptZeroZeroZeroOne_of_isCompl_line
+      hAL β hxspan
+  have hGfin' : 8 ≤ Module.finrank ℝ G := by
+    simpa [G] using hGfin
+  change Module.finrank ℝ (F ⧸ S) ≤ 2
+  rw [Submodule.finrank_quotient, hSfin, hFfin]
+  omega
+
+theorem macaulay_cokernel_bound_of_eq_spanPairProductsExceptZeroZero
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) {P : Submodule ℝ quadSubmodule}
+    (hP : P = spanPairProductsExceptZeroZero β) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) := by
+  have hcubic :=
+    finrank_linQuadProductSubmodule_quotient_le_one_of_eq_spanPairProductsExceptZeroZero
+      hAL β hxspan hP
+  have hquad :=
+    finrank_symSquare_quotient_eq_one_of_eq_spanPairProductsExceptZeroZero
+      hAL β hxspan hP
+  omega
+
+theorem macaulay_cokernel_bound_of_eq_spanPairProductsExceptZeroZeroZeroOne
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) {P : Submodule ℝ quadSubmodule}
+    (hP : P = spanPairProductsExceptZeroZeroZeroOne β) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) := by
+  have hcubic :=
+    finrank_linQuadProductSubmodule_quotient_le_two_of_eq_spanPairProductsExceptZeroZeroZeroOne
+      hAL β hxspan hP
+  have hquad :=
+    finrank_symSquare_quotient_eq_two_of_eq_spanPairProductsExceptZeroZeroZeroOne
+      hAL β hxspan hP
+  omega
 
 theorem exists_rank_two_adapted_basis
     {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
