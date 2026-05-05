@@ -358,6 +358,26 @@ def HasRankCaseAnnihilatorMapBounds
   (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
     Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 3)
 
+def HasRankCaseKernelEquationApolarData
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u) : Prop :=
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 1) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 2 ∧
+      ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              y ∈ W →
+                y ∉ ℝ ∙ x →
+                  (x : Poly) ≠ 0 →
+                    Module.finrank ℝ A = 2 →
+                      Module.finrank ℝ W = 2 →
+                        HasBinaryRestrictionKernelEquationCase B p u x y) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 3)
+
 def HasLowRankApolarAnnihilatorMapTheorem
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   ∀ k : ℕ,
@@ -2102,6 +2122,36 @@ theorem hasRankCaseAnnihilatorMapBounds_of_kernelDecompositionApolarData
   · intro hrank3
     exact (hdata3 hrank3).1
 
+theorem hasRankCaseKernelEquationApolarData_of_kernelDecompositionApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseKernelDecompositionApolarData B p u hu) :
+    HasRankCaseKernelEquationApolarData B p u hu := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    exact (hdata1 hrank1).1
+  constructor
+  · intro hrank2
+    exact ⟨(hdata2 hrank2).1, (hdata2 hrank2).2.1⟩
+  · intro hrank3
+    exact (hdata3 hrank3).1
+
+theorem hasRankCaseAnnihilatorMapBounds_of_kernelEquationApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseKernelEquationApolarData B p u hu) :
+    HasRankCaseAnnihilatorMapBounds B p u := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    exact hdata1 hrank1
+  constructor
+  · intro hrank2
+    exact (hdata2 hrank2).1
+  · intro hrank3
+    exact hdata3 hrank3
+
 theorem hasRankTwoExistentialKernelEquationData_of_kernelDecompositionApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -2114,6 +2164,19 @@ theorem hasRankTwoExistentialKernelEquationData_of_kernelDecompositionApolarData
     ⟨y, hyW, hynot⟩
   exact ⟨y, hyW, hynot,
     (hdata2 hrank2).2.1 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim⟩
+
+theorem hasRankTwoExistentialKernelEquationData_of_kernelEquationApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseKernelEquationApolarData B p u hu) :
+    HasRankTwoExistentialKernelEquationData B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases hdata with ⟨_hdata1, hdata2, _hdata3⟩
+  rcases exists_rank_two_complement_second_direction
+      (W := W) (x := x) hx hWdim with
+    ⟨y, hyW, hynot⟩
+  exact ⟨y, hyW, hynot,
+    (hdata2 hrank2).2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim⟩
 
 theorem hasRankTwoExistentialCanonicalKernelData_of_kernelDecompositionApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -2568,6 +2631,18 @@ theorem residual_eq_zero_of_rankCaseAnnihilatorMapBounds_and_kernelEquationData
   residual_eq_zero_of_rankCaseAnnihilatorMapBounds_and_canonicalKernelData
     (B := B) hu hp hsocp hbounds
     (hasRankTwoExistentialCanonicalKernelData_of_kernelEquationData hcases)
+
+theorem residual_eq_zero_of_kernelEquationApolarData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata : HasRankCaseKernelEquationApolarData B p u hu) :
+    residual p u = 0 :=
+  residual_eq_zero_of_rankCaseAnnihilatorMapBounds_and_kernelEquationData
+    (B := B) hu hp hsocp
+    (hasRankCaseAnnihilatorMapBounds_of_kernelEquationApolarData hdata)
+    (hasRankTwoExistentialKernelEquationData_of_kernelEquationApolarData hdata)
 
 theorem residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
@@ -3122,6 +3197,20 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseAnnihilatorMapBo
     (B := B) hu hp hsocp
     (hbounds B p u hu hB hp hsocp)
     (hcases B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_kernelEquationApolarData
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseKernelEquationApolarData B p u hu) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_kernelEquationApolarData
+    (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
     (hprod :
