@@ -834,6 +834,22 @@ def HasGlobalLowRankApolarSupportTheorem : Prop :=
         IsSOCP B p u →
           HasLowRankApolarSupportTheorem B p u
 
+def HasGlobalRankCaseAnnihilatorMapBounds : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankCaseAnnihilatorMapBounds B p u
+
+def HasGlobalRankCaseApolarSupportBounds : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankCaseApolarSupportBounds B p u
+
 def HasLowRankApolarSupportDecomposition
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   ∀ k : ℕ,
@@ -8073,6 +8089,76 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarSupp
         (globalLowRankApolarEssentialQuotientTheorem_of_quaternaryQuartic_rankSeven_no_spurious_socp
           hmain),
     quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarSupportTheorem⟩
+
+theorem globalRankCaseAnnihilatorMapBounds_of_globalLowRankApolarAnnihilatorMapTheorem
+    (hann : HasGlobalLowRankApolarAnnihilatorMapTheorem) :
+    HasGlobalRankCaseAnnihilatorMapBounds := by
+  intro B p u hu hB hp hsocp
+  exact hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem
+    (hann B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarAnnihilatorMapTheorem_of_globalRankCaseAnnihilatorMapBounds
+    (hbounds : HasGlobalRankCaseAnnihilatorMapBounds) :
+    HasGlobalLowRankApolarAnnihilatorMapTheorem := by
+  intro B p u hu hB hp hsocp
+  exact hasLowRankApolarAnnihilatorMapTheorem_of_rankCaseAnnihilatorMapBounds
+    (hbounds B p u hu hB hp hsocp)
+
+theorem globalRankCaseAnnihilatorMapBounds_iff_globalLowRankApolarAnnihilatorMapTheorem :
+    HasGlobalRankCaseAnnihilatorMapBounds ↔
+      HasGlobalLowRankApolarAnnihilatorMapTheorem :=
+  ⟨globalLowRankApolarAnnihilatorMapTheorem_of_globalRankCaseAnnihilatorMapBounds,
+    globalRankCaseAnnihilatorMapBounds_of_globalLowRankApolarAnnihilatorMapTheorem⟩
+
+theorem globalRankCaseApolarSupportBounds_of_globalLowRankApolarSupportTheorem
+    (hsupport : HasGlobalLowRankApolarSupportTheorem) :
+    HasGlobalRankCaseApolarSupportBounds := by
+  intro B p u hu hB hp hsocp
+  exact hasRankCaseApolarSupportBounds_of_lowRankApolarSupportTheorem
+    (hsupport B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarSupportTheorem_of_globalRankCaseApolarSupportBounds
+    (hsupport : HasGlobalRankCaseApolarSupportBounds) :
+    HasGlobalLowRankApolarSupportTheorem := by
+  intro B p u hu hB hp hsocp
+  exact hasLowRankApolarSupportTheorem_of_rankCaseApolarSupportBounds
+    (hsupport B p u hu hB hp hsocp)
+
+theorem globalRankCaseApolarSupportBounds_iff_globalLowRankApolarSupportTheorem :
+    HasGlobalRankCaseApolarSupportBounds ↔
+      HasGlobalLowRankApolarSupportTheorem :=
+  ⟨globalLowRankApolarSupportTheorem_of_globalRankCaseApolarSupportBounds,
+    globalRankCaseApolarSupportBounds_of_globalLowRankApolarSupportTheorem⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankCaseAnnihilatorMapBounds
+    (hbounds : HasGlobalRankCaseAnnihilatorMapBounds) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseAnnihilatorMapBounds_direct
+    (fun B p u hu hB hp hsocp => hbounds B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankCaseApolarSupportBounds
+    (hsupport : HasGlobalRankCaseApolarSupportBounds) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarSupportTheorem
+    (globalLowRankApolarSupportTheorem_of_globalRankCaseApolarSupportBounds hsupport)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankCaseAnnihilatorMapBounds :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankCaseAnnihilatorMapBounds :=
+  ⟨fun hmain =>
+      globalRankCaseAnnihilatorMapBounds_of_globalLowRankApolarAnnihilatorMapTheorem
+        ((quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarAnnihilatorMapTheorem).mp
+          hmain),
+    quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankCaseAnnihilatorMapBounds⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankCaseApolarSupportBounds :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankCaseApolarSupportBounds :=
+  ⟨fun hmain =>
+      globalRankCaseApolarSupportBounds_of_globalLowRankApolarSupportTheorem
+        ((quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarSupportTheorem).mp
+          hmain),
+    quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankCaseApolarSupportBounds⟩
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_quotientLocalComponents_direct
     (hsymm2 :

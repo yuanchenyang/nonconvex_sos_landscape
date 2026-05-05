@@ -13844,4 +13844,39 @@ Hilbert-function argument in the blueprint.
 
 No Julia numerical claims were used in this round.
 
+\section*{Global rank-case support split}
+
+\paragraph{Gap targeted.}
+The blueprint proof is rank-by-rank.  The global support and annihilator-map
+theorems still hid that split behind a low-rank parameter \(k\).
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasGlobalRankCaseAnnihilatorMapBounds}
+\]
+and
+\[
+\texttt{HasGlobalRankCaseApolarSupportBounds}.
+\]
+Proved their equivalences with the global low-rank annihilator-map and support
+theorems, and added root equivalences:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankCaseAnnihilatorMapBounds},
+\]
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankCaseApolarSupportBounds}.
+\]
+
+\paragraph{Strategy change.}
+The exact remaining global support obligation is now exposed as three rank
+cases.  Rank one is already handled by the catalecticant rank-one
+annihilator-map bound; the open mathematical content is concentrated in the
+rank-two and rank-three support/codimension bounds.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
