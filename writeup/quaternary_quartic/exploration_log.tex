@@ -8153,4 +8153,44 @@ kernel-equation apolar data, or any stronger package that projects to it.
 
 No Julia numerical claims were used in this round.
 
+\section*{Split exact bounds from universal kernel equations}
+
+\paragraph{Gap targeted.}
+\texttt{HasRankCaseKernelEquationApolarData} packaged two independent
+mathematical tasks: exact-rank annihilator-map bounds and the rank-two binary
+kernel-equation theorem.  Keeping them bundled made it harder to attack either
+side independently.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankTwoUniversalKernelEquationData}
+\]
+for the universal rank-two kernel-equation statement.  Proved projections from
+the minimal apolar package to this predicate, and a constructor
+\[
+\texttt{hasRankCaseKernelEquationApolarData\_of\_annihilatorBounds\_and\_universalKernelEquationData}.
+\]
+Also proved the universal-to-existential bridge and added residual/root
+reductions from exact annihilator bounds plus universal kernel-equation data.
+
+\paragraph{Strategy change.}
+The two remaining proof obligations are now separately exposed: exact-rank
+annihilator-map bounds, and the universal rank-two kernel-equation theorem.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The remaining mathematical work is to prove the exact annihilator-map bounds
+and the universal rank-two kernel-equation classification from the blueprint.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
