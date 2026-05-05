@@ -142,6 +142,29 @@ def binaryHankelQuad (a b c d e r s t : ℝ) : ℝ :=
 def binaryKernelDiscriminant (r s t : ℝ) : ℝ :=
   s^2 - 4 * r * t
 
+theorem binaryKernelDiscriminant_swap (r s t : ℝ) :
+    binaryKernelDiscriminant t s r = binaryKernelDiscriminant r s t := by
+  unfold binaryKernelDiscriminant
+  ring
+
+theorem binaryKernelDiscriminant_diagonal (r s t α δ : ℝ) :
+    binaryKernelDiscriminant (r * α^2) (s * α * δ) (t * δ^2) =
+      (α * δ)^2 * binaryKernelDiscriminant r s t := by
+  unfold binaryKernelDiscriminant
+  ring
+
+theorem binaryKernelDiscriminant_shearX (r s t tau : ℝ) :
+    binaryKernelDiscriminant r (2 * r * tau + s) (r * tau^2 + s * tau + t) =
+      binaryKernelDiscriminant r s t := by
+  unfold binaryKernelDiscriminant
+  ring
+
+theorem binaryKernelDiscriminant_shearY (r s t tau : ℝ) :
+    binaryKernelDiscriminant (r + s * tau + t * tau^2) (s + 2 * t * tau) t =
+      binaryKernelDiscriminant r s t := by
+  unfold binaryKernelDiscriminant
+  ring
+
 def binaryHankelMul (a b c d e : ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ![a * v 0 + b * v 1 + c * v 2,
     b * v 0 + c * v 1 + d * v 2,
