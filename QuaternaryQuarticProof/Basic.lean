@@ -1313,6 +1313,47 @@ theorem hasRankCaseApolarComponentData_of_existentialBinaryFormData
       (residualEval_sq_lt_of_eq_add_mem_ker_catalecticantMap
         (B := B) (p := p) (u := u) hqdecomp hqK hqneg)
 
+theorem hasRankCaseNegativeSquareApolarData_of_existentialBinaryFormData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseExistentialBinaryFormData B p u hu) :
+    HasRankCaseNegativeSquareApolarData B p u hu := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    exact hdata1 hrank1
+  constructor
+  · intro hrank2
+    refine ⟨(hdata2 hrank2).1, ?_⟩
+    intro A W hAann hAW hAdim hWdim
+    have hWpos : 0 < Module.finrank ℝ W := by omega
+    rcases exists_mem_ne_zero_of_finrank_pos (K := ℝ) (V := linSubmodule)
+        (s := W) hWpos with
+      ⟨x, hxW, hxne⟩
+    have hx : (x : Poly) ≠ 0 := by
+      intro hzero
+      exact hxne (Subtype.ext hzero)
+    rcases (hdata2 hrank2).2 A W x hAann hAW hxW hx hAdim hWdim with
+      ⟨y, hyW, hynot, hform⟩
+    rcases exists_negative_pure_square_of_binaryLowRankNormalForm
+        (B := B) (p := p) (u := u)
+        (x := x) (y := y) hform
+        (binaryRestriction_eval_eq B p u x y) with
+      ⟨z, hzspan, hneg⟩
+    have hzW : z ∈ W := by
+      have hspan : Submodule.span ℝ ({x, y} : Set linSubmodule) = W :=
+        span_rank_two_support_pair_eq hx hxW hyW hynot hWdim
+      rwa [hspan] at hzspan
+    have hz : (z : Poly) ≠ 0 := by
+      intro hzero
+      have hval_zero :
+          B ((linProduct z z : quadSubmodule).1^2) (residual p u) = 0 := by
+        simp [linProduct, hzero]
+      linarith
+    exact ⟨z, hzW, hz, hneg⟩
+  · intro hrank3
+    exact hdata3 hrank3
+
 theorem hasRankCaseKernelDecompositionApolarData_of_productIndependenceApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -1819,10 +1860,9 @@ theorem residual_eq_zero_of_existentialBinaryFormData
     (hsocp : IsSOCP B p u)
     (hdata : HasRankCaseExistentialBinaryFormData B p u hu) :
     residual p u = 0 :=
-  residual_eq_zero_of_rankCaseApolarComponentData
+  residual_eq_zero_of_negativeSquareApolarData
     (B := B) hu hp hsocp
-    (hasRankCaseApolarComponentData_of_existentialBinaryFormData
-      (B := B) hp hsocp.1 hdata)
+    (hasRankCaseNegativeSquareApolarData_of_existentialBinaryFormData hdata)
 
 theorem residual_eq_zero_of_kernelDecompositionApolarData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}

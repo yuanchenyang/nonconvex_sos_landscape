@@ -6584,4 +6584,40 @@ statement.
 
 No Julia numerical claims were used in this round.
 
+\section*{Binary forms imply negative-square data}
+
+\paragraph{Gap targeted.}
+The existential binary normal-form interface should now be subordinate to the
+negative-square interface, rather than maintaining a separate proof route.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_existentialBinaryFormData}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  In rank two, it chooses a
+nonzero vector \(x\) in the two-dimensional complement, uses the existential
+binary normal-form hypothesis to find a second direction \(y\), applies the
+existing binary negative-square theorem, and transports the resulting vector
+back into the complement plane.
+
+Updated
+\[
+\texttt{residual\_eq\_zero\_of\_existentialBinaryFormData}
+\]
+to route through \texttt{residual\_eq\_zero\_of\_negativeSquareApolarData}.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+completes successfully.
+
+\paragraph{Remaining blockers.}
+The preferred current interface is the negative-square apolar data package:
+rank-case annihilator-map bounds plus a rank-two negative pure square in the
+binary support plane.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
