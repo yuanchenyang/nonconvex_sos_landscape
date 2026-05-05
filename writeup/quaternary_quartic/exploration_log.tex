@@ -9811,4 +9811,47 @@ the rank-two normalized-position theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Low-rank apolar routes with universal kernel equations}
+
+\paragraph{Gap targeted.}
+The proof could already close from rank-case support bounds plus universal
+rank-two kernel-equation data, but the low-rank apolar theorem-level packages
+did not expose this route directly.  This forced later work to detour through
+normalized-position or branch/canonical packages even if the kernel-equation
+input is proved first.
+
+\paragraph{Lean progress.}
+Added residual-level routes from universal kernel-equation data paired with:
+\[
+\texttt{HasLowRankApolarSupportTheorem},\quad
+\texttt{HasLowRankApolarAnnihilatorMapTheorem},\quad
+\texttt{HasLowRankApolarSupportDecomposition},\quad
+\texttt{HasLowRankApolarProductKernelDecomposition}.
+\]
+Added the matching theorem-level routes with names ending in
+\[
+\texttt{\_and\_universalKernelEquationData}.
+\]
+
+\paragraph{Strategy change.}
+The remaining proof can now close from either of the two rank-two formulations:
+universal normalized-position data or universal kernel-equation data.  The
+apolar side can be supplied in any of the equivalent low-rank forms.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The substantive blockers are still the low-rank apolar theorem and the
+rank-two binary kernel-equation/normalized-position theorem.  This round
+removed one routing dependency between those two inputs and the final theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
