@@ -12327,4 +12327,51 @@ bound and this rank-three exact-sequence obstruction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Hilbert first-entry to annihilator dimension}
+
+\paragraph{Gap targeted.}
+The blueprint proves the low-rank support statement by showing that the first
+Hilbert-function entry \(h_1\), the number of essential variables, is bounded
+by the catalecticant rank \(k\).  The Lean target is instead a lower bound on
+\(\dim\Ann_1\).  The conversion \(h_1=4-\dim\Ann_1\) had not been isolated.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasRankTwoApolarHilbertFirstBound},
+\qquad
+\texttt{HasRankThreeApolarHilbertFirstBound},
+\]
+and proved:
+\[
+\texttt{rankTwoDimensionBound\_of\_rankTwoHilbertFirstBound},
+\qquad
+\texttt{rankThreeDimensionBound\_of\_rankThreeHilbertFirstBound}.
+\]
+These lemmas use that \(\Ann_1\) is a subspace of the four-dimensional linear
+space.  I also factored the rank-three Macaulay bridge through:
+\[
+\texttt{rankThreeHilbertFirstBound\_of\_rankThreeMacaulayObstruction}.
+\]
+
+Added direct wrappers reducing the top-level theorem to:
+\[
+\texttt{HasRankTwoApolarHilbertFirstBound}
+\]
+and:
+\[
+\texttt{HasRankThreeApolarMacaulayObstruction}.
+\]
+
+\paragraph{Strategy change.}
+The remaining rank-two obligation now matches the blueprint's Macaulay-growth
+claim \(h_1\le2\) directly.  The remaining rank-three obligation remains the
+exact-sequence construction of the forbidden Macaulay case in the bad
+\(h_1=4\) branch.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
