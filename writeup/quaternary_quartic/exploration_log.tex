@@ -5275,4 +5275,46 @@ linear independence from the direct-sum decomposition, prove exact
 
 No Julia numerical claims were used in this round.
 
+\section*{Reducing exact symmetric-square dimensions to product independence}
+
+\paragraph{Gap targeted.}
+The rank-one and rank-two component hypotheses still assumed exact dimensions
+\(\dim\Sym^2A=6\) and \(\dim\Sym^2A=3\).  Existing Catalecticant lemmas prove
+these exact dimensions from linear independence of the symmetric basis-product
+families, which is the concrete algebraic fact expected from a direct-sum
+coordinate argument.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Support.lean}:
+\[
+\texttt{hasRankTwoSupportComponentHypothesis\_of\_basis\_product\_independence}
+\]
+and
+\[
+\texttt{hasRankOneSupportComponentHypothesis\_of\_basis\_product\_independence}.
+\]
+The rank-two constructor uses a basis \(\beta:\texttt{Fin 2}\to A\) and
+linear independence of
+\[
+\{\beta_i\beta_j:i\le j\}
+\]
+to obtain \(\dim\Sym^2A=3\).  The rank-one constructor uses the analogous
+\(\texttt{Fin 3}\) family to obtain \(\dim\Sym^2A=6\).  Both then invoke the
+previous support constructors.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The exact symmetric-square dimension obligations are now reduced to concrete
+basis-product linear independence.  Remaining structural work: prove these
+linear-independence facts from \(E=A\oplus W\), prove the rank-two combined
+product independence, and derive binary kernel-equation alternatives.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
