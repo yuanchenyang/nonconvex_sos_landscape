@@ -11750,4 +11750,43 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Direct reduction to the annihilator-map theorem}
+
+\paragraph{Gap targeted.}
+After reducing the root pipeline to
+\texttt{HasLowRankApolarSupportTheorem}, the next proof interface was still
+phrased in terms of support/codimension packaging.  The most concrete remaining
+obligation is the equivalent annihilator-map rank statement:
+\[
+\dim \operatorname{range}(\texttt{linearAnnihilatorMap}) \le k
+\quad\text{from}\quad
+\dim \operatorname{range}(\texttt{catalecticantMap}) \le k
+\]
+for \(k \le 3\).
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarAnnihilatorMapTheorem\_direct},
+\]
+and the root-level helper:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarAnnihilatorMapTheorem\_direct}.
+\]
+These theorems compose the existing support/annihilator-map equivalence with
+the direct binary negative-square pipeline.  A per-instance proof of
+\texttt{HasLowRankApolarAnnihilatorMapTheorem} is now sufficient to prove the
+target theorem.
+
+\paragraph{Strategy change.}
+Future rounds can work directly on the linear-algebraic apolar theorem rather
+than first constructing support subspaces.  The support formulation remains
+available by equivalence, but the leading blocker is now isolated as the range
+dimension bound for \texttt{linearAnnihilatorMap}.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
