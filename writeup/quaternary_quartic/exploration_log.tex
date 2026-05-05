@@ -7696,4 +7696,57 @@ rank-two canonical/normalized binary kernel construction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Annihilator-map form of the support gap}
+
+\paragraph{Gap targeted.}
+The low-rank apolar support theorem still bundled two steps: bounding the range
+of the linear annihilator map and then converting that bound into a large
+linear annihilator subspace.  The second step is already formalized by
+rank-nullity, so the remaining structural gap should expose only the map-rank
+statement.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasLowRankApolarAnnihilatorMapTheorem}
+\]
+as the monotone statement
+\[
+\operatorname{rank} C_\lambda \le k \Longrightarrow
+\operatorname{rank}(\texttt{linearAnnihilatorMap}) \le k
+\quad (k\le3).
+\]
+Proved
+\[
+\texttt{hasLowRankApolarSupportTheorem\_of\_annihilatorMapTheorem}
+\]
+and the casewise bridge
+\[
+\texttt{hasRankCaseAnnihilatorMapBounds\_of\_lowRankApolarAnnihilatorMapTheorem}.
+\]
+Also added the residual/root reductions through annihilator-map theorem plus
+canonical kernel data.
+
+\paragraph{Strategy change.}
+The support side of the final proof is now reduced to the finite-dimensional
+apolar statement that the degree-one annihilator map has rank at most the
+catalecticant rank in ranks \(1,2,3\).  Once this map-rank theorem is proved,
+the existing Lean code obtains the annihilator subspace and complement
+automatically.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The open mathematical inputs are the low-rank apolar annihilator-map theorem
+and the rank-two canonical/normalized binary kernel construction.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -358,6 +358,13 @@ def HasRankCaseAnnihilatorMapBounds
   (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
     Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 3)
 
+def HasLowRankApolarAnnihilatorMapTheorem
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  ∀ k : ℕ,
+    k ≤ 3 →
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) ≤ k →
+        Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ k
+
 def HasRankCaseApolarSupportBounds
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
@@ -1622,6 +1629,28 @@ theorem hasRankCaseAnnihilatorMapBounds_of_apolarSupportBounds
     exact annihilatorMap_range_le_three_of_hasLinearAnnihilatorCodimAtMost
       (B := B) (p := p) (u := u) (hsupport3 hrank3)
 
+theorem hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hann : HasLowRankApolarAnnihilatorMapTheorem B p u) :
+    HasRankCaseAnnihilatorMapBounds B p u := by
+  constructor
+  · intro hrank1
+    exact hann 1 (by norm_num) (by omega)
+  constructor
+  · intro hrank2
+    exact hann 2 (by norm_num) (by omega)
+  · intro hrank3
+    exact hann 3 (by norm_num) (by omega)
+
+theorem hasLowRankApolarSupportTheorem_of_annihilatorMapTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hann : HasLowRankApolarAnnihilatorMapTheorem B p u) :
+    HasLowRankApolarSupportTheorem B p u := by
+  intro k hk hrank_le
+  exact hasLinearAnnihilatorCodimAtMost_of_annihilatorMap_range
+    (B := B) (p := p) (u := u) (k := k) (by omega)
+    (hann k hk hrank_le)
+
 theorem hasRankCaseApolarSupportBounds_of_lowRankApolarSupportTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupport : HasLowRankApolarSupportTheorem B p u) :
@@ -2368,6 +2397,19 @@ theorem residual_eq_zero_of_lowRankApolarSupportTheorem_and_canonicalKernelData
     (hasLowRankApolarSupportDecomposition_of_lowRankApolarSupportTheorem hsupport)
     hcanon
 
+theorem residual_eq_zero_of_lowRankApolarAnnihilatorMapTheorem_and_canonicalKernelData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hann : HasLowRankApolarAnnihilatorMapTheorem B p u)
+    (hcanon : HasRankTwoExistentialCanonicalKernelData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarSupportTheorem_and_canonicalKernelData
+    (B := B) hu hp hsocp
+    (hasLowRankApolarSupportTheorem_of_annihilatorMapTheorem hann)
+    hcanon
+
 theorem residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -2825,6 +2867,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheo
   exact residual_eq_zero_of_lowRankApolarSupportTheorem_and_canonicalKernelData
     (B := B) hu hp hsocp
     (hsupport B p u hu hB hp hsocp)
+    (hcanon B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarAnnihilatorMapTheorem_and_canonicalKernelData
+    (hann :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarAnnihilatorMapTheorem B p u)
+    (hcanon :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialCanonicalKernelData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarAnnihilatorMapTheorem_and_canonicalKernelData
+    (B := B) hu hp hsocp
+    (hann B p u hu hB hp hsocp)
     (hcanon B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
