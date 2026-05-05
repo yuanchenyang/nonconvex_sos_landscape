@@ -11484,4 +11484,46 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Canonical data for transported hyperbolic and elliptic branches}
+
+\paragraph{Gap targeted.}
+After transporting both kernel positions and negative Hankel witnesses, the
+binary layer still needed the exact \texttt{HasBinaryCanonicalKernelData}
+objects consumed downstream.  The hyperbolic branches should enter through the
+\(xy\) alternative, while the elliptic branch should enter through the
+\((1,0,1)\) alternative.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{canonicalKernelData\_of\_hyperbolic\_shearY\_shearX\_dual},
+\]
+\[
+\texttt{canonicalKernelData\_of\_elliptic\_shearY\_diagonal\_dual},
+\qquad
+\texttt{canonicalKernelData\_of\_hyperbolic\_zero\_xCoeff\_shearY\_dual}.
+\]
+Each theorem combines the previously proved transformed kernel equation with
+the corresponding transformed negative Hankel witness to build full canonical
+kernel data for the transformed coefficients.
+
+\paragraph{Strategy change.}
+The hyperbolic and elliptic discriminant branches now reach the binary
+canonical-data interface directly.  The remaining binary gap is the parabolic
+branch's \texttt{ySq} alternative, which requires a linear independence
+certificate for the first two transformed columns rather than a negative
+Hankel witness.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -1332,6 +1332,43 @@ theorem hankelNegativeValue_of_hyperbolic_shearY_shearX_dual
     HasBinaryHankelNegativeValue.shearX_dual
       (a := A) (b := B) (c := C) (d := D) (e := e) (tau := mu) hfirst
 
+theorem canonicalKernelData_of_hyperbolic_shearY_shearX_dual
+    {a b c d e r s t : ℝ}
+    (hr : r ≠ 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    let disc := binaryKernelDiscriminant r s t
+    let tau := (s - Real.sqrt disc) / (2 * r)
+    let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+    let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+    let C := c + 2 * d * tau + e * tau^2
+    let D := d + e * tau
+    let mu := r / Real.sqrt disc
+    HasBinaryCanonicalKernelData
+        A
+        (A * mu + B)
+        (A * mu^2 + 2 * B * mu + C)
+        (A * mu^3 + 3 * B * mu^2 + 3 * C * mu + D)
+        (A * mu^4 + 4 * B * mu^3 + 6 * C * mu^2 + 4 * D * mu + e) := by
+  dsimp only
+  let disc := binaryKernelDiscriminant r s t
+  let tau := (s - Real.sqrt disc) / (2 * r)
+  let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+  let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+  let C := c + 2 * d * tau + e * tau^2
+  let D := d + e * tau
+  let mu := r / Real.sqrt disc
+  refine Or.inl ⟨?_, ?_⟩
+  · simpa [disc, tau, A, B, C, D, mu] using
+      xy_kernel_of_hyperbolic_shearY_shearX_dual_kernel
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc_pos hker
+  · simpa [disc, tau, A, B, C, D, mu] using
+      hankelNegativeValue_of_hyperbolic_shearY_shearX_dual
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc_pos hneg
+
 theorem binaryHankelMul_elliptic_shearY_dual_diagonal_kernel
     {a b c d e r s t : ℝ}
     (hr : r ≠ 0)
@@ -1468,6 +1505,42 @@ theorem hankelNegativeValue_of_elliptic_shearY_diagonal_dual
       (a := A) (b := B) (c := C) (d := D) (e := e)
       (α := scale) (δ := 1) hscale hone hfirst
 
+theorem canonicalKernelData_of_elliptic_shearY_diagonal_dual
+    {a b c d e r s t : ℝ}
+    (hdisc_neg : binaryKernelDiscriminant r s t < 0)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    let T := -binaryKernelDiscriminant r s t / (4 * r)
+    let tau := s / (2 * r)
+    let scale := Real.sqrt (r / T)
+    let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+    let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+    let C := c + 2 * d * tau + e * tau^2
+    let D := d + e * tau
+    HasBinaryCanonicalKernelData
+        (A * scale^4)
+        (B * scale^3)
+        (C * scale^2)
+        (D * scale)
+        e := by
+  dsimp only
+  let T := -binaryKernelDiscriminant r s t / (4 * r)
+  let tau := s / (2 * r)
+  let scale := Real.sqrt (r / T)
+  let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+  let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+  let C := c + 2 * d * tau + e * tau^2
+  let D := d + e * tau
+  refine Or.inr (Or.inr ⟨?_, ?_⟩)
+  · simpa [T, tau, scale, A, B, C, D] using
+      elliptic_kernel_of_elliptic_shearY_diagonal_dual_kernel
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hdisc_neg hker
+  · simpa [T, tau, scale, A, B, C, D] using
+      hankelNegativeValue_of_elliptic_shearY_diagonal_dual
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hdisc_neg hneg
+
 theorem xy_kernel_of_hyperbolic_zero_xCoeff_shearY_dual_kernel
     {a b c d e r s t : ℝ}
     (hr : r = 0)
@@ -1526,6 +1599,27 @@ theorem hankelNegativeValue_of_hyperbolic_zero_xCoeff_shearY_dual
   simpa using
     HasBinaryHankelNegativeValue.shearY_dual
       (a := a) (b := b) (c := c) (d := d) (e := e) (tau := t / s) hneg
+
+theorem canonicalKernelData_of_hyperbolic_zero_xCoeff_shearY_dual
+    {a b c d e r s t : ℝ}
+    (hr : r = 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    HasBinaryCanonicalKernelData
+        (a + 4 * b * (t / s) + 6 * c * (t / s)^2 +
+          4 * d * (t / s)^3 + e * (t / s)^4)
+        (b + 3 * c * (t / s) + 3 * d * (t / s)^2 + e * (t / s)^3)
+        (c + 2 * d * (t / s) + e * (t / s)^2)
+        (d + e * (t / s))
+        e := by
+  refine Or.inl ⟨?_, ?_⟩
+  · exact xy_kernel_of_hyperbolic_zero_xCoeff_shearY_dual_kernel
+      (a := a) (b := b) (c := c) (d := d) (e := e)
+      (r := r) (s := s) (t := t) hr hdisc_pos hker
+  · exact hankelNegativeValue_of_hyperbolic_zero_xCoeff_shearY_dual
+      (a := a) (b := b) (c := c) (d := d) (e := e)
+      (r := r) (s := s) (t := t) hr hdisc_pos hneg
 
 theorem exists_nonzero_binaryHankel_kernel_equations_of_finrank_range_le_two
     {a b c d e : ℝ}
