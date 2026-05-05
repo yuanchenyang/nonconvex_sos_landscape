@@ -387,6 +387,25 @@ def HasRankTwoUniversalKernelEquationData
                     Module.finrank ℝ W = 2 →
                       HasBinaryRestrictionKernelEquationCase B p u x y
 
+def HasRankTwoUniversalCanonicalKernelData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+      A ≤ linearAnnihilator B p u →
+        IsCompl A W →
+          x ∈ W →
+            y ∈ W →
+              y ∉ ℝ ∙ x →
+                (x : Poly) ≠ 0 →
+                  Module.finrank ℝ A = 2 →
+                    Module.finrank ℝ W = 2 →
+                      HasBinaryCanonicalKernelData
+                        (binaryRestrictionCoeffA B p u x)
+                        (binaryRestrictionCoeffB B p u x y)
+                        (binaryRestrictionCoeffC B p u x y)
+                        (binaryRestrictionCoeffD B p u x y)
+                        (binaryRestrictionCoeffE B p u y)
+
 def HasRankCaseKernelEquationApolarData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u) : Prop :=
@@ -2265,6 +2284,22 @@ theorem hasRankTwoUniversalKernelEquationData_of_kernelEquationApolarData
   rcases hdata with ⟨_hdata1, hdata2, _hdata3⟩
   exact (hdata2 hrank2).2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
 
+theorem hasRankTwoUniversalCanonicalKernelData_of_universalKernelEquationData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hcases : HasRankTwoUniversalKernelEquationData B p u) :
+    HasRankTwoUniversalCanonicalKernelData B p u := by
+  intro hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+  exact binaryRestriction_canonicalKernelData_of_kernelEquationCase
+    (hcases hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim)
+
+theorem hasRankTwoUniversalKernelEquationData_of_universalCanonicalKernelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hcanon : HasRankTwoUniversalCanonicalKernelData B p u) :
+    HasRankTwoUniversalKernelEquationData B p u := by
+  intro hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+  exact binaryRestriction_kernelEquationCase_of_canonicalKernelData
+    (hcanon hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim)
+
 theorem hasRankCaseKernelEquationApolarData_of_annihilatorBounds_and_universalKernelEquationData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -2812,6 +2847,20 @@ theorem residual_eq_zero_of_splitAnnihilatorBounds_and_universalKernelEquationDa
     (hasRankCaseAnnihilatorMapBounds_of_splitAnnihilatorMapBounds
       hbound1 hbound2 hbound3)
     hcases
+
+theorem residual_eq_zero_of_splitAnnihilatorBounds_and_universalCanonicalKernelData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hbound1 : HasRankOneApolarAnnihilatorMapBound B p u)
+    (hbound2 : HasRankTwoApolarAnnihilatorMapBound B p u)
+    (hbound3 : HasRankThreeApolarAnnihilatorMapBound B p u)
+    (hcanon : HasRankTwoUniversalCanonicalKernelData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_splitAnnihilatorBounds_and_universalKernelEquationData
+    (B := B) hu hp hsocp hbound1 hbound2 hbound3
+    (hasRankTwoUniversalKernelEquationData_of_universalCanonicalKernelData hcanon)
 
 theorem residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
@@ -3475,6 +3524,45 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_splitAnnihilatorBounds_a
     (hbound2 B p u hu hB hp hsocp)
     (hbound3 B p u hu hB hp hsocp)
     (hcases B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_splitAnnihilatorBounds_and_universalCanonicalKernelData
+    (hbound1 :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankOneApolarAnnihilatorMapBound B p u)
+    (hbound2 :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoApolarAnnihilatorMapBound B p u)
+    (hbound3 :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankThreeApolarAnnihilatorMapBound B p u)
+    (hcanon :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoUniversalCanonicalKernelData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_splitAnnihilatorBounds_and_universalCanonicalKernelData
+    (B := B) hu hp hsocp
+    (hbound1 B p u hu hB hp hsocp)
+    (hbound2 B p u hu hB hp hsocp)
+    (hbound3 B p u hu hB hp hsocp)
+    (hcanon B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
     (hprod :

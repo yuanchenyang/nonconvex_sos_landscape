@@ -605,6 +605,35 @@ theorem binaryRestriction_canonicalKernelData_of_kernelEquationCase
       fin_cases i <;> simp [binaryHankelMul, hc, hd, he]
     · simpa [hc, hd, he] using ellipticKernel_binaryHankelNegativeValue hne
 
+theorem binaryRestriction_kernelEquationCase_of_canonicalKernelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}
+    (hcanon :
+      HasBinaryCanonicalKernelData
+        (binaryRestrictionCoeffA B p u x)
+        (binaryRestrictionCoeffB B p u x y)
+        (binaryRestrictionCoeffC B p u x y)
+        (binaryRestrictionCoeffD B p u x y)
+        (binaryRestrictionCoeffE B p u y)) :
+    HasBinaryRestrictionKernelEquationCase B p u x y := by
+  rcases hcanon with hxy | hySq | hell
+  · rcases xy_kernel_equations_of_binaryHankelMul_eq_zero hxy.1 with
+      ⟨hb, hc, hd⟩
+    refine Or.inl ⟨hb, hc, hd, ?_⟩
+    rcases hxy.2 with ⟨r, _s, t, hneg⟩
+    refine ⟨r, t, ?_⟩
+    simpa [binaryHankelQuad, hb, hc, hd] using hneg
+  · rcases ySq_kernel_equations_of_binaryHankelMul_eq_zero hySq.1 with
+      ⟨hc, hd, he⟩
+    refine Or.inr (Or.inl ⟨hc, hd, he, ?_⟩)
+    exact ySqKernel_b_ne_zero_of_column_linearIndependent hySq.2
+  · rcases elliptic_kernel_equations_of_binaryHankelMul_eq_zero hell.1 with
+      ⟨hc, hd, he⟩
+    refine Or.inr (Or.inr ⟨hc, hd, he, ?_⟩)
+    by_contra hzero
+    push Not at hzero
+    rcases hell.2 with ⟨r, s, t, hneg⟩
+    simp [binaryHankelQuad, hc, hd, he, hzero.1, hzero.2] at hneg
+
 theorem binaryLowRankNegativeNormalForm_of_kernelBranchCertificate
     {a b c d e : ℝ}
     (hcert : HasBinaryKernelBranchCertificate a b c d e) :

@@ -8275,4 +8275,48 @@ route.
 
 No Julia numerical claims were used in this round.
 
+\section*{Universal canonical kernel route}
+
+\paragraph{Gap targeted.}
+The rank-two kernel-equation obligation was exposed directly in terms of the
+three syntactic binary branches.  The binary layer already has a more invariant
+canonical-kernel package, but it only projected from equation cases to canonical
+data, not back.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{binaryRestriction\_kernelEquationCase\_of\_canonicalKernelData}
+\]
+in \texttt{QuaternaryQuarticProof.Binary}.  This proves that each canonical
+binary Hankel kernel branch yields the corresponding binary restriction
+kernel-equation case.  Added
+\[
+\texttt{HasRankTwoUniversalCanonicalKernelData}
+\]
+and bridges in \texttt{QuaternaryQuarticProof.Basic} between universal
+canonical-kernel data and universal kernel-equation data.  Added residual and
+root reductions from the three split annihilator-map bounds plus universal
+canonical-kernel data.
+
+\paragraph{Strategy change.}
+The rank-two side can now be closed by proving universal canonical kernel data;
+the equation-case package is recovered automatically.  This aligns the Lean
+route more closely with the blueprint's normalized binary Hankel analysis.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the three split exact annihilator-map bounds and the universal canonical
+rank-two binary kernel theorem, then replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
