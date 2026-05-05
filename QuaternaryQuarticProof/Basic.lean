@@ -486,6 +486,13 @@ def HasLowRankApolarEssentialQuotientBounds
   HasRankTwoApolarEssentialQuotientBound B p u ∧
     HasRankThreeApolarEssentialQuotientBound B p u
 
+def HasLowRankApolarEssentialQuotientTheorem
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  ∀ k : ℕ,
+    k ≤ 3 →
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = k →
+        Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) ≤ k
+
 def HasRankThreeApolarMacaulayObstruction
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
@@ -2445,6 +2452,12 @@ theorem lowRankApolarHilbertData_of_lowRankApolarEssentialQuotientBounds
   lowRankApolarHilbertData_of_rankTwo_rankThreeEssentialQuotientBounds
     hquot.1 hquot.2
 
+theorem lowRankApolarEssentialQuotientBounds_of_theorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasLowRankApolarEssentialQuotientTheorem B p u) :
+    HasLowRankApolarEssentialQuotientBounds B p u :=
+  ⟨hquot 2 (by norm_num), hquot 3 (by norm_num)⟩
+
 theorem lowRankApolarHilbertData_of_rankTwo_rankThreeApolarAnnihilatorMapBounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hbound2 : HasRankTwoApolarAnnihilatorMapBound B p u)
@@ -2612,6 +2625,20 @@ theorem hasLinearAnnihilatorCodimAtMost_zero_of_catalecticantMap_rank_zero
     (by
       rw [finrank_range_linearAnnihilatorMap_eq_zero_of_catalecticantMap_rank_zero
         (B := B) (p := p) (u := u) hrank])
+
+theorem lowRankApolarEssentialQuotientTheorem_of_bounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasLowRankApolarEssentialQuotientBounds B p u) :
+    HasLowRankApolarEssentialQuotientTheorem B p u := by
+  intro k hk hrank
+  interval_cases k
+  · rw [finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap]
+    rw [finrank_range_linearAnnihilatorMap_eq_zero_of_catalecticantMap_rank_zero
+      (B := B) (p := p) (u := u) hrank]
+  · rw [finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap]
+    exact rankOneApolarAnnihilatorMapBound_direct (B := B) (p := p) (u := u) hrank
+  · exact hquot.1 hrank
+  · exact hquot.2 hrank
 
 theorem hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -5023,6 +5050,17 @@ theorem residual_eq_zero_of_lowRankApolarEssentialQuotientBounds_direct
   residual_eq_zero_of_rankTwo_rankThreeEssentialQuotientBounds_direct
     (B := B) hu hp hsocp hquot.1 hquot.2
 
+theorem residual_eq_zero_of_lowRankApolarEssentialQuotientTheorem_direct
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hquot : HasLowRankApolarEssentialQuotientTheorem B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarEssentialQuotientBounds_direct
+    (B := B) hu hp hsocp
+    (lowRankApolarEssentialQuotientBounds_of_theorem hquot)
+
 theorem residual_eq_zero_of_rankTwoDimensionBound_rankThreeMacaulayObstruction_direct
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -6901,6 +6939,21 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarEssentialQu
   intro B p u hB hp hu hsocp
   letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
   exact residual_eq_zero_of_lowRankApolarEssentialQuotientBounds_direct
+    (B := B) hu hp hsocp
+    (hquot B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarEssentialQuotientTheorem_direct
+    (hquot :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarEssentialQuotientTheorem B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarEssentialQuotientTheorem_direct
     (B := B) hu hp hsocp
     (hquot B p u hu hB hp hsocp)
 

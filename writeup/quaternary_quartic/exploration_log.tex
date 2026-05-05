@@ -12679,4 +12679,54 @@ ranks \(k=2,3\).  Rank one is already formalized directly.
 
 No Julia numerical claims were used in this round.
 
+\section*{All-low-ranks quotient theorem}
+
+\paragraph{Gap targeted.}
+The unified quotient target covered ranks two and three, while rank zero and
+rank one were already available from earlier formalized arguments.  The
+blueprint's structural statement is naturally uniform for all catalecticant
+ranks \(k\le3\), so the next reduction was to expose that uniform theorem.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasLowRankApolarEssentialQuotientTheorem},
+\]
+which states that for every \(k\le3\), catalecticant rank \(k\) implies
+\[
+\dim(\texttt{linSubmodule}/\texttt{linearAnnihilator})\le k.
+\]
+Proved:
+\[
+\texttt{lowRankApolarEssentialQuotientTheorem\_of\_bounds}
+\]
+from the rank-two/rank-three quotient bounds.  The proof uses the existing
+rank-zero annihilator-map theorem for \(k=0\), the direct rank-one theorem for
+\(k=1\), and the assumed quotient bounds for \(k=2,3\).  Also proved:
+\[
+\texttt{lowRankApolarEssentialQuotientBounds\_of\_theorem}.
+\]
+
+Added direct wrappers:
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarEssentialQuotientTheorem\_direct}
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarEssentialQuotientTheorem\_direct}.
+\]
+
+\paragraph{Strategy change.}
+The remaining apolar support/Hilbert proof can now be stated uniformly as:
+\[
+\texttt{HasLowRankApolarEssentialQuotientTheorem}.
+\]
+Ranks zero and one are formally closed; only the mathematical content behind
+the rank-two and rank-three quotient inequalities remains.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
