@@ -10507,4 +10507,51 @@ three discriminant branches of the coordinate-free rank-two binary theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Binary quartic pullback bridge}
+
+\paragraph{Gap targeted.}
+The blueprint's rank-two binary proof normalizes the kernel quadratic by a real
+linear change of variables, proves a negative pure value in those normalized
+coordinates, and then returns to the original binary plane.  The Lean binary
+layer did not yet have a reusable bridge for this final pullback step.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{IsBinaryQuarticPullback}
+\]
+to record that one binary quartic is obtained from another by substituting a
+linear change of variables.  Added:
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_pullback}
+\]
+and
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_pullback\_lowRankNegativeNormalForm}.
+\]
+These lemmas show that a negative value in normalized coordinates gives a
+negative value in the original coordinates, and that the existing low-rank
+normal-form certificate can be used after such a pullback.
+
+\paragraph{Strategy change.}
+The remaining discriminant branches can focus on constructing normalized
+coefficients and proving the pullback identity.  They no longer need to repeat
+the negative-value transfer argument.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support and the
+actual coordinate-change construction for each binary discriminant branch.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

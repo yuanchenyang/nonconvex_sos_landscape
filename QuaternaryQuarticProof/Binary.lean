@@ -10,6 +10,12 @@ namespace QuaternaryQuartic
 def binaryQuarticEval (a b c d e x y : ℝ) : ℝ :=
   a * x^4 + 4 * b * x^3 * y + 6 * c * x^2 * y^2 + 4 * d * x * y^3 + e * y^4
 
+def IsBinaryQuarticPullback
+    (a b c d e A B C D E α β γ δ : ℝ) : Prop :=
+  ∀ X Y : ℝ,
+    binaryQuarticEval A B C D E X Y =
+      binaryQuarticEval a b c d e (α * X + β * Y) (γ * X + δ * Y)
+
 def binaryHankelQuad (a b c d e r s t : ℝ) : ℝ :=
   a * r^2 + 2 * b * r * s + 2 * c * r * t + c * s^2 + 2 * d * s * t + e * t^2
 
@@ -1419,6 +1425,23 @@ theorem binaryQuarticEval_exists_negative_of_lowRankNegativeNormalForm
     exact y_sq_kernel_binaryQuarticEval_exists_negative _ _ hb
   · rcases hell with ⟨rfl, rfl, rfl, hne⟩
     exact elliptic_kernel_binaryQuarticEval_exists_negative _ _ hne
+
+theorem binaryQuarticEval_exists_negative_of_pullback
+    {a b c d e A B C D E α β γ δ : ℝ}
+    (hpull : IsBinaryQuarticPullback a b c d e A B C D E α β γ δ)
+    (hneg : ∃ X Y : ℝ, binaryQuarticEval A B C D E X Y < 0) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 := by
+  rcases hneg with ⟨X, Y, hXY⟩
+  refine ⟨α * X + β * Y, γ * X + δ * Y, ?_⟩
+  rwa [← hpull X Y]
+
+theorem binaryQuarticEval_exists_negative_of_pullback_lowRankNegativeNormalForm
+    {a b c d e A B C D E α β γ δ : ℝ}
+    (hpull : IsBinaryQuarticPullback a b c d e A B C D E α β γ δ)
+    (hform : HasBinaryLowRankNegativeNormalForm A B C D E) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 :=
+  binaryQuarticEval_exists_negative_of_pullback hpull
+    (binaryQuarticEval_exists_negative_of_lowRankNegativeNormalForm hform)
 
 theorem binaryQuarticEval_exists_negative_of_canonicalKernelData
     {a b c d e : ℝ}
