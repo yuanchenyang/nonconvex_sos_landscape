@@ -2803,6 +2803,20 @@ theorem lowRankApolarEssentialQuotientBounds_of_coreData
   lowRankApolarEssentialQuotientBounds_of_lowRankApolarQuotientLocalData
     (lowRankApolarQuotientLocalData_of_coreData hdata)
 
+theorem lowRankApolarQuotientCoreData_of_essentialQuotientBounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasLowRankApolarEssentialQuotientBounds B p u) :
+    HasLowRankApolarQuotientCoreData B p u :=
+  ⟨rankTwoMacaulayGrowthBound_of_rankTwoEssentialQuotientBound hquot.1,
+    rankThreeBadBranchContradiction_of_rankThreeEssentialQuotientBound hquot.2⟩
+
+theorem lowRankApolarQuotientCoreData_iff_essentialQuotientBounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarQuotientCoreData B p u ↔
+      HasLowRankApolarEssentialQuotientBounds B p u :=
+  ⟨lowRankApolarEssentialQuotientBounds_of_coreData,
+    lowRankApolarQuotientCoreData_of_essentialQuotientBounds⟩
+
 theorem lowRankApolarEssentialQuotientBounds_of_lowRankApolarBlueprintLocalData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hdata : HasLowRankApolarBlueprintLocalData B p u) :

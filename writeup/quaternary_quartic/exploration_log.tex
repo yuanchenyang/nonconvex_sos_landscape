@@ -13708,4 +13708,31 @@ rank-three bad-branch contradiction to the rank-three quotient bound.
 
 No Julia numerical claims were used in this round.
 
+\section*{Core data equivalent to rank-pair quotient bounds}
+
+\paragraph{Gap targeted.}
+After proving the rank-two and rank-three component equivalences separately,
+the two-component core target still lacked a direct paired equivalence with
+the rank-two/rank-three essential quotient bounds.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{lowRankApolarQuotientCoreData\_of\_essentialQuotientBounds},
+\]
+and:
+\[
+\texttt{lowRankApolarQuotientCoreData\_iff\_essentialQuotientBounds}.
+\]
+
+\paragraph{Strategy change.}
+The two-component core target is now exactly equivalent to the pair of
+rank-two and rank-three essential quotient bounds.  This keeps the shortest
+remaining local target synchronized with the rank-pair quotient formulation.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
