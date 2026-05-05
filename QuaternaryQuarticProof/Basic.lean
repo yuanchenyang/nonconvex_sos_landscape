@@ -2640,6 +2640,32 @@ theorem lowRankApolarEssentialQuotientTheorem_of_bounds
   · exact hquot.1 hrank
   · exact hquot.2 hrank
 
+theorem lowRankApolarEssentialQuotientTheorem_of_lowRankApolarAnnihilatorMapTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hann : HasLowRankApolarAnnihilatorMapTheorem B p u) :
+    HasLowRankApolarEssentialQuotientTheorem B p u := by
+  intro k hk hrank
+  rw [finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap]
+  exact hann k hk (by omega)
+
+theorem hasLowRankApolarAnnihilatorMapTheorem_of_lowRankApolarEssentialQuotientTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasLowRankApolarEssentialQuotientTheorem B p u) :
+    HasLowRankApolarAnnihilatorMapTheorem B p u := by
+  intro k hk hrank_le
+  let n := Module.finrank ℝ (LinearMap.range (catalecticantMap B p u))
+  have hn_le_three : n ≤ 3 := by omega
+  have hquot_n := hquot n hn_le_three rfl
+  rw [finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap] at hquot_n
+  exact hquot_n.trans hrank_le
+
+theorem hasLowRankApolarAnnihilatorMapTheorem_iff_lowRankApolarEssentialQuotientTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarAnnihilatorMapTheorem B p u ↔
+      HasLowRankApolarEssentialQuotientTheorem B p u :=
+  ⟨lowRankApolarEssentialQuotientTheorem_of_lowRankApolarAnnihilatorMapTheorem,
+    hasLowRankApolarAnnihilatorMapTheorem_of_lowRankApolarEssentialQuotientTheorem⟩
+
 theorem hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hann : HasLowRankApolarAnnihilatorMapTheorem B p u) :

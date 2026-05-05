@@ -12729,4 +12729,41 @@ the rank-two and rank-three quotient inequalities remains.
 
 No Julia numerical claims were used in this round.
 
+\section*{Equivalence with the annihilator-map theorem}
+
+\paragraph{Gap targeted.}
+The new quotient theorem uses exact catalecticant rank, while the older
+annihilator-map theorem uses an at-most-\(k\) hypothesis.  Since the quotient
+dimension equals the annihilator-map range dimension, these two formulations
+should be formally interchangeable.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{lowRankApolarEssentialQuotientTheorem\_of\_lowRankApolarAnnihilatorMapTheorem},
+\]
+\[
+\texttt{hasLowRankApolarAnnihilatorMapTheorem\_of\_lowRankApolarEssentialQuotientTheorem},
+\]
+and:
+\[
+\texttt{hasLowRankApolarAnnihilatorMapTheorem\_iff\_lowRankApolarEssentialQuotientTheorem}.
+\]
+The reverse direction applies the exact-rank quotient theorem at
+\[
+n=\rank(\texttt{catalecticantMap})
+\]
+and then uses \(n\le k\).
+
+\paragraph{Strategy change.}
+The formal proof can now move freely between the quotient/Hilbert statement
+and the annihilator-map statement.  This confirms that the new quotient target
+is not an extra assumption but a reformulation of the prior apolar support
+interface.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
