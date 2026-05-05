@@ -5735,4 +5735,35 @@ rank two, and the rank-three kernel decomposition.
 
 No Julia numerical claims were used in this round.
 
+\section*{Direct rank-three kernel-to-factor-span bridge}
+
+\paragraph{Gap targeted.}
+In rank three, the blueprint uses \(\dim K=\dim L=7\) and \(L\subseteq K\) to
+identify the catalecticant kernel with the span of the seven factor quadratics.
+Lean already had the equality and a polynomial-kernel version, but not the
+direct statement for a \(\texttt{quadSubmodule}\) element of
+\(\ker(\texttt{catalecticantMap})\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{mem\_spanUQuad\_of\_rank\_three\_of\_mem\_ker\_catalecticantMap}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  It states that under
+FOCP, full rank of the relation map, and catalecticant rank three, every
+quadratic in \(\ker C_\lambda\) lies in \(\texttt{spanUQuad hu}\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+This removes another small conversion step in the rank-three branch.  The main
+remaining work is still the low-rank apolar support/decomposition theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

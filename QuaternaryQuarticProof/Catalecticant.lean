@@ -1783,6 +1783,22 @@ theorem mem_spanUQuad_of_rank_three_of_mem_catalecticantKernel
   rw [hspan_eq_ker]
   exact mem_ker_catalecticantMap_iff.mpr hqK
 
+theorem mem_spanUQuad_of_rank_three_of_mem_ker_catalecticantMap
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    {q : quadSubmodule}
+    (hqK : q ∈ LinearMap.ker (catalecticantMap B p u)) :
+    q ∈ spanUQuad hu := by
+  have hspan_eq_ker :
+      spanUQuad hu = LinearMap.ker (catalecticantMap B p u) :=
+    spanUQuad_eq_ker_catalecticantMap_of_rank_three
+      (B := B) (p := p) (u := u) hu hfocp hker hrank
+  rw [hspan_eq_ker]
+  exact hqK
+
 theorem linProduct_mem_spanUQuad_of_rank_three_of_mem_linearAnnihilator
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
