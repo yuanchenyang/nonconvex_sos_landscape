@@ -2774,6 +2774,30 @@ theorem finrank_cubicProductAnnihilator_le_two_of_contractionEval_ker_eq_bot
   finrank_cubicProductAnnihilator_le_two_of_contractionEval_injective
     (A := A) (P := P) (a0 := a0) hfin (LinearMap.ker_eq_bot.mp hker)
 
+theorem finrank_cubicProductAnnihilator_le_two_of_contractionEval_range_le_one
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    {η : (P.comap (symSquareSubmodule A).subtype).dualAnnihilator}
+    (hfin :
+      Module.finrank ℝ
+        ((P.comap (symSquareSubmodule A).subtype).dualAnnihilator) = 2)
+    {a0 : A}
+    (ha0 :
+      η.1 ⟨linProduct a0.1 a0.1,
+        linProduct_mem_linProductSubmodule a0 a0⟩ ≠ 0)
+    (hrange :
+      Module.finrank ℝ
+          (LinearMap.range (cubicProductAnnihilatorContractionEval A P a0)) ≤ 1) :
+    Module.finrank ℝ (cubicProductAnnihilator A P) ≤ 2 := by
+  have hker_le :
+      Module.finrank ℝ
+          (LinearMap.ker (cubicProductAnnihilatorContractionEval A P a0)) ≤ 1 :=
+    finrank_ker_cubicProductAnnihilatorContractionEval_le_one_of_dualAnnihilator_finrank_eq_two
+      (A := A) (P := P) (η := η) hfin ha0
+  have hsum :=
+    LinearMap.finrank_range_add_finrank_ker
+      (cubicProductAnnihilatorContractionEval A P a0)
+  omega
+
 theorem finrank_linQuadProductSubmodule_quotient_eq_finrank_cubicProductAnnihilator
     {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule} :
     Module.finrank ℝ
@@ -2818,6 +2842,38 @@ theorem macaulay_cokernel_bound_of_finrank_symSquare_quotient_eq_one
   refine macaulay_cokernel_bound_of_cubicProductAnnihilator_bound ?_
   rw [hquot]
   exact finrank_cubicProductAnnihilator_le_one_of_symSquare_quotient_eq_one hquot
+
+theorem macaulay_cokernel_bound_of_finrank_symSquare_quotient_eq_two_of_contractionEval_range_le_one
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    (hquot :
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 2)
+    {η : (P.comap (symSquareSubmodule A).subtype).dualAnnihilator}
+    {a0 : A}
+    (ha0 :
+      η.1 ⟨linProduct a0.1 a0.1,
+        linProduct_mem_linProductSubmodule a0 a0⟩ ≠ 0)
+    (hrange :
+      Module.finrank ℝ
+          (LinearMap.range (cubicProductAnnihilatorContractionEval A P a0)) ≤ 1) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) := by
+  refine macaulay_cokernel_bound_of_cubicProductAnnihilator_bound ?_
+  rw [hquot]
+  have hfin :
+      Module.finrank ℝ
+        ((P.comap (symSquareSubmodule A).subtype).dualAnnihilator) = 2 := by
+    rw [← finrank_quotient_eq_finrank_dualAnnihilator
+      (P.comap (symSquareSubmodule A).subtype)]
+    exact hquot
+  exact finrank_cubicProductAnnihilator_le_two_of_contractionEval_range_le_one
+    (A := A) (P := P) (η := η) hfin ha0 hrange
 
 theorem finrank_symSquare_quotient_eq_one_of_eq_spanPairProductsExceptZeroZero
     {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)

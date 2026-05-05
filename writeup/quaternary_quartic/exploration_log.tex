@@ -15670,4 +15670,36 @@ placeholder axiom until the final theorem is rewired.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-nullity closure for q=2 image branch}
+
+\paragraph{Gap targeted.}
+The remaining q=2 branch needs an image bound for contraction evaluation.
+This round removed the downstream rank-nullity bookkeeping so that the next
+Lean target is exactly that image bound.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{finrank\_cubicProductAnnihilator\_le\_two\_of\_contractionEval\_range\_le\_one}.
+\]
+It combines the existing q=2 kernel bound with the pending hypothesis that
+the contraction-evaluation image has dimension at most one.  Also added the
+corresponding Macaulay wrapper
+\[
+\texttt{macaulay\_cokernel\_bound\_of\_finrank\_symSquare\_quotient\_eq\_two\_of\_contractionEval\_range\_le\_one}.
+\]
+
+\paragraph{Strategy status.}
+The quotient-two Macaulay step is now reduced to a single central algebraic
+statement: in the non-injective contraction-evaluation branch, prove
+\[
+\dim\operatorname{range}(\texttt{cubicProductAnnihilatorContractionEval})
+\le 1.
+\]
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
