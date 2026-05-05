@@ -6698,4 +6698,47 @@ or negative-square theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Aligning annihilator bounds with apolar support}
+
+\paragraph{Gap targeted.}
+The current root reduction used rank-case bounds on the image of the linear
+annihilator map.  The blueprint's low-rank support lemma instead produces
+codimension data for the linear annihilator itself, via a large subspace
+\(\Ann_1(\lambda)\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankCaseApolarSupportBounds}
+\]
+for the rank-one, rank-two, and rank-three instances of
+\[
+\texttt{HasLinearAnnihilatorCodimAtMost}.
+\]
+Proved
+\[
+\texttt{hasRankCaseAnnihilatorMapBounds\_of\_apolarSupportBounds}
+\]
+using the existing finite-dimensional equivalence between annihilator
+codimension and annihilator-map range dimension.  Added residual and root
+reduction theorems showing that apolar support bounds plus
+\[
+\texttt{HasRankTwoExistentialBinaryFormData}
+\]
+imply the target theorem.
+
+\paragraph{Strategy change.}
+The remaining support obligation is now stated in the same direction as
+Lemma~\ref{lem:low-rank-support}: prove codimension support bounds first, then
+derive the map-rank bounds as a bookkeeping consequence.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The two remaining mathematical inputs are the low-rank apolar support bounds
+and the rank-two existential binary normal-form theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
