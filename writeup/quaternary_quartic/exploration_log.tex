@@ -6035,4 +6035,50 @@ together with the apolar annihilator-map bounds.
 
 No Julia numerical claims were used in this round.
 
+\section*{Full affine-linear basis product independence}
+
+\paragraph{Gap targeted.}
+The rank-one and rank-two product-independence obligations are direct-sum
+versions of a finite-dimensional fact: symmetric products of a basis of
+\(\Lin\) form a basis of \(\Quad\).  The previous round proved spanning; this
+round adds the corresponding linear independence statement for a
+four-element affine-linear basis.
+
+\paragraph{Lean progress.}
+Added a global bilinear product map
+\[
+\texttt{linProductBilin}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  Added:
+\[
+\texttt{linProductSubmodule\_top\_top\_le\_span\_basis\_products},
+\quad
+\texttt{span\_basis\_products\_eq\_top},
+\]
+and
+\[
+\texttt{linearIndependent\_basis\_products\_fin\_four}.
+\]
+For any basis \(\beta:\texttt{Fin 4}\to\Lin\), the ten products
+\(\beta_i\beta_j\) with \(i\le j\) span \(\Quad\), and since
+\(\dim\Quad=10\), they are linearly independent.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+and
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+complete successfully.  The full quaternary harness is run for the commit; the
+expected remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The full-space basis product independence theorem is now formalized.  The next
+step is transporting it to bases adapted to complements \(A\oplus W\), yielding
+the rank-one/rank-two combined product-independence obligations.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
