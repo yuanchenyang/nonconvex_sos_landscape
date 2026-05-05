@@ -393,6 +393,19 @@ theorem elliptic_shearX_ySqCoeff_eq_neg_discriminant_div
   unfold binaryKernelDiscriminant
   ring
 
+theorem elliptic_dual_shearY_mixedCoeff_eq_zero
+    {r s : ℝ} (hr : r ≠ 0) :
+    s - 2 * r * (s / (2 * r)) = 0 := by
+  exact parabolic_shearY_mixedCoeff_eq_zero (r := r) (s := s) hr
+
+theorem elliptic_dual_shearY_ySqCoeff_eq_neg_discriminant_div
+    {r s t : ℝ} (hr : r ≠ 0) :
+    r * (s / (2 * r))^2 - s * (s / (2 * r)) + t =
+      -binaryKernelDiscriminant r s t / (4 * r) := by
+  field_simp [hr]
+  unfold binaryKernelDiscriminant
+  ring
+
 theorem isBinaryQuadraticPullback_elliptic_shearX_to_diagonal
     {r s t : ℝ}
     (hdisc_neg : binaryKernelDiscriminant r s t < 0) :
@@ -1181,6 +1194,98 @@ theorem xy_kernel_of_hyperbolic_shearY_shearX_dual_kernel
     (d := A * mu^3 + 3 * B * mu^2 + 3 * C * mu + D)
     (e := A * mu^4 + 4 * B * mu^3 + 6 * C * mu^2 + 4 * D * mu + e)
     (S := Real.sqrt disc) hsqrt hsecond
+
+theorem binaryHankelMul_elliptic_shearY_dual_diagonal_kernel
+    {a b c d e r s t : ℝ}
+    (hr : r ≠ 0)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0) :
+    binaryHankelMul
+        (a + 4 * b * (s / (2 * r)) + 6 * c * (s / (2 * r))^2 +
+          4 * d * (s / (2 * r))^3 + e * (s / (2 * r))^4)
+        (b + 3 * c * (s / (2 * r)) + 3 * d * (s / (2 * r))^2 +
+          e * (s / (2 * r))^3)
+        (c + 2 * d * (s / (2 * r)) + e * (s / (2 * r))^2)
+        (d + e * (s / (2 * r)))
+        e
+        (![r, 0, -binaryKernelDiscriminant r s t / (4 * r)] : Fin 3 → ℝ) = 0 := by
+  have htransport := binaryHankelMul_shearY_dual_kernel
+    (a := a) (b := b) (c := c) (d := d) (e := e)
+    (r := r) (s := s) (t := t) (tau := s / (2 * r)) hker
+  have hmix : s - 2 * r * (s / (2 * r)) = 0 :=
+    elliptic_dual_shearY_mixedCoeff_eq_zero (r := r) (s := s) hr
+  have hy :
+      r * (s / (2 * r))^2 - s * (s / (2 * r)) + t =
+        -binaryKernelDiscriminant r s t / (4 * r) :=
+    elliptic_dual_shearY_ySqCoeff_eq_neg_discriminant_div
+      (r := r) (s := s) (t := t) hr
+  simpa [hmix, hy] using htransport
+
+theorem elliptic_kernel_of_elliptic_shearY_diagonal_dual_kernel
+    {a b c d e r s t : ℝ}
+    (hdisc_neg : binaryKernelDiscriminant r s t < 0)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0) :
+    let T := -binaryKernelDiscriminant r s t / (4 * r)
+    let tau := s / (2 * r)
+    let scale := Real.sqrt (r / T)
+    let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+    let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+    let C := c + 2 * d * tau + e * tau^2
+    let D := d + e * tau
+    binaryHankelMul
+        (A * scale^4)
+        (B * scale^3)
+        (C * scale^2)
+        (D * scale)
+        e
+        (![1, 0, 1] : Fin 3 → ℝ) = 0 := by
+  dsimp only
+  have hr : r ≠ 0 := elliptic_xCoeff_ne_zero
+    (r := r) (s := s) (t := t) hdisc_neg
+  let T := -binaryKernelDiscriminant r s t / (4 * r)
+  let tau := s / (2 * r)
+  let scale := Real.sqrt (r / T)
+  let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+  let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+  let C := c + 2 * d * tau + e * tau^2
+  let D := d + e * tau
+  have hfirst :
+      binaryHankelMul A B C D e (![r, 0, T] : Fin 3 → ℝ) = 0 := by
+    simpa [T, tau, A, B, C, D] using
+      binaryHankelMul_elliptic_shearY_dual_diagonal_kernel
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hker
+  have hratio : 0 < r / T := by
+    simpa [T] using
+      elliptic_shearX_diagonal_ratio_pos
+        (r := r) (s := s) (t := t) hdisc_neg
+  have hscale_sq : scale^2 = r / T := by
+    simpa [scale] using Real.sq_sqrt (le_of_lt hratio)
+  have hdiag :
+      binaryHankelMul
+          (A * scale^4)
+          (B * scale^3 * 1)
+          (C * scale^2 * 1^2)
+          (D * scale * 1^3)
+          (e * 1^4)
+          (![r * 1^2, 0 * scale * 1, T * scale^2] : Fin 3 → ℝ) = 0 :=
+    binaryHankelMul_diagonal_dual_kernel
+      (a := A) (b := B) (c := C) (d := D) (e := e)
+      (r := r) (s := 0) (t := T) (α := scale) (δ := 1) hfirst
+  have hTscale : T * scale^2 = r := by
+    rw [hscale_sq]
+    have hT_ne : T ≠ 0 := by
+      intro hT
+      rw [hT, div_zero] at hratio
+      linarith
+    field_simp [hT_ne]
+  have hcanonical :
+      binaryHankelMul
+          (A * scale^4) (B * scale^3) (C * scale^2) (D * scale) e
+          (![r, 0, r] : Fin 3 → ℝ) = 0 := by
+    simpa [hTscale] using hdiag
+  exact elliptic_kernel_of_nonzero_scalar_elliptic_kernel
+    (a := A * scale^4) (b := B * scale^3) (c := C * scale^2)
+    (d := D * scale) (e := e) (R := r) hr hcanonical
 
 theorem exists_nonzero_binaryHankel_kernel_equations_of_finrank_range_le_two
     {a b c d e : ℝ}

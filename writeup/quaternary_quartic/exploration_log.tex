@@ -11307,4 +11307,48 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Elliptic binary kernel transport to the canonical branch}
+
+\paragraph{Gap targeted.}
+The elliptic discriminant branch needs the dual version of diagonalization and
+equal-coefficient scaling.  For \(D=s^2-4rt<0\), the leading coefficient
+\(r\) is nonzero.  A dual shear by \(s/(2r)\) diagonalizes the transported
+kernel, and a diagonal quartic pullback with scale
+\(\sqrt{r/(-D/(4r))}\) turns it into a scalar multiple of
+\((1,0,1)\).
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{elliptic\_dual\_shearY\_mixedCoeff\_eq\_zero},
+\quad
+\texttt{elliptic\_dual\_shearY\_ySqCoeff\_eq\_neg\_discriminant\_div},
+\]
+\[
+\texttt{binaryHankelMul\_elliptic\_shearY\_dual\_diagonal\_kernel},
+\quad
+\texttt{elliptic\_kernel\_of\_elliptic\_shearY\_diagonal\_dual\_kernel}.
+\]
+The final theorem packages the elliptic branch through a dual shear and
+diagonal scaling, then removes the nonzero scalar \(r\) to obtain the exact
+canonical vector \((1,0,1)\) for the transformed binary Hankel map.
+
+\paragraph{Strategy change.}
+The nonzero-leading parabolic, hyperbolic, and elliptic transport branches are
+now all connected to canonical kernel vectors.  The remaining binary transport
+work is mostly packaging: the zero-leading parabolic/hyperbolic branches and a
+single classifier that dispatches on the discriminant and leading coefficient.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}
