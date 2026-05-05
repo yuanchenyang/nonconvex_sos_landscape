@@ -5766,4 +5766,39 @@ remaining work is still the low-rank apolar support/decomposition theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Support complement separation wrappers}
+
+\paragraph{Gap targeted.}
+The remaining combined product-linear-independence proofs rely on direct-sum
+coordinates \(E=A\oplus W\).  A basic recurring fact is that a nonzero support
+direction in \(W\) is not in \(A\), and conversely for a nonzero vector in
+\(A\).  The generic complement lemmas existed, but the support code uses
+nonzeroness after coercion to \(\texttt{Poly}\).
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Support.lean}:
+\[
+\texttt{not\_mem\_left\_of\_support\_complement\_mem\_ne\_zero}
+\]
+and
+\[
+\texttt{not\_mem\_right\_of\_annihilator\_complement\_mem\_ne\_zero}.
+\]
+These specialize the generic \(\texttt{IsCompl}\) separation lemmas to
+\(\texttt{linSubmodule}\), converting \(\texttt{(z : Poly) \(\ne\) 0}\) into
+subtype nonzeroness.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The direct-sum separation facts are now available in the form needed for the
+remaining product-independence proofs.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

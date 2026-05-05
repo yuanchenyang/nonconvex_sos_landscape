@@ -467,6 +467,30 @@ theorem span_rank_one_support_vector_eq
       exact hx (congrArg (fun z : linSubmodule => (z : Poly)) h))
     hxW hW
 
+theorem not_mem_left_of_support_complement_mem_ne_zero
+    {A W : Submodule ℝ linSubmodule} {z : linSubmodule}
+    (hAW : IsCompl A W)
+    (hzW : z ∈ W)
+    (hz : (z : Poly) ≠ 0) :
+    z ∉ A :=
+  not_mem_left_of_isCompl_right_mem_ne_zero
+    (K := ℝ) (V := linSubmodule) hAW hzW
+    (by
+      intro hzero
+      exact hz (congrArg (fun q : linSubmodule => (q : Poly)) hzero))
+
+theorem not_mem_right_of_annihilator_complement_mem_ne_zero
+    {A W : Submodule ℝ linSubmodule} {z : linSubmodule}
+    (hAW : IsCompl A W)
+    (hzA : z ∈ A)
+    (hz : (z : Poly) ≠ 0) :
+    z ∉ W :=
+  not_mem_right_of_isCompl_left_mem_ne_zero
+    (K := ℝ) (V := linSubmodule) hAW hzA
+    (by
+      intro hzero
+      exact hz (congrArg (fun q : linSubmodule => (q : Poly)) hzero))
+
 theorem hasRankTwoSupportComponentHypothesis_of_independent_binary_data
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hSym :
