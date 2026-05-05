@@ -10964,4 +10964,52 @@ from normalized kernel pullbacks to canonical Hankel data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Complete scalar hyperbolic normalization}
+
+\paragraph{Gap targeted.}
+The hyperbolic binary kernel branch still had the \(r=0\) case open after the
+previous round.  For \(D>0\), this case forces \(s\ne0\), and a single shear
+normalizes the kernel to \(xy\).
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{hyperbolic\_zero\_xCoeff\_mixedCoeff\_ne\_zero},
+\quad
+\texttt{hyperbolic\_zero\_xCoeff\_shearX\_ySqCoeff\_eq\_zero},
+\]
+\[
+\texttt{isBinaryQuadraticPullback\_hyperbolic\_zero\_xCoeff\_to\_xy},
+\quad
+\texttt{exists\_binaryQuadraticPullback\_hyperbolic\_to\_xy\_of\_xCoeff\_eq\_zero},
+\]
+and the combined theorem:
+\[
+\texttt{exists\_binaryQuadraticPullback\_hyperbolic\_to\_xy}.
+\]
+The combined theorem states that every binary quadratic kernel with positive
+discriminant admits a quadratic pullback to \((0,S,0)\) with \(S\ne0\).
+
+\paragraph{Strategy change.}
+The scalar hyperbolic branch is now complete at the quadratic-normalization
+level.  Remaining binary work can focus on transporting the Hankel kernel data
+through this normalization and on the elliptic branch.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support, the
+elliptic normalization branch, and the link from normalized quadratic pullbacks
+to transformed binary Hankel canonical data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

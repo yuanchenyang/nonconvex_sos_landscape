@@ -281,6 +281,59 @@ theorem exists_binaryQuadraticPullback_hyperbolic_to_xy_of_xCoeff_ne_zero
     Real.sqrt D, hS, ?_⟩
   simpa [D, tau, add_comm, add_left_comm, add_assoc] using hfirst.comp hsecond
 
+theorem hyperbolic_zero_xCoeff_mixedCoeff_ne_zero
+    {r s t : ℝ} (hr : r = 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t) :
+    s ≠ 0 := by
+  intro hs
+  unfold binaryKernelDiscriminant at hdisc_pos
+  rw [hr, hs] at hdisc_pos
+  norm_num at hdisc_pos
+
+theorem hyperbolic_zero_xCoeff_shearX_ySqCoeff_eq_zero
+    {s t : ℝ} (hs : s ≠ 0) :
+    s * (-t / s) + t = 0 := by
+  field_simp [hs]
+  ring
+
+theorem isBinaryQuadraticPullback_hyperbolic_zero_xCoeff_to_xy
+    {r s t : ℝ} (hr : r = 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t) :
+    IsBinaryQuadraticPullback r s t 0 s 0 1 (-t / s) 0 1 := by
+  have hs : s ≠ 0 :=
+    hyperbolic_zero_xCoeff_mixedCoeff_ne_zero (r := r) (s := s) (t := t)
+      hr hdisc_pos
+  subst r
+  convert isBinaryQuadraticPullback_shearX 0 s t (-t / s) using 1
+  · ring
+  · simpa using (hyperbolic_zero_xCoeff_shearX_ySqCoeff_eq_zero
+      (s := s) (t := t) hs).symm
+
+theorem exists_binaryQuadraticPullback_hyperbolic_to_xy_of_xCoeff_eq_zero
+    {r s t : ℝ} (hr : r = 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t) :
+    ∃ alpha beta gamma delta S : ℝ,
+      S ≠ 0 ∧
+        IsBinaryQuadraticPullback r s t 0 S 0 alpha beta gamma delta := by
+  have hs : s ≠ 0 :=
+    hyperbolic_zero_xCoeff_mixedCoeff_ne_zero (r := r) (s := s) (t := t)
+      hr hdisc_pos
+  exact ⟨1, -t / s, 0, 1, s, hs,
+    isBinaryQuadraticPullback_hyperbolic_zero_xCoeff_to_xy
+      (r := r) (s := s) (t := t) hr hdisc_pos⟩
+
+theorem exists_binaryQuadraticPullback_hyperbolic_to_xy
+    {r s t : ℝ}
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t) :
+    ∃ alpha beta gamma delta S : ℝ,
+      S ≠ 0 ∧
+        IsBinaryQuadraticPullback r s t 0 S 0 alpha beta gamma delta := by
+  by_cases hr : r = 0
+  · exact exists_binaryQuadraticPullback_hyperbolic_to_xy_of_xCoeff_eq_zero
+      (r := r) (s := s) (t := t) hr hdisc_pos
+  · exact exists_binaryQuadraticPullback_hyperbolic_to_xy_of_xCoeff_ne_zero
+      (r := r) (s := s) (t := t) hr hdisc_pos
+
 def binaryHankelMul (a b c d e : ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ![a * v 0 + b * v 1 + c * v 2,
     b * v 0 + c * v 1 + d * v 2,
