@@ -8929,4 +8929,48 @@ then replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Product geometry from annihilator-map bounds}
+
+\paragraph{Gap targeted.}
+The product-independence geometry route still treated
+\[
+\texttt{HasRankCaseProductIndependenceGeometryData}
+\]
+as an independent apolar package.  The largest reusable gap was to derive this
+geometry package directly from the rank-case annihilator-map bounds plus the
+standing SOS and first-order critical point hypotheses.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseProductIndependenceGeometryData\_of\_annihilatorMapBounds}.
+\]
+The rank-one branch reuses the complement product-independence theorem and the
+existing negative binary restriction coefficient lemma.  The rank-two branch
+uses the established combined-product linear independence theorem.  The
+rank-three branch extracts a negative SOS summand and decomposes it through the
+rank-three catalecticant-kernel decomposition from the annihilator-map range
+bound.
+
+\paragraph{Strategy change.}
+Product-independence geometry is no longer a separate mathematical blocker on
+the normalized-Hankel route: it follows from the annihilator-map bounds already
+used by the support-bound reductions.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the rank-case annihilator-map bounds and the universal normalized-Hankel
+rank-two package, or route those through existing support-bound and binary
+classification certificates; then replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

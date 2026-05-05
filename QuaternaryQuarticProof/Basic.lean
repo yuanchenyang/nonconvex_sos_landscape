@@ -1659,6 +1659,43 @@ theorem hasRankCaseProductIndependenceGeometryData_of_productIndependenceApolarD
   · intro hrank3
     exact hdata3 hrank3
 
+theorem hasRankCaseProductIndependenceGeometryData_of_annihilatorMapBounds
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hbounds : HasRankCaseAnnihilatorMapBounds B p u) :
+    HasRankCaseProductIndependenceGeometryData B p u hu := by
+  rcases hbounds with ⟨hann1, hann2, hann3⟩
+  constructor
+  · intro hrank1
+    refine ⟨hann1 hrank1, ?_, ?_⟩
+    · intro A W x _hAann hAW hxW hx hAdim hWdim
+      exact exists_rank_one_combined_product_independence
+        hAW hxW hx hAdim hWdim
+    · intro A W x hAann hAW hxW hx _hAdim hWdim
+      exact rank_one_binaryRestrictionCoeffA_neg_of_annihilator_complement
+        (B := B) (p := p) (u := u) hu hp hfocp hrank1
+        hAann hAW hxW hx hWdim
+  constructor
+  · intro hrank2
+    refine ⟨hann2 hrank2, ?_⟩
+    intro A W x y z _hAann hAW hxW hyW hynot hx hAdim hWdim hzspan hz
+    exact exists_rank_two_combined_product_independence
+      hAW hxW hyW hynot hx hAdim hWdim hzspan hz
+  · intro hrank3
+    refine ⟨hann3 hrank3, ?_⟩
+    rcases exists_negative_sos_summand_of_catalecticantMap_rank_eq_three
+        (B := B) hu hp hfocp hrank3 with
+      ⟨q, hq, hqneg⟩
+    let qQuad : quadSubmodule := ⟨q, hq⟩
+    rcases exists_rank_three_catalecticantKernel_decomposition_of_annihilatorMap_range
+        (B := B) (p := p) (u := u) (hann3 hrank3) qQuad with
+      ⟨W, qW, qK, hqdecomp, hqW, hqK⟩
+    exact ⟨W, qW, hqW,
+      residualEval_sq_lt_of_eq_add_mem_ker_catalecticantMap
+        (B := B) (p := p) (u := u) hqdecomp hqK hqneg⟩
+
 theorem hasRankCaseApolarComponentData_of_productIndependenceGeometryData_and_universalKernelBranchData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
