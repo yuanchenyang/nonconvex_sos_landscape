@@ -13557,4 +13557,56 @@ local Hilbert-function obligations.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two symmetry component closed}
+
+\paragraph{Gap targeted.}
+The three-component quotient-local target included a rank-two
+\texttt{HasRankTwoApolarGorensteinSymmetryData} component.  In the current
+Lean interface this component only names the essential quotient dimension as
+the degree-three entry, so it is tautological.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{rankTwoApolarGorensteinSymmetryData\_direct}.
+\]
+Introduced:
+\[
+\texttt{HasLowRankApolarQuotientCoreData},
+\]
+consisting only of:
+\[
+\texttt{HasRankTwoApolarMacaulayGrowthBound}
+\]
+and:
+\[
+\texttt{HasRankThreeApolarBadBranchContradiction}.
+\]
+Proved:
+\[
+\texttt{lowRankApolarQuotientLocalData\_of\_coreData},
+\]
+\[
+\texttt{lowRankApolarEssentialQuotientBounds\_of\_coreData},
+\]
+\[
+\texttt{lowRankApolarEssentialQuotientTheorem\_of\_coreData},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarQuotientCoreData\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarQuotientCoreData\_direct}.
+\]
+
+\paragraph{Strategy change.}
+The shortest remaining proof target now has two components: rank-two Macaulay
+growth and rank-three bad-branch contradiction.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

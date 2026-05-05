@@ -590,6 +590,11 @@ def HasLowRankApolarQuotientLocalData
     HasRankTwoApolarMacaulayGrowthBound B p u ∧
       HasRankThreeApolarBadBranchContradiction B p u
 
+def HasLowRankApolarQuotientCoreData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  HasRankTwoApolarMacaulayGrowthBound B p u ∧
+    HasRankThreeApolarBadBranchContradiction B p u
+
 def HasRankTwoUniversalKernelEquationData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
@@ -2369,9 +2374,15 @@ theorem rankTwoEssentialQuotientBound_of_rankTwoQuotientGrowthData
   rcases hdata hrank2 with ⟨h3, hsymm, hgrowth⟩
   have hdegree_two :
       Module.finrank ℝ
-          (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) = 2 :=
+      (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) = 2 :=
     finrank_quotient_ker_catalecticantMap_eq_two_of_rank_two hrank2
   omega
+
+theorem rankTwoApolarGorensteinSymmetryData_direct
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    HasRankTwoApolarGorensteinSymmetryData B p u := by
+  intro _hrank2
+  exact ⟨Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u), rfl⟩
 
 theorem rankTwoQuotientGrowthData_of_symmetry_and_macaulayGrowth
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -2753,6 +2764,19 @@ theorem lowRankApolarEssentialQuotientBounds_of_lowRankApolarQuotientLocalData
   lowRankApolarEssentialQuotientBounds_of_rankTwoSymmetryAndGrowth_rankThreeBadBranchContradiction
     hdata.1 hdata.2.1 hdata.2.2
 
+theorem lowRankApolarQuotientLocalData_of_coreData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasLowRankApolarQuotientCoreData B p u) :
+    HasLowRankApolarQuotientLocalData B p u :=
+  ⟨rankTwoApolarGorensteinSymmetryData_direct B p u, hdata.1, hdata.2⟩
+
+theorem lowRankApolarEssentialQuotientBounds_of_coreData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasLowRankApolarQuotientCoreData B p u) :
+    HasLowRankApolarEssentialQuotientBounds B p u :=
+  lowRankApolarEssentialQuotientBounds_of_lowRankApolarQuotientLocalData
+    (lowRankApolarQuotientLocalData_of_coreData hdata)
+
 theorem lowRankApolarEssentialQuotientBounds_of_lowRankApolarBlueprintLocalData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hdata : HasLowRankApolarBlueprintLocalData B p u) :
@@ -3088,6 +3112,13 @@ theorem lowRankApolarEssentialQuotientTheorem_of_lowRankApolarQuotientLocalData
     HasLowRankApolarEssentialQuotientTheorem B p u :=
   lowRankApolarEssentialQuotientTheorem_of_bounds
     (lowRankApolarEssentialQuotientBounds_of_lowRankApolarQuotientLocalData hdata)
+
+theorem lowRankApolarEssentialQuotientTheorem_of_coreData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasLowRankApolarQuotientCoreData B p u) :
+    HasLowRankApolarEssentialQuotientTheorem B p u :=
+  lowRankApolarEssentialQuotientTheorem_of_lowRankApolarQuotientLocalData
+    (lowRankApolarQuotientLocalData_of_coreData hdata)
 
 theorem lowRankApolarQuotientLocalData_of_lowRankApolarEssentialQuotientTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -5719,6 +5750,17 @@ theorem residual_eq_zero_of_lowRankApolarQuotientLocalData_direct
     (B := B) hu hp hsocp
     (lowRankApolarEssentialQuotientBounds_of_lowRankApolarQuotientLocalData hdata)
 
+theorem residual_eq_zero_of_lowRankApolarQuotientCoreData_direct
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata : HasLowRankApolarQuotientCoreData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarQuotientLocalData_direct
+    (B := B) hu hp hsocp
+    (lowRankApolarQuotientLocalData_of_coreData hdata)
+
 theorem residual_eq_zero_of_quotientLocalComponents_direct
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -7754,6 +7796,21 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarQuotientLoc
   intro B p u hB hp hu hsocp
   letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
   exact residual_eq_zero_of_lowRankApolarQuotientLocalData_direct
+    (B := B) hu hp hsocp
+    (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarQuotientCoreData_direct
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarQuotientCoreData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarQuotientCoreData_direct
     (B := B) hu hp hsocp
     (hdata B p u hu hB hp hsocp)
 
