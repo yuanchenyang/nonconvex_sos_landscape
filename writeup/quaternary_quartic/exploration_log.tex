@@ -10331,4 +10331,44 @@ rank-two binary pure-square theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Binary rank-two kernel vector}
+
+\paragraph{Gap targeted.}
+The binary pure-square theorem starts by passing from rank at most two of the
+binary Hankel map to a nonzero kernel quadratic.  This kernel-vector existence
+was implicit in the blueprint but not exposed as a Lean lemma.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{exists\_nonzero\_binaryHankelKernel\_of\_finrank\_range\_le\_two}
+\]
+and
+\[
+\texttt{exists\_nonzero\_binaryHankelMul\_kernel\_of\_finrank\_range\_le\_two}.
+\]
+These use rank-nullity on \(\mathbb{R}^3\) to produce a nonzero kernel vector
+from \(\dim \operatorname{range}\le 2\).
+
+\paragraph{Strategy change.}
+The remaining binary pure-square theorem can now begin with an explicit
+nonzero kernel quadratic; the next binary work should split that kernel by
+discriminant, matching the blueprint's hyperbolic/parabolic/elliptic cases.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support and the
+rank-two binary pure-square theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
