@@ -14654,4 +14654,46 @@ direct finite-dimensional proof.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three bad-branch multiplication rank}
+
+\paragraph{Gap targeted.}
+The central exact-sequence argument begins by choosing a nonzero linear
+element \(\ell\) and setting \(b\) to the rank of multiplication by \(\ell\)
+from degree one to degree two.  In the bad branch, the blueprint requires
+\(1\le b\le3\).  This had not yet been derived from the actual catalecticant
+multiplication map.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved that under the
+rank-three bad-branch quotient assumption, multiplication by any nonzero
+linear form has positive image dimension:
+\[
+\texttt{rankThreeBadBranch\_leftMultiplication\_finrank\_range\_pos}.
+\]
+Using the rank-three catalecticant quotient dimension, proved the upper bound
+\[
+\texttt{rankThreeBadBranch\_leftMultiplication\_finrank\_range\_le\_three}.
+\]
+Combined these as
+\[
+\texttt{rankThreeBadBranch\_leftMultiplication\_finrank\_range\_between}
+\]
+and produced an existential choice
+\[
+\texttt{exists\_rankThreeBadBranch\_leftMultiplication\_finrank\_range}.
+\]
+
+\paragraph{Strategy change.}
+This is no longer a packaging step: it extracts the first concrete datum
+\(1\le b\le3\) used in the rank-three exact sequence directly from the
+bad-branch multiplication map.  The next missing central step is to identify
+the degree-two and degree-three quotient dimensions as \(3-b\) and \(4-b\),
+then prove the Macaulay inequality \(4-b\le3-b\) cannot hold.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

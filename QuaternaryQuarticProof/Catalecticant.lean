@@ -2309,6 +2309,94 @@ theorem finrank_range_linearAnnihilatorMap_eq_four_of_finrank_quotient_linearAnn
   rw [← finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap]
   exact hquot
 
+theorem rankThreeBadBranch_leftMultiplication_finrank_range_pos
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4)
+    {a : linSubmodule} (ha : a ≠ 0) :
+    0 < Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) := by
+  by_contra hnot
+  have hrange_zero :
+      Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) = 0 := by
+    omega
+  have hrange_bot :
+      LinearMap.range (linearAnnihilatorMap B p u a) = ⊥ :=
+    (Submodule.finrank_eq_zero).mp hrange_zero
+  have hmap_zero : linearAnnihilatorMap B p u a = 0 := by
+    ext e
+    have hmem :
+        linearAnnihilatorMap B p u a e ∈
+          LinearMap.range (linearAnnihilatorMap B p u a) :=
+      LinearMap.mem_range_self _ _
+    have hbot :
+        linearAnnihilatorMap B p u a e ∈
+          (⊥ : Submodule ℝ
+            (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u))) := by
+      simpa [hrange_bot] using hmem
+    simpa using hbot
+  have hker :
+      a ∈ LinearMap.ker (linearAnnihilatorMap B p u) := by
+    simpa [LinearMap.mem_ker] using hmap_zero
+  have hbot :
+      a ∈ (⊥ : Submodule ℝ linSubmodule) := by
+    simpa [ker_linearAnnihilatorMap_eq_bot_of_finrank_quotient_linearAnnihilator_eq_four
+      hquot] using hker
+  exact ha (by simpa using hbot)
+
+theorem rankThreeBadBranch_leftMultiplication_finrank_range_le_three
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    (a : linSubmodule) :
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) ≤ 3 := by
+  have hcod :
+      Module.finrank ℝ
+          (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) = 3 :=
+    finrank_quotient_ker_catalecticantMap_eq_three_of_rank_three
+      (B := B) (p := p) (u := u) hrank
+  have hle :
+      Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) ≤
+        Module.finrank ℝ
+          (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) :=
+    by
+      simpa [finrank_top] using
+        (Submodule.finrank_mono
+          (show LinearMap.range (linearAnnihilatorMap B p u a) ≤
+            (⊤ : Submodule ℝ
+              (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u))) from
+            le_top))
+  omega
+
+theorem rankThreeBadBranch_leftMultiplication_finrank_range_between
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4)
+    {a : linSubmodule} (ha : a ≠ 0) :
+    1 ≤ Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) ∧
+      Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) ≤ 3 := by
+  exact ⟨
+    rankThreeBadBranch_leftMultiplication_finrank_range_pos
+      (B := B) (p := p) (u := u) hquot ha,
+    rankThreeBadBranch_leftMultiplication_finrank_range_le_three
+      (B := B) (p := p) (u := u) hrank a⟩
+
+theorem exists_rankThreeBadBranch_leftMultiplication_finrank_range
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4) :
+    ∃ (a : linSubmodule) (b : ℕ),
+      a ≠ 0 ∧
+        Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) = b ∧
+          1 ≤ b ∧ b ≤ 3 := by
+  have hpos : 0 < Module.finrank ℝ (⊤ : Submodule ℝ linSubmodule) := by
+    rw [finrank_top, finrank_linSubmodule_eq_four]
+    norm_num
+  rcases exists_mem_ne_zero_of_finrank_pos
+      (K := ℝ) (V := linSubmodule) (s := ⊤) hpos with
+    ⟨a, _ha_top, ha_ne⟩
+  refine ⟨a, Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)),
+    ha_ne, rfl, ?_⟩
+  exact rankThreeBadBranch_leftMultiplication_finrank_range_between
+    (B := B) (p := p) (u := u) hrank hquot ha_ne
+
 def scalarizedLinearAnnihilatorMap
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (T :
