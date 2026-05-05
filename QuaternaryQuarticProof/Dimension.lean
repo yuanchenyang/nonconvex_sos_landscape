@@ -220,6 +220,44 @@ theorem exists_mem_notMem_span_singleton_of_finrank_two
   have hlt : finrank K (K ∙ x) < finrank K W := by omega
   exact exists_mem_notMem_of_finrank_lt (K := K) (V := V) hlt
 
+omit [FiniteDimensional K V] in
+theorem linearIndependent_pair_of_notMem_span_singleton
+    {x y : V}
+    (hxne : x ≠ 0)
+    (hy : y ∉ K ∙ x) :
+    LinearIndependent K ![x, y] := by
+  rw [LinearIndependent.pair_iff' hxne]
+  intro a hay
+  exact hy (by
+    rw [← hay]
+    exact Submodule.smul_mem _ a (Submodule.subset_span (by simp)))
+
+omit [FiniteDimensional K V] in
+theorem finrank_span_pair_eq_two_of_notMem_span_singleton
+    {x y : V}
+    (hxne : x ≠ 0)
+    (hy : y ∉ K ∙ x) :
+    finrank K (Submodule.span K ({x, y} : Set V)) = 2 := by
+  have hli : LinearIndependent K ![x, y] :=
+    linearIndependent_pair_of_notMem_span_singleton
+      (K := K) (V := V) hxne hy
+  have hfin :
+      finrank K (Submodule.span K (Set.range ![x, y])) =
+        Fintype.card (Fin 2) :=
+    finrank_span_eq_card hli
+  have hrange : Set.range ![x, y] = ({x, y} : Set V) := by
+    ext z
+    constructor
+    · rintro ⟨i, rfl⟩
+      fin_cases i <;> simp
+    · intro hz
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hz
+      rcases hz with rfl | rfl
+      · exact ⟨0, by simp⟩
+      · exact ⟨1, by simp⟩
+  rw [hrange] at hfin
+  simpa using hfin
+
 end SubspaceChoice
 
 section ExactSubspaces

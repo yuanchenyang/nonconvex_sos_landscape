@@ -4562,4 +4562,51 @@ the largest rank-two blockers.
 
 No Julia numerical claims were used in this round.
 
+\section*{Recording dimension of an independent binary support plane}
+
+\paragraph{Gap targeted.}
+The rank-two support component now chooses \(y\in W\setminus\mathbb{R}x\).
+The binary normal-form and support-plane arguments also need the standard fact
+that this pair spans a two-dimensional plane.  This should be available as a
+small reusable dimension lemma rather than reproved inside later coefficient
+classification code.
+
+\paragraph{Lean progress.}
+Added generic lemmas to \texttt{QuaternaryQuarticProof/Dimension.lean}:
+\[
+\texttt{linearIndependent\_pair\_of\_notMem\_span\_singleton}
+\]
+and
+\[
+\texttt{finrank\_span\_pair\_eq\_two\_of\_notMem\_span\_singleton}.
+\]
+They turn \(x\ne0\) and \(y\notin Kx\) into linear independence of
+\((x,y)\), then into
+\[
+\dim_K\operatorname{span}\{x,y\}=2.
+\]
+Added the support-specialized wrapper
+\[
+\texttt{finrank\_span\_rank\_two\_support\_pair\_eq\_two}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}, converting the existing
+\(\texttt{(x : Poly) \(\ne\) 0}\) hypothesis into subtype nonzeroness.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Dimension}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the known
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two component proof still needs the apolar argument that produces the
+normal-form coefficient alternatives and the disjointness
+\(zA\cap\Sym^2A=0\).  The independent binary plane can now be passed to those
+future lemmas as a concrete two-dimensional span.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

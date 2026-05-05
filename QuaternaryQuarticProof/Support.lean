@@ -393,6 +393,18 @@ theorem exists_rank_two_complement_second_direction
       exact hx (congrArg (fun z : linSubmodule => (z : Poly)) h))
     hW
 
+theorem finrank_span_rank_two_support_pair_eq_two
+    {x y : linSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hy : y ∉ ℝ ∙ x) :
+    Module.finrank ℝ (Submodule.span ℝ ({x, y} : Set linSubmodule)) = 2 :=
+  finrank_span_pair_eq_two_of_notMem_span_singleton
+    (K := ℝ) (V := linSubmodule)
+    (by
+      intro h
+      exact hx (congrArg (fun z : linSubmodule => (z : Poly)) h))
+    hy
+
 theorem hasRankTwoSupportComponentHypothesis_of_independent_binary_data
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hSym :
