@@ -1629,6 +1629,42 @@ theorem hasRankCaseAnnihilatorMapBounds_of_apolarSupportBounds
     exact annihilatorMap_range_le_three_of_hasLinearAnnihilatorCodimAtMost
       (B := B) (p := p) (u := u) (hsupport3 hrank3)
 
+theorem finrank_range_linearAnnihilatorMap_eq_zero_of_catalecticantMap_rank_zero
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 0) :
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) = 0 := by
+  have hrange_bot : LinearMap.range (catalecticantMap B p u) = ⊥ :=
+    (Submodule.finrank_eq_zero).mp hrank
+  have hcat_zero : catalecticantMap B p u = 0 := by
+    ext q r
+    have hmem :
+        catalecticantMap B p u q ∈
+          LinearMap.range (catalecticantMap B p u) :=
+      LinearMap.mem_range_self _ _
+    have hbot :
+        catalecticantMap B p u q ∈
+          (⊥ : Submodule ℝ (Module.Dual ℝ quadSubmodule)) := by
+      simpa [hrange_bot] using hmem
+    have hqzero : catalecticantMap B p u q = 0 := by
+      simpa using hbot
+    simp [hqzero]
+  have hlin_top : linearAnnihilator B p u = ⊤ := by
+    ext a
+    constructor
+    · intro _ha
+      exact Submodule.mem_top
+    · intro _ha e
+      rw [hcat_zero]
+      simp
+  have hlin_dim : Module.finrank ℝ (linearAnnihilator B p u) = 4 := by
+    rw [hlin_top]
+    rw [finrank_top]
+    exact finrank_linSubmodule_eq_four
+  have hsum :=
+    finrank_range_linearAnnihilatorMap_add_finrank_linearAnnihilator B p u
+  omega
+
 theorem hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hann : HasLowRankApolarAnnihilatorMapTheorem B p u) :
@@ -1641,6 +1677,43 @@ theorem hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem
     exact hann 2 (by norm_num) (by omega)
   · intro hrank3
     exact hann 3 (by norm_num) (by omega)
+
+theorem hasLowRankApolarAnnihilatorMapTheorem_of_rankCaseAnnihilatorMapBounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbounds : HasRankCaseAnnihilatorMapBounds B p u) :
+    HasLowRankApolarAnnihilatorMapTheorem B p u := by
+  rcases hbounds with ⟨hbound1, hbound2, hbound3⟩
+  intro k hk hrank_le
+  let n := Module.finrank ℝ (LinearMap.range (catalecticantMap B p u))
+  have hn_le : n ≤ k := hrank_le
+  interval_cases k
+  · have hn0 : n = 0 := by omega
+    rw [finrank_range_linearAnnihilatorMap_eq_zero_of_catalecticantMap_rank_zero
+      (B := B) (p := p) (u := u) hn0]
+  · by_cases hn0 : n = 0
+    · rw [finrank_range_linearAnnihilatorMap_eq_zero_of_catalecticantMap_rank_zero
+        (B := B) (p := p) (u := u) hn0]
+      norm_num
+    · have hn1 : n = 1 := by omega
+      exact hbound1 hn1
+  · by_cases hn0 : n = 0
+    · rw [finrank_range_linearAnnihilatorMap_eq_zero_of_catalecticantMap_rank_zero
+        (B := B) (p := p) (u := u) hn0]
+      norm_num
+    · by_cases hn1 : n = 1
+      · exact (hbound1 hn1).trans (by norm_num)
+      · have hn2 : n = 2 := by omega
+        exact hbound2 hn2
+  · by_cases hn0 : n = 0
+    · rw [finrank_range_linearAnnihilatorMap_eq_zero_of_catalecticantMap_rank_zero
+        (B := B) (p := p) (u := u) hn0]
+      norm_num
+    · by_cases hn1 : n = 1
+      · exact (hbound1 hn1).trans (by norm_num)
+      · by_cases hn2 : n = 2
+        · exact (hbound2 hn2).trans (by norm_num)
+        · have hn3 : n = 3 := by omega
+          exact hbound3 hn3
 
 theorem hasLowRankApolarSupportTheorem_of_annihilatorMapTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}

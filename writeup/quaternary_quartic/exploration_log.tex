@@ -7788,4 +7788,44 @@ and the rank-two canonical/normalized binary kernel construction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-case annihilator bounds to monotone annihilator theorem}
+
+\paragraph{Gap targeted.}
+The new annihilator-map theorem is monotone in \(k\), but much of the existing
+formalization and blueprint bookkeeping is organized by exact catalecticant
+ranks \(1,2,3\).  The missing rank-zero case prevented a clean bridge from
+casewise bounds to the monotone interface.
+
+\paragraph{Lean progress.}
+Proved
+\[
+\texttt{finrank\_range\_linearAnnihilatorMap\_eq\_zero\_of\_catalecticantMap\_rank\_zero},
+\]
+showing that when the catalecticant range has finrank \(0\), the
+linear-annihilator map also has zero-dimensional range.  Then proved
+\[
+\texttt{hasLowRankApolarAnnihilatorMapTheorem\_of\_rankCaseAnnihilatorMapBounds}.
+\]
+
+\paragraph{Strategy change.}
+The support-side target can now be attacked through the existing exact-rank
+annihilator bounds interface.  Rank zero is discharged automatically; ranks
+\(1,2,3\) use the already separated case hypotheses.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The main open inputs are exact-rank annihilator-map bounds for the apolar
+support argument and the rank-two canonical/normalized binary kernel
+construction.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
