@@ -13331,4 +13331,41 @@ components to the landscape theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Direct four-component theorem wrapper}
+
+\paragraph{Gap targeted.}
+The root theorem could be reduced to the packaged local blueprint data, but
+the four remaining local obligations were not exposed directly in a top-level
+wrapper.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{residual\_eq\_zero\_of\_blueprintLocalComponents\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_blueprintLocalComponents\_direct}.
+\]
+These take the four local blueprint components as separate assumptions:
+\[
+\texttt{HasRankTwoApolarGorensteinSymmetryData},
+\quad
+\texttt{HasRankTwoApolarMacaulayGrowthBound},
+\quad
+\texttt{HasRankThreeApolarBadBranchExactSequenceShape},
+\quad
+\texttt{HasRankThreeApolarBadBranchMacaulayBound}.
+\]
+
+\paragraph{Strategy change.}
+The final remaining proof surface is now explicit at the root level.  Proving
+these four local components for every admissible SOCP is enough to close the
+main theorem without any additional packaging step.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
