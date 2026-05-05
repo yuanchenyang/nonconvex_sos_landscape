@@ -2952,6 +2952,27 @@ theorem lowRankApolarBlueprintHilbertData_iff_lowRankApolarEssentialQuotientTheo
   ⟨lowRankApolarEssentialQuotientTheorem_of_lowRankApolarBlueprintHilbertData,
     lowRankApolarBlueprintHilbertData_of_lowRankApolarEssentialQuotientTheorem⟩
 
+theorem lowRankApolarBlueprintLocalData_of_lowRankApolarEssentialQuotientTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasLowRankApolarEssentialQuotientTheorem B p u) :
+    HasLowRankApolarBlueprintLocalData B p u :=
+  lowRankApolarBlueprintLocalData_of_lowRankApolarBlueprintHilbertData
+    (lowRankApolarBlueprintHilbertData_of_lowRankApolarEssentialQuotientTheorem hquot)
+
+theorem lowRankApolarEssentialQuotientTheorem_of_lowRankApolarBlueprintLocalData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasLowRankApolarBlueprintLocalData B p u) :
+    HasLowRankApolarEssentialQuotientTheorem B p u :=
+  lowRankApolarEssentialQuotientTheorem_of_lowRankApolarBlueprintHilbertData
+    (lowRankApolarBlueprintHilbertData_of_lowRankApolarBlueprintLocalData hdata)
+
+theorem lowRankApolarBlueprintLocalData_iff_lowRankApolarEssentialQuotientTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarBlueprintLocalData B p u ↔
+      HasLowRankApolarEssentialQuotientTheorem B p u :=
+  ⟨lowRankApolarEssentialQuotientTheorem_of_lowRankApolarBlueprintLocalData,
+    lowRankApolarBlueprintLocalData_of_lowRankApolarEssentialQuotientTheorem⟩
+
 theorem lowRankApolarEssentialQuotientTheorem_of_lowRankApolarAnnihilatorMapTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hann : HasLowRankApolarAnnihilatorMapTheorem B p u) :

@@ -13223,4 +13223,35 @@ changing the mathematical target.
 
 No Julia numerical claims were used in this round.
 
+\section*{Local blueprint data equivalent to quotient theorem}
+
+\paragraph{Gap targeted.}
+The four-piece local blueprint data and the uniform essential quotient theorem
+were equivalent through the bundled blueprint interface, but there was no direct
+named bridge between them.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{lowRankApolarBlueprintLocalData\_of\_lowRankApolarEssentialQuotientTheorem},
+\]
+\[
+\texttt{lowRankApolarEssentialQuotientTheorem\_of\_lowRankApolarBlueprintLocalData},
+\]
+and:
+\[
+\texttt{lowRankApolarBlueprintLocalData\_iff\_lowRankApolarEssentialQuotientTheorem}.
+\]
+
+\paragraph{Strategy change.}
+The cleanest remaining target can now be chosen directly: prove either the
+four local blueprint Hilbert-function components or the uniform essential
+quotient theorem.  The conversion between them is formalized under one theorem
+name.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
