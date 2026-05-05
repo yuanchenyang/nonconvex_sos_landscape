@@ -1203,6 +1203,81 @@ theorem ySq_kernel_of_parabolic_shearY_swap_dual_kernel
   exact ySq_kernel_of_nonzero_scalar_ySq_kernel (a := e) (b := D)
     (c := C) (d := B) (e := A) (T := r) hr (by simpa [A, B, C, D] using hswap)
 
+theorem hankelNegativeValue_of_parabolic_shearY_swap_dual
+    {a b c d e r s t : ℝ}
+    (_hr : r ≠ 0)
+    (_hdisc : binaryKernelDiscriminant r s t = 0)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    let tau := s / (2 * r)
+    let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+    let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+    let C := c + 2 * d * tau + e * tau^2
+    let D := d + e * tau
+    HasBinaryHankelNegativeValue e D C B A := by
+  dsimp only
+  let tau := s / (2 * r)
+  let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+  let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+  let C := c + 2 * d * tau + e * tau^2
+  let D := d + e * tau
+  have hfirst : HasBinaryHankelNegativeValue A B C D e := by
+    simpa [A, B, C, D, tau] using
+      HasBinaryHankelNegativeValue.shearY_dual
+        (a := a) (b := b) (c := c) (d := d) (e := e) (tau := tau) hneg
+  simpa [A, B, C, D] using
+    HasBinaryHankelNegativeValue.swap_dual
+      (a := A) (b := B) (c := C) (d := D) (e := e) hfirst
+
+theorem canonicalKernelData_of_parabolic_shearY_swap_dual
+    {a b c d e r s t : ℝ}
+    (hr : r ≠ 0)
+    (hdisc : binaryKernelDiscriminant r s t = 0)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    let tau := s / (2 * r)
+    let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+    let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+    let C := c + 2 * d * tau + e * tau^2
+    let D := d + e * tau
+    HasBinaryCanonicalKernelData e D C B A := by
+  dsimp only
+  let tau := s / (2 * r)
+  let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+  let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+  let C := c + 2 * d * tau + e * tau^2
+  let D := d + e * tau
+  have hySq : binaryHankelMul e D C B A (![0, 0, 1] : Fin 3 → ℝ) = 0 := by
+    simpa [tau, A, B, C, D] using
+      ySq_kernel_of_parabolic_shearY_swap_dual_kernel
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc hker
+  have hneg' : HasBinaryHankelNegativeValue e D C B A := by
+    simpa [tau, A, B, C, D] using
+      hankelNegativeValue_of_parabolic_shearY_swap_dual
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc hneg
+  by_cases hD : D = 0
+  · have heq := ySq_kernel_equations_of_binaryHankelMul_eq_zero hySq
+    rcases heq with ⟨hC, hB, hA⟩
+    refine Or.inl ⟨?_, hneg'⟩
+    exact (binaryHankelMul_eq_zero_iff e D C B A 0 1 0).2
+      ⟨by simp [hD], by simp [hC], by simp [hB]⟩
+  · refine Or.inr (Or.inl ⟨hySq, ?_⟩)
+    rw [LinearIndependent.pair_iff']
+    · intro u hu
+      have hcoord1 := congrArg (fun v : Fin 3 → ℝ => v 1) hu
+      have huzero : u = 0 := by
+        have hmul : u * D = 0 := by
+          simpa [Pi.smul_apply] using hcoord1
+        exact (mul_eq_zero.mp hmul).resolve_right hD
+      have hcoord0 := congrArg (fun v : Fin 3 → ℝ => v 0) hu
+      rw [huzero] at hcoord0
+      simp at hcoord0
+      exact hD hcoord0.symm
+    · intro hzero
+      have hcoord1 := congrArg (fun v : Fin 3 → ℝ => v 1) hzero
+      simpa using hD hcoord1
+
 theorem binaryHankelMul_hyperbolic_shearY_dual_zero_ySq_kernel
     {a b c d e r s t : ℝ}
     (hr : r ≠ 0)

@@ -11526,4 +11526,46 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Canonical data for transported parabolic branch}
+
+\paragraph{Gap targeted.}
+The parabolic branch had reached the canonical \(y^2\) kernel position, but
+\texttt{HasBinaryCanonicalKernelData} requires either linear independence of
+the first two columns in the \(y^2\) branch or a negative witness in the \(xy\)
+branch.  This was the last branch-specific side condition left by the binary
+transport work.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{hankelNegativeValue\_of\_parabolic\_shearY\_swap\_dual},
+\qquad
+\texttt{canonicalKernelData\_of\_parabolic\_shearY\_swap\_dual}.
+\]
+The canonical-data theorem first transports the negative Hankel witness through
+the dual shear and swap.  It then splits on the transformed middle coefficient
+\(D\).  If \(D\ne0\), the two columns \((e,D,0)\) and \((D,0,0)\) are linearly
+independent, giving the \(y^2\) branch.  If \(D=0\), the already proved
+\(y^2\) kernel equations also force the \(xy\) kernel equations, and the
+transported negative witness gives the \(xy\) branch.
+
+\paragraph{Strategy change.}
+All discriminant branches with a chosen nonzero kernel vector now have
+transport-to-canonical-data lemmas.  The next binary gap is to assemble these
+branch lemmas into a single classifier driven by
+\texttt{HasBinaryHankelKernelDiscriminantData}; after that the remaining large
+gap returns to the apolar support theorem.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}
