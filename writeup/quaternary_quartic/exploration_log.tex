@@ -9094,4 +9094,44 @@ normalized-Hankel package.
 
 No Julia numerical claims were used in this round.
 
+\section*{Branch certificates as normalized position plus negativity}
+
+\paragraph{Gap targeted.}
+The rank-two binary path used both branch certificates and the split
+normalized-position/Hankel-negativity interface.  These represented the same
+normalized branch information, but this equivalence was not explicitly
+available in Lean.
+
+\paragraph{Lean progress.}
+Added the scalar equivalence
+\[
+\texttt{binaryKernelBranchCertificate\_iff\_normalizedKernelPosition\_and\_hankelNegative}
+\]
+and the corresponding universal equivalence
+\[
+\texttt{hasRankTwoUniversalKernelBranchData\_iff\_universalNormalizedPosition\_and\_HankelNegative}.
+\]
+Also added the direct projection from universal branch data to universal
+normalized position and universal Hankel negativity.
+
+\paragraph{Strategy change.}
+The remaining rank-two certificate target can now be phrased either as branch
+data or as normalized position plus negativity without changing the proof route.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The proof still needs the structural low-rank support theorem and a genuine
+construction of the universal rank-two branch/normalized certificate data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

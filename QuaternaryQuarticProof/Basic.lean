@@ -2831,6 +2831,30 @@ theorem hasRankTwoUniversalKernelBranchData_of_universalNormalizedPosition_and_H
     (hpos hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim)
     (hneg hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim)
 
+theorem universalNormalizedPosition_and_HankelNegative_of_universalKernelBranchData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbranches : HasRankTwoUniversalKernelBranchData B p u) :
+    HasRankTwoUniversalNormalizedKernelPositionData B p u ∧
+      HasRankTwoUniversalHankelNegativeData B p u := by
+  constructor
+  · intro hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+    exact binaryNormalizedKernelPosition_of_kernelBranchCertificate
+      (hbranches hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim)
+  · intro hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+    exact binaryHankelNegativeValue_of_kernelBranchCertificate
+      (hbranches hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim)
+
+theorem hasRankTwoUniversalKernelBranchData_iff_universalNormalizedPosition_and_HankelNegative
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankTwoUniversalKernelBranchData B p u ↔
+      HasRankTwoUniversalNormalizedKernelPositionData B p u ∧
+        HasRankTwoUniversalHankelNegativeData B p u := by
+  constructor
+  · exact universalNormalizedPosition_and_HankelNegative_of_universalKernelBranchData
+  · intro hdata
+    exact hasRankTwoUniversalKernelBranchData_of_universalNormalizedPosition_and_HankelNegative
+      hdata.1 hdata.2
+
 theorem hasRankTwoUniversalKernelEquationData_of_universalKernelBranchData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hbranches : HasRankTwoUniversalKernelBranchData B p u) :

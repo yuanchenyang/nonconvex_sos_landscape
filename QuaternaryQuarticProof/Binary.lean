@@ -1036,6 +1036,20 @@ theorem binaryHankelLinearMap_finrank_range_le_two_of_kernelBranchCertificate
   binaryHankelLinearMap_finrank_range_le_two_of_normalizedKernelPosition
     (binaryNormalizedKernelPosition_of_kernelBranchCertificate hcert)
 
+theorem binaryKernelBranchCertificate_iff_normalizedKernelPosition_and_hankelNegative
+    {a b c d e : ℝ} :
+    HasBinaryKernelBranchCertificate a b c d e ↔
+      HasBinaryNormalizedKernelPosition a b c d e ∧
+        HasBinaryHankelNegativeValue a b c d e := by
+  constructor
+  · intro hcert
+    exact ⟨
+      binaryNormalizedKernelPosition_of_kernelBranchCertificate hcert,
+      binaryHankelNegativeValue_of_kernelBranchCertificate hcert⟩
+  · intro hdata
+    exact binaryKernelBranchCertificate_of_normalizedKernelPosition
+      hdata.1 hdata.2
+
 theorem y_sq_kernel_binaryQuarticEval_exists_negative_of_rank_two
     (a b : ℝ) (_hneg : ∃ r s : ℝ, a * r^2 + 2 * b * r * s < 0)
     (hb : b ≠ 0) :
