@@ -7032,4 +7032,44 @@ kernel-branch classification.
 
 No Julia numerical claims were used in this round.
 
+\section*{Decomposition-level apolar support input}
+
+\paragraph{Gap targeted.}
+The support interface now matched the blueprint's rank inequality, but it still
+discarded the explicit decomposition \(E=W\oplus A\) produced by
+Lemma~\ref{lem:low-rank-support}.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasLowRankApolarSupportDecomposition}
+\]
+for the direct decomposition form of the blueprint lemma: for each
+\(k\le3\) and \(\rank C_\lambda\le k\), there are subspaces \(A,W\) with
+\[
+A\le\Ann_1(\lambda),\qquad A\oplus W=E,\qquad \dim W\le k,\qquad
+\dim A\ge4-k.
+\]
+Proved
+\[
+\texttt{hasLowRankApolarSupportTheorem\_of\_decomposition}
+\]
+and routed residual/root reductions through this decomposition-level input
+plus the rank-two kernel branch data.
+
+\paragraph{Strategy change.}
+The remaining support theorem is now stated essentially in the form used in
+the proof blueprint.  The later proof only extracts the annihilator
+codimension, but future formalization of the apolar lemma can keep the
+complement \(W\) available.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The two mathematical inputs remain the decomposition-level low-rank apolar
+support theorem and the binary Hankel kernel-branch classification.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

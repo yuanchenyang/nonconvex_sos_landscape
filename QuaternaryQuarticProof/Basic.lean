@@ -374,6 +374,17 @@ def HasLowRankApolarSupportTheorem
       Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) ≤ k →
         HasLinearAnnihilatorCodimAtMost B p u k
 
+def HasLowRankApolarSupportDecomposition
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  ∀ k : ℕ,
+    k ≤ 3 →
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) ≤ k →
+        ∃ A W : Submodule ℝ linSubmodule,
+          A ≤ linearAnnihilator B p u ∧
+            IsCompl A W ∧
+              Module.finrank ℝ W ≤ k ∧
+                4 - k ≤ Module.finrank ℝ A
+
 def HasRankTwoNegativeSquareData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
@@ -1493,6 +1504,22 @@ theorem hasRankCaseApolarSupportBounds_of_lowRankApolarSupportTheorem
   · intro hrank3
     exact hsupport 3 (by norm_num) (by omega)
 
+theorem hasLowRankApolarSupportTheorem_of_decomposition
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdecomp : HasLowRankApolarSupportDecomposition B p u) :
+    HasLowRankApolarSupportTheorem B p u := by
+  intro k hk hrank_le
+  rcases hdecomp k hk hrank_le with
+    ⟨A, _W, hAann, _hAW, _hWdim, hAdim⟩
+  exact ⟨A, hAann, hAdim⟩
+
+theorem hasRankCaseApolarSupportBounds_of_lowRankApolarSupportDecomposition
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdecomp : HasLowRankApolarSupportDecomposition B p u) :
+    HasRankCaseApolarSupportBounds B p u :=
+  hasRankCaseApolarSupportBounds_of_lowRankApolarSupportTheorem
+    (hasLowRankApolarSupportTheorem_of_decomposition hdecomp)
+
 theorem hasRankTwoExistentialBinaryFormData_of_kernelEquationData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hcases : HasRankTwoExistentialKernelEquationData B p u) :
@@ -2015,6 +2042,19 @@ theorem residual_eq_zero_of_lowRankApolarSupportTheorem_and_kernelBranches
     (hasRankCaseApolarSupportBounds_of_lowRankApolarSupportTheorem hsupport)
     hbranches
 
+theorem residual_eq_zero_of_lowRankApolarSupportDecomposition_and_kernelBranches
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdecomp : HasLowRankApolarSupportDecomposition B p u)
+    (hbranches : HasRankTwoExistentialKernelBranchData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarSupportTheorem_and_kernelBranches
+    (B := B) hu hp hsocp
+    (hasLowRankApolarSupportTheorem_of_decomposition hdecomp)
+    hbranches
+
 theorem residual_eq_zero_of_rankCaseSupportData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -2326,6 +2366,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheo
   exact residual_eq_zero_of_lowRankApolarSupportTheorem_and_kernelBranches
     (B := B) hu hp hsocp
     (hsupport B p u hu hB hp hsocp)
+    (hbranches B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportDecomposition_and_kernelBranches
+    (hdecomp :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarSupportDecomposition B p u)
+    (hbranches :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialKernelBranchData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarSupportDecomposition_and_kernelBranches
+    (B := B) hu hp hsocp
+    (hdecomp B p u hu hB hp hsocp)
     (hbranches B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseSupportData
