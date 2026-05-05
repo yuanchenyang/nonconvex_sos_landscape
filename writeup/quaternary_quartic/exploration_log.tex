@@ -15455,4 +15455,42 @@ quotient has dimension at most two.
 
 No Julia numerical claims were used in this round.
 
+\section*{Quotient-dimension-one Macaulay step}
+
+\paragraph{Gap targeted.}
+The largest remaining gap is the small Macaulay bound for the direct
+inverse-system route.  This round focused on the first nontrivial case:
+quadratic quotient dimension one.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved the polarization
+lemma
+\[
+\texttt{exists\_linProduct\_self\_dual\_ne\_zero},
+\]
+which says a nonzero functional on \(\operatorname{Sym}^2(A)\) is nonzero on
+some pure square \(a^2\).  Using this square and the contraction symmetry from
+the previous round, proved
+\[
+\texttt{finrank\_cubicProductAnnihilator\_le\_one\_of\_symSquare\_quotient\_eq\_one}.
+\]
+This shows that when the quadratic quotient has dimension one, the cubic
+product annihilator has dimension at most one.  The corresponding Macaulay
+cokernel wrapper is
+\[
+\texttt{macaulay\_cokernel\_bound\_of\_finrank\_symSquare\_quotient\_eq\_one}.
+\]
+
+\paragraph{Strategy status.}
+The direct inverse-system route now covers quotient dimensions zero and one.
+The remaining central algebraic case is quotient dimension two, where the
+same contraction-symmetry idea must bound a two-dimensional family of
+quadratic dual functionals.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

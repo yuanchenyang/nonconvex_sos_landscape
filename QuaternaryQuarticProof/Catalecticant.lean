@@ -2244,6 +2244,181 @@ theorem cubicProductAnnihilatorContraction_pair_symm
   apply Subtype.ext
   exact linQuadProduct_reassociate a.1 b.1 c.1
 
+theorem exists_linProduct_self_dual_ne_zero
+    {A : Submodule ℝ linSubmodule}
+    {η : Module.Dual ℝ (symSquareSubmodule A)} (hη : η ≠ 0) :
+    ∃ a : A,
+      η ⟨linProduct a.1 a.1, linProduct_mem_linProductSubmodule a a⟩ ≠ 0 := by
+  by_contra hnone
+  push Not at hnone
+  apply hη
+  ext q
+  change η q = 0
+  refine Submodule.span_induction
+    (p := fun z hz =>
+      η (⟨z, hz⟩ : symSquareSubmodule A) = 0)
+    ?_ ?_ ?_ ?_ q.2
+  · intro z hz
+    rcases hz with ⟨ab, rfl⟩
+    let a : A := ab.1
+    let b : A := ab.2
+    have hpolar :
+        (2 : ℝ) •
+            (⟨linProduct a.1 b.1,
+              linProduct_mem_linProductSubmodule a b⟩ : symSquareSubmodule A) =
+          ⟨linProduct (a + b).1 (a + b).1,
+            linProduct_mem_linProductSubmodule (a + b) (a + b)⟩ -
+            ⟨linProduct a.1 a.1,
+              linProduct_mem_linProductSubmodule a a⟩ -
+              ⟨linProduct b.1 b.1,
+                linProduct_mem_linProductSubmodule b b⟩ := by
+      apply Subtype.ext
+      simp [linProduct_add_right, two_smul, sub_eq_add_neg, linProduct_comm]
+      abel
+    have hval :
+        (2 : ℝ) * η
+            (⟨linProduct a.1 b.1,
+              linProduct_mem_linProductSubmodule a b⟩ : symSquareSubmodule A) = 0 := by
+      calc
+        (2 : ℝ) * η
+            (⟨linProduct a.1 b.1,
+              linProduct_mem_linProductSubmodule a b⟩ : symSquareSubmodule A) =
+            η ((2 : ℝ) •
+              (⟨linProduct a.1 b.1,
+                linProduct_mem_linProductSubmodule a b⟩ : symSquareSubmodule A)) := by
+              simp
+        _ = η
+            (⟨linProduct (a + b).1 (a + b).1,
+              linProduct_mem_linProductSubmodule (a + b) (a + b)⟩ -
+              ⟨linProduct a.1 a.1,
+                linProduct_mem_linProductSubmodule a a⟩ -
+                ⟨linProduct b.1 b.1,
+                  linProduct_mem_linProductSubmodule b b⟩ :
+              symSquareSubmodule A) := by
+              rw [hpolar]
+        _ = 0 := by
+              rw [map_sub, map_sub, hnone (a + b), hnone a, hnone b]
+              norm_num
+    nlinarith
+  · change η (0 : symSquareSubmodule A) = 0
+    simp
+  · intro x y hx hy hxzero hyzero
+    change η
+        (⟨x + y, Submodule.add_mem _ hx hy⟩ : symSquareSubmodule A) = 0
+    have hxy :
+        (⟨x + y, Submodule.add_mem _ hx hy⟩ : symSquareSubmodule A) =
+          ⟨x, hx⟩ + ⟨y, hy⟩ := rfl
+    rw [hxy]
+    simp [hxzero, hyzero]
+  · intro c x hx hxzero
+    change η
+        (⟨c • x, Submodule.smul_mem _ c hx⟩ : symSquareSubmodule A) = 0
+    have hcx :
+        (⟨c • x, Submodule.smul_mem _ c hx⟩ : symSquareSubmodule A) =
+          c • ⟨x, hx⟩ := rfl
+    rw [hcx]
+    simp [hxzero]
+
+theorem cubicProductAnnihilatorContraction_eval_injective_of_dualAnnihilator_finrank_eq_one
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    {η : (P.comap (symSquareSubmodule A).subtype).dualAnnihilator}
+    (hfin :
+      Module.finrank ℝ
+        ((P.comap (symSquareSubmodule A).subtype).dualAnnihilator) = 1)
+    (hη : η ≠ 0) {a0 : A}
+    (ha0 :
+      η.1 ⟨linProduct a0.1 a0.1,
+        linProduct_mem_linProductSubmodule a0 a0⟩ ≠ 0) :
+    Function.Injective
+      (((LinearMap.applyₗ (R := ℝ) (M := A)
+          (M₂ := (P.comap (symSquareSubmodule A).subtype).dualAnnihilator)) a0).comp
+        (cubicProductAnnihilatorContraction A P)) := by
+  intro φ ψ hφψ
+  apply cubicProductAnnihilatorContraction_injective
+  apply LinearMap.ext
+  intro c
+  let W := (P.comap (symSquareSubmodule A).subtype).dualAnnihilator
+  let q0 : symSquareSubmodule A :=
+    ⟨linProduct a0.1 a0.1, linProduct_mem_linProductSubmodule a0 a0⟩
+  let qc0 : symSquareSubmodule A :=
+    ⟨linProduct c.1 a0.1, linProduct_mem_linProductSubmodule c a0⟩
+  rcases exists_smul_eq_of_finrank_eq_one hfin hη
+      ((cubicProductAnnihilatorContraction A P φ) c) with
+    ⟨r, hr⟩
+  rcases exists_smul_eq_of_finrank_eq_one hfin hη
+      ((cubicProductAnnihilatorContraction A P ψ) c) with
+    ⟨s, hs⟩
+  have hpairφ :
+      ((cubicProductAnnihilatorContraction A P φ) c).1 q0 =
+        ((cubicProductAnnihilatorContraction A P φ) a0).1 qc0 := by
+    simpa [q0, qc0] using
+      cubicProductAnnihilatorContraction_pair_symm (A := A) (P := P) φ c a0 a0
+  have hpairψ :
+      ((cubicProductAnnihilatorContraction A P ψ) c).1 q0 =
+        ((cubicProductAnnihilatorContraction A P ψ) a0).1 qc0 := by
+    simpa [q0, qc0] using
+      cubicProductAnnihilatorContraction_pair_symm (A := A) (P := P) ψ c a0 a0
+  have hbase :
+      ((cubicProductAnnihilatorContraction A P φ) a0).1 qc0 =
+        ((cubicProductAnnihilatorContraction A P ψ) a0).1 qc0 := by
+    exact congrArg (fun θ : W => θ.1 qc0) hφψ
+  have hscale : r * η.1 q0 = s * η.1 q0 := by
+    calc
+      r * η.1 q0 =
+          ((cubicProductAnnihilatorContraction A P φ) c).1 q0 := by
+            rw [← hr]
+            rfl
+      _ = ((cubicProductAnnihilatorContraction A P φ) a0).1 qc0 := hpairφ
+      _ = ((cubicProductAnnihilatorContraction A P ψ) a0).1 qc0 := hbase
+      _ = ((cubicProductAnnihilatorContraction A P ψ) c).1 q0 := hpairψ.symm
+      _ = s * η.1 q0 := by
+            rw [← hs]
+            rfl
+  have hrs : r = s := by
+    exact mul_right_cancel₀ ha0 hscale
+  rw [← hr, ← hs, hrs]
+
+theorem finrank_cubicProductAnnihilator_le_one_of_symSquare_quotient_eq_one
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    (hquot :
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 1) :
+    Module.finrank ℝ (cubicProductAnnihilator A P) ≤ 1 := by
+  let W := (P.comap (symSquareSubmodule A).subtype).dualAnnihilator
+  have hWfin : Module.finrank ℝ W = 1 := by
+    rw [← finrank_quotient_eq_finrank_dualAnnihilator
+      (P.comap (symSquareSubmodule A).subtype)]
+    exact hquot
+  have hWpos : 0 < Module.finrank ℝ (⊤ : Submodule ℝ W) := by
+    rw [finrank_top, hWfin]
+    norm_num
+  rcases exists_mem_ne_zero_of_finrank_pos
+      (K := ℝ) (V := W) (s := ⊤) hWpos with
+    ⟨η, _hηtop, hηne⟩
+  have hηlin_ne : η.1 ≠ 0 := by
+    intro hzero
+    exact hηne (Subtype.ext hzero)
+  rcases exists_linProduct_self_dual_ne_zero (A := A) hηlin_ne with
+    ⟨a0, ha0⟩
+  let ev :
+      cubicProductAnnihilator A P →ₗ[ℝ] W :=
+    ((LinearMap.applyₗ (R := ℝ) (M := A) (M₂ := W)) a0).comp
+      (cubicProductAnnihilatorContraction A P)
+  have hinj : Function.Injective ev :=
+    cubicProductAnnihilatorContraction_eval_injective_of_dualAnnihilator_finrank_eq_one
+      (A := A) (P := P) (η := η) hWfin hηne ha0
+  have hrange : Module.finrank ℝ (LinearMap.range ev) =
+      Module.finrank ℝ (cubicProductAnnihilator A P) := by
+    have hsum := LinearMap.finrank_range_add_finrank_ker ev
+    have hker : LinearMap.ker ev = ⊥ := LinearMap.ker_eq_bot.mpr hinj
+    rw [hker] at hsum
+    simp at hsum
+    omega
+  have hle : Module.finrank ℝ (LinearMap.range ev) ≤ Module.finrank ℝ W := by
+    exact (LinearMap.range ev).finrank_le
+  omega
+
 theorem finrank_linQuadProductSubmodule_quotient_eq_finrank_cubicProductAnnihilator
     {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule} :
     Module.finrank ℝ
@@ -2271,6 +2446,23 @@ theorem macaulay_cokernel_bound_of_cubicProductAnnihilator_bound
           P.comap (symSquareSubmodule A).subtype) := by
   rw [finrank_linQuadProductSubmodule_quotient_eq_finrank_cubicProductAnnihilator]
   exact hbound
+
+theorem macaulay_cokernel_bound_of_finrank_symSquare_quotient_eq_one
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    (hquot :
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 1) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) := by
+  refine macaulay_cokernel_bound_of_cubicProductAnnihilator_bound ?_
+  rw [hquot]
+  exact finrank_cubicProductAnnihilator_le_one_of_symSquare_quotient_eq_one hquot
 
 theorem finrank_symSquare_quotient_eq_one_of_eq_spanPairProductsExceptZeroZero
     {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
