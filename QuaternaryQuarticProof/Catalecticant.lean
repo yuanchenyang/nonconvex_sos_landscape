@@ -2419,16 +2419,54 @@ theorem finrank_cubicProductAnnihilator_le_one_of_symSquare_quotient_eq_one
     exact (LinearMap.range ev).finrank_le
   omega
 
+def cubicProductAnnihilatorContractionEval
+    (A : Submodule ℝ linSubmodule) (P : Submodule ℝ quadSubmodule)
+    (a0 : A) :
+    cubicProductAnnihilator A P →ₗ[ℝ]
+      (P.comap (symSquareSubmodule A).subtype).dualAnnihilator :=
+  ((LinearMap.applyₗ (R := ℝ) (M := A)
+    (M₂ := (P.comap (symSquareSubmodule A).subtype).dualAnnihilator)) a0).comp
+      (cubicProductAnnihilatorContraction A P)
+
+@[simp] theorem cubicProductAnnihilatorContractionEval_apply
+    (A : Submodule ℝ linSubmodule) (P : Submodule ℝ quadSubmodule)
+    (a0 : A) (φ : cubicProductAnnihilator A P) :
+    cubicProductAnnihilatorContractionEval A P a0 φ =
+      (cubicProductAnnihilatorContraction A P φ) a0 :=
+  rfl
+
+def dualAnnihilatorSquareEval
+    (A : Submodule ℝ linSubmodule) (P : Submodule ℝ quadSubmodule)
+    (a0 : A) :
+    (P.comap (symSquareSubmodule A).subtype).dualAnnihilator →ₗ[ℝ] ℝ :=
+  { toFun := fun θ =>
+      θ.1 ⟨linProduct a0.1 a0.1,
+        linProduct_mem_linProductSubmodule a0 a0⟩
+    map_add' := by
+      intro θ ψ
+      rfl
+    map_smul' := by
+      intro r θ
+      rfl }
+
+@[simp] theorem dualAnnihilatorSquareEval_apply
+    (A : Submodule ℝ linSubmodule) (P : Submodule ℝ quadSubmodule)
+    (a0 : A)
+    (θ : (P.comap (symSquareSubmodule A).subtype).dualAnnihilator) :
+    dualAnnihilatorSquareEval A P a0 θ =
+      θ.1 ⟨linProduct a0.1 a0.1,
+        linProduct_mem_linProductSubmodule a0 a0⟩ :=
+  rfl
+
 theorem cubicProductAnnihilatorContraction_eval_mem_squareEval_ker
     {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
     {a0 : A} {φ : cubicProductAnnihilator A P}
-    (hφ :
-      (((LinearMap.applyₗ (R := ℝ) (M := A)
-          (M₂ := (P.comap (symSquareSubmodule A).subtype).dualAnnihilator)) a0).comp
-        (cubicProductAnnihilatorContraction A P)) φ = 0)
+    (hφ : cubicProductAnnihilatorContractionEval A P a0 φ = 0)
     (c : A) :
-    ((cubicProductAnnihilatorContraction A P φ) c).1
-        ⟨linProduct a0.1 a0.1, linProduct_mem_linProductSubmodule a0 a0⟩ = 0 := by
+    (cubicProductAnnihilatorContraction A P φ) c ∈
+      LinearMap.ker (dualAnnihilatorSquareEval A P a0) := by
+  change ((cubicProductAnnihilatorContraction A P φ) c).1
+      ⟨linProduct a0.1 a0.1, linProduct_mem_linProductSubmodule a0 a0⟩ = 0
   have hsymm :=
     cubicProductAnnihilatorContraction_pair_symm (A := A) (P := P) φ c a0 a0
   have hbase :
@@ -2474,35 +2512,229 @@ theorem finrank_ker_dualAnnihilator_squareEval_le_one_of_finrank_eq_two
       η.1 ⟨linProduct a0.1 a0.1,
         linProduct_mem_linProductSubmodule a0 a0⟩ ≠ 0) :
     Module.finrank ℝ
-        (LinearMap.ker
-          ({ toFun := fun θ =>
-                θ.1 ⟨linProduct a0.1 a0.1,
-                  linProduct_mem_linProductSubmodule a0 a0⟩
-             map_add' := by
-              intro θ ψ
-              rfl
-             map_smul' := by
-              intro r θ
-              rfl } :
-            (P.comap (symSquareSubmodule A).subtype).dualAnnihilator →ₗ[ℝ] ℝ)) ≤ 1 := by
-  let squareEval :
-      (P.comap (symSquareSubmodule A).subtype).dualAnnihilator →ₗ[ℝ] ℝ :=
-    { toFun := fun θ =>
-        θ.1 ⟨linProduct a0.1 a0.1,
-          linProduct_mem_linProductSubmodule a0 a0⟩
-      map_add' := by
-        intro θ ψ
-        rfl
-      map_smul' := by
-        intro r θ
-        rfl }
-  have hsquare_ne : squareEval ≠ 0 := by
+        (LinearMap.ker (dualAnnihilatorSquareEval A P a0)) ≤ 1 := by
+  have hsquare_ne : dualAnnihilatorSquareEval A P a0 ≠ 0 := by
     intro hzero
     have hηzero := congrArg (fun f =>
       f η) hzero
-    exact ha0 (by simpa [squareEval] using hηzero)
+    exact ha0 (by simpa using hηzero)
   exact finrank_ker_linearMap_to_real_le_one_of_finrank_eq_two
     hfin hsquare_ne
+
+def cubicProductAnnihilatorEvalKerToSquareEvalKer
+    (A : Submodule ℝ linSubmodule) (P : Submodule ℝ quadSubmodule)
+    (a0 b0 : A) :
+    LinearMap.ker (cubicProductAnnihilatorContractionEval A P a0) →ₗ[ℝ]
+      LinearMap.ker (dualAnnihilatorSquareEval A P a0) :=
+  { toFun := fun φ =>
+      ⟨(cubicProductAnnihilatorContraction A P φ.1) b0,
+        cubicProductAnnihilatorContraction_eval_mem_squareEval_ker
+          (A := A) (P := P) (a0 := a0) (φ := φ.1) φ.2 b0⟩
+    map_add' := by
+      intro φ ψ
+      apply Subtype.ext
+      rfl
+    map_smul' := by
+      intro r φ
+      apply Subtype.ext
+      rfl }
+
+@[simp] theorem cubicProductAnnihilatorEvalKerToSquareEvalKer_apply
+    (A : Submodule ℝ linSubmodule) (P : Submodule ℝ quadSubmodule)
+    (a0 b0 : A)
+    (φ : LinearMap.ker (cubicProductAnnihilatorContractionEval A P a0)) :
+    (cubicProductAnnihilatorEvalKerToSquareEvalKer A P a0 b0 φ :
+      (P.comap (symSquareSubmodule A).subtype).dualAnnihilator) =
+      (cubicProductAnnihilatorContraction A P φ.1) b0 :=
+  rfl
+
+theorem cubicProductAnnihilatorEvalKerToSquareEvalKer_injective
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    {a0 b0 : A}
+    {ζ : LinearMap.ker (dualAnnihilatorSquareEval A P a0)}
+    (hfin :
+      Module.finrank ℝ
+        (LinearMap.ker (dualAnnihilatorSquareEval A P a0)) = 1)
+    (hζ : ζ ≠ 0)
+    (hb0 :
+      ζ.1.1 ⟨linProduct b0.1 b0.1,
+        linProduct_mem_linProductSubmodule b0 b0⟩ ≠ 0) :
+    Function.Injective
+      (cubicProductAnnihilatorEvalKerToSquareEvalKer A P a0 b0) := by
+  intro φ ψ hφψ
+  apply Subtype.ext
+  apply cubicProductAnnihilatorContraction_injective
+  apply LinearMap.ext
+  intro c
+  let q0 : symSquareSubmodule A :=
+    ⟨linProduct b0.1 b0.1, linProduct_mem_linProductSubmodule b0 b0⟩
+  let qc : symSquareSubmodule A :=
+    ⟨linProduct c.1 b0.1, linProduct_mem_linProductSubmodule c b0⟩
+  have hφc_mem :
+      (cubicProductAnnihilatorContraction A P φ.1) c ∈
+        LinearMap.ker (dualAnnihilatorSquareEval A P a0) :=
+    cubicProductAnnihilatorContraction_eval_mem_squareEval_ker
+      (A := A) (P := P) (a0 := a0) (φ := φ.1) φ.2 c
+  have hψc_mem :
+      (cubicProductAnnihilatorContraction A P ψ.1) c ∈
+        LinearMap.ker (dualAnnihilatorSquareEval A P a0) :=
+    cubicProductAnnihilatorContraction_eval_mem_squareEval_ker
+      (A := A) (P := P) (a0 := a0) (φ := ψ.1) ψ.2 c
+  rcases exists_smul_eq_of_finrank_eq_one hfin hζ
+      (⟨(cubicProductAnnihilatorContraction A P φ.1) c, hφc_mem⟩ :
+        LinearMap.ker (dualAnnihilatorSquareEval A P a0)) with
+    ⟨r, hr⟩
+  rcases exists_smul_eq_of_finrank_eq_one hfin hζ
+      (⟨(cubicProductAnnihilatorContraction A P ψ.1) c, hψc_mem⟩ :
+        LinearMap.ker (dualAnnihilatorSquareEval A P a0)) with
+    ⟨s, hs⟩
+  have hpairφ :
+      ((cubicProductAnnihilatorContraction A P φ.1) c).1 q0 =
+        ((cubicProductAnnihilatorContraction A P φ.1) b0).1 qc := by
+    simpa [q0, qc] using
+      cubicProductAnnihilatorContraction_pair_symm
+        (A := A) (P := P) φ.1 c b0 b0
+  have hpairψ :
+      ((cubicProductAnnihilatorContraction A P ψ.1) c).1 q0 =
+        ((cubicProductAnnihilatorContraction A P ψ.1) b0).1 qc := by
+    simpa [q0, qc] using
+      cubicProductAnnihilatorContraction_pair_symm
+        (A := A) (P := P) ψ.1 c b0 b0
+  have hbase :
+      ((cubicProductAnnihilatorContraction A P φ.1) b0).1 qc =
+        ((cubicProductAnnihilatorContraction A P ψ.1) b0).1 qc := by
+    exact congrArg
+      (fun θ : LinearMap.ker (dualAnnihilatorSquareEval A P a0) => θ.1.1 qc)
+      hφψ
+  have hscale : r * ζ.1.1 q0 = s * ζ.1.1 q0 := by
+    calc
+      r * ζ.1.1 q0 =
+          ((cubicProductAnnihilatorContraction A P φ.1) c).1 q0 := by
+            exact congrArg
+              (fun θ : LinearMap.ker (dualAnnihilatorSquareEval A P a0) =>
+                θ.1.1 q0) hr
+      _ = ((cubicProductAnnihilatorContraction A P φ.1) b0).1 qc := hpairφ
+      _ = ((cubicProductAnnihilatorContraction A P ψ.1) b0).1 qc := hbase
+      _ = ((cubicProductAnnihilatorContraction A P ψ.1) c).1 q0 := hpairψ.symm
+      _ = s * ζ.1.1 q0 := by
+            exact (congrArg
+              (fun θ : LinearMap.ker (dualAnnihilatorSquareEval A P a0) =>
+                θ.1.1 q0) hs).symm
+  have hrs : r = s := mul_right_cancel₀ hb0 hscale
+  have hWφ := congrArg
+    (fun θ : LinearMap.ker (dualAnnihilatorSquareEval A P a0) =>
+      (θ.1 : (P.comap (symSquareSubmodule A).subtype).dualAnnihilator)) hr
+  have hWψ := congrArg
+    (fun θ : LinearMap.ker (dualAnnihilatorSquareEval A P a0) =>
+      (θ.1 : (P.comap (symSquareSubmodule A).subtype).dualAnnihilator)) hs
+  calc
+    ((cubicProductAnnihilatorContraction A P φ.1) c) =
+        r • (ζ.1 : (P.comap (symSquareSubmodule A).subtype).dualAnnihilator) := hWφ.symm
+    _ = s • (ζ.1 : (P.comap (symSquareSubmodule A).subtype).dualAnnihilator) := by
+      rw [hrs]
+    _ = ((cubicProductAnnihilatorContraction A P ψ.1) c) := hWψ
+
+theorem finrank_ker_cubicProductAnnihilatorContractionEval_le_one
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    {a0 b0 : A}
+    {ζ : LinearMap.ker (dualAnnihilatorSquareEval A P a0)}
+    (hfin :
+      Module.finrank ℝ
+        (LinearMap.ker (dualAnnihilatorSquareEval A P a0)) = 1)
+    (hζ : ζ ≠ 0)
+    (hb0 :
+      ζ.1.1 ⟨linProduct b0.1 b0.1,
+        linProduct_mem_linProductSubmodule b0 b0⟩ ≠ 0) :
+    Module.finrank ℝ
+        (LinearMap.ker (cubicProductAnnihilatorContractionEval A P a0)) ≤ 1 := by
+  let evb := cubicProductAnnihilatorEvalKerToSquareEvalKer A P a0 b0
+  have hinj : Function.Injective evb :=
+    cubicProductAnnihilatorEvalKerToSquareEvalKer_injective
+      (A := A) (P := P) (a0 := a0) (b0 := b0) hfin hζ hb0
+  have hle :
+      Module.finrank ℝ
+          (LinearMap.ker (cubicProductAnnihilatorContractionEval A P a0)) ≤
+        Module.finrank ℝ (LinearMap.ker (dualAnnihilatorSquareEval A P a0)) :=
+    LinearMap.finrank_le_finrank_of_injective (f := evb) hinj
+  omega
+
+theorem finrank_ker_cubicProductAnnihilatorContractionEval_le_one_of_dualAnnihilator_finrank_eq_two
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    {η : (P.comap (symSquareSubmodule A).subtype).dualAnnihilator}
+    (hfin :
+      Module.finrank ℝ
+        ((P.comap (symSquareSubmodule A).subtype).dualAnnihilator) = 2)
+    {a0 : A}
+    (ha0 :
+      η.1 ⟨linProduct a0.1 a0.1,
+        linProduct_mem_linProductSubmodule a0 a0⟩ ≠ 0) :
+    Module.finrank ℝ
+        (LinearMap.ker (cubicProductAnnihilatorContractionEval A P a0)) ≤ 1 := by
+  have hslice_le :
+      Module.finrank ℝ
+          (LinearMap.ker (dualAnnihilatorSquareEval A P a0)) ≤ 1 :=
+    finrank_ker_dualAnnihilator_squareEval_le_one_of_finrank_eq_two
+      (A := A) (P := P) (η := η) hfin ha0
+  let W := (P.comap (symSquareSubmodule A).subtype).dualAnnihilator
+  letI : Module.Free ℝ W := Module.Free.of_divisionRing ℝ W
+  haveI : Module.Finite ℝ W :=
+    Module.finite_of_finrank_eq_succ
+      (show Module.finrank ℝ W = Nat.succ 1 by
+        change Module.finrank ℝ
+          ((P.comap (symSquareSubmodule A).subtype).dualAnnihilator) = 2
+        exact hfin)
+  haveI : Module.Finite ℝ
+      (LinearMap.ker (dualAnnihilatorSquareEval A P a0)) := inferInstance
+  by_cases hslice_zero :
+      Module.finrank ℝ (LinearMap.ker (dualAnnihilatorSquareEval A P a0)) = 0
+  · have hslice_bot : LinearMap.ker (dualAnnihilatorSquareEval A P a0) = ⊥ :=
+      (Submodule.finrank_eq_zero).mp hslice_zero
+    have heval_ker_bot :
+        LinearMap.ker (cubicProductAnnihilatorContractionEval A P a0) = ⊥ := by
+      apply (Submodule.eq_bot_iff _).2
+      intro φ hφ
+      have hcontr_zero : cubicProductAnnihilatorContraction A P φ = 0 := by
+        apply LinearMap.ext
+        intro c
+        have hmem :
+            (cubicProductAnnihilatorContraction A P φ) c ∈
+              LinearMap.ker (dualAnnihilatorSquareEval A P a0) :=
+          cubicProductAnnihilatorContraction_eval_mem_squareEval_ker
+            (A := A) (P := P) (a0 := a0) (φ := φ) hφ c
+        have : (cubicProductAnnihilatorContraction A P φ) c ∈
+            (⊥ : Submodule ℝ
+              ((P.comap (symSquareSubmodule A).subtype).dualAnnihilator)) := by
+          simpa [hslice_bot] using hmem
+        simpa using this
+      exact (cubicProductAnnihilatorContraction_injective A P)
+        (by rw [hcontr_zero]; rfl)
+    rw [heval_ker_bot]
+    simp
+  · have hslice_fin :
+        Module.finrank ℝ (LinearMap.ker (dualAnnihilatorSquareEval A P a0)) = 1 := by
+      omega
+    have hslice_pos :
+        0 < Module.finrank ℝ
+          (⊤ : Submodule ℝ (LinearMap.ker (dualAnnihilatorSquareEval A P a0))) := by
+      rw [finrank_top, hslice_fin]
+      norm_num
+    rcases exists_mem_ne_zero_of_finrank_pos
+        (K := ℝ)
+        (V := LinearMap.ker (dualAnnihilatorSquareEval A P a0))
+        (s := ⊤) hslice_pos with
+      ⟨ζ, _hζtop, hζne⟩
+    have hζW_ne :
+        (ζ.1 : (P.comap (symSquareSubmodule A).subtype).dualAnnihilator) ≠ 0 := by
+      intro hzero
+      exact hζne (Subtype.ext hzero)
+    have hζlin_ne : ζ.1.1 ≠ 0 := by
+      intro hzero
+      exact hζW_ne (Subtype.ext hzero)
+    rcases exists_linProduct_self_dual_ne_zero (A := A) hζlin_ne with
+      ⟨b0, hb0⟩
+    exact finrank_ker_cubicProductAnnihilatorContractionEval_le_one
+      (A := A) (P := P) (a0 := a0) (b0 := b0)
+      (ζ := ζ) hslice_fin hζne hb0
 
 theorem finrank_linQuadProductSubmodule_quotient_eq_finrank_cubicProductAnnihilator
     {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule} :

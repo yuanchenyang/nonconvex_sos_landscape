@@ -15559,4 +15559,44 @@ contraction argument with less typeclass pressure.
 
 No Julia numerical claims were used in this round.
 
+\section*{Kernel bound for quotient dimension two}
+
+\paragraph{Gap targeted.}
+The quotient-dimension-two case still needed the kernel half of the
+rank-nullity argument for contraction evaluation.  The previous round
+constructed the codimension-one square-evaluation slice; this round proved
+that the relevant contraction-evaluation kernel injects into that slice.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, introduced the proof-serving
+maps
+\[
+\texttt{cubicProductAnnihilatorContractionEval}
+\qquad\text{and}\qquad
+\texttt{dualAnnihilatorSquareEval}
+\]
+to avoid repeating large inline linear-map expressions.  Proved
+\[
+\texttt{cubicProductAnnihilatorEvalKerToSquareEvalKer\_injective}
+\]
+and the derived dimension bound
+\[
+\texttt{finrank\_ker\_cubicProductAnnihilatorContractionEval\_le\_one\_of\_dualAnnihilator\_finrank\_eq\_two}.
+\]
+Concretely: if the quadratic dual annihilator has dimension two and some
+functional is nonzero on \(a_0^2\), then the kernel of contraction evaluation
+at \(a_0\) has dimension at most one.
+
+\paragraph{Strategy status.}
+The q=2 case now has the main kernel-control component.  The remaining
+algebraic step is to combine this with the image/rank side of contraction
+evaluation tightly enough to get the desired cubic-annihilator bound
+\(\dim \le 2\), rather than the weaker rank-nullity bound \(\dim \le 3\).
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
