@@ -12278,4 +12278,53 @@ direct top-level theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three Macaulay obstruction interface}
+
+\paragraph{Gap targeted.}
+The largest remaining rank-three gap is not the final numerical contradiction:
+that contradiction is already a finite arithmetic fact.  The missing formal
+bridge is the apolar exact-sequence step that, in the bad case
+\(\dim\Ann_1=0\), produces a number \(b\in\{1,2,3\}\) satisfying the forbidden
+Macaulay inequality.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasRankThreeApolarMacaulayObstruction},
+\]
+which records exactly the output of the rank-three exact-sequence argument in
+the bad case, and proved:
+\[
+\texttt{rankThreeDimensionBound\_of\_rankThreeMacaulayObstruction}.
+\]
+This theorem combines the obstruction data with the existing numerical lemma
+\[
+\texttt{rankThreeMacaulayNumericalContradiction}
+\]
+to prove the rank-three annihilator dimension bound.
+
+Also added wrappers:
+\[
+\texttt{hasRankCaseAnnihilatorMapBounds\_of\_rankTwoDimensionBound\_rankThreeMacaulayObstruction},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_rankTwoDimensionBound\_rankThreeMacaulayObstruction\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_rankTwoDimensionBound\_rankThreeMacaulayObstruction\_direct}.
+\]
+
+\paragraph{Strategy change.}
+The rank-three task is now isolated to constructing
+\texttt{HasRankThreeApolarMacaulayObstruction}; the finite Macaulay
+contradiction and its conversion to the desired annihilator dimension bound
+are formalized.  The remaining top-level assumptions are a rank-two dimension
+bound and this rank-three exact-sequence obstruction.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
