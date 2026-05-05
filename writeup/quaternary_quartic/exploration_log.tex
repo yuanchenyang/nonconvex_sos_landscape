@@ -15788,4 +15788,35 @@ quotient-core route should be able to replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Global reduction to rank-three bad branch}
+
+\paragraph{Gap targeted.}
+With rank-two Macaulay growth now direct, the global theorem should no longer
+carry rank-two as an open assumption.  This round rewired the existing
+quotient-core route to expose only the rank-three bad-branch contradiction as
+the remaining global obstruction.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Basic}, proved
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_globalRankThreeBadBranch}.
+\]
+It combines the existing global rank-two/rank-three quotient-core theorem
+with \texttt{globalRankTwoApolarMacaulayGrowthBound\_direct}.
+
+\paragraph{Strategy status.}
+The root placeholder is now separated from a single major mathematical
+obligation: proving
+\[
+\texttt{HasGlobalRankThreeApolarBadBranchContradiction}.
+\]
+The next round should use the local Macaulay bounds for quotient dimensions
+\(0,1,2\) to prove the left-multiplication cokernel inequality in the
+rank-three exact sequence.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -9954,6 +9954,12 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGro
       (globalRankThreeApolarEssentialQuotientBound_of_globalRankThreeApolarBadBranchContradiction
         hbad3))
 
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankThreeBadBranch
+    (hbad3 : HasGlobalRankThreeApolarBadBranchContradiction) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch
+    globalRankTwoApolarMacaulayGrowthBound_direct hbad3
+
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch :
     QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
       HasGlobalRankTwoApolarMacaulayGrowthBound ∧
