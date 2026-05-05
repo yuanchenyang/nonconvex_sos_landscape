@@ -9481,4 +9481,44 @@ kernel-equation cases.
 
 No Julia numerical claims were used in this round.
 
+\section*{Support bounds plus universal kernel equations close the scaffold}
+
+\paragraph{Gap targeted.}
+The code had a theorem-level route from apolar support bounds plus existential
+rank-two kernel-equation cases, but the remaining blueprint task is more
+naturally phrased as universal binary kernel-equation cases for every basis of
+the rank-two support plane.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{residual\_eq\_zero\_of\_apolarSupportBounds\_and\_universalKernelEquationData}
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_apolarSupportBounds\_and\_universalKernelEquationData}.
+\]
+The proof packages universal cases into the existing existential kernel-case
+route.
+
+\paragraph{Strategy change.}
+The final scaffold can now be closed from exactly two global ingredients:
+rank-case apolar support bounds and universal rank-two binary kernel-equation
+data.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove rank-case apolar support bounds and the universal rank-two binary
+kernel-equation cases.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
