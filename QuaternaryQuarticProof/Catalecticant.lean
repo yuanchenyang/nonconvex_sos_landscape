@@ -2142,6 +2142,91 @@ theorem macaulay_cokernel_bound_of_eq_spanPairProductsExceptZeroZeroZeroOne
       hAL β hxspan hP
   omega
 
+theorem finrank_linQuadProductSubmodule_quotient_mono
+    {A : Submodule ℝ linSubmodule} {P Q : Submodule ℝ quadSubmodule}
+    (hPQ : P ≤ Q) (hQ_le : Q ≤ symSquareSubmodule A) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A Q).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤
+      Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) := by
+  let F := linQuadProductSubmodule A (symSquareSubmodule A)
+  let GP := linQuadProductSubmodule A P
+  let GQ := linQuadProductSubmodule A Q
+  have hP_le : P ≤ symSquareSubmodule A := le_trans hPQ hQ_le
+  have hGP_le_F : GP ≤ F := by
+    exact linQuadProductSubmodule_mono le_rfl hP_le
+  have hGQ_le_F : GQ ≤ F := by
+    exact linQuadProductSubmodule_mono le_rfl hQ_le
+  have hGP_le_GQ : GP ≤ GQ := by
+    exact linQuadProductSubmodule_mono le_rfl hPQ
+  let SP : Submodule ℝ F := GP.comap F.subtype
+  let SQ : Submodule ℝ F := GQ.comap F.subtype
+  have hSPfin : Module.finrank ℝ SP = Module.finrank ℝ GP := by
+    exact (Submodule.comapSubtypeEquivOfLe hGP_le_F).finrank_eq
+  have hSQfin : Module.finrank ℝ SQ = Module.finrank ℝ GQ := by
+    exact (Submodule.comapSubtypeEquivOfLe hGQ_le_F).finrank_eq
+  have hfin_mono : Module.finrank ℝ GP ≤ Module.finrank ℝ GQ :=
+    Submodule.finrank_mono hGP_le_GQ
+  change Module.finrank ℝ (F ⧸ SQ) ≤ Module.finrank ℝ (F ⧸ SP)
+  rw [Submodule.finrank_quotient, Submodule.finrank_quotient, hSPfin, hSQfin]
+  omega
+
+theorem macaulay_cokernel_bound_of_spanPairProductsExceptZeroZero_le_of_quotient_eq_one
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) {P : Submodule ℝ quadSubmodule}
+    (hlex : spanPairProductsExceptZeroZero β ≤ P)
+    (hP_le : P ≤ symSquareSubmodule A)
+    (hquot :
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 1) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) := by
+  have hmono :=
+    finrank_linQuadProductSubmodule_quotient_mono
+      (A := A) hlex hP_le
+  have hlex_bound :=
+    finrank_linQuadProductSubmodule_quotient_le_one_of_eq_spanPairProductsExceptZeroZero
+      hAL β hxspan rfl
+  rw [hquot]
+  exact hmono.trans hlex_bound
+
+theorem macaulay_cokernel_bound_of_spanPairProductsExceptZeroZeroZeroOne_le_of_quotient_eq_two
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) {P : Submodule ℝ quadSubmodule}
+    (hlex : spanPairProductsExceptZeroZeroZeroOne β ≤ P)
+    (hP_le : P ≤ symSquareSubmodule A)
+    (hquot :
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 2) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) := by
+  have hmono :=
+    finrank_linQuadProductSubmodule_quotient_mono
+      (A := A) hlex hP_le
+  have hlex_bound :=
+    finrank_linQuadProductSubmodule_quotient_le_two_of_eq_spanPairProductsExceptZeroZeroZeroOne
+      hAL β hxspan rfl
+  rw [hquot]
+  exact hmono.trans hlex_bound
+
 theorem exists_rank_two_adapted_basis
     {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
     (β : Module.Basis (Fin 2) ℝ A) {x y : linSubmodule}

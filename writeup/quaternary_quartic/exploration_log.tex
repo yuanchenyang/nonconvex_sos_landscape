@@ -15257,4 +15257,38 @@ low-codimension quadratic subspace to one of these lex-normal models.
 
 No Julia numerical claims were used in this round.
 
+\section*{Containment reduction for lex Macaulay models}
+
+\paragraph{Gap targeted.}
+After proving the lex cokernel inequalities, the next algebraic reduction is
+monotonicity: enlarging the quadratic subspace can only enlarge the cubic
+product subspace, hence can only shrink the cubic cokernel.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{finrank\_linQuadProductSubmodule\_quotient\_mono}.
+\]
+It states that if \(P\subseteq Q\subseteq \operatorname{Sym}^2(A)\), then the
+cubic quotient for \(Q\) has dimension at most the cubic quotient for \(P\).
+Using this with the two lex models gives containment-form Macaulay bounds:
+\[
+\texttt{macaulay\_cokernel\_bound\_of\_spanPairProductsExceptZeroZero\_le\_of\_quotient\_eq\_one},
+\]
+\[
+\texttt{macaulay\_cokernel\_bound\_of\_spanPairProductsExceptZeroZeroZeroOne\_le\_of\_quotient\_eq\_two}.
+\]
+
+\paragraph{Strategy change.}
+The central algebraic gap is now isolated further: for a given low-codimension
+quadratic subspace, it remains to choose coordinates so that it contains the
+appropriate lex model.  Once that containment is available, the Macaulay
+cokernel inequality follows from the formalized lemmas.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
