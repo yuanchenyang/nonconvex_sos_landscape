@@ -3993,6 +3993,19 @@ theorem residual_eq_zero_of_lowRankApolarSupportTheorem_and_universalNormalizedP
     (hasRankTwoUniversalHankelNegativeData_of_point
       (B := B) (p := p) (u := u) hu hp hsocp.1)
 
+theorem residual_eq_zero_of_lowRankApolarAnnihilatorMapTheorem_and_universalNormalizedPosition
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hann : HasLowRankApolarAnnihilatorMapTheorem B p u)
+    (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarSupportTheorem_and_universalNormalizedPosition
+    (B := B) hu hp hsocp
+    (hasLowRankApolarSupportTheorem_of_annihilatorMapTheorem hann)
+    hpos
+
 theorem residual_eq_zero_of_lowRankApolarSupportDecomposition_and_universalNormalizedPosition
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -5333,8 +5346,31 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheo
   exact
     residual_eq_zero_of_lowRankApolarSupportTheorem_and_universalNormalizedPosition
       (B := B) hu hp hsocp
-      (hsupport B p u hu hB hp hsocp)
-      (hpos B p u hu hB hp hsocp)
+    (hsupport B p u hu hB hp hsocp)
+    (hpos B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarAnnihilatorMapTheorem_and_universalNormalizedPosition
+    (hann :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarAnnihilatorMapTheorem B p u)
+    (hpos :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoUniversalNormalizedKernelPositionData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarAnnihilatorMapTheorem_and_universalNormalizedPosition
+    (B := B) hu hp hsocp
+    (hann B p u hu hB hp hsocp)
+    (hpos B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportDecomposition_and_universalNormalizedPosition
     (hdecomp :

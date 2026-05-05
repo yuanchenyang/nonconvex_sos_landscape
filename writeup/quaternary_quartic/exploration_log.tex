@@ -9772,4 +9772,43 @@ catalecticant rank and to formalize the rank-two normalized-position input.
 
 No Julia numerical claims were used in this round.
 
+\section*{Annihilator-map route with universal normalized position}
+
+\paragraph{Gap targeted.}
+The low-rank apolar theorem can be attacked in annihilator-map form, and that
+form should connect directly to the normalized-position route without requiring
+a manual detour through support decompositions in later proof code.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarAnnihilatorMapTheorem\_and\_universalNormalizedPosition}
+\]
+and the matching theorem-level route
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarAnnihilatorMapTheorem\_and\_universalNormalizedPosition}.
+\]
+The proof composes the annihilator-map theorem with the existing support
+theorem conversion and then uses pointwise Hankel negativity from SOS/FOCP data.
+
+\paragraph{Strategy change.}
+The final theorem can now be driven by either the annihilator-map apolar
+theorem or the product-kernel/support formulation, plus the same universal
+rank-two normalized-position theorem.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The two real mathematical inputs remain the low-rank apolar theorem itself and
+the rank-two normalized-position theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
