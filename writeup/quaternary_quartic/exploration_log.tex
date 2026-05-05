@@ -6498,4 +6498,44 @@ low-rank normal form from the catalecticant rank hypotheses.
 
 No Julia numerical claims were used in this round.
 
+\section*{Existential binary normal-form interface}
+
+\paragraph{Gap targeted.}
+The rank-two binary-form interface still required a low-rank normal form for
+every ordered basis \(x,y\) of the two-dimensional complement.  The proof only
+uses, for each nonzero \(x\), the existence of a second direction \(y\) giving
+such a normal form.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankTwoSupportComponentHypothesis\_of\_exists\_binary\_form\_and\_productLI}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It accepts an existential
+rank-two binary normal-form hypothesis and obtains the needed
+\(\Sym^2A\)-dimension and disjointness facts from the product-independence
+lemma.
+
+Added
+\[
+\texttt{HasRankCaseExistentialBinaryFormData}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}, together with the corresponding
+apolar-component, residual, and root reduction theorems.  In this interface,
+rank two requires only that each nonzero complement vector can be completed to
+a binary normal-form pair.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+completes successfully.
+
+\paragraph{Remaining blockers.}
+The remaining high-level mathematical inputs are now the rank-case
+annihilator-map bounds and the existential rank-two binary low-rank normal
+form.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
