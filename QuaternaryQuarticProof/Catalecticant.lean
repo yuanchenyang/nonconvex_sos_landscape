@@ -814,6 +814,77 @@ theorem finrank_range_linProductLeftMapOn_eq
     simpa [linProductLeftMapOn, linProductLeftMap, linProduct] using hbcval
   simpa using mul_left_cancel₀ ha hprod
 
+theorem range_linProductLeftMapOn_eq_span_basis_products
+    {a : linSubmodule} {A : Submodule ℝ linSubmodule}
+    {ι : Type*} (β : Module.Basis ι ℝ A) :
+    LinearMap.range (linProductLeftMapOn a A) =
+      Submodule.span ℝ (Set.range fun i : ι => linProduct a (β i).1) := by
+  rw [← Submodule.map_top]
+  rw [← β.span_eq]
+  rw [Submodule.map_span]
+  congr
+  ext q
+  constructor
+  · rintro ⟨b, ⟨i, rfl⟩, rfl⟩
+    exact ⟨i, rfl⟩
+  · rintro ⟨i, rfl⟩
+    exact ⟨β i, ⟨i, rfl⟩, rfl⟩
+
+theorem range_linProductLeftMapOn_inf_symSquare_eq_bot_of_basis_products_linearIndependent
+    {A : Submodule ℝ linSubmodule} {z : linSubmodule}
+    (β : Module.Basis (Fin 2) ℝ A)
+    (hLI :
+      LinearIndependent ℝ
+        (Sum.elim
+          (fun i : Fin 2 => linProduct z (β i).1)
+          (fun ij : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+            linProduct (β ij.1.1).1 (β ij.1.2).1))) :
+    LinearMap.range (linProductLeftMapOn z A) ⊓ symSquareSubmodule A = ⊥ := by
+  let f : Fin 2 → quadSubmodule := fun i => linProduct z (β i).1
+  let g : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} → quadSubmodule :=
+    fun ij => linProduct (β ij.1.1).1 (β ij.1.2).1
+  have hrange :
+      LinearMap.range (linProductLeftMapOn z A) =
+        Submodule.span ℝ (Set.range f) := by
+    simpa [f] using range_linProductLeftMapOn_eq_span_basis_products
+      (a := z) (A := A) β
+  have hsym :
+      symSquareSubmodule A = Submodule.span ℝ (Set.range g) := by
+    apply le_antisymm
+    · refine linProductSubmodule_le_of_generators ?_
+      intro a b
+      have hrepr :=
+        LinearMap.sum_repr_mul_repr_mul
+          (b₁' := β) (b₂' := β) (B := linProductBilinOn A) a b
+      change ((linProductBilinOn A) a) b ∈ Submodule.span ℝ (Set.range g)
+      rw [← hrepr]
+      rw [Finsupp.sum_fintype]
+      swap
+      · simp
+      refine Submodule.sum_mem _ ?_
+      intro i _hi
+      rw [Finsupp.sum_fintype]
+      swap
+      · simp
+      refine Submodule.sum_mem _ ?_
+      intro j _hj
+      refine Submodule.smul_mem _ _ ?_
+      refine Submodule.smul_mem _ _ ?_
+      change linProduct (β i).1 (β j).1 ∈ Submodule.span ℝ (Set.range g)
+      by_cases hij : i ≤ j
+      · exact Submodule.subset_span ⟨⟨(i, j), hij⟩, rfl⟩
+      · have hji : j ≤ i := le_of_not_ge hij
+        rw [linProduct_comm]
+        exact Submodule.subset_span ⟨⟨(j, i), hji⟩, rfl⟩
+    · refine Submodule.span_le.mpr ?_
+      rintro q ⟨ij, rfl⟩
+      exact linProduct_mem_linProductSubmodule
+        (⟨(β ij.1.1).1, (β ij.1.1).2⟩ : A)
+        (⟨(β ij.1.2).1, (β ij.1.2).2⟩ : A)
+  rw [hrange, hsym]
+  exact inf_span_ranges_eq_bot_of_linearIndependent_sum
+    (K := ℝ) (V := quadSubmodule) hLI
+
 theorem finrank_range_linProductLeftMapOn_le
     (a : linSubmodule) (A : Submodule ℝ linSubmodule) :
     Module.finrank ℝ (LinearMap.range (linProductLeftMapOn a A)) ≤

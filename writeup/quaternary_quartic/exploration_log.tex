@@ -5135,4 +5135,60 @@ kernel-equation cases, and binary-plane disjointness.
 
 No Julia numerical claims were used in this round.
 
+\section*{Reducing rank-two product disjointness to product linear independence}
+
+\paragraph{Gap targeted.}
+The rank-two branch still needs
+\[
+zA\cap\Sym^2A=0.
+\]
+Rather than keep this as a primitive assumption, it can be reduced to a
+standard linear-independence statement for the combined family of mixed
+products \(z a_i\) and symmetric products \(a_i a_j\) in a basis of \(A\).
+
+\paragraph{Lean progress.}
+Added general linear-algebra lemmas to
+\texttt{QuaternaryQuarticProof/Dimension.lean}:
+\[
+\texttt{disjoint\_span\_ranges\_of\_linearIndependent\_sum}
+\]
+and
+\[
+\texttt{inf\_span\_ranges\_eq\_bot\_of\_linearIndependent\_sum}.
+\]
+They use \(\texttt{linearIndependent\_sum}\) to conclude that the spans of the
+left and right summands of a linearly independent \(\texttt{Sum.elim}\) family
+are disjoint.
+
+Added to \texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{range\_linProductLeftMapOn\_eq\_span\_basis\_products}
+\]
+and
+\[
+\texttt{range\_linProductLeftMapOn\_inf\_symSquare\_eq\_bot\_of\_basis\_products\_linearIndependent}.
+\]
+The latter proves the rank-two product-disjointness goal from linear
+independence of
+\[
+\{z a_i\}_{i=1}^2\cup\{a_i a_j: i\le j\}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Dimension}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The product-disjointness obligation is now reduced to a concrete product
+linear-independence statement.  The remaining structural work is to prove that
+linear independence from the direct-sum decomposition \(E=A\oplus W\), and to
+derive the binary kernel-equation cases.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -199,6 +199,28 @@ section SubspaceChoice
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
 variable [FiniteDimensional K V]
 
+section SpanDisjoint
+
+variable {ι κ : Type*}
+
+omit [FiniteDimensional K V] in
+theorem disjoint_span_ranges_of_linearIndependent_sum
+    {f : ι → V} {g : κ → V}
+    (hLI : LinearIndependent K (Sum.elim f g : ι ⊕ κ → V)) :
+    Disjoint (Submodule.span K (Set.range f)) (Submodule.span K (Set.range g)) := by
+  simpa [Function.comp_def] using
+    (linearIndependent_sum.mp hLI).2.2
+
+omit [FiniteDimensional K V] in
+theorem inf_span_ranges_eq_bot_of_linearIndependent_sum
+    {f : ι → V} {g : κ → V}
+    (hLI : LinearIndependent K (Sum.elim f g : ι ⊕ κ → V)) :
+    Submodule.span K (Set.range f) ⊓ Submodule.span K (Set.range g) = ⊥ :=
+  (disjoint_span_ranges_of_linearIndependent_sum
+    (K := K) (V := V) hLI).eq_bot
+
+end SpanDisjoint
+
 theorem exists_mem_notMem_of_finrank_lt
     {s t : Submodule K V}
     (hlt : finrank K t < finrank K s) :
