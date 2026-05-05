@@ -12234,4 +12234,48 @@ The rank-one case no longer appears in the top-level reduction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two/rank-three dimension-bound interface}
+
+\paragraph{Gap targeted.}
+The rank-one apolar branch is now closed directly, but the dimension-bound
+interface still bundled the solved rank-one inequality with the rank-two and
+rank-three Hilbert-function obligations.  This obscured the largest remaining
+gap: proving the two blueprint inequalities for the Artinian apolar Hilbert
+function.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasRankTwoThreeApolarAnnihilatorDimensionBounds},
+\]
+\[
+\texttt{hasRankCaseAnnihilatorMapBounds\_of\_rankTwo\_rankThreeDimensionBounds},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_rankTwo\_rankThreeApolarAnnihilatorDimensionBounds\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_rankTwo\_rankThreeApolarAnnihilatorDimensionBounds\_direct}.
+\]
+These wrappers use the proved rank-one annihilator-map theorem and reduce the
+top-level formal target to the rank-two and rank-three annihilator dimension
+bounds.
+
+\paragraph{Strategy change.}
+The next structural proof work should formalize the blueprint's apolar Hilbert
+function step:
+\[
+\texttt{HasRankTwoApolarAnnihilatorDimensionBound},
+\qquad
+\texttt{HasRankThreeApolarAnnihilatorDimensionBound}.
+\]
+Rank one is no longer part of the dimension-bound interface needed for the
+direct top-level theorem.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

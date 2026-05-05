@@ -447,6 +447,11 @@ def HasRankCaseApolarAnnihilatorDimensionBounds
     HasRankTwoApolarAnnihilatorDimensionBound B p u ∧
       HasRankThreeApolarAnnihilatorDimensionBound B p u
 
+def HasRankTwoThreeApolarAnnihilatorDimensionBounds
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  HasRankTwoApolarAnnihilatorDimensionBound B p u ∧
+    HasRankThreeApolarAnnihilatorDimensionBound B p u
+
 def HasRankTwoUniversalKernelEquationData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
@@ -2138,6 +2143,14 @@ theorem hasRankCaseAnnihilatorMapBounds_of_rankTwo_rankThree
   hasRankCaseAnnihilatorMapBounds_of_splitAnnihilatorMapBounds
     (B := B) (p := p) (u := u)
     rankOneApolarAnnihilatorMapBound_direct hbound2 hbound3
+
+theorem hasRankCaseAnnihilatorMapBounds_of_rankTwo_rankThreeDimensionBounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdims : HasRankTwoThreeApolarAnnihilatorDimensionBounds B p u) :
+    HasRankCaseAnnihilatorMapBounds B p u :=
+  hasRankCaseAnnihilatorMapBounds_of_rankTwo_rankThree
+    (rankTwoApolarAnnihilatorMapBound_of_rankTwoDimensionBound hdims.1)
+    (rankThreeApolarAnnihilatorMapBound_of_rankThreeDimensionBound hdims.2)
 
 theorem rankOneDimensionBound_of_rankOneApolarAnnihilatorMapBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -4679,6 +4692,17 @@ theorem residual_eq_zero_of_rankTwo_rankThreeApolarAnnihilatorMapBounds_direct
     (B := B) hu hp hsocp
     (hasRankCaseAnnihilatorMapBounds_of_rankTwo_rankThree hbound2 hbound3)
 
+theorem residual_eq_zero_of_rankTwo_rankThreeApolarAnnihilatorDimensionBounds_direct
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdims : HasRankTwoThreeApolarAnnihilatorDimensionBounds B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_rankCaseAnnihilatorMapBounds_direct
+    (B := B) hu hp hsocp
+    (hasRankCaseAnnihilatorMapBounds_of_rankTwo_rankThreeDimensionBounds hdims)
+
 theorem residual_eq_zero_of_supportDecomposition_and_normalizedHankelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -6443,6 +6467,21 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankTwo_rankThreeApolarA
     (B := B) hu hp hsocp
     (hbound2 B p u hu hB hp hsocp)
     (hbound3 B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankTwo_rankThreeApolarAnnihilatorDimensionBounds_direct
+    (hdims :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoThreeApolarAnnihilatorDimensionBounds B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_rankTwo_rankThreeApolarAnnihilatorDimensionBounds_direct
+    (B := B) hu hp hsocp
+    (hdims B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheorem_and_universalNormalizedPosition_and_scalarFacts
     (hsupport :
