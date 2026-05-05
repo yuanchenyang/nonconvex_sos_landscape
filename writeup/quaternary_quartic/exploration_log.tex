@@ -13132,4 +13132,52 @@ exact-sequence shape, and rank-three Macaulay/O-sequence bound.
 
 No Julia numerical claims were used in this round.
 
+\section*{Four-piece local blueprint data}
+
+\paragraph{Gap targeted.}
+After splitting rank two and rank three into their conceptual components, the
+remaining target needed a single name exposing all four pieces without
+rebundling them.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasLowRankApolarBlueprintLocalData},
+\]
+the conjunction of:
+\[
+\texttt{HasRankTwoApolarGorensteinSymmetryData},
+\quad
+\texttt{HasRankTwoApolarMacaulayGrowthBound},
+\quad
+\texttt{HasRankThreeApolarBadBranchExactSequenceShape},
+\quad
+\texttt{HasRankThreeApolarBadBranchMacaulayBound}.
+\]
+Proved:
+\[
+\texttt{lowRankApolarHilbertData\_of\_lowRankApolarBlueprintLocalData},
+\]
+\[
+\texttt{lowRankApolarBlueprintHilbertData\_of\_lowRankApolarBlueprintLocalData},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarBlueprintLocalData\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarBlueprintLocalData\_direct}.
+\]
+
+\paragraph{Strategy change.}
+The remaining proof work is now a four-part local Hilbert-function
+formalization.  Each part corresponds to a specific sentence in the blueprint:
+rank-two Gorenstein symmetry, rank-two Macaulay growth, rank-three
+exact-sequence shape, and rank-three Macaulay/O-sequence bound.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
