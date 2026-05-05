@@ -15000,4 +15000,41 @@ codimension no larger.
 
 No Julia numerical claims were used in this round.
 
+\section*{Three-variable quadratic products in a line complement}
+
+\paragraph{Gap targeted.}
+The finite Macaulay count also needs the degree-two side in the
+three-variable quotient: the six sorted products of a basis of the complement
+should be exactly the symmetric-square subspace and should be linearly
+independent.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{span\_basis\_pair\_products\_eq\_symSquareSubmodule},
+\]
+showing that sorted pair products of a three-element basis span
+\texttt{symSquareSubmodule}.  For a complement to a line, extracted linear
+independence of those six pair products as
+\[
+\texttt{linearIndependent\_basis\_pair\_products\_fin\_three\_of\_isCompl\_line}
+\]
+and concluded
+\[
+\texttt{finrank\_symSquareSubmodule\_eq\_six\_of\_isCompl\_line}.
+\]
+
+\paragraph{Strategy change.}
+Both vector spaces in the special Macaulay count are now represented by
+explicit bases in the line complement: six quadratic products and ten cubic
+products.  The remaining finite step is to show that a subspace of the six
+quadrics with codimension at most two has a degree-three product span with
+codimension at most the same number.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

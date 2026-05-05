@@ -858,6 +858,51 @@ theorem finrank_symSquareSubmodule_eq_six_of_basis_products_linearIndependent
     finrank_symSquareSubmodule_le_six_of_finrank_eq_three hA
   omega
 
+theorem span_basis_pair_products_eq_symSquareSubmodule
+    {A : Submodule ℝ linSubmodule}
+    (β : Module.Basis (Fin 3) ℝ A) :
+    Submodule.span ℝ
+        (Set.range fun ij : {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2} =>
+          linProduct (β ij.1.1).1 (β ij.1.2).1) =
+      symSquareSubmodule A := by
+  apply le_antisymm
+  · refine Submodule.span_le.mpr ?_
+    rintro q ⟨ij, rfl⟩
+    exact linProduct_mem_linProductSubmodule
+      (⟨(β ij.1.1).1, (β ij.1.1).2⟩ : A)
+      (⟨(β ij.1.2).1, (β ij.1.2).2⟩ : A)
+  · refine linProductSubmodule_le_of_generators ?_
+    intro a b
+    have hrepr :=
+      LinearMap.sum_repr_mul_repr_mul
+        (b₁' := β) (b₂' := β) (B := linProductBilinOn A) a b
+    change ((linProductBilinOn A) a) b ∈
+      Submodule.span ℝ
+        (Set.range fun ij : {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2} =>
+          linProduct (β ij.1.1).1 (β ij.1.2).1)
+    rw [← hrepr]
+    rw [Finsupp.sum_fintype]
+    swap
+    · simp
+    refine Submodule.sum_mem _ ?_
+    intro i _hi
+    rw [Finsupp.sum_fintype]
+    swap
+    · simp
+    refine Submodule.sum_mem _ ?_
+    intro j _hj
+    refine Submodule.smul_mem _ _ ?_
+    refine Submodule.smul_mem _ _ ?_
+    change linProduct (β i).1 (β j).1 ∈
+      Submodule.span ℝ
+        (Set.range fun ij : {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2} =>
+          linProduct (β ij.1.1).1 (β ij.1.2).1)
+    by_cases hij : i ≤ j
+    · exact Submodule.subset_span ⟨⟨(i, j), hij⟩, rfl⟩
+    · have hji : j ≤ i := le_of_not_ge hij
+      rw [linProduct_comm]
+      exact Submodule.subset_span ⟨⟨(j, i), hji⟩, rfl⟩
+
 theorem linOne_mul_linOne_mem_linProductSubmodule_top_top :
     linProduct linOne linOne ∈
       linProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤ := by
@@ -1434,6 +1479,30 @@ theorem linearIndependent_rank_one_combined_products_of_isCompl
   change LinearIndependent ℝ pulled at hsub
   change LinearIndependent ℝ target
   exact hpulled ▸ hsub
+
+theorem linearIndependent_basis_pair_products_fin_three_of_isCompl_line
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) :
+    LinearIndependent ℝ
+      (fun ij : {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2} =>
+        linProduct (β ij.1.1).1 (β ij.1.2).1) := by
+  let Pair3 := {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2}
+  have hcombined :=
+    linearIndependent_rank_one_combined_products_of_isCompl hAL β hxspan
+  let φ : Pair3 → (Fin 3 ⊕ Pair3) := Sum.inr
+  have hφinj : Function.Injective φ := by
+    intro a b h
+    exact Sum.inr.inj h
+  exact hcombined.comp φ hφinj
+
+theorem finrank_symSquareSubmodule_eq_six_of_isCompl_line
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) :
+    Module.finrank ℝ (symSquareSubmodule A) = 6 :=
+  finrank_symSquareSubmodule_eq_six_of_basis_products_linearIndependent β
+    (linearIndependent_basis_pair_products_fin_three_of_isCompl_line hAL β hxspan)
 
 theorem exists_rank_two_adapted_basis
     {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
