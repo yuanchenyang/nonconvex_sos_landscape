@@ -11264,4 +11264,47 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Hyperbolic binary kernel transport to the canonical branch}
+
+\paragraph{Gap targeted.}
+The hyperbolic discriminant branch needs the dual counterpart of the earlier
+quadratic normalization.  For \(D=s^2-4rt>0\) and \(r\ne0\), the dual shear by
+\((s-\sqrt D)/(2r)\) should give a kernel \((r,\sqrt D,0)\), and a subsequent
+dual shear should remove the \(x^2\) coefficient, leaving a scalar \(xy\)
+kernel.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{hyperbolic\_dual\_shearY\_mixedCoeff\_eq\_sqrt\_discriminant},
+\quad
+\texttt{hyperbolic\_dual\_shearY\_ySqCoeff\_eq\_zero},
+\]
+\[
+\texttt{binaryHankelMul\_hyperbolic\_shearY\_dual\_zero\_ySq\_kernel},
+\quad
+\texttt{xy\_kernel\_of\_hyperbolic\_shearY\_shearX\_dual\_kernel}.
+\]
+The final theorem packages the nonzero-\(r\) hyperbolic branch through two
+dual shears and removes the nonzero scalar \(\sqrt D\), producing the exact
+canonical vector \((0,1,0)\) for the transformed binary Hankel map.
+
+\paragraph{Strategy change.}
+The hyperbolic nonzero-leading branch can now feed the existing \(xy\)
+canonical branch certificate after coefficient transformation.  The remaining
+binary transport work is the zero-leading hyperbolic branch and the elliptic
+branch.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}

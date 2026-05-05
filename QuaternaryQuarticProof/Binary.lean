@@ -241,6 +241,27 @@ theorem hyperbolic_shearX_sqrt_discriminant_ne_zero
     Real.sqrt (binaryKernelDiscriminant r s t) ≠ 0 := by
   exact ne_of_gt (Real.sqrt_pos_of_pos hdisc_pos)
 
+theorem hyperbolic_dual_shearY_mixedCoeff_eq_sqrt_discriminant
+    {r s t : ℝ} (hr : r ≠ 0) :
+    s - 2 * r * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)) =
+      Real.sqrt (binaryKernelDiscriminant r s t) := by
+  field_simp [hr]
+  ring
+
+theorem hyperbolic_dual_shearY_ySqCoeff_eq_zero
+    {r s t : ℝ} (hr : r ≠ 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t) :
+    r * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r))^2 -
+        s * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)) + t =
+      0 := by
+  let D := binaryKernelDiscriminant r s t
+  have hD_nonneg : 0 ≤ D := le_of_lt hdisc_pos
+  have hsqrt_sq : (Real.sqrt D)^2 = D := Real.sq_sqrt hD_nonneg
+  have hD_def : D = s^2 - 4 * r * t := by
+    simp [D, binaryKernelDiscriminant]
+  field_simp [hr]
+  nlinarith
+
 theorem isBinaryQuadraticPullback_hyperbolic_shearX_to_zero_ySq
     {r s t : ℝ} (hr : r ≠ 0)
     (hdisc_pos : 0 < binaryKernelDiscriminant r s t) :
@@ -1066,6 +1087,100 @@ theorem ySq_kernel_of_parabolic_shearY_swap_dual_kernel
         (d := D) (e := e) (r := r) (s := 0) (t := 0) hx
   exact ySq_kernel_of_nonzero_scalar_ySq_kernel (a := e) (b := D)
     (c := C) (d := B) (e := A) (T := r) hr (by simpa [A, B, C, D] using hswap)
+
+theorem binaryHankelMul_hyperbolic_shearY_dual_zero_ySq_kernel
+    {a b c d e r s t : ℝ}
+    (hr : r ≠ 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0) :
+    binaryHankelMul
+        (a + 4 * b * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)) +
+          6 * c * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r))^2 +
+          4 * d * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r))^3 +
+          e * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r))^4)
+        (b + 3 * c * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)) +
+          3 * d * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r))^2 +
+          e * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r))^3)
+        (c + 2 * d * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)) +
+          e * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r))^2)
+        (d + e * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)))
+        e
+        (![r, Real.sqrt (binaryKernelDiscriminant r s t), 0] : Fin 3 → ℝ) = 0 := by
+  have htransport := binaryHankelMul_shearY_dual_kernel
+    (a := a) (b := b) (c := c) (d := d) (e := e)
+    (r := r) (s := s) (t := t)
+    (tau := (s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)) hker
+  have hmix :
+      s - 2 * r * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)) =
+        Real.sqrt (binaryKernelDiscriminant r s t) :=
+    hyperbolic_dual_shearY_mixedCoeff_eq_sqrt_discriminant
+      (r := r) (s := s) (t := t) hr
+  have hy :
+      r * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r))^2 -
+          s * ((s - Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)) + t =
+        0 :=
+    hyperbolic_dual_shearY_ySqCoeff_eq_zero
+      (r := r) (s := s) (t := t) hr hdisc_pos
+  simpa [hmix, hy] using htransport
+
+theorem xy_kernel_of_hyperbolic_shearY_shearX_dual_kernel
+    {a b c d e r s t : ℝ}
+    (hr : r ≠ 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0) :
+    let disc := binaryKernelDiscriminant r s t
+    let tau := (s - Real.sqrt disc) / (2 * r)
+    let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+    let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+    let C := c + 2 * d * tau + e * tau^2
+    let D := d + e * tau
+    let mu := r / Real.sqrt disc
+    binaryHankelMul
+        A
+        (A * mu + B)
+        (A * mu^2 + 2 * B * mu + C)
+        (A * mu^3 + 3 * B * mu^2 + 3 * C * mu + D)
+        (A * mu^4 + 4 * B * mu^3 + 6 * C * mu^2 + 4 * D * mu + e)
+        (![0, 1, 0] : Fin 3 → ℝ) = 0 := by
+  dsimp only
+  let disc := binaryKernelDiscriminant r s t
+  let tau := (s - Real.sqrt disc) / (2 * r)
+  let A := a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4
+  let B := b + 3 * c * tau + 3 * d * tau^2 + e * tau^3
+  let C := c + 2 * d * tau + e * tau^2
+  let D := d + e * tau
+  let mu := r / Real.sqrt disc
+  have hfirst :
+      binaryHankelMul A B C D e (![r, Real.sqrt disc, 0] : Fin 3 → ℝ) = 0 := by
+    simpa [disc, tau, A, B, C, D] using
+      binaryHankelMul_hyperbolic_shearY_dual_zero_ySq_kernel
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc_pos hker
+  have hsqrt : Real.sqrt disc ≠ 0 := by
+    simpa [disc] using
+      hyperbolic_shearX_sqrt_discriminant_ne_zero
+        (r := r) (s := s) (t := t) hdisc_pos
+  have hsecond :
+      binaryHankelMul
+          A
+          (A * mu + B)
+          (A * mu^2 + 2 * B * mu + C)
+          (A * mu^3 + 3 * B * mu^2 + 3 * C * mu + D)
+          (A * mu^4 + 4 * B * mu^3 + 6 * C * mu^2 + 4 * D * mu + e)
+          (![0, Real.sqrt disc, 0] : Fin 3 → ℝ) = 0 := by
+    have htransport := binaryHankelMul_shearX_dual_kernel
+      (a := A) (b := B) (c := C) (d := D) (e := e)
+      (r := r) (s := Real.sqrt disc) (t := 0) (tau := mu) hfirst
+    have hx : r - Real.sqrt disc * mu = 0 := by
+      change r - Real.sqrt disc * (r / Real.sqrt disc) = 0
+      field_simp [hsqrt]
+      ring
+    simpa [hx] using htransport
+  exact xy_kernel_of_nonzero_scalar_xy_kernel (a := A) (b := A * mu + B)
+    (c := A * mu^2 + 2 * B * mu + C)
+    (d := A * mu^3 + 3 * B * mu^2 + 3 * C * mu + D)
+    (e := A * mu^4 + 4 * B * mu^3 + 6 * C * mu^2 + 4 * D * mu + e)
+    (S := Real.sqrt disc) hsqrt hsecond
 
 theorem exists_nonzero_binaryHankel_kernel_equations_of_finrank_range_le_two
     {a b c d e : ℝ}
