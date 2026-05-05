@@ -8319,4 +8319,45 @@ rank-two binary kernel theorem, then replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Universal normalized Hankel route}
+
+\paragraph{Gap targeted.}
+After exposing universal canonical kernel data, the next rank-two gap was to
+align the Lean route with the blueprint's normalized Hankel facts: normalized
+kernel position, negative Hankel value, and Hankel rank at most two.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankTwoUniversalNormalizedHankelData}
+\]
+as the universal analogue of the existing existential normalized-Hankel
+package.  Proved the equivalence bridges needed by the route:
+universal canonical data projects to universal normalized Hankel data, and
+universal normalized Hankel data reconstructs universal canonical data via
+\[
+\texttt{binaryCanonicalKernelData\_of\_normalizedKernelPosition}.
+\]
+Added residual and root reductions from the three split annihilator-map bounds
+plus universal normalized-Hankel data.
+
+\paragraph{Strategy change.}
+The rank-two work can now be carried out at the normalized Hankel level, with
+canonical kernels and syntactic kernel-equation cases recovered automatically.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the three split exact annihilator-map bounds and the universal normalized
+rank-two Hankel data, then replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
