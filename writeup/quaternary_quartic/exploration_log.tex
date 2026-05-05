@@ -10279,4 +10279,56 @@ removed.
 
 No Julia numerical claims were used in this round.
 
+\section*{Pure-square binary theorem interface}
+
+\paragraph{Gap targeted.}
+The remaining binary input was stated as a fixed-coordinate normalized kernel
+classification.  The blueprint's actual rank-two binary lemma is weaker and
+more invariant: a rank-at-most-two binary Hankel form with a negative Hankel
+value has some negative pure fourth power after choosing a suitable binary
+linear form.
+
+\paragraph{Lean progress.}
+Added the theorem interface
+\[
+\texttt{HasUniversalBinaryRankTwoNegativePureSquareTheorem}.
+\]
+Then routed it through the SOCP point data:
+\[
+\texttt{hasRankTwoNegativeSquareData\_of\_universalPureSquareTheorem\_of\_point},
+\]
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_annihilatorBounds\_and\_universalPureSquareTheorem\_of\_point},
+\]
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_lowRankApolarSupportTheorem\_and\_universalPureSquareTheorem\_of\_point},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarSupportTheorem\_and\_universalPureSquareTheorem},
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarSupportTheorem\_and\_universalPureSquareTheorem}.
+\]
+
+\paragraph{Strategy change.}
+The final route can now use exactly the binary pure-square lemma described in
+the blueprint, avoiding the over-strong universal fixed-coordinate canonical
+classification.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support and the
+rank-two binary pure-square theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

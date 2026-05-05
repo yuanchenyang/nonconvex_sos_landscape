@@ -802,6 +802,12 @@ def HasUniversalBinaryRankTwoNormalizedKernelClassification : Prop :=
   ∀ a b c d e : ℝ,
     HasBinaryRankTwoNormalizedKernelClassification a b c d e
 
+def HasUniversalBinaryRankTwoNegativePureSquareTheorem : Prop :=
+  ∀ a b c d e : ℝ,
+    HasBinaryHankelNegativeValue a b c d e →
+      Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2 →
+        ∃ X Y : ℝ, binaryQuarticEval a b c d e X Y < 0
+
 def HasRankTwoExistentialScalarHankelFacts
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
@@ -3350,6 +3356,72 @@ theorem hasRankTwoNegativeSquareData_of_universalClassification_of_point
     (hasRankTwoExistentialNormalizedHankelData_of_universalClassification_of_point
       (B := B) (p := p) (u := u) hu hp hfocp hclass)
 
+theorem hasRankTwoNegativeSquareData_of_universalPureSquareTheorem_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hpure : HasUniversalBinaryRankTwoNegativePureSquareTheorem) :
+    HasRankTwoNegativeSquareData B p u := by
+  intro hrank2 A W hAann hAW hAdim hWdim
+  have hWpos : 0 < Module.finrank ℝ W := by omega
+  rcases exists_mem_ne_zero_of_finrank_pos (K := ℝ) (V := linSubmodule)
+      (s := W) hWpos with
+    ⟨x, hxW, hxne⟩
+  have hx : (x : Poly) ≠ 0 := by
+    intro hzero
+    exact hxne (Subtype.ext hzero)
+  rcases exists_rank_two_complement_second_direction
+      (W := W) (x := x) hx hWdim with
+    ⟨y, hyW, hynot⟩
+  have hneg :
+      HasBinaryHankelNegativeValue
+        (binaryRestrictionCoeffA B p u x)
+        (binaryRestrictionCoeffB B p u x y)
+        (binaryRestrictionCoeffC B p u x y)
+        (binaryRestrictionCoeffD B p u x y)
+        (binaryRestrictionCoeffE B p u y) :=
+    hasRankTwoUniversalHankelNegativeData_of_point
+      (B := B) (p := p) (u := u) hu hp hfocp
+      hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+  have hrank :
+      Module.finrank ℝ
+          (LinearMap.range
+            (binaryHankelLinearMap
+              (binaryRestrictionCoeffA B p u x)
+              (binaryRestrictionCoeffB B p u x y)
+              (binaryRestrictionCoeffC B p u x y)
+              (binaryRestrictionCoeffD B p u x y)
+              (binaryRestrictionCoeffE B p u y))) ≤ 2 :=
+    universalBinaryHankelRankBound_of_catalecticantRankTwo
+      hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+  rcases hpure
+      (binaryRestrictionCoeffA B p u x)
+      (binaryRestrictionCoeffB B p u x y)
+      (binaryRestrictionCoeffC B p u x y)
+      (binaryRestrictionCoeffD B p u x y)
+      (binaryRestrictionCoeffE B p u y)
+      hneg hrank with
+    ⟨X, Y, hXYneg⟩
+  let z : linSubmodule := X • x + Y • y
+  have hzW : z ∈ W := by
+    exact Submodule.add_mem W
+      (Submodule.smul_mem W X hxW)
+      (Submodule.smul_mem W Y hyW)
+  have hzneg :
+      B ((linProduct z z : quadSubmodule).1^2) (residual p u) < 0 := by
+    change B ((linProduct (X • x + Y • y) (X • x + Y • y) :
+        quadSubmodule).1^2) (residual p u) < 0
+    rw [binaryRestriction_eval_eq B p u x y X Y]
+    exact hXYneg
+  have hz : (z : Poly) ≠ 0 := by
+    intro hzero
+    have hval_zero :
+        B ((linProduct z z : quadSubmodule).1^2) (residual p u) = 0 := by
+      simp [linProduct, hzero]
+    linarith
+  exact ⟨z, hzW, hz, hzneg⟩
+
 theorem hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_universalClassification_of_point
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -3376,6 +3448,33 @@ theorem hasRankCaseNegativeSquareApolarData_of_lowRankApolarSupportTheorem_and_u
     (hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem
       (hasLowRankApolarAnnihilatorMapTheorem_of_supportTheorem hsupport))
     hclass
+
+theorem hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_universalPureSquareTheorem_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hbounds : HasRankCaseAnnihilatorMapBounds B p u)
+    (hpure : HasUniversalBinaryRankTwoNegativePureSquareTheorem) :
+    HasRankCaseNegativeSquareApolarData B p u hu :=
+  hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_rankTwo
+    (hu := hu) hbounds
+    (hasRankTwoNegativeSquareData_of_universalPureSquareTheorem_of_point
+      (B := B) (p := p) (u := u) hu hp hfocp hpure)
+
+theorem hasRankCaseNegativeSquareApolarData_of_lowRankApolarSupportTheorem_and_universalPureSquareTheorem_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hsupport : HasLowRankApolarSupportTheorem B p u)
+    (hpure : HasUniversalBinaryRankTwoNegativePureSquareTheorem) :
+    HasRankCaseNegativeSquareApolarData B p u hu :=
+  hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_universalPureSquareTheorem_of_point
+    (hu := hu) hp hfocp
+    (hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem
+      (hasLowRankApolarAnnihilatorMapTheorem_of_supportTheorem hsupport))
+    hpure
 
 theorem hasRankTwoNegativeSquareData_of_universalNormalizedHankelData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -4440,6 +4539,19 @@ theorem residual_eq_zero_of_lowRankApolarSupportTheorem_and_universalNormalizedB
     (B := B) hu hp hsocp
     (hasLowRankApolarSupportDecomposition_of_lowRankApolarSupportTheorem hsupport)
     hclass
+
+theorem residual_eq_zero_of_lowRankApolarSupportTheorem_and_universalPureSquareTheorem
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hsupport : HasLowRankApolarSupportTheorem B p u)
+    (hpure : HasUniversalBinaryRankTwoNegativePureSquareTheorem) :
+    residual p u = 0 :=
+  residual_eq_zero_of_negativeSquareApolarData
+    (B := B) hu hp hsocp
+    (hasRankCaseNegativeSquareApolarData_of_lowRankApolarSupportTheorem_and_universalPureSquareTheorem_of_point
+      (B := B) (p := p) (u := u) (hu := hu) hp hsocp.1 hsupport hpure)
 
 theorem residual_eq_zero_of_supportDecomposition_and_normalizedHankelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
@@ -6105,6 +6217,23 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheo
     (B := B) hu hp hsocp
     (hsupport B p u hu hB hp hsocp)
     hclass
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheorem_and_universalPureSquareTheorem
+    (hsupport :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarSupportTheorem B p u)
+    (hpure : HasUniversalBinaryRankTwoNegativePureSquareTheorem) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarSupportTheorem_and_universalPureSquareTheorem
+    (B := B) hu hp hsocp
+    (hsupport B p u hu hB hp hsocp)
+    hpure
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheorem_and_universalNormalizedPosition_and_scalarFacts
     (hsupport :
