@@ -941,6 +941,32 @@ theorem hasRankCaseApolarComponentData_of_productIndependenceApolarData
     (fun hrank3 => (hdata3 hrank3).1)
     (fun hrank3 => (hdata3 hrank3).2)
 
+theorem hasRankCaseProductIndependenceApolarData_of_kernelDecompositionApolarData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hdata : HasRankCaseKernelDecompositionApolarData B p u hu) :
+    HasRankCaseProductIndependenceApolarData B p u hu := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    exact hdata1 hrank1
+  constructor
+  · intro hrank2
+    exact hdata2 hrank2
+  · intro hrank3
+    refine ⟨(hdata3 hrank3).1, ?_⟩
+    rcases exists_negative_sos_summand_of_catalecticantMap_rank_eq_three
+        (B := B) hu hp hfocp hrank3 with
+      ⟨q, hq, hqneg⟩
+    let qQuad : quadSubmodule := ⟨q, hq⟩
+    rcases (hdata3 hrank3).2 qQuad hqneg with
+      ⟨W, qW, qK, hqdecomp, hqW, hqK⟩
+    exact ⟨W, qW, hqW,
+      residualEval_sq_lt_of_eq_add_mem_ker_catalecticantMap
+        (B := B) (p := p) (u := u) hqdecomp hqK hqneg⟩
+
 theorem hasRankCaseApolarComponentData_of_kernelDecompositionApolarData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -1231,9 +1257,9 @@ theorem residual_eq_zero_of_kernelDecompositionApolarData
     (hsocp : IsSOCP B p u)
     (hdata : HasRankCaseKernelDecompositionApolarData B p u hu) :
     residual p u = 0 :=
-  residual_eq_zero_of_rankCaseApolarComponentData
+  residual_eq_zero_of_productIndependenceApolarData
     (B := B) hu hp hsocp
-    (hasRankCaseApolarComponentData_of_kernelDecompositionApolarData
+    (hasRankCaseProductIndependenceApolarData_of_kernelDecompositionApolarData
       (B := B) hp hsocp.1 hdata)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseNegativeCertificates

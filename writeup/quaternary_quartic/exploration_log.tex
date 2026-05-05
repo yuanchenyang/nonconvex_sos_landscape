@@ -5877,4 +5877,45 @@ arbitrary SOCP data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Kernel decomposition to product-independence bridge}
+
+\paragraph{Gap targeted.}
+The proof hierarchy had a direct route from
+\(\texttt{HasRankCaseKernelDecompositionApolarData}\) to the apolar component
+data, but the earlier product-independence apolar interface was not connected
+to the newer kernel-decomposition interface.  The rank-three component of the
+newer interface is strictly stronger: it decomposes every negative quadratic
+into a supported term plus a catalecticant-kernel term.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseProductIndependenceApolarData\_of\_kernelDecompositionApolarData}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  In ranks one and two this is
+projection from the packaged data.  In rank three, it uses the existing
+negative SOS summand theorem for rank-three catalecticants, applies the
+kernel-decomposition hypothesis to that summand, and transfers strict
+negativity across the catalecticant-kernel component.  The theorem
+\[
+\texttt{residual\_eq\_zero\_of\_kernelDecompositionApolarData}
+\]
+now routes through
+\(\texttt{residual\_eq\_zero\_of\_productIndependenceApolarData}\) using this
+bridge.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The bridge removes a hierarchy gap but not the main mathematical construction:
+it remains to prove \(\texttt{HasRankCaseKernelDecompositionApolarData}\) for
+arbitrary positive-definite SOS SOCP input.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
