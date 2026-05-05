@@ -4940,4 +4940,47 @@ catalecticant support theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Producing SOS negative summands from positive catalecticant rank}
+
+\paragraph{Gap targeted.}
+The remaining apolar branches need negative quadratic input from the SOS
+certificate.  After proving that catalecticant rank \(1,2,3\) implies nonzero
+residual, the next step is to make the SOS negativity lemma directly available
+from each rank hypothesis.
+
+\paragraph{Lean progress.}
+Added rank-specific lemmas to
+\texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{exists\_negative\_sos\_summand\_of\_catalecticantMap\_rank\_eq\_one},
+\]
+\[
+\texttt{exists\_negative\_sos\_summand\_of\_catalecticantMap\_rank\_eq\_two},
+\]
+and
+\[
+\texttt{exists\_negative\_sos\_summand\_of\_catalecticantMap\_rank\_eq\_three}.
+\]
+Each lemma takes admissibility, SOS feasibility, FOCP, and the corresponding
+catalecticant rank equation, then returns a quadratic \(q\) with
+\[
+B(q^2,\texttt{residual p u})<0.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is still the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The negative input for each positive-rank branch is now available without a
+separate residual assumption.  The remaining hard work is to transport this
+negative quadratic through the low-rank apolar support decomposition to obtain
+the rank-one pure square, rank-two binary kernel-equation case, and rank-three
+supported negative quadratic.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

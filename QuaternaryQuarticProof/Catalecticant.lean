@@ -1813,6 +1813,39 @@ theorem exists_negative_sos_summand_of_nonzero_residual {p : Poly} {u : RankSeve
   exists_negative_sos_summand (B := B) hp
     (target_dot_residual_negative (B := B) hu hfocp hres)
 
+theorem exists_negative_sos_summand_of_catalecticantMap_rank_eq_one
+    {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1) :
+    ∃ q : Poly, IsQuadratic q ∧ B (q ^ 2) (residual p u) < 0 :=
+  exists_negative_sos_summand_of_nonzero_residual
+    (B := B) hu hp hfocp
+    (residual_ne_zero_of_catalecticantMap_rank_eq_one hrank)
+
+theorem exists_negative_sos_summand_of_catalecticantMap_rank_eq_two
+    {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2) :
+    ∃ q : Poly, IsQuadratic q ∧ B (q ^ 2) (residual p u) < 0 :=
+  exists_negative_sos_summand_of_nonzero_residual
+    (B := B) hu hp hfocp
+    (residual_ne_zero_of_catalecticantMap_rank_eq_two hrank)
+
+theorem exists_negative_sos_summand_of_catalecticantMap_rank_eq_three
+    {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3) :
+    ∃ q : Poly, IsQuadratic q ∧ B (q ^ 2) (residual p u) < 0 :=
+  exists_negative_sos_summand_of_nonzero_residual
+    (B := B) hu hp hfocp
+    (residual_ne_zero_of_catalecticantMap_rank_eq_three hrank)
+
 end ResidualFunctional
 
 end QuaternaryQuartic
