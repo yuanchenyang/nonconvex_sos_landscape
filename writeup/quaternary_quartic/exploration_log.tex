@@ -4983,4 +4983,42 @@ supported negative quadratic.
 
 No Julia numerical claims were used in this round.
 
+\section*{Specializing catalecticant quotient dimensions by rank}
+
+\paragraph{Gap targeted.}
+The low-rank apolar support theorem works in the quotient of quadratics by the
+catalecticant kernel.  The generic quotient/range rank equivalence was already
+formalized, but later rank-one, rank-two, and rank-three proofs should not
+need to repeat the conversion from catalecticant rank equations.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{finrank\_quotient\_ker\_catalecticantMap\_eq\_one\_of\_rank\_one},
+\]
+\[
+\texttt{finrank\_quotient\_ker\_catalecticantMap\_eq\_two\_of\_rank\_two},
+\]
+and
+\[
+\texttt{finrank\_quotient\_ker\_catalecticantMap\_eq\_three\_of\_rank\_three}.
+\]
+These specialize
+\(\texttt{finrank\_quotient\_ker\_catalecticantMap\_eq\_rank}\) to the three
+rank cases used in the blueprint.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The quotient dimension bookkeeping is now ready for the apolar support proof.
+The remaining nontrivial gap is still the finite-dimensional/inverse-system
+argument forcing the annihilator and support decompositions.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

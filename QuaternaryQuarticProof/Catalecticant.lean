@@ -1293,6 +1293,27 @@ theorem finrank_quotient_ker_catalecticantMap_eq_rank
       Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) :=
   (catalecticantMap B p u).quotKerEquivRange.finrank_eq
 
+theorem finrank_quotient_ker_catalecticantMap_eq_one_of_rank_one
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1) :
+    Module.finrank ℝ
+        (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) = 1 := by
+  rw [finrank_quotient_ker_catalecticantMap_eq_rank, hrank]
+
+theorem finrank_quotient_ker_catalecticantMap_eq_two_of_rank_two
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2) :
+    Module.finrank ℝ
+        (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) = 2 := by
+  rw [finrank_quotient_ker_catalecticantMap_eq_rank, hrank]
+
+theorem finrank_quotient_ker_catalecticantMap_eq_three_of_rank_three
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3) :
+    Module.finrank ℝ
+        (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) = 3 := by
+  rw [finrank_quotient_ker_catalecticantMap_eq_rank, hrank]
+
 theorem catalecticantKernel_pair_comm {B : DotForm} {p : Poly} {u : RankSevenVec}
     {q r : Poly} :
     B (q * r) (residual p u) = B (r * q) (residual p u) := by
