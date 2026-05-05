@@ -13805,4 +13805,43 @@ latter matches the blueprint's Hilbert-function formulation more closely.
 
 No Julia numerical claims were used in this round.
 
+\section*{Global support and annihilator-map equivalences}
+
+\paragraph{Gap targeted.}
+The global essential quotient theorem is equivalent locally to annihilator-map
+and support formulations.  The remaining gap can therefore be attacked either
+as a Hilbert-function quotient statement or as a support/codimension statement.
+
+\paragraph{Lean progress.}
+Added global predicates
+\[
+\texttt{HasGlobalLowRankApolarAnnihilatorMapTheorem}
+\]
+and
+\[
+\texttt{HasGlobalLowRankApolarSupportTheorem}.
+\]
+Proved their global equivalences with
+\[
+\texttt{HasGlobalLowRankApolarEssentialQuotientTheorem}
+\]
+and added root equivalences:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalLowRankApolarAnnihilatorMapTheorem},
+\]
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalLowRankApolarSupportTheorem}.
+\]
+
+\paragraph{Strategy change.}
+The exact remaining obligation is now available in three synchronized global
+forms: essential quotient, annihilator-map rank, and support codimension.  This
+sets up the next round to focus on proving support data from the apolar
+Hilbert-function argument in the blueprint.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

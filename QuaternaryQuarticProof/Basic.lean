@@ -818,6 +818,22 @@ def HasLowRankApolarSupportTheorem
       Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) ≤ k →
         HasLinearAnnihilatorCodimAtMost B p u k
 
+def HasGlobalLowRankApolarAnnihilatorMapTheorem : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasLowRankApolarAnnihilatorMapTheorem B p u
+
+def HasGlobalLowRankApolarSupportTheorem : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasLowRankApolarSupportTheorem B p u
+
 def HasLowRankApolarSupportDecomposition
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   ∀ k : ℕ,
@@ -7987,6 +8003,76 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarEsse
       HasGlobalLowRankApolarEssentialQuotientTheorem :=
   ⟨globalLowRankApolarEssentialQuotientTheorem_of_quaternaryQuartic_rankSeven_no_spurious_socp,
     quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarEssentialQuotientTheorem⟩
+
+theorem globalLowRankApolarAnnihilatorMapTheorem_of_globalLowRankApolarEssentialQuotientTheorem
+    (hquot : HasGlobalLowRankApolarEssentialQuotientTheorem) :
+    HasGlobalLowRankApolarAnnihilatorMapTheorem := by
+  intro B p u hu hB hp hsocp
+  exact hasLowRankApolarAnnihilatorMapTheorem_of_lowRankApolarEssentialQuotientTheorem
+    (hquot B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarEssentialQuotientTheorem_of_globalLowRankApolarAnnihilatorMapTheorem
+    (hann : HasGlobalLowRankApolarAnnihilatorMapTheorem) :
+    HasGlobalLowRankApolarEssentialQuotientTheorem := by
+  intro B p u hu hB hp hsocp
+  exact lowRankApolarEssentialQuotientTheorem_of_lowRankApolarAnnihilatorMapTheorem
+    (hann B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarAnnihilatorMapTheorem_iff_globalLowRankApolarEssentialQuotientTheorem :
+    HasGlobalLowRankApolarAnnihilatorMapTheorem ↔
+      HasGlobalLowRankApolarEssentialQuotientTheorem :=
+  ⟨globalLowRankApolarEssentialQuotientTheorem_of_globalLowRankApolarAnnihilatorMapTheorem,
+    globalLowRankApolarAnnihilatorMapTheorem_of_globalLowRankApolarEssentialQuotientTheorem⟩
+
+theorem globalLowRankApolarSupportTheorem_of_globalLowRankApolarEssentialQuotientTheorem
+    (hquot : HasGlobalLowRankApolarEssentialQuotientTheorem) :
+    HasGlobalLowRankApolarSupportTheorem := by
+  intro B p u hu hB hp hsocp
+  exact hasLowRankApolarSupportTheorem_of_lowRankApolarEssentialQuotientTheorem
+    (hquot B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarEssentialQuotientTheorem_of_globalLowRankApolarSupportTheorem
+    (hsupport : HasGlobalLowRankApolarSupportTheorem) :
+    HasGlobalLowRankApolarEssentialQuotientTheorem := by
+  intro B p u hu hB hp hsocp
+  exact lowRankApolarEssentialQuotientTheorem_of_lowRankApolarSupportTheorem
+    (hsupport B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarSupportTheorem_iff_globalLowRankApolarEssentialQuotientTheorem :
+    HasGlobalLowRankApolarSupportTheorem ↔
+      HasGlobalLowRankApolarEssentialQuotientTheorem :=
+  ⟨globalLowRankApolarEssentialQuotientTheorem_of_globalLowRankApolarSupportTheorem,
+    globalLowRankApolarSupportTheorem_of_globalLowRankApolarEssentialQuotientTheorem⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarAnnihilatorMapTheorem
+    (hann : HasGlobalLowRankApolarAnnihilatorMapTheorem) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarAnnihilatorMapTheorem_direct
+    (fun B p u hu hB hp hsocp => hann B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarSupportTheorem
+    (hsupport : HasGlobalLowRankApolarSupportTheorem) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheorem_direct
+    (fun B p u hu hB hp hsocp => hsupport B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarAnnihilatorMapTheorem :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalLowRankApolarAnnihilatorMapTheorem :=
+  ⟨fun hmain =>
+      globalLowRankApolarAnnihilatorMapTheorem_of_globalLowRankApolarEssentialQuotientTheorem
+        (globalLowRankApolarEssentialQuotientTheorem_of_quaternaryQuartic_rankSeven_no_spurious_socp
+          hmain),
+    quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarAnnihilatorMapTheorem⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarSupportTheorem :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalLowRankApolarSupportTheorem :=
+  ⟨fun hmain =>
+      globalLowRankApolarSupportTheorem_of_globalLowRankApolarEssentialQuotientTheorem
+        (globalLowRankApolarEssentialQuotientTheorem_of_quaternaryQuartic_rankSeven_no_spurious_socp
+          hmain),
+    quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarSupportTheorem⟩
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_quotientLocalComponents_direct
     (hsymm2 :
