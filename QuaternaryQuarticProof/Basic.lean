@@ -481,6 +481,11 @@ def HasRankThreeApolarEssentialQuotientBound
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
     Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) ≤ 3
 
+def HasLowRankApolarEssentialQuotientBounds
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  HasRankTwoApolarEssentialQuotientBound B p u ∧
+    HasRankThreeApolarEssentialQuotientBound B p u
+
 def HasRankThreeApolarMacaulayObstruction
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
@@ -2432,6 +2437,13 @@ theorem lowRankApolarHilbertData_of_rankTwo_rankThreeEssentialQuotientBounds
     HasLowRankApolarHilbertData B p u :=
   ⟨rankTwoMacaulayGrowthData_of_rankTwoEssentialQuotientBound hquot2,
     rankThreeExactSequenceData_of_rankThreeEssentialQuotientBound hquot3⟩
+
+theorem lowRankApolarHilbertData_of_lowRankApolarEssentialQuotientBounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasLowRankApolarEssentialQuotientBounds B p u) :
+    HasLowRankApolarHilbertData B p u :=
+  lowRankApolarHilbertData_of_rankTwo_rankThreeEssentialQuotientBounds
+    hquot.1 hquot.2
 
 theorem lowRankApolarHilbertData_of_rankTwo_rankThreeApolarAnnihilatorMapBounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -5001,6 +5013,16 @@ theorem residual_eq_zero_of_rankTwo_rankThreeEssentialQuotientBounds_direct
     (hasRankCaseAnnihilatorMapBounds_of_rankTwo_rankThreeEssentialQuotientBounds
       hquot2 hquot3)
 
+theorem residual_eq_zero_of_lowRankApolarEssentialQuotientBounds_direct
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hquot : HasLowRankApolarEssentialQuotientBounds B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_rankTwo_rankThreeEssentialQuotientBounds_direct
+    (B := B) hu hp hsocp hquot.1 hquot.2
+
 theorem residual_eq_zero_of_rankTwoDimensionBound_rankThreeMacaulayObstruction_direct
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -6866,6 +6888,21 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankTwo_rankThreeEssenti
     (B := B) hu hp hsocp
     (hquot2 B p u hu hB hp hsocp)
     (hquot3 B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarEssentialQuotientBounds_direct
+    (hquot :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarEssentialQuotientBounds B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarEssentialQuotientBounds_direct
+    (B := B) hu hp hsocp
+    (hquot B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankTwoDimensionBound_rankThreeMacaulayObstruction_direct
     (hdim2 :

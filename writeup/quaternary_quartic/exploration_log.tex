@@ -12640,4 +12640,43 @@ adding any new mathematical assumptions.
 
 No Julia numerical claims were used in this round.
 
+\section*{Unified essential quotient target}
+
+\paragraph{Gap targeted.}
+After identifying the essential quotient with the annihilator-map range, the
+remaining low-rank Hilbert task was still split into separate rank-two and
+rank-three quotient assumptions.  The blueprint's structural lemma is more
+naturally a single low-rank essential-variable statement.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasLowRankApolarEssentialQuotientBounds},
+\]
+the conjunction of the rank-two and rank-three essential quotient bounds.
+Added:
+\[
+\texttt{lowRankApolarHilbertData\_of\_lowRankApolarEssentialQuotientBounds},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarEssentialQuotientBounds\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarEssentialQuotientBounds\_direct}.
+\]
+
+\paragraph{Strategy change.}
+The remaining structural proof can now target one proposition:
+\[
+\texttt{HasLowRankApolarEssentialQuotientBounds}.
+\]
+This is the Lean version of the blueprint claim \(h_1\le k\) for the remaining
+ranks \(k=2,3\).  Rank one is already formalized directly.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
