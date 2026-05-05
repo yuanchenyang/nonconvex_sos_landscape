@@ -14575,4 +14575,41 @@ unlinked proof target.
 
 No Julia numerical claims were used in this round.
 
+\section*{Quotient catalecticant nondegeneracy}
+
+\paragraph{Gap targeted.}
+The remaining rank-three exact-sequence and Macaulay branches require working
+with the degree-two quotient by the catalecticant kernel.  The current
+blueprint packages record the Hilbert-function consequences, but the Lean
+development did not yet expose that the induced quotient catalecticant pairing
+is nondegenerate.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{ker\_quotientCatalecticantMap\_eq\_bot},
+\]
+showing that the catalecticant map induced on
+\(\texttt{quadSubmodule} / \ker C\) has trivial kernel.  Also proved
+\[
+\texttt{finrank\_range\_quotientCatalecticantMap\_eq\_finrank\_quotient}
+\]
+and
+\[
+\texttt{finrank\_range\_quotientCatalecticantMap\_eq\_rank}.
+\]
+
+\paragraph{Strategy change.}
+The exact-sequence formalization can now use the quotient catalecticant as a
+genuine nondegenerate pairing on the degree-two quotient, rather than only
+using packaged dimension consequences.  This is a concrete prerequisite for
+replacing the current rank-three bad-branch abstraction by an honest
+finite-dimensional argument.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

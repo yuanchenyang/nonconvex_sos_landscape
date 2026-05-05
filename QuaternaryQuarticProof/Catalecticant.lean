@@ -1916,6 +1916,46 @@ theorem quotientCatalecticantMap_pair_comm
           change catalecticantMap B p u q' r' = catalecticantMap B p u r' q'
           rw [catalecticantMap_pair_comm]
 
+theorem ker_quotientCatalecticantMap_eq_bot
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    LinearMap.ker (quotientCatalecticantMap B p u) = ⊥ := by
+  ext q
+  constructor
+  · intro hq
+    induction q using Submodule.Quotient.induction_on with
+    | _ q' =>
+        have hmap : catalecticantMap B p u q' = 0 := by
+          ext r
+          have hzero :
+              quotientCatalecticantMap B p u
+                  ((LinearMap.ker (catalecticantMap B p u)).mkQ q') = 0 := by
+            simpa [LinearMap.mem_ker] using hq
+          have hval := congrArg
+            (fun φ :
+              Module.Dual ℝ
+                (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) =>
+              φ ((LinearMap.ker (catalecticantMap B p u)).mkQ r)) hzero
+          simpa using hval
+        have hq' : q' ∈ LinearMap.ker (catalecticantMap B p u) := by
+          simpa [LinearMap.mem_ker] using hmap
+        simpa [Submodule.Quotient.mk_eq_zero] using hq'
+  · intro hq
+    have hqzero : q = 0 := by
+      simpa using hq
+    rw [LinearMap.mem_ker, hqzero]
+    simp
+
+theorem finrank_range_quotientCatalecticantMap_eq_finrank_quotient
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    Module.finrank ℝ (LinearMap.range (quotientCatalecticantMap B p u)) =
+      Module.finrank ℝ
+        (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) := by
+  have hsum := LinearMap.finrank_range_add_finrank_ker
+    (quotientCatalecticantMap B p u)
+  rw [ker_quotientCatalecticantMap_eq_bot] at hsum
+  simp at hsum
+  omega
+
 theorem quotientCatalecticantMap_linearProducts_reassociate
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (w x y z : linSubmodule) :
@@ -2073,6 +2113,13 @@ theorem finrank_quotient_ker_catalecticantMap_eq_rank
         (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) =
       Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) :=
   (catalecticantMap B p u).quotKerEquivRange.finrank_eq
+
+theorem finrank_range_quotientCatalecticantMap_eq_rank
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    Module.finrank ℝ (LinearMap.range (quotientCatalecticantMap B p u)) =
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) := by
+  rw [finrank_range_quotientCatalecticantMap_eq_finrank_quotient]
+  exact finrank_quotient_ker_catalecticantMap_eq_rank B p u
 
 theorem finrank_quotient_ker_catalecticantMap_eq_one_of_rank_one
     {B : DotForm} {p : Poly} {u : RankSevenVec}
