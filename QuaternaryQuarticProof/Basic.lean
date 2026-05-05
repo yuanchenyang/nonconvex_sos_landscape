@@ -550,6 +550,40 @@ def HasRankTwoExistentialScalarHankelFacts
                               (binaryRestrictionCoeffD B p u x y)
                               (binaryRestrictionCoeffE B p u y))) ≤ 2
 
+def HasRankTwoExistentialNormalizedHankelData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+      A ≤ linearAnnihilator B p u →
+        IsCompl A W →
+          x ∈ W →
+            (x : Poly) ≠ 0 →
+              Module.finrank ℝ A = 2 →
+                Module.finrank ℝ W = 2 →
+                  ∃ y : linSubmodule,
+                    y ∈ W ∧
+                      y ∉ ℝ ∙ x ∧
+                        HasBinaryNormalizedKernelPosition
+                          (binaryRestrictionCoeffA B p u x)
+                          (binaryRestrictionCoeffB B p u x y)
+                          (binaryRestrictionCoeffC B p u x y)
+                          (binaryRestrictionCoeffD B p u x y)
+                          (binaryRestrictionCoeffE B p u y) ∧
+                        HasBinaryHankelNegativeValue
+                          (binaryRestrictionCoeffA B p u x)
+                          (binaryRestrictionCoeffB B p u x y)
+                          (binaryRestrictionCoeffC B p u x y)
+                          (binaryRestrictionCoeffD B p u x y)
+                          (binaryRestrictionCoeffE B p u y) ∧
+                        Module.finrank ℝ
+                          (LinearMap.range
+                            (binaryHankelLinearMap
+                              (binaryRestrictionCoeffA B p u x)
+                              (binaryRestrictionCoeffB B p u x y)
+                              (binaryRestrictionCoeffC B p u x y)
+                              (binaryRestrictionCoeffD B p u x y)
+                              (binaryRestrictionCoeffE B p u y))) ≤ 2
+
 def HasRankCaseKernelDecompositionApolarData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u) : Prop :=
@@ -1708,6 +1742,17 @@ theorem hasRankTwoExistentialScalarHankelData_of_universal_and_facts
     (binaryRestrictionCoeffD B p u x y)
     (binaryRestrictionCoeffE B p u y)
 
+theorem hasRankTwoExistentialScalarHankelData_of_normalizedHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoExistentialNormalizedHankelData B p u) :
+    HasRankTwoExistentialScalarHankelData B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases hdata hrank2 A W x hAann hAW hxW hx hAdim hWdim with
+    ⟨y, hyW, hynot, hpos, hneg, hrank⟩
+  exact ⟨y, hyW, hynot,
+    binaryRankTwoNormalizedKernelClassification_of_normalizedKernelPosition hpos,
+    hneg, hrank⟩
+
 theorem hasRankTwoExistentialCanonicalKernelData_of_universal_and_facts
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification)
@@ -1715,6 +1760,13 @@ theorem hasRankTwoExistentialCanonicalKernelData_of_universal_and_facts
     HasRankTwoExistentialCanonicalKernelData B p u :=
   hasRankTwoExistentialCanonicalKernelData_of_scalarHankelData
     (hasRankTwoExistentialScalarHankelData_of_universal_and_facts hclass hfacts)
+
+theorem hasRankTwoExistentialCanonicalKernelData_of_normalizedHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoExistentialNormalizedHankelData B p u) :
+    HasRankTwoExistentialCanonicalKernelData B p u :=
+  hasRankTwoExistentialCanonicalKernelData_of_scalarHankelData
+    (hasRankTwoExistentialScalarHankelData_of_normalizedHankelData hdata)
 
 theorem hasRankTwoExistentialBinaryFormData_of_canonicalKernelData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -1740,6 +1792,13 @@ theorem hasRankTwoExistentialBinaryFormData_of_universal_and_facts
     HasRankTwoExistentialBinaryFormData B p u :=
   hasRankTwoExistentialBinaryFormData_of_scalarHankelData
     (hasRankTwoExistentialScalarHankelData_of_universal_and_facts hclass hfacts)
+
+theorem hasRankTwoExistentialBinaryFormData_of_normalizedHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoExistentialNormalizedHankelData B p u) :
+    HasRankTwoExistentialBinaryFormData B p u :=
+  hasRankTwoExistentialBinaryFormData_of_scalarHankelData
+    (hasRankTwoExistentialScalarHankelData_of_normalizedHankelData hdata)
 
 theorem hasRankTwoNegativeSquareData_of_existentialBinaryFormData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -2320,6 +2379,18 @@ theorem residual_eq_zero_of_supportDecomposition_and_universalNormalizedBinaryCl
     (hasLowRankApolarProductKernelDecomposition_of_supportDecomposition hdecomp)
     hclass hfacts
 
+theorem residual_eq_zero_of_supportDecomposition_and_normalizedHankelData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdecomp : HasLowRankApolarSupportDecomposition B p u)
+    (hdata : HasRankTwoExistentialNormalizedHankelData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarSupportDecomposition_and_canonicalKernelData
+    (B := B) hu hp hsocp hdecomp
+    (hasRankTwoExistentialCanonicalKernelData_of_normalizedHankelData hdata)
+
 theorem residual_eq_zero_of_rankCaseSupportData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -2774,6 +2845,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_supportDecomposition_and
     (hdecomp B p u hu hB hp hsocp)
     hclass
     (hfacts B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_supportDecomposition_and_normalizedHankelData
+    (hdecomp :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarSupportDecomposition B p u)
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialNormalizedHankelData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_supportDecomposition_and_normalizedHankelData
+    (B := B) hu hp hsocp
+    (hdecomp B p u hu hB hp hsocp)
+    (hdata B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseSupportData
     (hdata :

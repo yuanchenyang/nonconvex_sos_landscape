@@ -7506,4 +7506,59 @@ Hankel facts theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two normalized Hankel data interface}
+
+\paragraph{Gap targeted.}
+The previous root reduction still required two independent rank-two binary
+inputs: a universal normalized binary classification and separate scalar Hankel
+facts.  The blueprint's next local task is more naturally the single statement
+that, after choosing a complement and a nonzero linear form, one can choose a
+second binary coordinate putting the restricted Hankel functional in normalized
+kernel position while retaining the negative Hankel value and rank bound.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankTwoExistentialNormalizedHankelData}
+\]
+as this combined local obligation.  Proved bridges from this predicate to the
+existing scalar-Hankel and canonical-kernel interfaces, including
+\[
+\texttt{hasRankTwoExistentialScalarHankelData\_of\_normalizedHankelData},
+\quad
+\texttt{hasRankTwoExistentialCanonicalKernelData\_of\_normalizedHankelData},
+\]
+and the residual/root reductions
+\[
+\texttt{residual\_eq\_zero\_of\_supportDecomposition\_and\_normalizedHankelData}
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_supportDecomposition\_and\_normalizedHankelData}.
+\]
+
+\paragraph{Strategy change.}
+The final proof can now be completed from two theorem-level inputs:
+low-rank apolar support decomposition, and the rank-two normalized Hankel data
+statement.  The normalized data statement packages the change-of-basis,
+kernel-position, negativity, and binary rank bound requirements into the local
+form needed by the Lean proof.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The open inputs are the low-rank support decomposition theorem and the
+rank-two normalized Hankel data theorem.  The latter subsumes the previous
+universal normalized binary classification and scalar Hankel facts obligations
+for the support-decomposition route.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
