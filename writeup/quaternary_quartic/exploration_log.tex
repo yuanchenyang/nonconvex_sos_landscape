@@ -4344,4 +4344,51 @@ binary low-rank normal-form classification.
 
 No Julia numerical claims were used in this round.
 
+\section*{Named apolar component-data reducer}
+
+\paragraph{Gap targeted.}
+The previous support-complement constructors used large anonymous hypotheses
+for the remaining rank-one and rank-two algebra.  This made the next theorem
+target hard to read and reuse.
+
+\paragraph{Lean progress.}
+Added named predicates
+\[
+\texttt{HasRankOneSupportComponentHypothesis},\qquad
+\texttt{HasRankTwoSupportComponentHypothesis}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}, and rewrote the
+support-to-component constructors to consume these predicates.
+
+Added \(\texttt{HasRankCaseApolarComponentData}\) and the reducers
+\[
+\texttt{hasRankCaseNegativeCertificateFamily\_of\_apolarComponentData},
+\quad
+\texttt{residual\_eq\_zero\_of\_rankCaseApolarComponentData},
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_rankCaseApolarComponentData}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  This reducer now starts from
+rank-one/rank-two apolar support bounds plus the named component hypotheses,
+then invokes the exact complement extraction and the canonical binary
+restriction bridges.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Support}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The remaining proof target is now the apolar component data itself: derive
+\(\texttt{HasLinearAnnihilatorCodimAtMost}\) in the rank-one and rank-two cases
+and prove the named support component hypotheses, plus rank-three support data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

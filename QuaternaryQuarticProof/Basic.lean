@@ -122,6 +122,18 @@ def HasRankCaseBinaryRestrictionComponentData
   (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
     HasRankThreeAnnihilatorSupportData B p u)
 
+def HasRankCaseApolarComponentData
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u) : Prop :=
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+    HasLinearAnnihilatorCodimAtMost B p u 1 ∧
+      HasRankOneSupportComponentHypothesis B p u) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    HasLinearAnnihilatorCodimAtMost B p u 2 ∧
+      HasRankTwoSupportComponentHypothesis B p u) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+    HasRankThreeAnnihilatorSupportData B p u)
+
 theorem hasRankCaseNegativeCertificateFamily_of_supportData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -256,6 +268,36 @@ theorem hasRankCaseNegativeCertificateFamily_of_binaryRestrictionComponentData
     exact exists_negative_syzygyCertificate_of_rank_three_supportData
       (B := B) (p := p) (u := u) hu hfocp hker hrank3 (hdata3 hrank3)
 
+theorem hasRankCaseNegativeCertificateFamily_of_apolarComponentData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hfocp : IsFOCP B p u)
+    (hdata : HasRankCaseApolarComponentData B p u hu) :
+    HasRankCaseNegativeCertificateFamily B p u := by
+  intro _hres hker
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    rcases hdata1 hrank1 with ⟨hsupp, hcomponent⟩
+    exact exists_negative_syzygyCertificate_of_rank_one_productSupportData
+      (B := B) (p := p) (u := u) (hu := hu)
+      (hasRankOneProductSupportData_of_binaryRestrictionComponentData
+        (B := B) (p := p) (u := u) (hu := hu)
+        hfocp hker hrank1
+        (exists_rank_one_binaryRestrictionComponentData_of_support hsupp hcomponent))
+  constructor
+  · intro hrank2
+    rcases hdata2 hrank2 with ⟨hsupp, hcomponent⟩
+    exact exists_negative_syzygyCertificate_of_preimageProductSupportData
+      (B := B) (p := p) (u := u) (hu := hu)
+      (hasPreimageProductSupportData_of_rank_two_binaryRestrictionComponentData
+        (B := B) (p := p) (u := u) (hu := hu)
+        hfocp hker hrank2
+        (exists_rank_two_binaryRestrictionComponentData_of_support hsupp hcomponent))
+  · intro hrank3
+    exact exists_negative_syzygyCertificate_of_rank_three_supportData
+      (B := B) (p := p) (u := u) hu hfocp hker hrank3 (hdata3 hrank3)
+
 theorem residual_eq_zero_of_hasRankCaseNegativeCertificateFamily
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -321,6 +363,17 @@ theorem residual_eq_zero_of_rankCaseBinaryRestrictionComponentData
     (B := B) hu hp hsocp
     (hasRankCaseNegativeCertificateFamily_of_binaryRestrictionComponentData
       hu hsocp.1 hdata)
+
+theorem residual_eq_zero_of_rankCaseApolarComponentData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata : HasRankCaseApolarComponentData B p u hu) :
+    residual p u = 0 :=
+  residual_eq_zero_of_hasRankCaseNegativeCertificateFamily
+    (B := B) hu hp hsocp
+    (hasRankCaseNegativeCertificateFamily_of_apolarComponentData hu hsocp.1 hdata)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseNegativeCertificates
     (hcert :
@@ -404,6 +457,20 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseBinaryRestrictio
   intro B p u hB hp hu hsocp
   letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
   exact residual_eq_zero_of_rankCaseBinaryRestrictionComponentData
+    (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseApolarComponentData
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseApolarComponentData B p u hu) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_rankCaseApolarComponentData
     (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
 
 /-
