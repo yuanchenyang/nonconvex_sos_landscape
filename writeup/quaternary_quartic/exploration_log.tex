@@ -6993,4 +6993,43 @@ remains open.
 
 No Julia numerical claims were used in this round.
 
+\section*{Low-rank support as a single monotone input}
+
+\paragraph{Gap targeted.}
+The apolar support side was represented by three exact-rank cases, while
+Lemma~\ref{lem:low-rank-support} is naturally a single statement for
+\(\rank C_\lambda\le k\), \(k\le3\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasLowRankApolarSupportTheorem}
+\]
+as the direct Lean interface for the blueprint lemma:
+\[
+\texttt{finrank (range catalecticantMap) <= k}
+\Rightarrow
+\texttt{HasLinearAnnihilatorCodimAtMost ... k}.
+\]
+Proved
+\[
+\texttt{hasRankCaseApolarSupportBounds\_of\_lowRankApolarSupportTheorem}
+\]
+and added residual/root reductions through this single support theorem plus
+the rank-two kernel branch data.
+
+\paragraph{Strategy change.}
+The support blocker is now stated in the same monotone form as the blueprint.
+The exact-rank bookkeeping is isolated in a short Lean bridge.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The two mathematical inputs are now:
+the monotone low-rank apolar support theorem and the binary Hankel
+kernel-branch classification.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
