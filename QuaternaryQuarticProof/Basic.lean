@@ -2231,6 +2231,17 @@ theorem finrank_range_linearAnnihilatorMap_eq_zero_of_catalecticantMap_rank_zero
     finrank_range_linearAnnihilatorMap_add_finrank_linearAnnihilator B p u
   omega
 
+theorem hasLinearAnnihilatorCodimAtMost_zero_of_catalecticantMap_rank_zero
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 0) :
+    HasLinearAnnihilatorCodimAtMost B p u 0 :=
+  hasLinearAnnihilatorCodimAtMost_of_annihilatorMap_range
+    (B := B) (p := p) (u := u) (k := 0) (by norm_num)
+    (by
+      rw [finrank_range_linearAnnihilatorMap_eq_zero_of_catalecticantMap_rank_zero
+        (B := B) (p := p) (u := u) hrank])
+
 theorem hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hann : HasLowRankApolarAnnihilatorMapTheorem B p u) :
@@ -2303,6 +2314,50 @@ theorem hasRankCaseApolarSupportBounds_of_lowRankApolarSupportTheorem
   · intro hrank3
     exact hsupport 3 (by norm_num) (by omega)
 
+theorem hasLowRankApolarSupportTheorem_of_rankCaseApolarSupportBounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupport : HasRankCaseApolarSupportBounds B p u) :
+    HasLowRankApolarSupportTheorem B p u := by
+  rcases hsupport with ⟨hsupp1, hsupp2, hsupp3⟩
+  intro k hk hrank_le
+  let n := Module.finrank ℝ (LinearMap.range (catalecticantMap B p u))
+  have hn_le : n ≤ k := hrank_le
+  interval_cases k
+  · have hn0 : n = 0 := by omega
+    exact hasLinearAnnihilatorCodimAtMost_zero_of_catalecticantMap_rank_zero
+      (B := B) (p := p) (u := u) hn0
+  · by_cases hn0 : n = 0
+    · exact HasLinearAnnihilatorCodimAtMost.mono (by norm_num)
+        (hasLinearAnnihilatorCodimAtMost_zero_of_catalecticantMap_rank_zero
+          (B := B) (p := p) (u := u) hn0)
+    · have hn1 : n = 1 := by omega
+      exact hsupp1 hn1
+  · by_cases hn0 : n = 0
+    · exact HasLinearAnnihilatorCodimAtMost.mono (by norm_num)
+        (hasLinearAnnihilatorCodimAtMost_zero_of_catalecticantMap_rank_zero
+          (B := B) (p := p) (u := u) hn0)
+    · by_cases hn1 : n = 1
+      · exact HasLinearAnnihilatorCodimAtMost.rank_one_to_two (hsupp1 hn1)
+      · have hn2 : n = 2 := by omega
+        exact hsupp2 hn2
+  · by_cases hn0 : n = 0
+    · exact HasLinearAnnihilatorCodimAtMost.mono (by norm_num)
+        (hasLinearAnnihilatorCodimAtMost_zero_of_catalecticantMap_rank_zero
+          (B := B) (p := p) (u := u) hn0)
+    · by_cases hn1 : n = 1
+      · exact HasLinearAnnihilatorCodimAtMost.mono (by norm_num) (hsupp1 hn1)
+      · by_cases hn2 : n = 2
+        · exact HasLinearAnnihilatorCodimAtMost.rank_two_to_three (hsupp2 hn2)
+        · have hn3 : n = 3 := by omega
+          exact hsupp3 hn3
+
+theorem hasLowRankApolarSupportTheorem_iff_rankCaseApolarSupportBounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarSupportTheorem B p u ↔
+      HasRankCaseApolarSupportBounds B p u :=
+  ⟨hasRankCaseApolarSupportBounds_of_lowRankApolarSupportTheorem,
+    hasLowRankApolarSupportTheorem_of_rankCaseApolarSupportBounds⟩
+
 theorem hasLowRankApolarSupportTheorem_of_decomposition
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hdecomp : HasLowRankApolarSupportDecomposition B p u) :
@@ -2327,6 +2382,17 @@ theorem hasLowRankApolarSupportTheorem_iff_decomposition
       HasLowRankApolarSupportDecomposition B p u :=
   ⟨hasLowRankApolarSupportDecomposition_of_lowRankApolarSupportTheorem,
     hasLowRankApolarSupportTheorem_of_decomposition⟩
+
+theorem hasLowRankApolarSupportDecomposition_iff_rankCaseApolarSupportBounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarSupportDecomposition B p u ↔
+      HasRankCaseApolarSupportBounds B p u :=
+  ⟨fun hdecomp =>
+      hasRankCaseApolarSupportBounds_of_lowRankApolarSupportTheorem
+        (hasLowRankApolarSupportTheorem_of_decomposition hdecomp),
+    fun hsupport =>
+      hasLowRankApolarSupportDecomposition_of_lowRankApolarSupportTheorem
+        (hasLowRankApolarSupportTheorem_of_rankCaseApolarSupportBounds hsupport)⟩
 
 theorem hasRankCaseApolarSupportBounds_of_lowRankApolarSupportDecomposition
     {B : DotForm} {p : Poly} {u : RankSevenVec}

@@ -9134,4 +9134,43 @@ construction of the universal rank-two branch/normalized certificate data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Exact-rank support bounds imply the low-rank support theorem}
+
+\paragraph{Gap targeted.}
+The blueprint's low-rank support lemma is naturally proved by the cases
+\(k=1,2,3\), but the Lean interface still had only the forward projection from
+the monotone low-rank theorem to the rank-case support bounds.
+
+\paragraph{Lean progress.}
+Added the rank-zero support case
+\[
+\texttt{hasLinearAnnihilatorCodimAtMost\_zero\_of\_catalecticantMap\_rank\_zero}
+\]
+and proved
+\[
+\texttt{hasLowRankApolarSupportTheorem\_of\_rankCaseApolarSupportBounds}.
+\]
+Also recorded equivalences between the monotone low-rank support theorem, the
+rank-case support bounds, and the support-decomposition package.
+
+\paragraph{Strategy change.}
+The structural support theorem can now be formalized rank-by-rank, matching the
+blueprint's proof by catalecticant rank, while still satisfying all global
+routes that expect the monotone low-rank support theorem.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the exact-rank support bounds in ranks one, two, and three, and construct
+one of the equivalent rank-two branch/normalized certificate packages.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
