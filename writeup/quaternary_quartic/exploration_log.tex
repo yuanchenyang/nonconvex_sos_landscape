@@ -11710,4 +11710,44 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Root reduction to apolar support only}
+
+\paragraph{Gap targeted.}
+The previous Basic integration produced the rank-two negative-square data
+directly from the binary classifier, but the public reduction still exposed
+older helper theorems requiring a universal binary pure-square theorem.  The
+goal of this round was to make the main proof pipeline depend only on the
+remaining apolar support theorem.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarSupportTheorem\_direct},
+\]
+and the root-level helper:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarSupportTheorem\_direct}.
+\]
+These wrappers combine the direct binary rank-two classifier with the existing
+negative-square apolar pipeline.  They show that a proof of
+\texttt{HasLowRankApolarSupportTheorem} for each SOCP instance is now
+sufficient to prove the target theorem.
+
+\paragraph{Strategy change.}
+The binary side is no longer a main blocker in the theorem-level interface.
+The largest remaining gap is the actual low-rank apolar support theorem:
+constructing the rank-one, rank-two, and rank-three annihilator/support data
+from the catalecticant and apolar Hilbert-function argument.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}
