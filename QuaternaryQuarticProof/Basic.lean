@@ -3298,6 +3298,19 @@ theorem residual_eq_zero_of_annihilatorDimensionBounds_and_universalKernelBranch
     (hasRankCaseAnnihilatorMapBounds_of_dimensionBounds hdims)
     hbranches
 
+theorem residual_eq_zero_of_apolarSupportBounds_and_universalKernelBranchData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hsupport : HasRankCaseApolarSupportBounds B p u)
+    (hbranches : HasRankTwoUniversalKernelBranchData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_annihilatorDimensionBounds_and_universalKernelBranchData
+    (B := B) hu hp hsocp
+    (hasRankCaseApolarAnnihilatorDimensionBounds_of_apolarSupportBounds hsupport)
+    hbranches
+
 theorem residual_eq_zero_of_apolarSupportBounds_and_universalNormalizedPosition_and_HankelNegative
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -4232,6 +4245,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_annihilatorDimensionBoun
   exact residual_eq_zero_of_annihilatorDimensionBounds_and_universalKernelBranchData
     (B := B) hu hp hsocp
     (hdims B p u hu hB hp hsocp)
+    (hbranches B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_apolarSupportBounds_and_universalKernelBranchData
+    (hsupport :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseApolarSupportBounds B p u)
+    (hbranches :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoUniversalKernelBranchData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_apolarSupportBounds_and_universalKernelBranchData
+    (B := B) hu hp hsocp
+    (hsupport B p u hu hB hp hsocp)
     (hbranches B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_apolarSupportBounds_and_universalNormalizedPosition_and_HankelNegative
