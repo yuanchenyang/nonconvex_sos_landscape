@@ -134,6 +134,66 @@ def HasRankCaseApolarComponentData
   (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
     HasRankThreeAnnihilatorSupportData B p u)
 
+def HasRankCaseProductIndependenceApolarData
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u) : Prop :=
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 1 ∧
+      (∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              (x : Poly) ≠ 0 →
+                Module.finrank ℝ A = 3 →
+                  Module.finrank ℝ W = 1 →
+                    ∃ β : Module.Basis (Fin 3) ℝ A,
+                      LinearIndependent ℝ
+                        (fun ij : {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2} =>
+                          linProduct (β ij.1.1).1 (β ij.1.2).1)) ∧
+        ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+          A ≤ linearAnnihilator B p u →
+            IsCompl A W →
+              x ∈ W →
+                (x : Poly) ≠ 0 →
+                  Module.finrank ℝ A = 3 →
+                    Module.finrank ℝ W = 1 →
+                      binaryRestrictionCoeffA B p u x < 0) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 2 ∧
+      (∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              y ∈ W →
+                y ∉ ℝ ∙ x →
+                  (x : Poly) ≠ 0 →
+                    Module.finrank ℝ A = 2 →
+                      Module.finrank ℝ W = 2 →
+                        HasBinaryRestrictionKernelEquationCase B p u x y) ∧
+        ∀ (A W : Submodule ℝ linSubmodule) (x y z : linSubmodule),
+          A ≤ linearAnnihilator B p u →
+            IsCompl A W →
+              x ∈ W →
+                y ∈ W →
+                  y ∉ ℝ ∙ x →
+                    (x : Poly) ≠ 0 →
+                      Module.finrank ℝ A = 2 →
+                        Module.finrank ℝ W = 2 →
+                          z ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) →
+                            (z : Poly) ≠ 0 →
+                              ∃ β : Module.Basis (Fin 2) ℝ A,
+                                LinearIndependent ℝ
+                                  (Sum.elim
+                                    (fun i : Fin 2 => linProduct z (β i).1)
+                                    (fun ij :
+                                        {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+                                      linProduct (β ij.1.1).1 (β ij.1.2).1))) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 3 ∧
+      ∃ (W : Submodule ℝ linSubmodule) (q : quadSubmodule),
+        q ∈ linProductSubmodule W W ∧
+          B (q.1^2) (residual p u) < 0)
+
 theorem hasRankCaseApolarComponentData_of_component_obligations
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -695,6 +755,23 @@ theorem hasRankCaseApolarComponentData_of_rank_two_productLI_component_obligatio
     exact hasRankThreeAnnihilatorSupportData_of_rank_three_support
       (B := B) (p := p) (u := u) hsupp hqWW hqneg
 
+theorem hasRankCaseApolarComponentData_of_productIndependenceApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseProductIndependenceApolarData B p u hu) :
+    HasRankCaseApolarComponentData B p u hu := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  exact hasRankCaseApolarComponentData_of_rank_two_productLI_component_obligations
+    (B := B) (p := p) (u := u) (hu := hu)
+    (fun hrank1 => (hdata1 hrank1).1)
+    (fun hrank1 => (hdata1 hrank1).2.1)
+    (fun hrank1 => (hdata1 hrank1).2.2)
+    (fun hrank2 => (hdata2 hrank2).1)
+    (fun hrank2 => (hdata2 hrank2).2.1)
+    (fun hrank2 => (hdata2 hrank2).2.2)
+    (fun hrank3 => (hdata3 hrank3).1)
+    (fun hrank3 => (hdata3 hrank3).2)
+
 theorem hasRankCaseNegativeCertificateFamily_of_supportData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -936,6 +1013,17 @@ theorem residual_eq_zero_of_rankCaseApolarComponentData
     (B := B) hu hp hsocp
     (hasRankCaseNegativeCertificateFamily_of_apolarComponentData hu hsocp.1 hdata)
 
+theorem residual_eq_zero_of_productIndependenceApolarData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata : HasRankCaseProductIndependenceApolarData B p u hu) :
+    residual p u = 0 :=
+  residual_eq_zero_of_rankCaseApolarComponentData
+    (B := B) hu hp hsocp
+    (hasRankCaseApolarComponentData_of_productIndependenceApolarData hdata)
+
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseNegativeCertificates
     (hcert :
       ∀ (B : DotForm) (p : Poly) (u : RankSevenVec),
@@ -1032,6 +1120,20 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseApolarComponentD
   intro B p u hB hp hu hsocp
   letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
   exact residual_eq_zero_of_rankCaseApolarComponentData
+    (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_productIndependenceApolarData
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseProductIndependenceApolarData B p u hu) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_productIndependenceApolarData
     (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
 
 /-

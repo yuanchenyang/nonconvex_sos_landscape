@@ -5427,4 +5427,51 @@ pure-square coefficient.
 
 No Julia numerical claims were used in this round.
 
+\section*{Packaging reduced apolar data as a final proof interface}
+
+\paragraph{Gap targeted.}
+The latest reductions left the main remaining apolar work spread across many
+arguments: annihilator-map bounds, rank-one product independence and
+negativity, rank-two binary kernel equations and product independence, and
+rank-three negative support.  This made the remaining gap less explicit at the
+final theorem interface.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankCaseProductIndependenceApolarData}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  This packages the currently
+reduced rank-one, rank-two, and rank-three apolar obligations into one
+rank-case data interface.  Added
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_productIndependenceApolarData},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_productIndependenceApolarData},
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_productIndependenceApolarData}.
+\]
+These wire the package through the existing certificate pipeline all the way
+to the immutable target statement, without changing the final theorem
+declaration.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is still the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+It is now enough to prove
+\(\texttt{HasRankCaseProductIndependenceApolarData}\) for every positive
+definite SOS SOCP instance.  That is exactly the structural low-rank apolar
+support theorem plus binary kernel classification and rank-three negative
+support transport.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
