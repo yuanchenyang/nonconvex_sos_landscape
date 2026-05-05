@@ -10454,4 +10454,57 @@ coordinate-free rank-two binary classification/pure-square theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Binary kernel discriminant split}
+
+\paragraph{Gap targeted.}
+The coordinate-free rank-two binary theorem now has a nonzero scalar kernel
+quadratic and its Hankel kernel equations.  The next blueprint step is to split
+that quadratic into hyperbolic, parabolic, and elliptic cases by its
+discriminant.
+
+\paragraph{Lean progress.}
+Added the scalar discriminant:
+\[
+\texttt{binaryKernelDiscriminant}
+\]
+and the case predicate:
+\[
+\texttt{HasBinaryKernelDiscriminantCase}.
+\]
+Added:
+\[
+\texttt{hasBinaryKernelDiscriminantCase}
+\]
+for the real trichotomy \(D>0\), \(D=0\), or \(D<0\), plus:
+\[
+\texttt{HasBinaryHankelKernelDiscriminantData}
+\]
+and
+\[
+\texttt{hasBinaryHankelKernelDiscriminantData\_of\_finrank\_range\_le\_two}.
+\]
+The last theorem packages rank at most two of the binary Hankel map as a
+nonzero kernel quadratic, its three scalar kernel equations, and the
+discriminant case needed for the normalized-kernel classification.
+
+\paragraph{Strategy change.}
+Future binary work can now refine three explicit discriminant branches instead
+of rediscovering the nonzero kernel vector and sign split in each branch.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support and the
+three discriminant branches of the coordinate-free rank-two binary theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

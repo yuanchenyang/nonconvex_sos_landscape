@@ -13,6 +13,9 @@ def binaryQuarticEval (a b c d e x y : ℝ) : ℝ :=
 def binaryHankelQuad (a b c d e r s t : ℝ) : ℝ :=
   a * r^2 + 2 * b * r * s + 2 * c * r * t + c * s^2 + 2 * d * s * t + e * t^2
 
+def binaryKernelDiscriminant (r s t : ℝ) : ℝ :=
+  s^2 - 4 * r * t
+
 def binaryHankelMul (a b c d e : ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ![a * v 0 + b * v 1 + c * v 2,
     b * v 0 + c * v 1 + d * v 2,
@@ -96,6 +99,11 @@ theorem binaryHankelMul_ne_zero_of_binaryHankelQuad_neg
 
 def HasBinaryHankelNegativeValue (a b c d e : ℝ) : Prop :=
   ∃ r s t : ℝ, binaryHankelQuad a b c d e r s t < 0
+
+def HasBinaryKernelDiscriminantCase (r s t : ℝ) : Prop :=
+  0 < binaryKernelDiscriminant r s t ∨
+    binaryKernelDiscriminant r s t = 0 ∨
+      binaryKernelDiscriminant r s t < 0
 
 def HasBinaryKernelBranchCertificate (a b c d e : ℝ) : Prop :=
   (b = 0 ∧ c = 0 ∧ d = 0 ∧
@@ -319,6 +327,34 @@ theorem exists_nonzero_binaryHankel_kernel_equations_of_finrank_range_le_two
           ext i
           fin_cases i <;> simp
         rwa [hvec])
+
+theorem hasBinaryKernelDiscriminantCase
+    (r s t : ℝ) :
+    HasBinaryKernelDiscriminantCase r s t := by
+  by_cases hpos : 0 < binaryKernelDiscriminant r s t
+  · exact Or.inl hpos
+  · by_cases hzero : binaryKernelDiscriminant r s t = 0
+    · exact Or.inr (Or.inl hzero)
+    · exact Or.inr (Or.inr (lt_of_le_of_ne (le_of_not_gt hpos) hzero))
+
+def HasBinaryHankelKernelDiscriminantData (a b c d e : ℝ) : Prop :=
+  ∃ r s t : ℝ,
+    (r ≠ 0 ∨ s ≠ 0 ∨ t ≠ 0) ∧
+      a * r + b * s + c * t = 0 ∧
+        b * r + c * s + d * t = 0 ∧
+          c * r + d * s + e * t = 0 ∧
+            HasBinaryKernelDiscriminantCase r s t
+
+theorem hasBinaryHankelKernelDiscriminantData_of_finrank_range_le_two
+    {a b c d e : ℝ}
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2) :
+    HasBinaryHankelKernelDiscriminantData a b c d e := by
+  rcases exists_nonzero_binaryHankel_kernel_equations_of_finrank_range_le_two
+      (a := a) (b := b) (c := c) (d := d) (e := e) hrank with
+    ⟨r, s, t, hnonzero, h0, h1, h2⟩
+  exact ⟨r, s, t, hnonzero, h0, h1, h2,
+    hasBinaryKernelDiscriminantCase r s t⟩
 
 theorem binaryHankelLinearMap_finrank_range_le_two_of_xy_kernel
     {a b c d e : ℝ}
