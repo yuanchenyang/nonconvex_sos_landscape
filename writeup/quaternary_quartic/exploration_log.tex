@@ -4653,4 +4653,44 @@ three cases.
 
 No Julia numerical claims were used in this round.
 
+\section*{Specializing binary normal-form bridges to restriction coefficients}
+
+\paragraph{Gap targeted.}
+The support component predicates use the canonical coefficients
+\(\texttt{binaryRestrictionCoeffA}\) through
+\(\texttt{binaryRestrictionCoeffE}\), not abstract scalars
+\((a,b,c,d,e)\).  The previous kernel-equation bridges therefore still
+required a manual specialization step in every later use.
+
+\paragraph{Lean progress.}
+Added the canonical coefficient wrappers
+\[
+\texttt{binaryRestriction\_lowRankNegativeNormalForm\_of\_xyKernel\_equations},
+\]
+\[
+\texttt{binaryRestriction\_lowRankNegativeNormalForm\_of\_ySqKernel\_equations},
+\]
+and
+\[
+\texttt{binaryRestriction\_lowRankNegativeNormalForm\_of\_ellipticKernel\_equations}
+\]
+to \texttt{QuaternaryQuarticProof/Binary.lean}.  These produce the exact
+\(\texttt{HasBinaryLowRankNegativeNormalForm}\) term required by
+\(\texttt{HasRankTwoBinaryRestrictionComponentData}\) from coefficient
+equations on the binary restriction.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is unchanged, namely the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The normal-form field can now be discharged directly once the apolar
+rank-two restriction supplies one of the three coefficient-equation cases.
+The proof still needs that case split and the geometric disjointness fact.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -98,6 +98,60 @@ def binaryRestrictionCoeffE
     (B : DotForm) (p : Poly) (u : RankSevenVec) (y : linSubmodule) : ℝ :=
   B ((linProduct y y : quadSubmodule).1^2) (residual p u)
 
+theorem binaryRestriction_lowRankNegativeNormalForm_of_xyKernel_equations
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}
+    (hb : binaryRestrictionCoeffB B p u x y = 0)
+    (hc : binaryRestrictionCoeffC B p u x y = 0)
+    (hd : binaryRestrictionCoeffD B p u x y = 0)
+    (hneg :
+      ∃ r t : ℝ,
+        binaryRestrictionCoeffA B p u x * r^2 +
+            binaryRestrictionCoeffE B p u y * t^2 <
+          0) :
+    HasBinaryLowRankNegativeNormalForm
+      (binaryRestrictionCoeffA B p u x)
+      (binaryRestrictionCoeffB B p u x y)
+      (binaryRestrictionCoeffC B p u x y)
+      (binaryRestrictionCoeffD B p u x y)
+      (binaryRestrictionCoeffE B p u y) :=
+  HasBinaryLowRankNegativeNormalForm.of_xyKernel_equations hb hc hd hneg
+
+theorem binaryRestriction_lowRankNegativeNormalForm_of_ySqKernel_equations
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}
+    (hc : binaryRestrictionCoeffC B p u x y = 0)
+    (hd : binaryRestrictionCoeffD B p u x y = 0)
+    (he : binaryRestrictionCoeffE B p u y = 0)
+    (hb : binaryRestrictionCoeffB B p u x y ≠ 0) :
+    HasBinaryLowRankNegativeNormalForm
+      (binaryRestrictionCoeffA B p u x)
+      (binaryRestrictionCoeffB B p u x y)
+      (binaryRestrictionCoeffC B p u x y)
+      (binaryRestrictionCoeffD B p u x y)
+      (binaryRestrictionCoeffE B p u y) :=
+  HasBinaryLowRankNegativeNormalForm.of_ySqKernel_equations hc hd he hb
+
+theorem binaryRestriction_lowRankNegativeNormalForm_of_ellipticKernel_equations
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}
+    (hc :
+      binaryRestrictionCoeffC B p u x y =
+        -binaryRestrictionCoeffA B p u x)
+    (hd :
+      binaryRestrictionCoeffD B p u x y =
+        -binaryRestrictionCoeffB B p u x y)
+    (he :
+      binaryRestrictionCoeffE B p u y =
+        binaryRestrictionCoeffA B p u x)
+    (hne :
+      binaryRestrictionCoeffA B p u x ≠ 0 ∨
+        binaryRestrictionCoeffB B p u x y ≠ 0) :
+    HasBinaryLowRankNegativeNormalForm
+      (binaryRestrictionCoeffA B p u x)
+      (binaryRestrictionCoeffB B p u x y)
+      (binaryRestrictionCoeffC B p u x y)
+      (binaryRestrictionCoeffD B p u x y)
+      (binaryRestrictionCoeffE B p u y) :=
+  HasBinaryLowRankNegativeNormalForm.of_ellipticKernel_equations hc hd he hne
+
 theorem binaryRestriction_pow_eq_C
     (x y : linSubmodule) (X Y : ℝ) :
     (linProduct (X • x + Y • y) (X • x + Y • y) :
