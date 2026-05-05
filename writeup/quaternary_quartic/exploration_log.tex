@@ -12766,4 +12766,39 @@ interface.
 
 No Julia numerical claims were used in this round.
 
+\section*{Equivalence with the apolar support theorem}
+
+\paragraph{Gap targeted.}
+The quotient theorem says the essential-variable quotient has dimension at
+most \(k\).  The original support theorem says there is a subspace
+\(A\subseteq\Ann_1\) of dimension at least \(4-k\).  In a four-dimensional
+linear space these are equivalent, but the equivalence had not been formalized
+at the low-rank theorem level.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{lowRankApolarEssentialQuotientTheorem\_of\_lowRankApolarSupportTheorem},
+\]
+\[
+\texttt{hasLowRankApolarSupportTheorem\_of\_lowRankApolarEssentialQuotientTheorem},
+\]
+and:
+\[
+\texttt{hasLowRankApolarSupportTheorem\_iff\_lowRankApolarEssentialQuotientTheorem}.
+\]
+The first direction uses the support subspace \(A\le\Ann_1\).  The second
+uses \(A=\Ann_1\) and the quotient-dimension identity.
+
+\paragraph{Strategy change.}
+The remaining structural statement can now be viewed interchangeably as a
+support theorem, an annihilator-map theorem, or an essential quotient theorem.
+This reduces future proof search friction: whichever formulation is most
+convenient for the Macaulay/Hilbert argument can feed the existing pipeline.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

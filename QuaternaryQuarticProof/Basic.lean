@@ -2666,6 +2666,37 @@ theorem hasLowRankApolarAnnihilatorMapTheorem_iff_lowRankApolarEssentialQuotient
   ⟨lowRankApolarEssentialQuotientTheorem_of_lowRankApolarAnnihilatorMapTheorem,
     hasLowRankApolarAnnihilatorMapTheorem_of_lowRankApolarEssentialQuotientTheorem⟩
 
+theorem lowRankApolarEssentialQuotientTheorem_of_lowRankApolarSupportTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupport : HasLowRankApolarSupportTheorem B p u) :
+    HasLowRankApolarEssentialQuotientTheorem B p u := by
+  intro k hk hrank
+  rcases hsupport k hk (by omega) with ⟨A, hAann, hAdim⟩
+  rw [finrank_quotient_linearAnnihilator_eq_sub]
+  have hAfin_le :
+      Module.finrank ℝ A ≤ Module.finrank ℝ (linearAnnihilator B p u) :=
+    Submodule.finrank_mono hAann
+  omega
+
+theorem hasLowRankApolarSupportTheorem_of_lowRankApolarEssentialQuotientTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasLowRankApolarEssentialQuotientTheorem B p u) :
+    HasLowRankApolarSupportTheorem B p u := by
+  intro k hk hrank_le
+  let n := Module.finrank ℝ (LinearMap.range (catalecticantMap B p u))
+  have hn_le_three : n ≤ 3 := by omega
+  have hquot_n := hquot n hn_le_three rfl
+  rw [finrank_quotient_linearAnnihilator_eq_sub] at hquot_n
+  refine ⟨linearAnnihilator B p u, le_rfl, ?_⟩
+  omega
+
+theorem hasLowRankApolarSupportTheorem_iff_lowRankApolarEssentialQuotientTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarSupportTheorem B p u ↔
+      HasLowRankApolarEssentialQuotientTheorem B p u :=
+  ⟨lowRankApolarEssentialQuotientTheorem_of_lowRankApolarSupportTheorem,
+    hasLowRankApolarSupportTheorem_of_lowRankApolarEssentialQuotientTheorem⟩
+
 theorem hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hann : HasLowRankApolarAnnihilatorMapTheorem B p u) :
