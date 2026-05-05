@@ -650,6 +650,38 @@ theorem y_sq_kernel_binaryQuarticEval_exists_negative
   refine ⟨1, t, ?_⟩
   simpa [binaryQuarticEval, mul_assoc] using ht
 
+theorem y_sq_kernel_binaryHankelNegativeValue
+    (a b : ℝ) (hb : b ≠ 0) :
+    HasBinaryHankelNegativeValue a b 0 0 0 := by
+  rcases exists_linear_combination_lt_zero a b hb with ⟨t, ht⟩
+  refine ⟨1, 2 * t, 0, ?_⟩
+  have heq : binaryHankelQuad a b 0 0 0 1 (2 * t) 0 = a + 4 * b * t := by
+    unfold binaryHankelQuad
+    ring
+  rwa [heq]
+
+theorem y_sq_kernel_binaryHankelNegativeValue_of_column_linearIndependent
+    {a b : ℝ}
+    (hLI : LinearIndependent ℝ
+      ![(![a, b, 0] : Fin 3 → ℝ), (![b, 0, 0] : Fin 3 → ℝ)]) :
+    HasBinaryHankelNegativeValue a b 0 0 0 :=
+  y_sq_kernel_binaryHankelNegativeValue a b
+    (ySqKernel_b_ne_zero_of_column_linearIndependent hLI)
+
+theorem binaryHankelNegativeValue_of_canonicalKernelData
+    {a b c d e : ℝ}
+    (hcanon : HasBinaryCanonicalKernelData a b c d e) :
+    HasBinaryHankelNegativeValue a b c d e := by
+  rcases hcanon with hxy | hySq | hell
+  · exact hxy.2
+  · rcases ySq_kernel_equations_of_binaryHankelMul_eq_zero hySq.1 with
+      ⟨hc, hd, he⟩
+    subst c
+    subst d
+    subst e
+    exact y_sq_kernel_binaryHankelNegativeValue_of_column_linearIndependent hySq.2
+  · exact hell.2
+
 theorem y_sq_kernel_binaryQuarticEval_exists_negative_of_rank_two
     (a b : ℝ) (_hneg : ∃ r s : ℝ, a * r^2 + 2 * b * r * s < 0)
     (hb : b ≠ 0) :

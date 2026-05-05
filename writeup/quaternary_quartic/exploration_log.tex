@@ -7190,4 +7190,40 @@ rank-two canonical kernel data theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{\(y^2\)-canonical branch has negative Hankel value}
+
+\paragraph{Gap targeted.}
+The canonical \(y^2\)-kernel branch used column independence to produce the
+normal form, but the blueprint's binary lemma also keeps a global negative
+Hankel quadratic value in view.
+
+\paragraph{Lean progress.}
+Proved
+\[
+\texttt{y\_sq\_kernel\_binaryHankelNegativeValue}
+\]
+from \(b\ne0\), then combined it with the existing column-independence lemma
+to prove
+\[
+\texttt{y\_sq\_kernel\_binaryHankelNegativeValue\_of\_column\_linearIndependent}.
+\]
+Finally proved
+\[
+\texttt{binaryHankelNegativeValue\_of\_canonicalKernelData},
+\]
+so every canonical kernel branch now yields a negative Hankel value.
+
+\paragraph{Strategy change.}
+The rank-two canonical-kernel theorem can now preserve the original
+indefiniteness hypothesis uniformly across all three canonical branches.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The two open inputs remain the product-kernel low-rank support decomposition
+and the rank-two canonical kernel data theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
