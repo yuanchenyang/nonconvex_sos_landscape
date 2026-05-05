@@ -1726,6 +1726,18 @@ theorem hasRankTwoExistentialCanonicalKernelData_of_scalarHankelData
     ⟨y, hyW, hynot, hclass, hneg, hrank⟩
   exact ⟨y, hyW, hynot, hclass hneg hrank⟩
 
+theorem hasRankTwoExistentialNormalizedHankelData_of_canonicalKernelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hcanon : HasRankTwoExistentialCanonicalKernelData B p u) :
+    HasRankTwoExistentialNormalizedHankelData B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases hcanon hrank2 A W x hAann hAW hxW hx hAdim hWdim with
+    ⟨y, hyW, hynot, hcanon_y⟩
+  exact ⟨y, hyW, hynot,
+    binaryNormalizedKernelPosition_of_canonicalKernelData hcanon_y,
+    binaryHankelNegativeValue_of_canonicalKernelData hcanon_y,
+    binaryHankelLinearMap_finrank_range_le_two_of_canonicalKernelData hcanon_y⟩
+
 theorem hasRankTwoExistentialScalarHankelData_of_universal_and_facts
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification)

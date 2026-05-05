@@ -7561,4 +7561,52 @@ for the support-decomposition route.
 
 No Julia numerical claims were used in this round.
 
+\section*{Canonical kernel data implies normalized Hankel data}
+
+\paragraph{Gap targeted.}
+The normalized Hankel interface still had to justify that the binary Hankel
+rank bound follows from putting the rank-two kernel in one of the canonical
+positions.  This is a finite-dimensional fact about a nonzero vector in the
+kernel of a linear map from \(\mathbb{R}^3\).
+
+\paragraph{Lean progress.}
+Added binary rank-nullity lemmas showing that if one of
+\[
+\texttt{![0,1,0]},\quad \texttt{![0,0,1]},\quad \texttt{![1,0,1]}
+\]
+lies in the kernel of \(\texttt{binaryHankelLinearMap}\), then its range has
+finrank at most \(2\).  Also added
+\[
+\texttt{binaryNormalizedKernelPosition\_of\_canonicalKernelData}
+\]
+and
+\[
+\texttt{binaryHankelLinearMap\_finrank\_range\_le\_two\_of\_canonicalKernelData}.
+\]
+In the quaternary layer, proved
+\[
+\texttt{hasRankTwoExistentialNormalizedHankelData\_of\_canonicalKernelData}.
+\]
+
+\paragraph{Strategy change.}
+Canonical kernel data now packages enough information to recover the whole
+normalized Hankel data obligation.  This makes the normalized interface a
+genuine local normal-form target rather than an additional rank hypothesis.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The open theorem-level inputs remain low-rank apolar support decomposition and
+a construction of canonical or normalized rank-two kernel data from the
+blueprint's binary change-of-basis argument.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

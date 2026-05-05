@@ -192,6 +192,88 @@ theorem binaryRankTwoNormalizedKernelClassification_of_normalizedKernelPosition
   intro hneg _hrank
   exact binaryCanonicalKernelData_of_normalizedKernelPosition hpos hneg
 
+theorem binaryHankelLinearMap_finrank_range_le_two_of_nonzero_kernel
+    {a b c d e : ℝ} {v : Fin 3 → ℝ}
+    (hker : binaryHankelLinearMap a b c d e v = 0)
+    (hv : v ≠ 0) :
+    Module.finrank ℝ
+      (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2 := by
+  let f := binaryHankelLinearMap a b c d e
+  change Module.finrank ℝ (LinearMap.range f) ≤ 2
+  have hvker : v ∈ LinearMap.ker f := by
+    simpa [f, LinearMap.mem_ker] using hker
+  have hker_ne_bot : LinearMap.ker f ≠ ⊥ := by
+    intro hbot
+    have hvbot : v ∈ (⊥ : Submodule ℝ (Fin 3 → ℝ)) := by
+      simpa [hbot] using hvker
+    exact hv (by simpa using hvbot)
+  have hkerdim : 1 ≤ Module.finrank ℝ (LinearMap.ker f) :=
+    (Submodule.one_le_finrank_iff).2 hker_ne_bot
+  have hsum :
+      Module.finrank ℝ (LinearMap.range f) +
+          Module.finrank ℝ (LinearMap.ker f) =
+        3 := by
+    simpa [f] using (LinearMap.finrank_range_add_finrank_ker f)
+  omega
+
+theorem binaryHankelLinearMap_finrank_range_le_two_of_xy_kernel
+    {a b c d e : ℝ}
+    (hker : binaryHankelMul a b c d e (![0, 1, 0] : Fin 3 → ℝ) = 0) :
+    Module.finrank ℝ
+      (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2 := by
+  refine binaryHankelLinearMap_finrank_range_le_two_of_nonzero_kernel
+    (a := a) (b := b) (c := c) (d := d) (e := e)
+    (v := (![0, 1, 0] : Fin 3 → ℝ)) ?_ ?_
+  · simpa using hker
+  · intro h
+    have h1 := congrArg (fun v : Fin 3 → ℝ => v 1) h
+    norm_num [Fin.isValue] at h1
+
+theorem binaryHankelLinearMap_finrank_range_le_two_of_ySq_kernel
+    {a b c d e : ℝ}
+    (hker : binaryHankelMul a b c d e (![0, 0, 1] : Fin 3 → ℝ) = 0) :
+    Module.finrank ℝ
+      (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2 := by
+  refine binaryHankelLinearMap_finrank_range_le_two_of_nonzero_kernel
+    (a := a) (b := b) (c := c) (d := d) (e := e)
+    (v := (![0, 0, 1] : Fin 3 → ℝ)) ?_ ?_
+  · simpa using hker
+  · intro h
+    have h2 := congrArg (fun v : Fin 3 → ℝ => v ⟨2, by norm_num⟩) h
+    norm_num [Fin.isValue] at h2
+
+theorem binaryHankelLinearMap_finrank_range_le_two_of_elliptic_kernel
+    {a b c d e : ℝ}
+    (hker : binaryHankelMul a b c d e (![1, 0, 1] : Fin 3 → ℝ) = 0) :
+    Module.finrank ℝ
+      (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2 := by
+  refine binaryHankelLinearMap_finrank_range_le_two_of_nonzero_kernel
+    (a := a) (b := b) (c := c) (d := d) (e := e)
+    (v := (![1, 0, 1] : Fin 3 → ℝ)) ?_ ?_
+  · simpa using hker
+  · intro h
+    have h0 := congrArg (fun v : Fin 3 → ℝ => v 0) h
+    norm_num [Fin.isValue] at h0
+
+theorem binaryNormalizedKernelPosition_of_canonicalKernelData
+    {a b c d e : ℝ}
+    (hcanon : HasBinaryCanonicalKernelData a b c d e) :
+    HasBinaryNormalizedKernelPosition a b c d e := by
+  rcases hcanon with hxy | hySq | hell
+  · exact Or.inl hxy.1
+  · exact Or.inr (Or.inl hySq)
+  · exact Or.inr (Or.inr hell.1)
+
+theorem binaryHankelLinearMap_finrank_range_le_two_of_canonicalKernelData
+    {a b c d e : ℝ}
+    (hcanon : HasBinaryCanonicalKernelData a b c d e) :
+    Module.finrank ℝ
+      (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2 := by
+  rcases hcanon with hxy | hySq | hell
+  · exact binaryHankelLinearMap_finrank_range_le_two_of_xy_kernel hxy.1
+  · exact binaryHankelLinearMap_finrank_range_le_two_of_ySq_kernel hySq.1
+  · exact binaryHankelLinearMap_finrank_range_le_two_of_elliptic_kernel hell.1
+
 def HasBinaryLowRankNegativeNormalForm (a b c d e : ℝ) : Prop :=
   (∃ ρ α β : ℝ,
     ρ < 0 ∧
