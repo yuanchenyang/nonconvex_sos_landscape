@@ -3141,6 +3141,15 @@ theorem hasRankCaseApolarComponentData_of_productIndependenceGeometryData_and_un
     hgeom
     (hasRankTwoUniversalKernelBranchData_of_universalNormalizedHankelData hdata)
 
+theorem universalBinaryHankelRankBound_of_catalecticantRankTwo
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankTwoUniversalBinaryHankelRankBound B p u := by
+  intro hrank2 A W x y _hAann _hAW _hxW _hyW _hynot _hx _hAdim _hWdim
+  have hle :=
+    binaryHankelLinearMap_finrank_range_le_catalecticantMap_rank
+      (B := B) (p := p) (u := u) x y
+  rwa [hrank2] at hle
+
 theorem hasRankTwoUniversalNormalizedHankelData_of_components
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u)
@@ -3189,7 +3198,7 @@ theorem hasRankTwoUniversalNormalizedHankelData_of_universalNormalizedPosition_a
     HasRankTwoUniversalNormalizedHankelData B p u :=
   hasRankTwoUniversalNormalizedHankelData_of_components
     hpos hneg
-    (universalBinaryHankelRankBound_of_universalNormalizedKernelPositionData hpos)
+    universalBinaryHankelRankBound_of_catalecticantRankTwo
 
 theorem hasRankTwoUniversalNormalizedHankelData_of_universalNormalizedPosition_of_point
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}

@@ -10123,4 +10123,56 @@ the construction of universal normalized rank-two kernel position.
 
 No Julia numerical claims were used in this round.
 
+\section*{Automatic binary Hankel rank bound}
+
+\paragraph{Gap targeted.}
+The rank-two normalized-Hankel package previously obtained the binary Hankel
+rank bound from normalized kernel position.  Mathematically this rank bound is
+only a restriction of the ambient catalecticant rank-two hypothesis, so it
+should not consume any normal-form input.
+
+\paragraph{Lean progress.}
+Added the binary restriction factorization:
+\[
+\texttt{binaryQuadraticCombinationMap},\quad
+\texttt{binaryHankelCoordinateMap},
+\]
+\[
+\texttt{binaryHankelLinearMap\_eq\_coordinate\_comp\_catalecticant},
+\]
+and
+\[
+\texttt{binaryHankelLinearMap\_finrank\_range\_le\_catalecticantMap\_rank}.
+\]
+At the main proof-data level, added
+\[
+\texttt{universalBinaryHankelRankBound\_of\_catalecticantRankTwo}.
+\]
+The constructor
+\[
+\texttt{hasRankTwoUniversalNormalizedHankelData\_of\_universalNormalizedPosition\_and\_HankelNegative}
+\]
+now uses this automatic rank bound instead of deriving it from normalized
+kernel position.
+
+\paragraph{Strategy change.}
+The rank-two binary gap is now narrowed to normalized kernel position itself:
+Hankel negativity comes from the point hypotheses, and the Hankel rank bound is
+automatic from catalecticant rank two.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The remaining core inputs are the low-rank apolar support theorem and the
+actual normalized rank-two kernel-position construction.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

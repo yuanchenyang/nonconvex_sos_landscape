@@ -64,6 +64,27 @@ theorem binaryHankelQuad_eq_zero_of_binaryHankelMul_eq_zero
   rw [hker]
   simp
 
+def binaryQuadraticCombinationMap (x y : linSubmodule) :
+    (Fin 3 → ℝ) →ₗ[ℝ] quadSubmodule where
+  toFun v := v 0 • linProduct x x + v 1 • linProduct x y + v 2 • linProduct y y
+  map_add' v w := by
+    ext
+    simp [Pi.add_apply, add_smul]
+    abel
+  map_smul' r v := by
+    ext
+    simp [mul_smul]
+
+def binaryHankelCoordinateMap (x y : linSubmodule) :
+    Module.Dual ℝ quadSubmodule →ₗ[ℝ] (Fin 3 → ℝ) where
+  toFun φ := ![φ (linProduct x x), φ (linProduct x y), φ (linProduct y y)]
+  map_add' φ ψ := by
+    ext i
+    fin_cases i <;> simp
+  map_smul' r φ := by
+    ext i
+    fin_cases i <;> simp
+
 theorem binaryHankelMul_ne_zero_of_binaryHankelQuad_neg
     {a b c d e r s t : ℝ}
     (hneg : binaryHankelQuad a b c d e r s t < 0) :
@@ -498,6 +519,51 @@ def binaryRestrictionCoeffD
 def binaryRestrictionCoeffE
     (B : DotForm) (p : Poly) (u : RankSevenVec) (y : linSubmodule) : ℝ :=
   B ((linProduct y y : quadSubmodule).1^2) (residual p u)
+
+theorem binaryHankelLinearMap_eq_coordinate_comp_catalecticant
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule) :
+    binaryHankelLinearMap
+        (binaryRestrictionCoeffA B p u x)
+        (binaryRestrictionCoeffB B p u x y)
+        (binaryRestrictionCoeffC B p u x y)
+        (binaryRestrictionCoeffD B p u x y)
+        (binaryRestrictionCoeffE B p u y) =
+      (binaryHankelCoordinateMap x y).comp
+        ((catalecticantMap B p u).comp (binaryQuadraticCombinationMap x y)) := by
+  ext v i
+  fin_cases i <;>
+    simp [binaryHankelLinearMap, binaryHankelMul, binaryHankelCoordinateMap,
+      binaryQuadraticCombinationMap, binaryRestrictionCoeffA,
+      binaryRestrictionCoeffB, binaryRestrictionCoeffC, binaryRestrictionCoeffD,
+      binaryRestrictionCoeffE] <;>
+    ring_nf
+
+theorem binaryHankelLinearMap_finrank_range_le_catalecticantMap_rank
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule) :
+    Module.finrank ℝ
+        (LinearMap.range
+          (binaryHankelLinearMap
+            (binaryRestrictionCoeffA B p u x)
+            (binaryRestrictionCoeffB B p u x y)
+            (binaryRestrictionCoeffC B p u x y)
+            (binaryRestrictionCoeffD B p u x y)
+            (binaryRestrictionCoeffE B p u y))) ≤
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) := by
+  rw [binaryHankelLinearMap_eq_coordinate_comp_catalecticant]
+  let f := (catalecticantMap B p u).comp (binaryQuadraticCombinationMap x y)
+  let g := binaryHankelCoordinateMap x y
+  have hpost :
+      Module.finrank ℝ (LinearMap.range (g.comp f)) ≤
+        Module.finrank ℝ (LinearMap.range f) := by
+    rw [LinearMap.range_comp]
+    exact Submodule.finrank_map_le g (LinearMap.range f)
+  have hpre :
+      Module.finrank ℝ (LinearMap.range f) ≤
+        Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) := by
+    exact Submodule.finrank_mono
+      (LinearMap.range_comp_le_range (binaryQuadraticCombinationMap x y)
+        (catalecticantMap B p u))
+  exact hpost.trans hpre
 
 theorem binaryRestriction_lowRankNegativeNormalForm_of_xyKernel_equations
     {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}
