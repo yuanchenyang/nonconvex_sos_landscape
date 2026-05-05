@@ -4305,4 +4305,43 @@ coefficients.
 
 No Julia numerical claims were used in this round.
 
+\section*{Component data from apolar support complements}
+
+\paragraph{Gap targeted.}
+The complement-based binary restriction data still began with exact complement
+data as an assumption.  The apolar support interface already extracts exact
+annihilator complements from
+\(\texttt{HasLinearAnnihilatorCodimAtMost}\); the normal-form theorem should
+only have to supply the remaining algebraic facts after that extraction.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_rank\_one\_binaryRestrictionComponentData\_of\_support}
+\]
+and
+\[
+\texttt{exists\_rank\_two\_binaryRestrictionComponentData\_of\_support}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  These use the existing exact
+annihilator-complement vector extractors for ranks one and two, then invoke a
+rank-specific component hypothesis only for the remaining choices and facts:
+the second support-plane direction, exact \(\Sym^2\) dimension, binary normal
+form of the canonical coefficients, and rank-two disjointness.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The support-complement extraction is now connected to the component-data
+target.  The remaining proof work is the rank-specific algebra inside the
+chosen complement: exact product dimensions, direct-sum disjointness, and
+binary low-rank normal-form classification.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

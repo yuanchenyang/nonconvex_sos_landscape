@@ -337,6 +337,68 @@ def HasRankTwoBinaryRestrictionComponentData
                                   symSquareSubmodule A =
                                 ⊥
 
+theorem exists_rank_one_binaryRestrictionComponentData_of_support
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 1)
+    (hcomponent :
+      ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              (x : Poly) ≠ 0 →
+                Module.finrank ℝ A = 3 →
+                  Module.finrank ℝ W = 1 →
+                    ∃ y : linSubmodule,
+                      Module.finrank ℝ (symSquareSubmodule A) = 6 ∧
+                        HasBinaryLowRankNegativeNormalForm
+                          (binaryRestrictionCoeffA B p u x)
+                          (binaryRestrictionCoeffB B p u x y)
+                          (binaryRestrictionCoeffC B p u x y)
+                          (binaryRestrictionCoeffD B p u x y)
+                          (binaryRestrictionCoeffE B p u y)) :
+    HasRankOneBinaryRestrictionComponentData B p u := by
+  rcases exists_rank_one_exact_annihilator_complement_vector
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, W, x, hAann, hAW, hxW, hx, _hxnotA, hAdim, hWdim⟩
+  rcases hcomponent A W x hAann hAW hxW hx hAdim hWdim with
+    ⟨y, hSymdim, hform⟩
+  exact ⟨A, W, x, y, hAann, hAW, hxW, hx, hAdim, hWdim, hSymdim, hform⟩
+
+theorem exists_rank_two_binaryRestrictionComponentData_of_support
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 2)
+    (hcomponent :
+      ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              (x : Poly) ≠ 0 →
+                Module.finrank ℝ A = 2 →
+                  Module.finrank ℝ W = 2 →
+                    ∃ y : linSubmodule,
+                      y ∈ W ∧
+                        Module.finrank ℝ (symSquareSubmodule A) = 3 ∧
+                          HasBinaryLowRankNegativeNormalForm
+                            (binaryRestrictionCoeffA B p u x)
+                            (binaryRestrictionCoeffB B p u x y)
+                            (binaryRestrictionCoeffC B p u x y)
+                            (binaryRestrictionCoeffD B p u x y)
+                            (binaryRestrictionCoeffE B p u y) ∧
+                            ∀ z : linSubmodule,
+                              z ∈ W →
+                                (z : Poly) ≠ 0 →
+                                  LinearMap.range (linProductLeftMapOn z A) ⊓
+                                      symSquareSubmodule A =
+                                    ⊥) :
+    HasRankTwoBinaryRestrictionComponentData B p u := by
+  rcases exists_rank_two_exact_annihilator_complement_vector
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, W, x, hAann, hAW, hxW, hx, _hxnotA, hAdim, hWdim⟩
+  rcases hcomponent A W x hAann hAW hxW hx hAdim hWdim with
+    ⟨y, hyW, hSymdim, hform, hdisj⟩
+  exact ⟨A, W, x, y, hAann, hAW, hxW, hyW, hx, hAdim, hWdim, hSymdim, hform,
+    hdisj⟩
+
 theorem exists_rank_three_exact_annihilator
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupp : HasLinearAnnihilatorCodimAtMost B p u 3) :
