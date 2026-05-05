@@ -5918,4 +5918,54 @@ arbitrary positive-definite SOS SOCP input.
 
 No Julia numerical claims were used in this round.
 
+\section*{Affine-linear products span quadratics}
+
+\paragraph{Gap targeted.}
+The blueprint repeatedly uses the affine-chart fact
+\(\Lin\cdot\Lin=\Quad\): every quadratic polynomial in three affine variables
+is a linear combination of products of affine-linear forms.  This is a core
+algebraic input for the direct-sum product-independence and rank-three
+decomposition arguments.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{map\_subtype\_linProductSubmodule\_top\_top},
+\quad
+\texttt{bounded\_totalDegree\_two\_eq\_add\_bounded\_totalDegree\_one},
+\]
+\[
+\texttt{linSubmodule\_mul\_linSubmodule\_eq\_quadSubmodule},
+\quad
+\texttt{map\_subtype\_linProductSubmodule\_top\_top\_eq\_quadSubmodule},
+\]
+and
+\[
+\texttt{linProductSubmodule\_top\_top\_eq\_top}.
+\]
+The proof connects the internal \(\texttt{linProductSubmodule}\) to the
+ordinary pointwise product of polynomial submodules, then uses mathlib's
+\(\texttt{MvPolynomial.restrictSupport\_add}\) plus a finite
+\(\texttt{Finsupp.degree}\) calculation showing that degree \(\le 2\)
+exponents are exactly sums of two degree \(\le 1\) exponents.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+and
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The ambient product-spanning fact is now formalized.  The remaining product
+independence obligations require the sharper direct-sum versions for
+complements \(E=A\oplus W\), not just the ambient equality
+\(\Lin\cdot\Lin=\Quad\).
+
+No Julia numerical claims were used in this round.
+
 \end{document}

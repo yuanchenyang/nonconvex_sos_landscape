@@ -16,7 +16,7 @@ noncomputable section
 
 namespace QuaternaryQuartic
 
-open scoped BigOperators
+open scoped BigOperators Pointwise
 
 /-- The submodule of affine-chart polynomials of total degree at most one. -/
 def linSubmodule : Submodule ℝ Poly where
@@ -619,6 +619,108 @@ theorem linVar_mul_linVar_mem_linProductSubmodule_top_top (i j : Fin 3) :
   exact linProduct_mem_linProductSubmodule
     (⟨linVar i, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
     (⟨linVar j, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+
+theorem linSubmodule_mul_linSubmodule_le_quadSubmodule :
+    linSubmodule * linSubmodule ≤ quadSubmodule := by
+  rw [Submodule.mul_le]
+  intro p hp q hq
+  exact mul_lin_lin_mem_quad hp hq
+
+theorem map_subtype_linProductSubmodule_top_top :
+    (linProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤).map
+        quadSubmodule.subtype =
+      linSubmodule * linSubmodule := by
+  apply le_antisymm
+  · rw [linProductSubmodule, Submodule.map_span]
+    refine Submodule.span_le.mpr ?_
+    rintro q ⟨x, hx, rfl⟩
+    rcases hx with ⟨ab, rfl⟩
+    exact Submodule.mul_mem_mul ab.1.1.2 ab.2.1.2
+  · rw [Submodule.mul_le]
+    intro p hp q hq
+    let a : linSubmodule := ⟨p, hp⟩
+    let b : linSubmodule := ⟨q, hq⟩
+    refine ⟨linProduct a b, ?_, rfl⟩
+    exact linProduct_mem_linProductSubmodule
+      (⟨a, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+      (⟨b, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+
+theorem finsupp_degree_eq_total (s : Fin 3 →₀ ℕ) :
+    Finsupp.degree s = s.sum (fun _ e => e) := by
+  rw [Finsupp.degree_eq_sum]
+  rw [Finsupp.sum_fintype]
+  intro i
+  simp
+
+theorem bounded_totalDegree_two_eq_add_bounded_totalDegree_one :
+    ({s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 2} : Set (Fin 3 →₀ ℕ)) =
+      {s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 1} +
+        {s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 1} := by
+  let S1 : Set (Fin 3 →₀ ℕ) := {s | s.sum (fun _ e => e) ≤ 1}
+  let S2 : Set (Fin 3 →₀ ℕ) := {s | s.sum (fun _ e => e) ≤ 2}
+  let D1 : Set (Fin 3 →₀ ℕ) := Finsupp.degree ⁻¹' Set.Iic 1
+  let D2 : Set (Fin 3 →₀ ℕ) := Finsupp.degree ⁻¹' Set.Iic 2
+  have hS1D1 : S1 = D1 := by
+    ext s
+    simp [S1, D1, Set.mem_Iic, finsupp_degree_eq_total]
+  have hS2D2 : S2 = D2 := by
+    ext s
+    simp [S2, D2, Set.mem_Iic, finsupp_degree_eq_total]
+  have hIic : (Set.Iic 1 + Set.Iic 1 : Set ℕ) = Set.Iic 2 := by
+    ext n
+    constructor
+    · rintro ⟨a, ha, b, hb, rfl⟩
+      simp only [Set.mem_Iic] at ha hb ⊢
+      omega
+    · intro hn
+      simp only [Set.mem_Iic] at hn
+      interval_cases n
+      · exact ⟨0, by norm_num, 0, by norm_num, by norm_num⟩
+      · exact ⟨1, by norm_num, 0, by norm_num, by norm_num⟩
+      · exact ⟨1, by norm_num, 1, by norm_num, by norm_num⟩
+  change S2 = S1 + S1
+  calc
+    S2 = D2 := hS2D2
+    _ = Finsupp.degree ⁻¹' (Set.Iic 1 + Set.Iic 1 : Set ℕ) := by
+      rw [hIic]
+    _ = D1 + D1 :=
+      Finsupp.degree_preimage_add (σ := Fin 3) (Set.Iic 1) (Set.Iic 1)
+    _ = S1 + S1 := by
+      rw [hS1D1]
+
+theorem linSubmodule_mul_linSubmodule_eq_quadSubmodule :
+    linSubmodule * linSubmodule = quadSubmodule := by
+  rw [linSubmodule_eq_restrictTotalDegree, quadSubmodule_eq_restrictTotalDegree]
+  change
+    MvPolynomial.restrictSupport ℝ
+        ({s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 1} : Set (Fin 3 →₀ ℕ)) *
+      MvPolynomial.restrictSupport ℝ
+        ({s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 1} : Set (Fin 3 →₀ ℕ)) =
+      MvPolynomial.restrictSupport ℝ
+        ({s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 2} : Set (Fin 3 →₀ ℕ))
+  rw [← MvPolynomial.restrictSupport_add]
+  rw [← bounded_totalDegree_two_eq_add_bounded_totalDegree_one]
+
+theorem map_subtype_linProductSubmodule_top_top_eq_quadSubmodule :
+    (linProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤).map
+        quadSubmodule.subtype =
+      quadSubmodule := by
+  rw [map_subtype_linProductSubmodule_top_top]
+  exact linSubmodule_mul_linSubmodule_eq_quadSubmodule
+
+theorem linProductSubmodule_top_top_eq_top :
+    linProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤ = ⊤ := by
+  rw [eq_top_iff]
+  intro q _hq
+  have hqmap :
+      (q : Poly) ∈
+        (linProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤).map
+          quadSubmodule.subtype := by
+    rw [map_subtype_linProductSubmodule_top_top_eq_quadSubmodule]
+    exact q.2
+  rcases hqmap with ⟨q', hq', hqeq⟩
+  have hq'q : q' = q := Subtype.ext hqeq
+  simpa [hq'q] using hq'
 
 def linProductLeftMap (a : linSubmodule) : linSubmodule →ₗ[ℝ] quadSubmodule where
   toFun b := linProduct a b
