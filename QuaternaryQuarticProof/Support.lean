@@ -991,6 +991,41 @@ theorem exists_rank_three_exact_annihilator
     ⟨A, hAA₀, hAfin⟩
   exact ⟨A, hAA₀.trans hAann, hAfin⟩
 
+theorem exists_rank_three_exact_annihilator_complement_generator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 3) :
+    ∃ A W : Submodule ℝ linSubmodule,
+      ∃ z : linSubmodule,
+        A ≤ linearAnnihilator B p u ∧
+          IsCompl A W ∧
+            z ∈ A ∧
+              (z : Poly) ≠ 0 ∧
+                z ∉ W ∧
+                  ℝ ∙ z = A ∧
+                    Module.finrank ℝ A = 1 ∧
+                      Module.finrank ℝ W = 3 := by
+  rcases exists_rank_three_exact_annihilator
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, hAann, hAfin⟩
+  rcases exists_isCompl_finrank_add_eq (K := ℝ) (V := linSubmodule) A with
+    ⟨W, hAW, hsum⟩
+  have hApos : 0 < Module.finrank ℝ A := by omega
+  rcases exists_mem_ne_zero_of_finrank_pos (K := ℝ) (V := linSubmodule)
+      (s := A) hApos with
+    ⟨z, hzA, hzne⟩
+  have hz : (z : Poly) ≠ 0 := by
+    intro hzero
+    exact hzne (Subtype.ext hzero)
+  have hznotW : z ∉ W :=
+    not_mem_right_of_annihilator_complement_mem_ne_zero hAW hzA hz
+  have hspan : ℝ ∙ z = A :=
+    span_singleton_eq_of_mem_of_finrank_one
+      (K := ℝ) (V := linSubmodule) hzne hzA hAfin
+  have hWfin : Module.finrank ℝ W = 3 := by
+    have hlin : Module.finrank ℝ linSubmodule = 4 := finrank_linSubmodule_eq_four
+    omega
+  exact ⟨A, W, z, hAann, hAW, hzA, hz, hznotW, hspan, hAfin, hWfin⟩
+
 theorem exists_rank_one_exact_annihilator_symSquare
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupp : HasLinearAnnihilatorCodimAtMost B p u 1) :

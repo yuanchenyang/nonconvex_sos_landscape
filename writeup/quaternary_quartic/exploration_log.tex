@@ -5842,4 +5842,39 @@ rank-three kernel decomposition for arbitrary SOCP input.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three annihilator generator package}
+
+\paragraph{Gap targeted.}
+The rank-three branch of the blueprint needs a nonzero annihilator linear form
+and a complementary three-plane before the negative quadratic is decomposed
+modulo the catalecticant kernel.  Lean had the exact one-dimensional
+annihilator extraction, but not the separated complement package that records
+the annihilator generator as a line.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{exists\_rank\_three\_exact\_annihilator\_complement\_generator}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  From
+\(\texttt{HasLinearAnnihilatorCodimAtMost}\;3\), it returns
+\(A,W,z\) with \(A\le\Ann\), \(A\oplus W\), \(z\in A\),
+\((z:\texttt{Poly})\ne0\), \(z\notin W\), \(\mathbb Rz=A\),
+\(\dim A=1\), and \(\dim W=3\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+All low-rank exact-complement witness packages now exist in Lean.  The main
+remaining unformalized mathematics is the construction of product independence,
+rank-two binary kernel equations, and the rank-three kernel decomposition for
+arbitrary SOCP data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
