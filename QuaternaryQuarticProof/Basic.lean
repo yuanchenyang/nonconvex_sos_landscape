@@ -2093,6 +2093,13 @@ theorem rankThreeApolarAnnihilatorMapBound_of_rankCaseAnnihilatorMapBounds
     HasRankThreeApolarAnnihilatorMapBound B p u :=
   hbounds.2.2
 
+theorem rankOneApolarAnnihilatorMapBound_direct
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankOneApolarAnnihilatorMapBound B p u := by
+  intro hrank1
+  exact finrank_range_linearAnnihilatorMap_le_one_of_catalecticantMap_rank_one
+    (B := B) (p := p) (u := u) hrank1
+
 theorem rankOneApolarAnnihilatorMapBound_of_rankOneDimensionBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hdim : HasRankOneApolarAnnihilatorDimensionBound B p u) :

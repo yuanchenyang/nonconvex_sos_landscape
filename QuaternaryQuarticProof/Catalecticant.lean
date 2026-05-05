@@ -2320,6 +2320,41 @@ theorem finrank_range_linearAnnihilatorMap_le_one_of_rank_one_quotientPairing_no
       exact scalarizedLinearAnnihilatorMap_rank_one_identity_of_quotientPairing_nonzero
         (B := B) (p := p) (u := u) T hT hrs)
 
+theorem exists_quotientCatalecticantMap_pair_ne_zero_of_catalecticantMap_rank_one
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1) :
+    ∃ r s : quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u),
+      quotientCatalecticantMap B p u r s ≠ 0 := by
+  by_contra hnone
+  push Not at hnone
+  have hmap_zero : catalecticantMap B p u = 0 := by
+    ext q r
+    have hpair := hnone
+      ((LinearMap.ker (catalecticantMap B p u)).mkQ q)
+      ((LinearMap.ker (catalecticantMap B p u)).mkQ r)
+    simpa using hpair
+  have hrange_zero :
+      LinearMap.range (catalecticantMap B p u) = ⊥ := by
+    rw [hmap_zero]
+    simp
+  have hfin_zero :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 0 := by
+    rw [hrange_zero]
+    simp
+  omega
+
+theorem finrank_range_linearAnnihilatorMap_le_one_of_catalecticantMap_rank_one
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1) :
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 1 :=
+  finrank_range_linearAnnihilatorMap_le_one_of_rank_one_quotientPairing_nonzero
+    (B := B) (p := p) (u := u) hrank
+    (fun _T _hT =>
+      exists_quotientCatalecticantMap_pair_ne_zero_of_catalecticantMap_rank_one
+        (B := B) (p := p) (u := u) hrank)
+
 theorem linProductSubmodule_linearAnnihilator_top_le_ker
     {B : DotForm} {p : Poly} {u : RankSevenVec} :
     linProductSubmodule (linearAnnihilator B p u) ⊤ ≤

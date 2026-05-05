@@ -12161,4 +12161,41 @@ Once this is proved, the rank-one branch of
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one annihilator-map bound}
+
+\paragraph{Gap targeted.}
+The previous reduction isolated rank one to nonvanishing of the quotient
+catalecticant pairing.  This nonvanishing follows directly from the rank-one
+catalecticant hypothesis: if the quotient pairing were identically zero, then
+the original catalecticant map would be zero and its range would have finrank
+zero, contradicting finrank one.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof.Catalecticant}:
+\[
+\texttt{exists\_quotientCatalecticantMap\_pair\_ne\_zero\_of\_catalecticantMap\_rank\_one},
+\]
+and:
+\[
+\texttt{finrank\_range\_linearAnnihilatorMap\_le\_one\_of\_catalecticantMap\_rank\_one}.
+\]
+Added to \texttt{QuaternaryQuarticProof.Basic}:
+\[
+\texttt{rankOneApolarAnnihilatorMapBound\_direct}.
+\]
+This closes the rank-one branch of
+\texttt{HasRankCaseAnnihilatorMapBounds}.
+
+\paragraph{Strategy change.}
+The leading apolar-support gap is no longer split evenly across ranks one,
+two, and three.  Rank one is formalized directly from the quotient
+catalecticant argument.  The remaining structural obligations are now the
+rank-two and rank-three annihilator-map bounds.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
