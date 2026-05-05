@@ -5096,4 +5096,43 @@ those binary-plane facts from the apolar support theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Threading binary-plane disjointness into apolar rank-case assembly}
+
+\paragraph{Gap targeted.}
+After reducing rank-two disjointness to the selected binary plane in
+\texttt{Support.lean}, the rank-case apolar assembler in \texttt{Basic.lean}
+still exposed the older \(z\in W\) obligation.  The top-level remaining
+obligations should match the reduced binary-plane form.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_binary\_plane\_component\_obligations}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  It is the same rank-case
+apolar assembler as before, except the rank-two disjointness input is now
+stated for
+\[
+z\in\operatorname{span}\{x,y\}
+\]
+after choosing \(y\in W\setminus\mathbb{R}x\).  Internally it invokes
+\[
+\texttt{hasRankTwoSupportComponentHypothesis\_of\_independent\_binary\_plane\_cases}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The top-level rank-two apolar obligation is now aligned with the binary
+classification geometry.  The main missing theorem is still the structural
+low-rank apolar support proof that supplies the exact dimensions,
+kernel-equation cases, and binary-plane disjointness.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
