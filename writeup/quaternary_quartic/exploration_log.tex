@@ -14370,4 +14370,35 @@ remains the Macaulay-growth statement.
 
 No Julia numerical claims were used in this round.
 
+\section*{Bundle remaining branches as Hilbert data}
+
+\paragraph{Gap targeted.}
+The current remaining branches, rank-two Macaulay growth and rank-three
+exact-sequence data, are exactly the components of the local
+\[
+\texttt{HasLowRankApolarHilbertData}
+\]
+package after replacing rank-two growth by its Hilbert-data form.
+
+\paragraph{Lean progress.}
+Added the global package
+\[
+\texttt{HasGlobalLowRankApolarHilbertData}.
+\]
+Proved local and global equivalences between this package and the pair
+consisting of global rank-two Macaulay growth plus global rank-three
+exact-sequence data.  Added the root equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalLowRankApolarHilbertData}.
+\]
+
+\paragraph{Strategy change.}
+The largest remaining gap is now available as a single global Hilbert-data
+theorem matching the low-rank catalecticant section of the blueprint.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
