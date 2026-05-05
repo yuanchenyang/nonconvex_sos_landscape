@@ -10175,4 +10175,64 @@ actual normalized rank-two kernel-position construction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Point-derived scalar Hankel facts}
+
+\paragraph{Gap targeted.}
+After making the binary Hankel rank bound automatic, the existential scalar
+Hankel package still routed through universal normalized position to obtain the
+rank bound.  This left the rank-two binary bridge stated in a stronger form
+than necessary.
+
+\paragraph{Lean progress.}
+Moved
+\[
+\texttt{universalBinaryHankelRankBound\_of\_catalecticantRankTwo}
+\]
+next to the rank-bound data definition so earlier scalar-data constructors can
+use it.  Updated
+\[
+\texttt{hasRankTwoExistentialScalarHankelFacts\_of\_universalNormalizedPosition\_and\_HankelNegative}
+\]
+to use the automatic rank bound.  Added:
+\[
+\texttt{hasRankTwoExistentialScalarHankelFacts\_of\_point},
+\]
+\[
+\texttt{hasRankTwoExistentialCanonicalKernelData\_of\_universalClassification\_of\_point},
+\]
+\[
+\texttt{hasRankTwoExistentialNormalizedHankelData\_of\_universalClassification\_of\_point},
+\]
+\[
+\texttt{hasRankTwoNegativeSquareData\_of\_universalClassification\_of\_point},
+\]
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_annihilatorBounds\_and\_universalClassification\_of\_point},
+\]
+and
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_lowRankApolarSupportTheorem\_and\_universalClassification\_of\_point}.
+\]
+
+\paragraph{Strategy change.}
+The binary rank-two side can now be split into point-derived scalar facts
+(Hankel negativity plus rank) and a separate universal scalar classification
+statement.  This avoids using normalized-position data to carry facts that are
+already consequences of the SOCP point and rank-two catalecticant hypothesis.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The remaining core inputs are the low-rank apolar support theorem and a genuine
+rank-two binary scalar classification/normalization theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -602,6 +602,15 @@ def HasRankTwoUniversalBinaryHankelRankBound
                             (binaryRestrictionCoeffD B p u x y)
                             (binaryRestrictionCoeffE B p u y))) ≤ 2
 
+theorem universalBinaryHankelRankBound_of_catalecticantRankTwo
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankTwoUniversalBinaryHankelRankBound B p u := by
+  intro hrank2 A W x y _hAann _hAW _hxW _hyW _hynot _hx _hAdim _hWdim
+  have hle :=
+    binaryHankelLinearMap_finrank_range_le_catalecticantMap_rank
+      (B := B) (p := p) (u := u) x y
+  rwa [hrank2] at hle
+
 def HasRankCaseKernelEquationApolarData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u) : Prop :=
@@ -2635,7 +2644,7 @@ theorem hasRankTwoExistentialNormalizedHankelData_of_universalNormalizedPosition
 
 theorem hasRankTwoExistentialScalarHankelFacts_of_universalNormalizedPosition_and_HankelNegative
     {B : DotForm} {p : Poly} {u : RankSevenVec}
-    (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u)
+    (_hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u)
     (hneg : HasRankTwoUniversalHankelNegativeData B p u) :
     HasRankTwoExistentialScalarHankelFacts B p u := by
   intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
@@ -2644,8 +2653,25 @@ theorem hasRankTwoExistentialScalarHankelFacts_of_universalNormalizedPosition_an
     ⟨y, hyW, hynot⟩
   exact ⟨y, hyW, hynot,
     hneg hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim,
-    binaryHankelLinearMap_finrank_range_le_two_of_normalizedKernelPosition
-      (hpos hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim)⟩
+    universalBinaryHankelRankBound_of_catalecticantRankTwo
+      hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim⟩
+
+theorem hasRankTwoExistentialScalarHankelFacts_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u) :
+    HasRankTwoExistentialScalarHankelFacts B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases exists_rank_two_complement_second_direction
+      (W := W) (x := x) hx hWdim with
+    ⟨y, hyW, hynot⟩
+  refine ⟨y, hyW, hynot, ?_, ?_⟩
+  · exact hasRankTwoUniversalHankelNegativeData_of_point
+      (B := B) (p := p) (u := u) hu hp hfocp
+      hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+  · exact universalBinaryHankelRankBound_of_catalecticantRankTwo
+      hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
 
 theorem hasRankTwoExistentialCanonicalKernelData_of_universal_and_facts
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -2661,6 +2687,29 @@ theorem hasRankTwoExistentialCanonicalKernelData_of_normalizedHankelData
     HasRankTwoExistentialCanonicalKernelData B p u :=
   hasRankTwoExistentialCanonicalKernelData_of_scalarHankelData
     (hasRankTwoExistentialScalarHankelData_of_normalizedHankelData hdata)
+
+theorem hasRankTwoExistentialCanonicalKernelData_of_universalClassification_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification) :
+    HasRankTwoExistentialCanonicalKernelData B p u :=
+  hasRankTwoExistentialCanonicalKernelData_of_universal_and_facts
+    hclass
+    (hasRankTwoExistentialScalarHankelFacts_of_point
+      (B := B) (p := p) (u := u) hu hp hfocp)
+
+theorem hasRankTwoExistentialNormalizedHankelData_of_universalClassification_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification) :
+    HasRankTwoExistentialNormalizedHankelData B p u :=
+  hasRankTwoExistentialNormalizedHankelData_of_canonicalKernelData
+    (hasRankTwoExistentialCanonicalKernelData_of_universalClassification_of_point
+      (B := B) (p := p) (u := u) hu hp hfocp hclass)
 
 theorem hasRankTwoExistentialCanonicalKernelData_iff_normalizedHankelData
     {B : DotForm} {p : Poly} {u : RankSevenVec} :
@@ -3141,15 +3190,6 @@ theorem hasRankCaseApolarComponentData_of_productIndependenceGeometryData_and_un
     hgeom
     (hasRankTwoUniversalKernelBranchData_of_universalNormalizedHankelData hdata)
 
-theorem universalBinaryHankelRankBound_of_catalecticantRankTwo
-    {B : DotForm} {p : Poly} {u : RankSevenVec} :
-    HasRankTwoUniversalBinaryHankelRankBound B p u := by
-  intro hrank2 A W x y _hAann _hAW _hxW _hyW _hynot _hx _hAdim _hWdim
-  have hle :=
-    binaryHankelLinearMap_finrank_range_le_catalecticantMap_rank
-      (B := B) (p := p) (u := u) x y
-  rwa [hrank2] at hle
-
 theorem hasRankTwoUniversalNormalizedHankelData_of_components
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u)
@@ -3298,6 +3338,44 @@ theorem hasRankTwoNegativeSquareData_of_existentialNormalizedHankelData
     HasRankTwoNegativeSquareData B p u :=
   hasRankTwoNegativeSquareData_of_existentialBinaryFormData
     (hasRankTwoExistentialBinaryFormData_of_normalizedHankelData hdata)
+
+theorem hasRankTwoNegativeSquareData_of_universalClassification_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification) :
+    HasRankTwoNegativeSquareData B p u :=
+  hasRankTwoNegativeSquareData_of_existentialNormalizedHankelData
+    (hasRankTwoExistentialNormalizedHankelData_of_universalClassification_of_point
+      (B := B) (p := p) (u := u) hu hp hfocp hclass)
+
+theorem hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_universalClassification_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hbounds : HasRankCaseAnnihilatorMapBounds B p u)
+    (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification) :
+    HasRankCaseNegativeSquareApolarData B p u hu :=
+  hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_rankTwo
+    (hu := hu) hbounds
+    (hasRankTwoNegativeSquareData_of_universalClassification_of_point
+      (B := B) (p := p) (u := u) hu hp hfocp hclass)
+
+theorem hasRankCaseNegativeSquareApolarData_of_lowRankApolarSupportTheorem_and_universalClassification_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hsupport : HasLowRankApolarSupportTheorem B p u)
+    (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification) :
+    HasRankCaseNegativeSquareApolarData B p u hu :=
+  hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_universalClassification_of_point
+    (hu := hu) hp hfocp
+    (hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem
+      (hasLowRankApolarAnnihilatorMapTheorem_of_supportTheorem hsupport))
+    hclass
 
 theorem hasRankTwoNegativeSquareData_of_universalNormalizedHankelData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
