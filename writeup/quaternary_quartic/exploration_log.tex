@@ -13492,4 +13492,35 @@ contradiction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Quotient-local data equivalence}
+
+\paragraph{Gap targeted.}
+The new three-component quotient-local data implied the uniform essential
+quotient theorem, but the reverse direction had not been named.  Without it,
+the new shortest target was not formally known to be equivalent to the
+previous quotient theorem target.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{lowRankApolarQuotientLocalData\_of\_lowRankApolarEssentialQuotientTheorem},
+\]
+using the rank-two quotient-growth data extracted from the quotient theorem
+and the rank-three bad-branch contradiction extracted from the rank-three
+quotient bound.  Also added:
+\[
+\texttt{lowRankApolarQuotientLocalData\_iff\_lowRankApolarEssentialQuotientTheorem}.
+\]
+
+\paragraph{Strategy change.}
+The shortest remaining target,
+\texttt{HasLowRankApolarQuotientLocalData}, is now equivalent to the uniform
+essential quotient theorem.  It is safe to use the three-component formulation
+as the main local blueprint target.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
