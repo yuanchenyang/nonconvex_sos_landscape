@@ -2257,6 +2257,14 @@ theorem rankTwoHilbertFirstBound_of_rankTwoEssentialQuotientBound
   rw [← finrank_quotient_linearAnnihilator_eq_sub]
   exact hquot hrank2
 
+theorem rankTwoEssentialQuotientBound_of_rankTwoApolarAnnihilatorMapBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbound : HasRankTwoApolarAnnihilatorMapBound B p u) :
+    HasRankTwoApolarEssentialQuotientBound B p u := by
+  intro hrank2
+  rw [finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap]
+  exact hbound hrank2
+
 theorem rankTwoMacaulayGrowthData_of_rankTwoEssentialQuotientBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hquot : HasRankTwoApolarEssentialQuotientBound B p u) :
@@ -2313,6 +2321,14 @@ theorem rankThreeHilbertFirstBound_of_rankThreeEssentialQuotientBound
   intro hrank3
   rw [← finrank_quotient_linearAnnihilator_eq_sub]
   exact hquot hrank3
+
+theorem rankThreeEssentialQuotientBound_of_rankThreeApolarAnnihilatorMapBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbound : HasRankThreeApolarAnnihilatorMapBound B p u) :
+    HasRankThreeApolarEssentialQuotientBound B p u := by
+  intro hrank3
+  rw [finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap]
+  exact hbound hrank3
 
 theorem rankThreeDimensionBound_of_rankThreeEssentialQuotientBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -2416,6 +2432,15 @@ theorem lowRankApolarHilbertData_of_rankTwo_rankThreeEssentialQuotientBounds
     HasLowRankApolarHilbertData B p u :=
   ⟨rankTwoMacaulayGrowthData_of_rankTwoEssentialQuotientBound hquot2,
     rankThreeExactSequenceData_of_rankThreeEssentialQuotientBound hquot3⟩
+
+theorem lowRankApolarHilbertData_of_rankTwo_rankThreeApolarAnnihilatorMapBounds
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbound2 : HasRankTwoApolarAnnihilatorMapBound B p u)
+    (hbound3 : HasRankThreeApolarAnnihilatorMapBound B p u) :
+    HasLowRankApolarHilbertData B p u :=
+  lowRankApolarHilbertData_of_rankTwo_rankThreeEssentialQuotientBounds
+    (rankTwoEssentialQuotientBound_of_rankTwoApolarAnnihilatorMapBound hbound2)
+    (rankThreeEssentialQuotientBound_of_rankThreeApolarAnnihilatorMapBound hbound3)
 
 theorem hasRankCaseAnnihilatorMapBounds_of_rankTwoMacaulayGrowthData_rankThreeMacaulayObstruction
     {B : DotForm} {p : Poly} {u : RankSevenVec}

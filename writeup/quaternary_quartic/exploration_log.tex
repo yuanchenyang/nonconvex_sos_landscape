@@ -12598,4 +12598,46 @@ three.  Future proof work can focus on these quotient bounds directly.
 
 No Julia numerical claims were used in this round.
 
+\section*{Essential quotient equals annihilator-map range}
+
+\paragraph{Gap targeted.}
+The quotient-bound Hilbert formulation and the annihilator-map formulation
+were connected only indirectly through dimension arithmetic.  The largest
+remaining gap is proving the quotient bounds, so it is useful to identify them
+exactly with the already-developed \texttt{linearAnnihilatorMap} range bounds.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof.Catalecticant}:
+\[
+\texttt{finrank\_quotient\_linearAnnihilator\_eq\_range\_linearAnnihilatorMap}.
+\]
+This uses:
+\[
+\texttt{linearAnnihilator\_eq\_ker\_linearAnnihilatorMap}
+\]
+and the quotient-kernel/range linear equivalence.
+
+Added to \texttt{QuaternaryQuarticProof.Basic}:
+\[
+\texttt{rankTwoEssentialQuotientBound\_of\_rankTwoApolarAnnihilatorMapBound},
+\qquad
+\texttt{rankThreeEssentialQuotientBound\_of\_rankThreeApolarAnnihilatorMapBound},
+\]
+and:
+\[
+\texttt{lowRankApolarHilbertData\_of\_rankTwo\_rankThreeApolarAnnihilatorMapBounds}.
+\]
+
+\paragraph{Strategy change.}
+The essential quotient \(h_1\) is now formally the same dimension as the range
+of the linear annihilator map.  This ties the Hilbert-function route back to
+the previously isolated rank-two and rank-three annihilator-map bounds without
+adding any new mathematical assumptions.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

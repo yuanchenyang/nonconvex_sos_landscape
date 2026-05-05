@@ -2197,6 +2197,13 @@ theorem linearAnnihilator_eq_ker_linearAnnihilatorMap
       simp
     simpa [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero] using happ
 
+theorem finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) =
+      Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) := by
+  rw [linearAnnihilator_eq_ker_linearAnnihilatorMap]
+  exact (linearAnnihilatorMap B p u).quotKerEquivRange.finrank_eq
+
 theorem finrank_range_linearAnnihilatorMap_add_finrank_linearAnnihilator
     (B : DotForm) (p : Poly) (u : RankSevenVec) :
     Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) +
