@@ -1,4 +1,5 @@
 import Mathlib.LinearAlgebra.Dimension.Constructions
+import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.LinearAlgebra.Quotient.Bilinear
 import Mathlib.RingTheory.MvPolynomial.Basic
 import Mathlib.RingTheory.MvPolynomial.Homogeneous
@@ -1995,6 +1996,48 @@ theorem macaulay_cokernel_bound_of_finrank_symSquare_quotient_eq_zero
           P.comap (symSquareSubmodule A).subtype) := by
   exact macaulay_cokernel_bound_of_eq_symSquare
     (eq_symSquare_of_finrank_symSquare_quotient_eq_zero hP_le hquot)
+
+theorem finrank_quotient_eq_finrank_dualAnnihilator
+    {V : Type*} [AddCommGroup V] [Module ℝ V] [FiniteDimensional ℝ V]
+    (S : Submodule ℝ V) :
+    Module.finrank ℝ (V ⧸ S) = Module.finrank ℝ S.dualAnnihilator := by
+  have hquot := Submodule.finrank_quotient (R := ℝ) (S := ℝ) S
+  have hann := Subspace.finrank_add_finrank_dualAnnihilator_eq S
+  omega
+
+def cubicProductAnnihilator
+    (A : Submodule ℝ linSubmodule) (P : Submodule ℝ quadSubmodule) :
+    Submodule ℝ (Module.Dual ℝ (linQuadProductSubmodule A (symSquareSubmodule A))) :=
+  ((linQuadProductSubmodule A P).comap
+    (linQuadProductSubmodule A (symSquareSubmodule A)).subtype).dualAnnihilator
+
+theorem finrank_linQuadProductSubmodule_quotient_eq_finrank_cubicProductAnnihilator
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule} :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) =
+      Module.finrank ℝ (cubicProductAnnihilator A P) := by
+  exact finrank_quotient_eq_finrank_dualAnnihilator
+    ((linQuadProductSubmodule A P).comap
+      (linQuadProductSubmodule A (symSquareSubmodule A)).subtype)
+
+theorem macaulay_cokernel_bound_of_cubicProductAnnihilator_bound
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    (hbound :
+      Module.finrank ℝ (cubicProductAnnihilator A P) ≤
+        Module.finrank ℝ
+          (symSquareSubmodule A ⧸
+            P.comap (symSquareSubmodule A).subtype)) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) := by
+  rw [finrank_linQuadProductSubmodule_quotient_eq_finrank_cubicProductAnnihilator]
+  exact hbound
 
 theorem finrank_symSquare_quotient_eq_one_of_eq_spanPairProductsExceptZeroZero
     {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)

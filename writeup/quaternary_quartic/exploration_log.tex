@@ -15335,4 +15335,48 @@ and codimension-two quadratic subspaces.
 
 No Julia numerical claims were used in this round.
 
+\section*{Dual-annihilator bridge for the direct Macaulay route}
+
+\paragraph{Gap targeted.}
+The attempted lex-containment reduction is too strong as a statement over
+\(\mathbb{R}\): an arbitrary real hyperplane of ternary quadrics need not
+contain a coordinate lex hyperplane.  The central algebraic argument should
+therefore be carried through the inverse-system/Macaulay formulation, bounding
+cubic functionals annihilating \(A\cdot P\).
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, imported the mathlib dual
+annihilator lemmas and proved
+\[
+\texttt{finrank\_quotient\_eq\_finrank\_dualAnnihilator}.
+\]
+Specialized this to the cubic product quotient by defining
+\[
+\texttt{cubicProductAnnihilator}\ A\ P
+\]
+as the dual annihilator of the product subspace inside
+\(A\operatorname{Sym}^2(A)\).  Proved
+\[
+\texttt{finrank\_linQuadProductSubmodule\_quotient\_eq\_finrank\_cubicProductAnnihilator}.
+\]
+Finally packaged the bridge
+\[
+\texttt{macaulay\_cokernel\_bound\_of\_cubicProductAnnihilator\_bound},
+\]
+which says the desired cokernel Macaulay inequality follows from the
+corresponding bound on the cubic product annihilator.
+
+\paragraph{Strategy change.}
+The remaining central algebraic task is now the direct small Macaulay theorem:
+for \(P\subseteq\operatorname{Sym}^2(A)\) with quadratic quotient dimension
+\(\le2\), prove that the dual annihilator of \(A\cdot P\) has dimension no
+larger than that quotient.  This avoids relying on an invalid real
+lex-containment normal form.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
