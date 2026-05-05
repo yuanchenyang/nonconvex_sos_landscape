@@ -11437,4 +11437,51 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Diagonal and packaged negative-value transport}
+
+\paragraph{Gap targeted.}
+The previous transport packages produced canonical kernel vectors after
+normalization.  To turn those positions into full canonical branch data, the
+transformed coefficients also need negative Hankel witnesses.  The remaining
+small missing sign bridge was nonzero diagonal scaling, used in the elliptic
+branch.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{binaryHankelQuad\_diagonal\_dual},
+\qquad
+\texttt{HasBinaryHankelNegativeValue.diagonal\_dual}.
+\]
+The diagonal identity shows that the Hankel quadratic is multiplied by
+\((\alpha\delta)^4\), so nonzero diagonal changes preserve negativity.
+Then added packaged transformed negativity lemmas:
+\[
+\texttt{hankelNegativeValue\_of\_hyperbolic\_shearY\_shearX\_dual},
+\]
+\[
+\texttt{hankelNegativeValue\_of\_elliptic\_shearY\_diagonal\_dual},
+\qquad
+\texttt{hankelNegativeValue\_of\_hyperbolic\_zero\_xCoeff\_shearY\_dual}.
+\]
+
+\paragraph{Strategy change.}
+The hyperbolic and elliptic transported coefficient systems now carry both
+canonical kernel positions and negative Hankel witnesses.  The next binary
+packaging step is to combine each pair into \texttt{HasBinaryCanonicalKernelData}
+for the transformed systems, leaving only the \(y^2\) branch's linear
+independence side condition to handle separately.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}
