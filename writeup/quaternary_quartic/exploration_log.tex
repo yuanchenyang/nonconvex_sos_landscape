@@ -14813,4 +14813,37 @@ for the quotient by the chosen linear form, which should provide
 
 No Julia numerical claims were used in this round.
 
+\section*{Expose actual cokernel Macaulay violation}
+
+\paragraph{Gap targeted.}
+After tying the bad-branch shape to the actual exact-sequence maps, the next
+central issue is the Macaulay/O-sequence inequality \(q_3\le q_2\).  The proof
+should make clear that the formalized cokernels themselves are the objects
+whose dimensions violate this inequality in the bad branch.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{exists\_rankThreeBadBranch\_leftMultiplication\_cokernel\_not\_macaulay}.
+\]
+Under the rank-three bad-branch hypotheses, it produces a nonzero linear form
+\(\ell\) such that the formal degree-three cokernel dimension is not at most
+the formal degree-two cokernel dimension.  The proof uses the already
+formalized exact-sequence dimensions \(q_2=3-b\), \(q_3=4-b\), and the
+numerical contradiction for \(1\le b\le3\).
+
+\paragraph{Strategy change.}
+The remaining rank-three Macaulay gap is now an explicit missing theorem that
+the quotient by the chosen linear form satisfies the cokernel inequality
+\[
+\dim Q_3 \le \dim Q_2.
+\]
+Combining such a theorem with the new Lean lemma would close the bad branch.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
