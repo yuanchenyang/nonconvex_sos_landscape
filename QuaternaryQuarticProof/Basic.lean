@@ -197,6 +197,37 @@ def HasRankCaseProductIndependenceApolarData
         q ∈ linProductSubmodule W W ∧
           B (q.1^2) (residual p u) < 0)
 
+def HasRankCaseProductFreeApolarData
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u) : Prop :=
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 1 ∧
+      ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              (x : Poly) ≠ 0 →
+                Module.finrank ℝ A = 3 →
+                  Module.finrank ℝ W = 1 →
+                    binaryRestrictionCoeffA B p u x < 0) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 2 ∧
+      ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              y ∈ W →
+                y ∉ ℝ ∙ x →
+                  (x : Poly) ≠ 0 →
+                    Module.finrank ℝ A = 2 →
+                      Module.finrank ℝ W = 2 →
+                        HasBinaryRestrictionKernelEquationCase B p u x y) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 3 ∧
+      ∃ (W : Submodule ℝ linSubmodule) (q : quadSubmodule),
+        q ∈ linProductSubmodule W W ∧
+          B (q.1^2) (residual p u) < 0)
+
 def HasRankCaseKernelDecompositionApolarData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u) : Prop :=
@@ -1010,6 +1041,21 @@ theorem hasRankCaseApolarComponentData_of_productIndependenceApolarData
     (fun hrank3 => (hdata3 hrank3).1)
     (fun hrank3 => (hdata3 hrank3).2)
 
+theorem hasRankCaseApolarComponentData_of_productFreeApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseProductFreeApolarData B p u hu) :
+    HasRankCaseApolarComponentData B p u hu := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  exact hasRankCaseApolarComponentData_of_product_free_component_obligations
+    (B := B) (p := p) (u := u) (hu := hu)
+    (fun hrank1 => (hdata1 hrank1).1)
+    (fun hrank1 => (hdata1 hrank1).2)
+    (fun hrank2 => (hdata2 hrank2).1)
+    (fun hrank2 => (hdata2 hrank2).2)
+    (fun hrank3 => (hdata3 hrank3).1)
+    (fun hrank3 => (hdata3 hrank3).2)
+
 theorem hasRankCaseKernelDecompositionApolarData_of_productIndependenceApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -1337,6 +1383,17 @@ theorem residual_eq_zero_of_productIndependenceApolarData
     (B := B) hu hp hsocp
     (hasRankCaseApolarComponentData_of_productIndependenceApolarData hdata)
 
+theorem residual_eq_zero_of_productFreeApolarData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata : HasRankCaseProductFreeApolarData B p u hu) :
+    residual p u = 0 :=
+  residual_eq_zero_of_rankCaseApolarComponentData
+    (B := B) hu hp hsocp
+    (hasRankCaseApolarComponentData_of_productFreeApolarData hdata)
+
 theorem residual_eq_zero_of_kernelDecompositionApolarData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -1459,6 +1516,20 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_productIndependenceApola
   intro B p u hB hp hu hsocp
   letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
   exact residual_eq_zero_of_productIndependenceApolarData
+    (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_productFreeApolarData
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseProductFreeApolarData B p u hu) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_productFreeApolarData
     (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_kernelDecompositionApolarData

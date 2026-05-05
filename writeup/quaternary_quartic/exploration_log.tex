@@ -6235,4 +6235,44 @@ the rank-three negative/decomposition data that feed the product-free bridge.
 
 No Julia numerical claims were used in this round.
 
+\section*{Product-free apolar interface}
+
+\paragraph{Gap targeted.}
+After the rank-one and rank-two product-independence proofs, the old apolar
+data interface still exposed those product-independence facts as assumptions.
+The formal statement of the remaining gap therefore needed to be tightened.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankCaseProductFreeApolarData}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  This package keeps only the
+remaining rank-case inputs: the annihilator-map bounds, rank-one negativity,
+rank-two binary kernel-equation cases, and rank-three negative product data.
+Added the bridges
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_productFreeApolarData},
+\quad
+\texttt{residual\_eq\_zero\_of\_productFreeApolarData},
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_productFreeApolarData}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+completes successfully.
+
+\paragraph{Remaining blockers.}
+The top-level scaffold can now target the product-free rank-case data rather
+than the older product-independence package.  The remaining proof work is to
+derive those rank-one, rank-two, and rank-three inputs from the SOCP and SOS
+hypotheses.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
