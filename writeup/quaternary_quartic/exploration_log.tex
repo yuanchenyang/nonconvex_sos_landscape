@@ -6413,4 +6413,48 @@ product data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three negativity from annihilator data}
+
+\paragraph{Gap targeted.}
+The binary-form apolar interface still carried rank-three negative product
+data as an external assumption.  With the annihilator-map bound in rank three,
+the existing decomposition lemma already converts any negative SOS summand
+into a negative product supported on a complement.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankCaseBinaryFormAndAnnihilatorData}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  In rank three this package
+requires only
+\[
+\dim\operatorname{range}(\texttt{linearAnnihilatorMap})\le3.
+\]
+Added
+\[
+\texttt{hasRankCaseBinaryFormApolarData\_of\_binaryFormAndAnnihilatorData}
+\]
+which obtains a negative SOS summand in rank three, applies
+\[
+\texttt{exists\_rank\_three\_catalecticantKernel\_decomposition\_of\_annihilatorMap\_range},
+\]
+and transfers negativity across the kernel summand.
+
+Added the corresponding residual and root reduction theorems.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+completes successfully.
+
+\paragraph{Remaining blockers.}
+The newest high-level data interface now asks only for the annihilator-map
+bounds in ranks one, two, and three, plus the rank-two binary low-rank normal
+form.  Rank-one negativity and rank-three negative product data are both
+derived internally.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

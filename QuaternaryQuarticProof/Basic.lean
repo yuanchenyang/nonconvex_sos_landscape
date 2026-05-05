@@ -279,6 +279,31 @@ def HasRankCaseBinaryFormApolarData
         q ∈ linProductSubmodule W W ∧
           B (q.1^2) (residual p u) < 0)
 
+def HasRankCaseBinaryFormAndAnnihilatorData
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u) : Prop :=
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 1) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 2 ∧
+      ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              y ∈ W →
+                y ∉ ℝ ∙ x →
+                  (x : Poly) ≠ 0 →
+                    Module.finrank ℝ A = 2 →
+                      Module.finrank ℝ W = 2 →
+                        HasBinaryLowRankNegativeNormalForm
+                          (binaryRestrictionCoeffA B p u x)
+                          (binaryRestrictionCoeffB B p u x y)
+                          (binaryRestrictionCoeffC B p u x y)
+                          (binaryRestrictionCoeffD B p u x y)
+                          (binaryRestrictionCoeffE B p u y)) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 3)
+
 def HasRankCaseKernelDecompositionApolarData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u) : Prop :=
@@ -1168,6 +1193,33 @@ theorem hasRankCaseApolarComponentData_of_binaryFormApolarData
     exact hasRankThreeAnnihilatorSupportData_of_rank_three_support
       (B := B) (p := p) (u := u) hsupp hqWW hqneg
 
+theorem hasRankCaseBinaryFormApolarData_of_binaryFormAndAnnihilatorData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hdata : HasRankCaseBinaryFormAndAnnihilatorData B p u hu) :
+    HasRankCaseBinaryFormApolarData B p u hu := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    exact hdata1 hrank1
+  constructor
+  · intro hrank2
+    exact hdata2 hrank2
+  · intro hrank3
+    refine ⟨hdata3 hrank3, ?_⟩
+    rcases exists_negative_sos_summand_of_catalecticantMap_rank_eq_three
+        (B := B) hu hp hfocp hrank3 with
+      ⟨q, hq, hqneg⟩
+    let qQuad : quadSubmodule := ⟨q, hq⟩
+    rcases exists_rank_three_catalecticantKernel_decomposition_of_annihilatorMap_range
+        (B := B) (p := p) (u := u) (hdata3 hrank3) qQuad with
+      ⟨W, qW, qK, hqdecomp, hqW, hqK⟩
+    exact ⟨W, qW, hqW,
+      residualEval_sq_lt_of_eq_add_mem_ker_catalecticantMap
+        (B := B) (p := p) (u := u) hqdecomp hqK hqneg⟩
+
 theorem hasRankCaseKernelDecompositionApolarData_of_productIndependenceApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -1556,6 +1608,18 @@ theorem residual_eq_zero_of_binaryFormApolarData
     (hasRankCaseApolarComponentData_of_binaryFormApolarData
       (B := B) hp hsocp.1 hdata)
 
+theorem residual_eq_zero_of_binaryFormAndAnnihilatorData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata : HasRankCaseBinaryFormAndAnnihilatorData B p u hu) :
+    residual p u = 0 :=
+  residual_eq_zero_of_binaryFormApolarData
+    (B := B) hu hp hsocp
+    (hasRankCaseBinaryFormApolarData_of_binaryFormAndAnnihilatorData
+      (B := B) hp hsocp.1 hdata)
+
 theorem residual_eq_zero_of_kernelDecompositionApolarData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -1720,6 +1784,20 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_binaryFormApolarData
   intro B p u hB hp hu hsocp
   letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
   exact residual_eq_zero_of_binaryFormApolarData
+    (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_binaryFormAndAnnihilatorData
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseBinaryFormAndAnnihilatorData B p u hu) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_binaryFormAndAnnihilatorData
     (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_kernelDecompositionApolarData
