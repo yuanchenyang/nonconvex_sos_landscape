@@ -14696,4 +14696,40 @@ then prove the Macaulay inequality \(4-b\le3-b\) cannot hold.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three degree-two cokernel}
+
+\paragraph{Gap targeted.}
+After extracting the multiplication rank \(b\) in the rank-three bad branch,
+the blueprint's exact sequence next identifies the degree-two quotient term as
+\(q_2=3-b\).  This should be derived from the actual quotient by the image of
+multiplication, rather than recorded abstractly.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{rankThree\_leftMultiplication\_degreeTwoCokernel\_finrank\_eq\_three\_sub},
+\]
+which states that for rank-three catalecticant quotient \(Q_2\), the cokernel
+of multiplication by a linear form has dimension
+\[
+3-\dim\operatorname{im}(\cdot \ell).
+\]
+Combined this with the previous bad-branch multiplication-rank lemma in
+\[
+\texttt{exists\_rankThreeBadBranch\_leftMultiplication\_degreeTwoCokernel},
+\]
+producing \(a\), \(b\), and \(q_2\) with \(1\le b\le3\) and \(q_2=3-b\).
+
+\paragraph{Strategy change.}
+The rank-three exact-sequence data now has two genuinely formalized pieces:
+the valid range for \(b\), and the degree-two quotient dimension \(q_2=3-b\).
+The remaining exact-sequence dimension step is the degree-three term
+\(q_3=4-b\), followed by the Macaulay inequality contradiction.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

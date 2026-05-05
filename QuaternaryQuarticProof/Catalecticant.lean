@@ -2397,6 +2397,38 @@ theorem exists_rankThreeBadBranch_leftMultiplication_finrank_range
   exact rankThreeBadBranch_leftMultiplication_finrank_range_between
     (B := B) (p := p) (u := u) hrank hquot ha_ne
 
+theorem rankThree_leftMultiplication_degreeTwoCokernel_finrank_eq_three_sub
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    (a : linSubmodule) :
+    Module.finrank ℝ
+        ((quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) ⧸
+          LinearMap.range (linearAnnihilatorMap B p u a)) =
+      3 - Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) := by
+  rw [Submodule.finrank_quotient]
+  rw [finrank_quotient_ker_catalecticantMap_eq_three_of_rank_three
+    (B := B) (p := p) (u := u) hrank]
+
+theorem exists_rankThreeBadBranch_leftMultiplication_degreeTwoCokernel
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4) :
+    ∃ (a : linSubmodule) (b q2 : ℕ),
+      a ≠ 0 ∧
+        Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) = b ∧
+          1 ≤ b ∧ b ≤ 3 ∧
+            q2 = 3 - b ∧
+              Module.finrank ℝ
+                  ((quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) ⧸
+                    LinearMap.range (linearAnnihilatorMap B p u a)) = q2 := by
+  rcases exists_rankThreeBadBranch_leftMultiplication_finrank_range
+      (B := B) (p := p) (u := u) hrank hquot with
+    ⟨a, b, ha_ne, hb, hbpos, hbtop⟩
+  refine ⟨a, b, 3 - b, ha_ne, hb, hbpos, hbtop, rfl, ?_⟩
+  rw [rankThree_leftMultiplication_degreeTwoCokernel_finrank_eq_three_sub
+    (B := B) (p := p) (u := u) hrank a]
+  rw [hb]
+
 def scalarizedLinearAnnihilatorMap
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (T :
