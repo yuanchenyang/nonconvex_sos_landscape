@@ -13089,4 +13089,47 @@ growth.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three exact shape and Macaulay-bound split}
+
+\paragraph{Gap targeted.}
+The rank-three bad-branch interface bundled two blueprint steps: constructing
+the exact-sequence Hilbert-function shape and applying the Macaulay
+\(O\)-sequence inequality.  These are conceptually distinct in the written
+proof.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasRankThreeApolarBadBranchExactSequenceShape},
+\]
+which records the existence of \(b,q_2,q_3\) with
+\[
+1\le b\le3,\qquad q_2=3-b,\qquad q_3=4-b.
+\]
+Added:
+\[
+\texttt{HasRankThreeApolarBadBranchMacaulayBound},
+\]
+which records the Macaulay/O-sequence inequality \(q_3\le q_2\) for such
+entries in the bad branch.
+
+Proved:
+\[
+\texttt{rankThreeBadBranchExactSequenceData\_of\_shape\_and\_macaulayBound},
+\]
+and:
+\[
+\texttt{lowRankApolarHilbertData\_of\_rankTwoSymmetryAndGrowth\_rankThreeShapeAndMacaulayBound}.
+\]
+
+\paragraph{Strategy change.}
+The remaining blueprint data now decomposes into four local pieces:
+rank-two Gorenstein symmetry, rank-two Macaulay growth, rank-three
+exact-sequence shape, and rank-three Macaulay/O-sequence bound.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
