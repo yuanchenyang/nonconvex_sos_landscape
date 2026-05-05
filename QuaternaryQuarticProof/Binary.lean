@@ -238,6 +238,49 @@ theorem isBinaryQuadraticPullback_hyperbolic_shearX_to_zero_ySq
   · exact (hyperbolic_shearX_ySqCoeff_eq_zero
       (r := r) (s := s) (t := t) hr hdisc_pos).symm
 
+theorem hyperbolic_shearY_xSqCoeff_eq_zero
+    {R S : ℝ} (hS : S ≠ 0) :
+    R + S * (-R / S) + 0 * (-R / S)^2 = 0 := by
+  field_simp [hS]
+  ring
+
+theorem hyperbolic_shearY_mixedCoeff_eq
+    (R S : ℝ) :
+    S + 2 * 0 * (-R / S) = S := by
+  ring
+
+theorem isBinaryQuadraticPullback_hyperbolic_shearY_to_xy
+    {R S : ℝ} (hS : S ≠ 0) :
+    IsBinaryQuadraticPullback R S 0 0 S 0 1 0 (-R / S) 1 := by
+  convert isBinaryQuadraticPullback_shearY R S 0 (-R / S) using 1
+  · exact (hyperbolic_shearY_xSqCoeff_eq_zero (R := R) (S := S) hS).symm
+  · exact (hyperbolic_shearY_mixedCoeff_eq R S).symm
+
+theorem exists_binaryQuadraticPullback_hyperbolic_to_xy_of_xCoeff_ne_zero
+    {r s t : ℝ} (hr : r ≠ 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t) :
+    ∃ alpha beta gamma delta S : ℝ,
+      S ≠ 0 ∧
+        IsBinaryQuadraticPullback r s t 0 S 0 alpha beta gamma delta := by
+  let D := binaryKernelDiscriminant r s t
+  let tau := (-s + Real.sqrt D) / (2 * r)
+  have hfirst :
+      IsBinaryQuadraticPullback r s t r (Real.sqrt D) 0 1 tau 0 1 := by
+    simpa [D, tau] using
+      isBinaryQuadraticPullback_hyperbolic_shearX_to_zero_ySq
+        (r := r) (s := s) (t := t) hr hdisc_pos
+  have hS : Real.sqrt D ≠ 0 := by
+    exact hyperbolic_shearX_sqrt_discriminant_ne_zero
+      (r := r) (s := s) (t := t) hdisc_pos
+  have hsecond :
+      IsBinaryQuadraticPullback r (Real.sqrt D) 0
+        0 (Real.sqrt D) 0 1 0 (-r / Real.sqrt D) 1 :=
+    isBinaryQuadraticPullback_hyperbolic_shearY_to_xy
+      (R := r) (S := Real.sqrt D) hS
+  refine ⟨1 + tau * (-r / Real.sqrt D), tau, -r / Real.sqrt D, 1,
+    Real.sqrt D, hS, ?_⟩
+  simpa [D, tau, add_comm, add_left_comm, add_assoc] using hfirst.comp hsecond
+
 def binaryHankelMul (a b c d e : ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ![a * v 0 + b * v 1 + c * v 2,
     b * v 0 + c * v 1 + d * v 2,

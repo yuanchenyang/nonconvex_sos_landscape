@@ -10919,4 +10919,49 @@ connection from normalized transformed kernels back to Hankel canonical data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Hyperbolic binary kernel second shear}
+
+\paragraph{Gap targeted.}
+The previous hyperbolic round reduced the kernel quadratic to
+\(R X^2+SXY\) with \(S\ne0\).  The blueprint's canonical hyperbolic branch is
+the \(xy\) kernel, so one more elementary shear is needed.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{hyperbolic\_shearY\_xSqCoeff\_eq\_zero},
+\quad
+\texttt{hyperbolic\_shearY\_mixedCoeff\_eq},
+\]
+\[
+\texttt{isBinaryQuadraticPullback\_hyperbolic\_shearY\_to\_xy},
+\quad
+\texttt{exists\_binaryQuadraticPullback\_hyperbolic\_to\_xy\_of\_xCoeff\_ne\_zero}.
+\]
+The last theorem combines the square-root first shear with the second shear:
+if \(r\ne0\) and \(s^2-4rt>0\), then there is a binary quadratic pullback from
+\((r,s,t)\) to \((0,S,0)\) with \(S\ne0\).
+
+\paragraph{Strategy change.}
+The \(r\ne0\) hyperbolic scalar normalization is now complete at the quadratic
+pullback level.  The remaining hyperbolic scalar work is the \(r=0\) case,
+which should reduce to \(xy\) directly because \(D=s^2>0\) forces \(s\ne0\).
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support, the
+hyperbolic \(r=0\) scalar subcase, elliptic normalization, and the final link
+from normalized kernel pullbacks to canonical Hankel data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
