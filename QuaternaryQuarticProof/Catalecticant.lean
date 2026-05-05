@@ -2736,6 +2736,44 @@ theorem finrank_ker_cubicProductAnnihilatorContractionEval_le_one_of_dualAnnihil
       (A := A) (P := P) (a0 := a0) (b0 := b0)
       (ζ := ζ) hslice_fin hζne hb0
 
+theorem finrank_cubicProductAnnihilator_le_two_of_contractionEval_injective
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    {a0 : A}
+    (hfin :
+      Module.finrank ℝ
+        ((P.comap (symSquareSubmodule A).subtype).dualAnnihilator) = 2)
+    (hinj : Function.Injective (cubicProductAnnihilatorContractionEval A P a0)) :
+    Module.finrank ℝ (cubicProductAnnihilator A P) ≤ 2 := by
+  let W := (P.comap (symSquareSubmodule A).subtype).dualAnnihilator
+  letI : Module.Free ℝ W := Module.Free.of_divisionRing ℝ W
+  haveI : Module.Finite ℝ W :=
+    Module.finite_of_finrank_eq_succ
+      (show Module.finrank ℝ W = Nat.succ 1 by
+        change Module.finrank ℝ
+          ((P.comap (symSquareSubmodule A).subtype).dualAnnihilator) = 2
+        exact hfin)
+  have hle :
+      Module.finrank ℝ (cubicProductAnnihilator A P) ≤
+        Module.finrank ℝ W :=
+    LinearMap.finrank_le_finrank_of_injective
+      (f := cubicProductAnnihilatorContractionEval A P a0) hinj
+  have hWfin : Module.finrank ℝ W = 2 := by
+    change Module.finrank ℝ
+      ((P.comap (symSquareSubmodule A).subtype).dualAnnihilator) = 2
+    exact hfin
+  omega
+
+theorem finrank_cubicProductAnnihilator_le_two_of_contractionEval_ker_eq_bot
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    {a0 : A}
+    (hfin :
+      Module.finrank ℝ
+        ((P.comap (symSquareSubmodule A).subtype).dualAnnihilator) = 2)
+    (hker : LinearMap.ker (cubicProductAnnihilatorContractionEval A P a0) = ⊥) :
+    Module.finrank ℝ (cubicProductAnnihilator A P) ≤ 2 :=
+  finrank_cubicProductAnnihilator_le_two_of_contractionEval_injective
+    (A := A) (P := P) (a0 := a0) hfin (LinearMap.ker_eq_bot.mp hker)
+
 theorem finrank_linQuadProductSubmodule_quotient_eq_finrank_cubicProductAnnihilator
     {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule} :
     Module.finrank ℝ

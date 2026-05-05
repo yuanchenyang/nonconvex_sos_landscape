@@ -15599,4 +15599,36 @@ evaluation tightly enough to get the desired cubic-annihilator bound
 
 No Julia numerical claims were used in this round.
 
+\section*{Injective q=2 contraction branch}
+
+\paragraph{Gap targeted.}
+After bounding the kernel of contraction evaluation in the q=2 setting, the
+next clean split is whether that kernel is zero.  If it is zero, the cubic
+annihilator embeds directly in the two-dimensional quadratic dual
+annihilator.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{finrank\_cubicProductAnnihilator\_le\_two\_of\_contractionEval\_injective}
+\]
+and its kernel formulation
+\[
+\texttt{finrank\_cubicProductAnnihilator\_le\_two\_of\_contractionEval\_ker\_eq\_bot}.
+\]
+Thus the quotient-dimension-two Macaulay bound is now closed in the subcase
+where evaluation of contractions at the chosen \(a_0\) is injective.
+
+\paragraph{Strategy status.}
+The remaining q=2 branch is the genuinely non-injective one: the contraction
+evaluation kernel is one-dimensional.  The next step is to use a nonzero
+kernel element and the already proved square-evaluation slice control to
+force the image of contraction evaluation to be one-dimensional as well.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
