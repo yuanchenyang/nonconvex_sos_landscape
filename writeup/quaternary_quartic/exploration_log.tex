@@ -10596,4 +10596,45 @@ actual hyperbolic/parabolic/elliptic normalization lemmas for binary kernels.
 
 No Julia numerical claims were used in this round.
 
+\section*{Binary pullback composition}
+
+\paragraph{Gap targeted.}
+The concrete binary pullback identities need to be composable, since the
+normalization of an arbitrary binary kernel quadratic may require more than one
+elementary change of variables.  The previous round also only recorded the
+shear \(x=X+tY,\ y=Y\).
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{IsBinaryQuarticPullback.comp}
+\]
+for composing two pullback identities, and:
+\[
+\texttt{isBinaryQuarticPullback\_shearY}
+\]
+for the symmetric shear \(x=X,\ y=tX+Y\).
+
+\paragraph{Strategy change.}
+The binary normalization branch proofs can now build a pullback identity by
+composing elementary swaps, scalings, and shears instead of proving one large
+quartic expansion in each branch.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support and the
+branch-specific construction of normalizing transformations for nonzero binary
+kernel quadratics.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

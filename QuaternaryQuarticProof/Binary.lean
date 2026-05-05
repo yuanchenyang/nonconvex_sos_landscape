@@ -27,6 +27,18 @@ theorem isBinaryQuarticPullback_swap (a b c d e : ℝ) :
   unfold binaryQuarticEval
   ring
 
+theorem IsBinaryQuarticPullback.comp
+    {a b c d e A B C D E P Q R S T α β γ δ mu nu xi om : ℝ}
+    (h1 : IsBinaryQuarticPullback a b c d e A B C D E α β γ δ)
+    (h2 : IsBinaryQuarticPullback A B C D E P Q R S T mu nu xi om) :
+    IsBinaryQuarticPullback a b c d e P Q R S T
+      (α * mu + β * xi) (α * nu + β * om)
+      (γ * mu + δ * xi) (γ * nu + δ * om) := by
+  intro X Y
+  rw [h2 X Y, h1 (mu * X + nu * Y) (xi * X + om * Y)]
+  unfold binaryQuarticEval
+  ring
+
 theorem isBinaryQuarticPullback_diagonal
     (a b c d e α δ : ℝ) :
     IsBinaryQuarticPullback a b c d e
@@ -45,6 +57,19 @@ theorem isBinaryQuarticPullback_shearX
       (a * t^3 + 3 * b * t^2 + 3 * c * t + d)
       (a * t^4 + 4 * b * t^3 + 6 * c * t^2 + 4 * d * t + e)
       1 t 0 1 := by
+  intro X Y
+  unfold binaryQuarticEval
+  ring
+
+theorem isBinaryQuarticPullback_shearY
+    (a b c d e t : ℝ) :
+    IsBinaryQuarticPullback a b c d e
+      (a + 4 * b * t + 6 * c * t^2 + 4 * d * t^3 + e * t^4)
+      (b + 3 * c * t + 3 * d * t^2 + e * t^3)
+      (c + 2 * d * t + e * t^2)
+      (d + e * t)
+      e
+      1 0 t 1 := by
   intro X Y
   unfold binaryQuarticEval
   ring
