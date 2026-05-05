@@ -4819,4 +4819,48 @@ extracted vector.  It still needs the apolar normal-form proof giving exact
 
 No Julia numerical claims were used in this round.
 
+\section*{Assembling apolar rank-case data from explicit component obligations}
+
+\paragraph{Gap targeted.}
+The root proof path is blocked at
+\(\texttt{HasRankCaseApolarComponentData}\).  Prior rounds reduced the
+rank-one and rank-two component hypotheses, but \texttt{Basic.lean} still did
+not expose a single theorem saying exactly which apolar facts remain to prove
+for each catalecticant rank.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_component\_obligations}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  It constructs
+\[
+\texttt{HasRankCaseApolarComponentData B p u hu}
+\]
+from the following rank-indexed obligations:
+\begin{enumerate}
+\item rank one: \(\dim\operatorname{range}(\texttt{linearAnnihilatorMap})\le1\),
+  exact \(\dim\Sym^2A=6\), and negative pure-square coefficient;
+\item rank two: \(\dim\operatorname{range}(\texttt{linearAnnihilatorMap})\le2\),
+  exact \(\dim\Sym^2A=3\), the packaged binary kernel-equation case, and
+  product-disjointness;
+\item rank three: the existing rank-three annihilator support data.
+\end{enumerate}
+The theorem uses the existing support constructors, so it does not introduce a
+new proof target or weaken the final statement.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is still the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The largest gap is now sharply localized: prove the listed apolar component
+obligations from the low-rank catalecticant/Hilbert-function argument in the
+blueprint.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
