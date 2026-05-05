@@ -2753,6 +2753,50 @@ theorem lowRankApolarEssentialQuotientTheorem_of_bounds
   · exact hquot.1 hrank
   · exact hquot.2 hrank
 
+theorem rankTwoQuotientGrowthData_of_lowRankApolarEssentialQuotientTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasLowRankApolarEssentialQuotientTheorem B p u) :
+    HasRankTwoApolarQuotientGrowthData B p u := by
+  intro hrank2
+  refine ⟨Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u), rfl, ?_⟩
+  have hq := hquot 2 (by norm_num) hrank2
+  have hdegree_two :
+      Module.finrank ℝ
+          (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) = 2 :=
+    finrank_quotient_ker_catalecticantMap_eq_two_of_rank_two hrank2
+  omega
+
+theorem rankThreeBadBranchExactSequenceData_of_lowRankApolarEssentialQuotientTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasLowRankApolarEssentialQuotientTheorem B p u) :
+    HasRankThreeApolarBadBranchExactSequenceData B p u := by
+  intro hrank3 hbad
+  have hq := hquot 3 (by norm_num) hrank3
+  exfalso
+  omega
+
+theorem lowRankApolarBlueprintHilbertData_of_lowRankApolarEssentialQuotientTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasLowRankApolarEssentialQuotientTheorem B p u) :
+    HasLowRankApolarBlueprintHilbertData B p u :=
+  ⟨rankTwoQuotientGrowthData_of_lowRankApolarEssentialQuotientTheorem hquot,
+    rankThreeBadBranchExactSequenceData_of_lowRankApolarEssentialQuotientTheorem hquot⟩
+
+theorem lowRankApolarEssentialQuotientTheorem_of_lowRankApolarBlueprintHilbertData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasLowRankApolarBlueprintHilbertData B p u) :
+    HasLowRankApolarEssentialQuotientTheorem B p u :=
+  lowRankApolarEssentialQuotientTheorem_of_bounds
+    (lowRankApolarEssentialQuotientBounds_of_lowRankApolarHilbertData
+      (lowRankApolarHilbertData_of_lowRankApolarBlueprintHilbertData hdata))
+
+theorem lowRankApolarBlueprintHilbertData_iff_lowRankApolarEssentialQuotientTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarBlueprintHilbertData B p u ↔
+      HasLowRankApolarEssentialQuotientTheorem B p u :=
+  ⟨lowRankApolarEssentialQuotientTheorem_of_lowRankApolarBlueprintHilbertData,
+    lowRankApolarBlueprintHilbertData_of_lowRankApolarEssentialQuotientTheorem⟩
+
 theorem lowRankApolarEssentialQuotientTheorem_of_lowRankApolarAnnihilatorMapTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hann : HasLowRankApolarAnnihilatorMapTheorem B p u) :

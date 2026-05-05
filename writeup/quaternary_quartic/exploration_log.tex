@@ -12999,4 +12999,49 @@ theorem is formalized.
 
 No Julia numerical claims were used in this round.
 
+\section*{Blueprint data equivalent to quotient theorem}
+
+\paragraph{Gap targeted.}
+The blueprint-shaped Hilbert-data package and the uniform essential quotient
+theorem were both available as remaining targets, but their equivalence had not
+been formalized.  This mattered because the rank-three bad-branch exact
+sequence is vacuous once the quotient theorem is known.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{rankTwoQuotientGrowthData\_of\_lowRankApolarEssentialQuotientTheorem},
+\]
+which uses the rank-two quotient bound and the rank-two catalecticant quotient
+dimension to build the rank-two quotient-growth data.
+
+Added:
+\[
+\texttt{rankThreeBadBranchExactSequenceData\_of\_lowRankApolarEssentialQuotientTheorem},
+\]
+where the bad branch \(h_1=4\) contradicts the rank-three quotient bound
+\(h_1\le3\).
+
+Then proved:
+\[
+\texttt{lowRankApolarBlueprintHilbertData\_of\_lowRankApolarEssentialQuotientTheorem},
+\]
+\[
+\texttt{lowRankApolarEssentialQuotientTheorem\_of\_lowRankApolarBlueprintHilbertData},
+\]
+and the equivalence:
+\[
+\texttt{lowRankApolarBlueprintHilbertData\_iff\_lowRankApolarEssentialQuotientTheorem}.
+\]
+
+\paragraph{Strategy change.}
+The remaining structural proof may now be completed either by proving the
+uniform quotient theorem directly or by proving the blueprint Hilbert-data
+package.  The two targets are formally equivalent.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
