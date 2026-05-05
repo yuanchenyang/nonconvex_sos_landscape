@@ -870,6 +870,15 @@ def HasGlobalRankTwoThreeApolarSupportBounds : Prop :=
           (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
             HasLinearAnnihilatorCodimAtMost B p u 3)
 
+def HasGlobalRankTwoThreeApolarEssentialQuotientBounds : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankTwoApolarEssentialQuotientBound B p u ∧
+            HasRankThreeApolarEssentialQuotientBound B p u
+
 def HasLowRankApolarSupportDecomposition
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   ∀ k : ℕ,
@@ -2443,6 +2452,52 @@ theorem rankTwoEssentialQuotientBound_of_rankTwoApolarAnnihilatorMapBound
   rw [finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap]
   exact hbound hrank2
 
+theorem rankTwoApolarAnnihilatorMapBound_of_rankTwoEssentialQuotientBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasRankTwoApolarEssentialQuotientBound B p u) :
+    HasRankTwoApolarAnnihilatorMapBound B p u := by
+  intro hrank2
+  rw [← finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap]
+  exact hquot hrank2
+
+theorem rankTwoEssentialQuotientBound_iff_rankTwoApolarAnnihilatorMapBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankTwoApolarEssentialQuotientBound B p u ↔
+      HasRankTwoApolarAnnihilatorMapBound B p u :=
+  ⟨rankTwoApolarAnnihilatorMapBound_of_rankTwoEssentialQuotientBound,
+    rankTwoEssentialQuotientBound_of_rankTwoApolarAnnihilatorMapBound⟩
+
+theorem rankTwoEssentialQuotientBound_of_rankTwoSupportBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupport :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+        HasLinearAnnihilatorCodimAtMost B p u 2) :
+    HasRankTwoApolarEssentialQuotientBound B p u :=
+  rankTwoEssentialQuotientBound_of_rankTwoApolarAnnihilatorMapBound
+    (by
+      intro hrank2
+      exact annihilatorMap_range_le_two_of_hasLinearAnnihilatorCodimAtMost
+        (B := B) (p := p) (u := u) (hsupport hrank2))
+
+theorem rankTwoSupportBound_of_rankTwoEssentialQuotientBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasRankTwoApolarEssentialQuotientBound B p u) :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+        HasLinearAnnihilatorCodimAtMost B p u 2 := by
+  intro hrank2
+  exact hasLinearAnnihilatorCodimAtMost_two_of_annihilatorMap_range
+    (B := B) (p := p) (u := u)
+    (rankTwoApolarAnnihilatorMapBound_of_rankTwoEssentialQuotientBound
+      hquot hrank2)
+
+theorem rankTwoSupportBound_iff_rankTwoEssentialQuotientBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+        HasLinearAnnihilatorCodimAtMost B p u 2) ↔
+      HasRankTwoApolarEssentialQuotientBound B p u :=
+  ⟨rankTwoEssentialQuotientBound_of_rankTwoSupportBound,
+    rankTwoSupportBound_of_rankTwoEssentialQuotientBound⟩
+
 theorem rankTwoEssentialQuotientBound_of_rankTwoQuotientGrowthData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hdata : HasRankTwoApolarQuotientGrowthData B p u) :
@@ -2578,6 +2633,52 @@ theorem rankThreeEssentialQuotientBound_of_rankThreeApolarAnnihilatorMapBound
   intro hrank3
   rw [finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap]
   exact hbound hrank3
+
+theorem rankThreeApolarAnnihilatorMapBound_of_rankThreeEssentialQuotientBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasRankThreeApolarEssentialQuotientBound B p u) :
+    HasRankThreeApolarAnnihilatorMapBound B p u := by
+  intro hrank3
+  rw [← finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap]
+  exact hquot hrank3
+
+theorem rankThreeEssentialQuotientBound_iff_rankThreeApolarAnnihilatorMapBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankThreeApolarEssentialQuotientBound B p u ↔
+      HasRankThreeApolarAnnihilatorMapBound B p u :=
+  ⟨rankThreeApolarAnnihilatorMapBound_of_rankThreeEssentialQuotientBound,
+    rankThreeEssentialQuotientBound_of_rankThreeApolarAnnihilatorMapBound⟩
+
+theorem rankThreeEssentialQuotientBound_of_rankThreeSupportBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupport :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+        HasLinearAnnihilatorCodimAtMost B p u 3) :
+    HasRankThreeApolarEssentialQuotientBound B p u :=
+  rankThreeEssentialQuotientBound_of_rankThreeApolarAnnihilatorMapBound
+    (by
+      intro hrank3
+      exact annihilatorMap_range_le_three_of_hasLinearAnnihilatorCodimAtMost
+        (B := B) (p := p) (u := u) (hsupport hrank3))
+
+theorem rankThreeSupportBound_of_rankThreeEssentialQuotientBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasRankThreeApolarEssentialQuotientBound B p u) :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+        HasLinearAnnihilatorCodimAtMost B p u 3 := by
+  intro hrank3
+  exact hasLinearAnnihilatorCodimAtMost_three_of_annihilatorMap_range
+    (B := B) (p := p) (u := u)
+    (rankThreeApolarAnnihilatorMapBound_of_rankThreeEssentialQuotientBound
+      hquot hrank3)
+
+theorem rankThreeSupportBound_iff_rankThreeEssentialQuotientBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+        HasLinearAnnihilatorCodimAtMost B p u 3) ↔
+      HasRankThreeApolarEssentialQuotientBound B p u :=
+  ⟨rankThreeEssentialQuotientBound_of_rankThreeSupportBound,
+    rankThreeSupportBound_of_rankThreeEssentialQuotientBound⟩
 
 theorem rankThreeDimensionBound_of_rankThreeEssentialQuotientBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -8260,6 +8361,74 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeApola
         ((quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankCaseApolarSupportBounds).mp
           hmain),
     quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarSupportBounds⟩
+
+theorem globalRankTwoThreeApolarEssentialQuotientBounds_of_globalRankTwoThreeApolarAnnihilatorMapBounds
+    (hbounds : HasGlobalRankTwoThreeApolarAnnihilatorMapBounds) :
+    HasGlobalRankTwoThreeApolarEssentialQuotientBounds := by
+  intro B p u hu hB hp hsocp
+  exact ⟨
+    rankTwoEssentialQuotientBound_of_rankTwoApolarAnnihilatorMapBound
+      (hbounds B p u hu hB hp hsocp).1,
+    rankThreeEssentialQuotientBound_of_rankThreeApolarAnnihilatorMapBound
+      (hbounds B p u hu hB hp hsocp).2⟩
+
+theorem globalRankTwoThreeApolarAnnihilatorMapBounds_of_globalRankTwoThreeApolarEssentialQuotientBounds
+    (hquot : HasGlobalRankTwoThreeApolarEssentialQuotientBounds) :
+    HasGlobalRankTwoThreeApolarAnnihilatorMapBounds := by
+  intro B p u hu hB hp hsocp
+  exact ⟨
+    rankTwoApolarAnnihilatorMapBound_of_rankTwoEssentialQuotientBound
+      (hquot B p u hu hB hp hsocp).1,
+    rankThreeApolarAnnihilatorMapBound_of_rankThreeEssentialQuotientBound
+      (hquot B p u hu hB hp hsocp).2⟩
+
+theorem globalRankTwoThreeApolarEssentialQuotientBounds_iff_globalRankTwoThreeApolarAnnihilatorMapBounds :
+    HasGlobalRankTwoThreeApolarEssentialQuotientBounds ↔
+      HasGlobalRankTwoThreeApolarAnnihilatorMapBounds :=
+  ⟨globalRankTwoThreeApolarAnnihilatorMapBounds_of_globalRankTwoThreeApolarEssentialQuotientBounds,
+    globalRankTwoThreeApolarEssentialQuotientBounds_of_globalRankTwoThreeApolarAnnihilatorMapBounds⟩
+
+theorem globalRankTwoThreeApolarEssentialQuotientBounds_of_globalRankTwoThreeApolarSupportBounds
+    (hsupport : HasGlobalRankTwoThreeApolarSupportBounds) :
+    HasGlobalRankTwoThreeApolarEssentialQuotientBounds := by
+  intro B p u hu hB hp hsocp
+  exact ⟨
+    rankTwoEssentialQuotientBound_of_rankTwoSupportBound
+      (hsupport B p u hu hB hp hsocp).1,
+    rankThreeEssentialQuotientBound_of_rankThreeSupportBound
+      (hsupport B p u hu hB hp hsocp).2⟩
+
+theorem globalRankTwoThreeApolarSupportBounds_of_globalRankTwoThreeApolarEssentialQuotientBounds
+    (hquot : HasGlobalRankTwoThreeApolarEssentialQuotientBounds) :
+    HasGlobalRankTwoThreeApolarSupportBounds := by
+  intro B p u hu hB hp hsocp
+  exact ⟨
+    rankTwoSupportBound_of_rankTwoEssentialQuotientBound
+      (hquot B p u hu hB hp hsocp).1,
+    rankThreeSupportBound_of_rankThreeEssentialQuotientBound
+      (hquot B p u hu hB hp hsocp).2⟩
+
+theorem globalRankTwoThreeApolarEssentialQuotientBounds_iff_globalRankTwoThreeApolarSupportBounds :
+    HasGlobalRankTwoThreeApolarEssentialQuotientBounds ↔
+      HasGlobalRankTwoThreeApolarSupportBounds :=
+  ⟨globalRankTwoThreeApolarSupportBounds_of_globalRankTwoThreeApolarEssentialQuotientBounds,
+    globalRankTwoThreeApolarEssentialQuotientBounds_of_globalRankTwoThreeApolarSupportBounds⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarEssentialQuotientBounds
+    (hquot : HasGlobalRankTwoThreeApolarEssentialQuotientBounds) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarAnnihilatorMapBounds
+    (globalRankTwoThreeApolarAnnihilatorMapBounds_of_globalRankTwoThreeApolarEssentialQuotientBounds
+      hquot)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeApolarEssentialQuotientBounds :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoThreeApolarEssentialQuotientBounds :=
+  ⟨fun hmain =>
+      globalRankTwoThreeApolarEssentialQuotientBounds_of_globalRankTwoThreeApolarAnnihilatorMapBounds
+        ((quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeApolarAnnihilatorMapBounds).mp
+          hmain),
+    quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarEssentialQuotientBounds⟩
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_quotientLocalComponents_direct
     (hsymm2 :

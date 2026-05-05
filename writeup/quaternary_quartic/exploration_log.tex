@@ -13920,4 +13920,44 @@ branch exact-sequence contradiction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Two-three quotient/support equivalence}
+
+\paragraph{Gap targeted.}
+With rank one removed, the remaining target should be stated directly in the
+blueprint's rank-two/rank-three essential quotient language and kept
+equivalent to the support and annihilator-map formulations.
+
+\paragraph{Lean progress.}
+Added local equivalences for rank two and rank three:
+\[
+\texttt{rankTwoEssentialQuotientBound\_iff\_rankTwoApolarAnnihilatorMapBound},
+\quad
+\texttt{rankThreeEssentialQuotientBound\_iff\_rankThreeApolarAnnihilatorMapBound},
+\]
+and support versions:
+\[
+\texttt{rankTwoSupportBound\_iff\_rankTwoEssentialQuotientBound},
+\quad
+\texttt{rankThreeSupportBound\_iff\_rankThreeEssentialQuotientBound}.
+\]
+Added the global package
+\[
+\texttt{HasGlobalRankTwoThreeApolarEssentialQuotientBounds}
+\]
+and proved equivalences with both two/three-only global support bounds and
+two/three-only global annihilator-map bounds.  Added:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoThreeApolarEssentialQuotientBounds}.
+\]
+
+\paragraph{Strategy change.}
+The remaining theorem is now exactly equivalent to proving the two quotient
+bounds appearing in the blueprint: rank two \(h_1\le 2\) and rank three
+\(h_1\le 3\), with rank one discharged separately.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
