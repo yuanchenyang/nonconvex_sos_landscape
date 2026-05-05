@@ -187,6 +187,87 @@ theorem finrank_quadSubmodule_eq_ten :
       {n : Fin 3 →₀ ℕ | n.sum (fun _ e => e) ≤ 2})]
   exact natCard_quadExponentSet
 
+/-- The submodule of affine-chart polynomials of total degree at most three. -/
+def cubicSubmodule : Submodule ℝ Poly where
+  carrier := {q | q.totalDegree ≤ 3}
+  zero_mem' := by
+    simp
+  add_mem' := by
+    intro p q hp hq
+    exact (MvPolynomial.totalDegree_add p q).trans (max_le hp hq)
+  smul_mem' := by
+    intro a q hq
+    exact (MvPolynomial.totalDegree_smul_le a q).trans hq
+
+@[simp] theorem mem_cubicSubmodule {q : Poly} :
+    q ∈ cubicSubmodule ↔ q.totalDegree ≤ 3 := Iff.rfl
+
+theorem cubicSubmodule_eq_restrictTotalDegree :
+    cubicSubmodule = MvPolynomial.restrictTotalDegree (Fin 3) ℝ 3 := by
+  ext q
+  simp [cubicSubmodule, MvPolynomial.mem_restrictTotalDegree]
+
+instance instModuleFiniteCubicSubmodule : Module.Finite ℝ cubicSubmodule := by
+  rw [cubicSubmodule_eq_restrictTotalDegree]
+  infer_instance
+
+private abbrev CubicExponentSet :=
+  {s : Fin 3 →₀ ℕ // s.sum (fun _ e => e) ≤ 3}
+
+private abbrev BoundedFinTripleThree :=
+  {f : Fin 3 → Fin 4 // (∑ i, (f i).val) ≤ 3}
+
+private theorem finsupp_value_lt_four (s : Fin 3 →₀ ℕ)
+    (hs : s.sum (fun _ e => e) ≤ 3) (i : Fin 3) :
+    s i < 4 := by
+  have hle_sum : s i ≤ s.sum (fun _ e => e) := by
+    simpa using
+      (Finsupp.single_eval_le_sum (f := s) (g := fun n : ℕ => n)
+        (by simp) (fun n => Nat.zero_le n) i)
+  omega
+
+private theorem equivFunOnFinite_symm_sum_finTripleThree (f : Fin 3 → Fin 4) :
+    (Finsupp.equivFunOnFinite.symm (fun i => (f i).val)).sum (fun _ e => e) =
+      ∑ i, (f i).val := by
+  simpa using
+    (Finsupp.equivFunOnFinite_symm_sum (f := fun i : Fin 3 => (f i).val))
+
+private def cubicExponentEquivBoundedFinTripleThree :
+    CubicExponentSet ≃ BoundedFinTripleThree where
+  toFun s := ⟨fun i => ⟨s.1 i, finsupp_value_lt_four s.1 s.2 i⟩, by
+    simpa [finsupp_sum_eq_finset_sum s.1] using s.2⟩
+  invFun f := ⟨Finsupp.equivFunOnFinite.symm (fun i => (f.1 i).val), by
+    simpa [equivFunOnFinite_symm_sum_finTripleThree f.1] using f.2⟩
+  left_inv := by
+    intro s
+    apply Subtype.ext
+    ext i
+    simp
+  right_inv := by
+    intro f
+    apply Subtype.ext
+    ext i
+    simp
+
+private instance instFintypeCubicExponentSet : Fintype CubicExponentSet :=
+  Fintype.ofEquiv BoundedFinTripleThree cubicExponentEquivBoundedFinTripleThree.symm
+
+private theorem natCard_cubicExponentSet :
+    Nat.card CubicExponentSet = 20 := by
+  rw [Nat.card_congr cubicExponentEquivBoundedFinTripleThree]
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+theorem finrank_cubicSubmodule_eq_twenty :
+    Module.finrank ℝ cubicSubmodule = 20 := by
+  rw [cubicSubmodule_eq_restrictTotalDegree]
+  change Module.finrank ℝ
+    (MvPolynomial.restrictSupport ℝ {n : Fin 3 →₀ ℕ | n.sum (fun _ e => e) ≤ 3}) = 20
+  rw [Module.finrank_eq_nat_card_basis
+    (MvPolynomial.basisRestrictSupport ℝ
+      {n : Fin 3 →₀ ℕ | n.sum (fun _ e => e) ≤ 3})]
+  exact natCard_cubicExponentSet
+
 /-- The submodule of affine-chart polynomials of total degree at most four. -/
 def quarticSubmodule : Submodule ℝ Poly where
   carrier := {q | IsQuartic q}
@@ -293,6 +374,16 @@ theorem mul_lin_lin_mem_quad {p q : Poly}
   change (p * q).totalDegree ≤ 2
   omega
 
+theorem mul_lin_quad_mem_cubic {p q : Poly}
+    (hp : p ∈ linSubmodule) (hq : q ∈ quadSubmodule) :
+    p * q ∈ cubicSubmodule := by
+  have hmul : (p * q).totalDegree ≤ p.totalDegree + q.totalDegree :=
+    MvPolynomial.totalDegree_mul p q
+  have hp1 : p.totalDegree ≤ 1 := hp
+  have hq2 : q.totalDegree ≤ 2 := hq
+  change (p * q).totalDegree ≤ 3
+  omega
+
 def linOne : linSubmodule :=
   ⟨1, by simp⟩
 
@@ -349,6 +440,61 @@ theorem linProduct_self_ne_zero {a : linSubmodule}
     (linProduct a a : quadSubmodule).1 ≠ 0 := by
   simpa [linProduct] using mul_ne_zero ha ha
 
+def linQuadProduct (a : linSubmodule) (q : quadSubmodule) : cubicSubmodule :=
+  ⟨a.1 * q.1, mul_lin_quad_mem_cubic a.2 q.2⟩
+
+@[simp] theorem linQuadProduct_val (a : linSubmodule) (q : quadSubmodule) :
+    (linQuadProduct a q : Poly) = a.1 * q.1 := rfl
+
+@[simp] theorem linQuadProduct_add_left
+    (a b : linSubmodule) (q : quadSubmodule) :
+    linQuadProduct (a + b) q = linQuadProduct a q + linQuadProduct b q := by
+  ext
+  simp [linQuadProduct, add_mul]
+
+@[simp] theorem linQuadProduct_add_right
+    (a : linSubmodule) (q r : quadSubmodule) :
+    linQuadProduct a (q + r) = linQuadProduct a q + linQuadProduct a r := by
+  ext
+  simp [linQuadProduct, mul_add]
+
+@[simp] theorem linQuadProduct_smul_left
+    (c : ℝ) (a : linSubmodule) (q : quadSubmodule) :
+    linQuadProduct (c • a) q = c • linQuadProduct a q := by
+  ext
+  simp [linQuadProduct]
+
+@[simp] theorem linQuadProduct_smul_right
+    (c : ℝ) (a : linSubmodule) (q : quadSubmodule) :
+    linQuadProduct a (c • q) = c • linQuadProduct a q := by
+  ext
+  simp [linQuadProduct]
+
+def linQuadProductBilin :
+    linSubmodule →ₗ[ℝ] quadSubmodule →ₗ[ℝ] cubicSubmodule where
+  toFun a :=
+    { toFun := fun q => linQuadProduct a q
+      map_add' := by
+        intro q r
+        exact linQuadProduct_add_right a q r
+      map_smul' := by
+        intro c q
+        exact linQuadProduct_smul_right c a q }
+  map_add' := by
+    intro a b
+    apply LinearMap.ext
+    intro q
+    exact linQuadProduct_add_left a b q
+  map_smul' := by
+    intro c a
+    apply LinearMap.ext
+    intro q
+    exact linQuadProduct_smul_left c a q
+
+@[simp] theorem linQuadProductBilin_apply
+    (a : linSubmodule) (q : quadSubmodule) :
+    (linQuadProductBilin a) q = linQuadProduct a q := rfl
+
 def linProductBilin :
     linSubmodule →ₗ[ℝ] linSubmodule →ₗ[ℝ] quadSubmodule where
   toFun a :=
@@ -376,6 +522,11 @@ def linProductBilin :
 def linProductSubmodule (U V : Submodule ℝ linSubmodule) :
     Submodule ℝ quadSubmodule :=
   Submodule.span ℝ (Set.range fun x : U × V => linProduct x.1.1 x.2.1)
+
+def linQuadProductSubmodule
+    (U : Submodule ℝ linSubmodule) (P : Submodule ℝ quadSubmodule) :
+    Submodule ℝ cubicSubmodule :=
+  Submodule.span ℝ (Set.range fun x : U × P => linQuadProduct x.1.1 x.2.1)
 
 def symSquareSubmodule (U : Submodule ℝ linSubmodule) :
     Submodule ℝ quadSubmodule :=
@@ -407,6 +558,12 @@ theorem linProduct_mem_linProductSubmodule
     linProduct a.1 b.1 ∈ linProductSubmodule U V := by
   exact Submodule.subset_span ⟨(a, b), rfl⟩
 
+theorem linQuadProduct_mem_linQuadProductSubmodule
+    {U : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    (a : U) (q : P) :
+    linQuadProduct a.1 q.1 ∈ linQuadProductSubmodule U P := by
+  exact Submodule.subset_span ⟨(a, q), rfl⟩
+
 theorem linProductSubmodule_mono
     {U₁ U₂ V₁ V₂ : Submodule ℝ linSubmodule}
     (hU : U₁ ≤ U₂) (hV : V₁ ≤ V₂) :
@@ -415,6 +572,24 @@ theorem linProductSubmodule_mono
   rintro q ⟨x, rfl⟩
   exact linProduct_mem_linProductSubmodule
     (⟨x.1.1, hU x.1.2⟩ : U₂) (⟨x.2.1, hV x.2.2⟩ : V₂)
+
+theorem linQuadProductSubmodule_mono
+    {U₁ U₂ : Submodule ℝ linSubmodule} {P₁ P₂ : Submodule ℝ quadSubmodule}
+    (hU : U₁ ≤ U₂) (hP : P₁ ≤ P₂) :
+    linQuadProductSubmodule U₁ P₁ ≤ linQuadProductSubmodule U₂ P₂ := by
+  refine Submodule.span_le.mpr ?_
+  rintro q ⟨x, rfl⟩
+  exact linQuadProduct_mem_linQuadProductSubmodule
+    (⟨x.1.1, hU x.1.2⟩ : U₂) (⟨x.2.1, hP x.2.2⟩ : P₂)
+
+theorem linQuadProductSubmodule_le_of_generators
+    {U : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    {C : Submodule ℝ cubicSubmodule}
+    (hgen : ∀ (a : U) (q : P), linQuadProduct a.1 q.1 ∈ C) :
+    linQuadProductSubmodule U P ≤ C := by
+  refine Submodule.span_le.mpr ?_
+  rintro q ⟨x, rfl⟩
+  exact hgen x.1 x.2
 
 theorem linProductSubmodule_comm (U V : Submodule ℝ linSubmodule) :
     linProductSubmodule U V = linProductSubmodule V U := by

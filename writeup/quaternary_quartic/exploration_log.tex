@@ -14882,4 +14882,45 @@ inequality for the quotient by a nonzero linear form, then apply this bridge.
 
 No Julia numerical claims were used in this round.
 
+\section*{Add cubic product layer for Macaulay step}
+
+\paragraph{Gap targeted.}
+The remaining rank-three Macaulay/O-sequence inequality is a statement about
+degree-three products in the quotient by a linear form.  The Lean development
+had degree-one, degree-two, and degree-four submodules, but no degree-three
+polynomial submodule or linear-times-quadratic product span.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, added the proof-serving
+degree-three submodule
+\[
+\texttt{cubicSubmodule}
+\]
+with finite-dimensional instance and finrank computation
+\[
+\texttt{finrank\_cubicSubmodule\_eq\_twenty}.
+\]
+Added the bilinear product
+\[
+\texttt{linQuadProductBilin}
+\]
+and the span
+\[
+\texttt{linQuadProductSubmodule}
+\]
+together with generator membership and monotonicity lemmas.  These are the
+objects needed to state the special Macaulay lower bound on products of three
+remaining variables with a large degree-two kernel.
+
+\paragraph{Strategy change.}
+Rather than introduce a general Hilbert-function framework, the proof now has
+the concrete degree-three product space needed for the specific \(q_3\le q_2\)
+inequality in the rank-three bad branch.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
