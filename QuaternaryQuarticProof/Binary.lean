@@ -16,6 +16,39 @@ def IsBinaryQuarticPullback
     binaryQuarticEval A B C D E X Y =
       binaryQuarticEval a b c d e (α * X + β * Y) (γ * X + δ * Y)
 
+theorem isBinaryQuarticPullback_id (a b c d e : ℝ) :
+    IsBinaryQuarticPullback a b c d e a b c d e 1 0 0 1 := by
+  intro X Y
+  simp [binaryQuarticEval]
+
+theorem isBinaryQuarticPullback_swap (a b c d e : ℝ) :
+    IsBinaryQuarticPullback a b c d e e d c b a 0 1 1 0 := by
+  intro X Y
+  unfold binaryQuarticEval
+  ring
+
+theorem isBinaryQuarticPullback_diagonal
+    (a b c d e α δ : ℝ) :
+    IsBinaryQuarticPullback a b c d e
+      (a * α^4) (b * α^3 * δ) (c * α^2 * δ^2)
+      (d * α * δ^3) (e * δ^4) α 0 0 δ := by
+  intro X Y
+  unfold binaryQuarticEval
+  ring
+
+theorem isBinaryQuarticPullback_shearX
+    (a b c d e t : ℝ) :
+    IsBinaryQuarticPullback a b c d e
+      a
+      (a * t + b)
+      (a * t^2 + 2 * b * t + c)
+      (a * t^3 + 3 * b * t^2 + 3 * c * t + d)
+      (a * t^4 + 4 * b * t^3 + 6 * c * t^2 + 4 * d * t + e)
+      1 t 0 1 := by
+  intro X Y
+  unfold binaryQuarticEval
+  ring
+
 def binaryHankelQuad (a b c d e r s t : ℝ) : ℝ :=
   a * r^2 + 2 * b * r * s + 2 * c * r * t + c * s^2 + 2 * d * s * t + e * t^2
 
