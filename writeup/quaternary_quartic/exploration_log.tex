@@ -9939,4 +9939,58 @@ and the low-rank apolar theorem remain unproved.
 
 No Julia numerical claims were used in this round.
 
+\section*{Negative pure squares from normalized binary kernel data}
+
+\paragraph{Gap targeted.}
+The blueprint's binary rank-at-most-two lemma concludes that normalized kernel
+cases give a negative pure fourth power.  The Lean development had this result
+available through the intermediate
+\texttt{HasBinaryLowRankNegativeNormalForm}, but direct lemmas from canonical
+and normalized kernel data were missing.
+
+\paragraph{Lean progress.}
+Added scalar negative-value lemmas:
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_canonicalKernelData},
+\]
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_kernelBranchCertificate},
+\]
+and
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_normalizedKernelPosition}.
+\]
+Added the corresponding restriction-level pure-square lemmas:
+\[
+\texttt{exists\_negative\_pure\_square\_of\_binaryCanonicalKernelData},
+\]
+\[
+\texttt{exists\_negative\_pure\_square\_of\_binaryKernelBranchCertificate},
+\]
+and
+\[
+\texttt{exists\_negative\_pure\_square\_of\_binaryNormalizedKernelPosition}.
+\]
+
+\paragraph{Strategy change.}
+The rank-two branch can now use canonical or normalized kernel data directly to
+produce the negative pure square required by the syzygy construction, without
+unpacking the low-rank normal-form wrapper at each call site.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded, rebuilding
+\texttt{Binary}, \texttt{Support}, and \texttt{Basic}.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The actual normalized-basis construction and low-rank apolar theorem remain the
+two largest unproved inputs.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

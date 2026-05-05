@@ -1243,6 +1243,28 @@ theorem binaryQuarticEval_exists_negative_of_lowRankNegativeNormalForm
   · rcases hell with ⟨rfl, rfl, rfl, hne⟩
     exact elliptic_kernel_binaryQuarticEval_exists_negative _ _ hne
 
+theorem binaryQuarticEval_exists_negative_of_canonicalKernelData
+    {a b c d e : ℝ}
+    (hcanon : HasBinaryCanonicalKernelData a b c d e) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 :=
+  binaryQuarticEval_exists_negative_of_lowRankNegativeNormalForm
+    (binaryLowRankNegativeNormalForm_of_canonicalKernelData hcanon)
+
+theorem binaryQuarticEval_exists_negative_of_kernelBranchCertificate
+    {a b c d e : ℝ}
+    (hcert : HasBinaryKernelBranchCertificate a b c d e) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 :=
+  binaryQuarticEval_exists_negative_of_lowRankNegativeNormalForm
+    (binaryLowRankNegativeNormalForm_of_kernelBranchCertificate hcert)
+
+theorem binaryQuarticEval_exists_negative_of_normalizedKernelPosition
+    {a b c d e : ℝ}
+    (hpos : HasBinaryNormalizedKernelPosition a b c d e)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 :=
+  binaryQuarticEval_exists_negative_of_canonicalKernelData
+    (binaryCanonicalKernelData_of_normalizedKernelPosition hpos hneg)
+
 theorem exists_negative_pure_square_of_binaryLowRankNormalForm
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {a b c d e : ℝ} {x y : linSubmodule}
@@ -1262,5 +1284,48 @@ theorem exists_negative_pure_square_of_binaryLowRankNormalForm
       (Submodule.smul_mem _ Y (Submodule.subset_span (by simp)))
   · rw [heval X Y]
     exact hneg
+
+theorem exists_negative_pure_square_of_binaryCanonicalKernelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {a b c d e : ℝ} {x y : linSubmodule}
+    (hcanon : HasBinaryCanonicalKernelData a b c d e)
+    (heval : ∀ X Y : ℝ,
+      B ((linProduct (X • x + Y • y) (X • x + Y • y) : quadSubmodule).1^2)
+          (residual p u) =
+        binaryQuarticEval a b c d e X Y) :
+    ∃ z : linSubmodule,
+      z ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) ∧
+        B ((linProduct z z : quadSubmodule).1^2) (residual p u) < 0 :=
+  exists_negative_pure_square_of_binaryLowRankNormalForm
+    (binaryLowRankNegativeNormalForm_of_canonicalKernelData hcanon) heval
+
+theorem exists_negative_pure_square_of_binaryKernelBranchCertificate
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {a b c d e : ℝ} {x y : linSubmodule}
+    (hcert : HasBinaryKernelBranchCertificate a b c d e)
+    (heval : ∀ X Y : ℝ,
+      B ((linProduct (X • x + Y • y) (X • x + Y • y) : quadSubmodule).1^2)
+          (residual p u) =
+        binaryQuarticEval a b c d e X Y) :
+    ∃ z : linSubmodule,
+      z ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) ∧
+        B ((linProduct z z : quadSubmodule).1^2) (residual p u) < 0 :=
+  exists_negative_pure_square_of_binaryLowRankNormalForm
+    (binaryLowRankNegativeNormalForm_of_kernelBranchCertificate hcert) heval
+
+theorem exists_negative_pure_square_of_binaryNormalizedKernelPosition
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {a b c d e : ℝ} {x y : linSubmodule}
+    (hpos : HasBinaryNormalizedKernelPosition a b c d e)
+    (hneg : HasBinaryHankelNegativeValue a b c d e)
+    (heval : ∀ X Y : ℝ,
+      B ((linProduct (X • x + Y • y) (X • x + Y • y) : quadSubmodule).1^2)
+          (residual p u) =
+        binaryQuarticEval a b c d e X Y) :
+    ∃ z : linSubmodule,
+      z ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) ∧
+        B ((linProduct z z : quadSubmodule).1^2) (residual p u) < 0 :=
+  exists_negative_pure_square_of_binaryCanonicalKernelData
+    (binaryCanonicalKernelData_of_normalizedKernelPosition hpos hneg) heval
 
 end QuaternaryQuartic
