@@ -8874,6 +8874,26 @@ theorem globalLowRankApolarHilbertData_iff_globalRankTwoMacaulayGrowth_and_rankT
       globalLowRankApolarHilbertData_of_globalRankTwoMacaulayGrowth_and_rankThreeExactSequenceData
         hdata.1 hdata.2⟩
 
+theorem globalRankTwoThreeApolarEssentialQuotientBounds_of_globalLowRankApolarHilbertData
+    (hdata : HasGlobalLowRankApolarHilbertData) :
+    HasGlobalRankTwoThreeApolarEssentialQuotientBounds := by
+  intro B p u hu hB hp hsocp
+  exact lowRankApolarEssentialQuotientBounds_of_lowRankApolarHilbertData
+    (hdata B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarHilbertData_of_globalRankTwoThreeApolarEssentialQuotientBounds
+    (hquot : HasGlobalRankTwoThreeApolarEssentialQuotientBounds) :
+    HasGlobalLowRankApolarHilbertData := by
+  intro B p u hu hB hp hsocp
+  exact lowRankApolarHilbertData_of_lowRankApolarEssentialQuotientBounds
+    (hquot B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarHilbertData_iff_globalRankTwoThreeApolarEssentialQuotientBounds :
+    HasGlobalLowRankApolarHilbertData ↔
+      HasGlobalRankTwoThreeApolarEssentialQuotientBounds :=
+  ⟨globalRankTwoThreeApolarEssentialQuotientBounds_of_globalLowRankApolarHilbertData,
+    globalLowRankApolarHilbertData_of_globalRankTwoThreeApolarEssentialQuotientBounds⟩
+
 theorem globalRankCaseApolarSupportBounds_of_globalRankTwoThreeApolarSupportBounds
     (hsupport : HasGlobalRankTwoThreeApolarSupportBounds) :
     HasGlobalRankCaseApolarSupportBounds := by

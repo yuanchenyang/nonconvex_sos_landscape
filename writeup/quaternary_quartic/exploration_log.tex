@@ -14401,4 +14401,29 @@ theorem matching the low-rank catalecticant section of the blueprint.
 
 No Julia numerical claims were used in this round.
 
+\section*{Bridge Hilbert data and quotient bounds}
+
+\paragraph{Gap targeted.}
+The new global Hilbert-data package should be explicitly connected to the
+older global rank-two/rank-three essential quotient target to avoid parallel
+unlinked formulations of the same remaining gap.
+
+\paragraph{Lean progress.}
+Proved
+\[
+\texttt{globalLowRankApolarHilbertData\_iff\_globalRankTwoThreeApolarEssentialQuotientBounds}.
+\]
+This lifts the local equivalence between low-rank Hilbert data and low-rank
+essential quotient bounds to the global SOCP-indexed packages.
+
+\paragraph{Strategy change.}
+The remaining proof can now move freely between the blueprint Hilbert-data
+formulation and the essential quotient formulation without introducing new
+assumptions or changing the root theorem.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
