@@ -2577,6 +2577,20 @@ theorem hasRankTwoExistentialNormalizedHankelData_of_universalNormalizedPosition
     hpos hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim,
     hneg, hrank⟩
 
+theorem hasRankTwoExistentialScalarHankelFacts_of_universalNormalizedPosition_and_HankelNegative
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u)
+    (hneg : HasRankTwoUniversalHankelNegativeData B p u) :
+    HasRankTwoExistentialScalarHankelFacts B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases exists_rank_two_complement_second_direction
+      (W := W) (x := x) hx hWdim with
+    ⟨y, hyW, hynot⟩
+  exact ⟨y, hyW, hynot,
+    hneg hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim,
+    binaryHankelLinearMap_finrank_range_le_two_of_normalizedKernelPosition
+      (hpos hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim)⟩
+
 theorem hasRankTwoExistentialCanonicalKernelData_of_universal_and_facts
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification)

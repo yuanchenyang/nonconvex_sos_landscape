@@ -9209,4 +9209,41 @@ position plus scalar Hankel facts.
 
 No Julia numerical claims were used in this round.
 
+\section*{Scalar Hankel facts from universal normalized components}
+
+\paragraph{Gap targeted.}
+The scalar-Hankel route still treated existential scalar Hankel facts as an
+independent rank-two input, even though universal normalized position and
+universal Hankel negativity imply them after choosing a second support
+direction.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankTwoExistentialScalarHankelFacts\_of\_universalNormalizedPosition\_and\_HankelNegative}.
+\]
+The proof chooses \(y\in W\setminus \mathbb{R}x\) using the existing
+two-dimensional complement lemma, obtains the negative Hankel value from the
+universal negativity hypothesis, and obtains the binary Hankel rank bound from
+the normalized-position theorem.
+
+\paragraph{Strategy change.}
+The scalar-facts path no longer needs a separate rank-two proof once the
+universal normalized-position and negativity components are available.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove rank-case apolar support bounds and the universal normalized
+position/Hankel negativity components, or equivalently universal branch data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
