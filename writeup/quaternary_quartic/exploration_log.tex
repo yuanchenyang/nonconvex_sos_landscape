@@ -11114,4 +11114,47 @@ data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Remove scalar factors from binary kernels}
+
+\paragraph{Gap targeted.}
+The scalar hyperbolic and elliptic normalizations land in nonzero scalar
+multiples of the canonical kernels \((0,1,0)\) and \((1,0,1)\).  The binary
+Hankel layer needed reusable lemmas to remove these nonzero scalar factors.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{binaryHankelMul\_eq\_zero\_of\_smul\_eq\_zero},
+\]
+plus canonical specializations:
+\[
+\texttt{xy\_kernel\_of\_nonzero\_scalar\_xy\_kernel},
+\qquad
+\texttt{elliptic\_kernel\_of\_nonzero\_scalar\_elliptic\_kernel}.
+\]
+These show that if a nonzero scalar multiple of a kernel vector is killed by
+the binary Hankel map, then the normalized kernel vector is killed as well.
+
+\paragraph{Strategy change.}
+Future transported-kernel proofs can target scalar multiples produced by the
+normalization calculations and then immediately recover the exact canonical
+kernel vectors used by existing binary branch certificates.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support and the
+transport lemma from quadratic/quartic pullbacks to transformed binary Hankel
+kernel data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

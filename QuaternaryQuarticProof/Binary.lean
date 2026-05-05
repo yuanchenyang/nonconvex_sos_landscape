@@ -787,6 +787,55 @@ theorem ySq_kernel_of_parabolic_zero_xCoeff_kernel_equations
   ext i
   fin_cases i <;> simp [binaryHankelMul, hc, hd, he]
 
+theorem binaryHankelMul_eq_zero_of_smul_eq_zero
+    {a b c d e k : ℝ} {v : Fin 3 → ℝ}
+    (hk : k ≠ 0)
+    (hker : binaryHankelMul a b c d e (k • v) = 0) :
+    binaryHankelMul a b c d e v = 0 := by
+  ext i
+  fin_cases i
+  · have h0 := congrArg (fun w : Fin 3 → ℝ => w 0) hker
+    simp [binaryHankelMul, Pi.smul_apply] at h0
+    have hmul : k * (a * v 0 + b * v 1 + c * v 2) = 0 := by
+      nlinarith
+    exact (mul_eq_zero.mp hmul).resolve_left hk
+  · have h1 := congrArg (fun w : Fin 3 → ℝ => w 1) hker
+    simp [binaryHankelMul, Pi.smul_apply] at h1
+    have hmul : k * (b * v 0 + c * v 1 + d * v 2) = 0 := by
+      nlinarith
+    exact (mul_eq_zero.mp hmul).resolve_left hk
+  · have h2 := congrArg (fun w : Fin 3 → ℝ => w 2) hker
+    simp [binaryHankelMul, Pi.smul_apply] at h2
+    have hmul : k * (c * v 0 + d * v 1 + e * v 2) = 0 := by
+      nlinarith
+    exact (mul_eq_zero.mp hmul).resolve_left hk
+
+theorem xy_kernel_of_nonzero_scalar_xy_kernel
+    {a b c d e S : ℝ}
+    (hS : S ≠ 0)
+    (hker : binaryHankelMul a b c d e (![0, S, 0] : Fin 3 → ℝ) = 0) :
+    binaryHankelMul a b c d e (![0, 1, 0] : Fin 3 → ℝ) = 0 := by
+  have hscale :
+      (![0, S, 0] : Fin 3 → ℝ) = S • (![0, 1, 0] : Fin 3 → ℝ) := by
+    ext i
+    fin_cases i <;> simp [Pi.smul_apply]
+  rw [hscale] at hker
+  exact binaryHankelMul_eq_zero_of_smul_eq_zero (a := a) (b := b)
+    (c := c) (d := d) (e := e) (k := S) hS hker
+
+theorem elliptic_kernel_of_nonzero_scalar_elliptic_kernel
+    {a b c d e R : ℝ}
+    (hR : R ≠ 0)
+    (hker : binaryHankelMul a b c d e (![R, 0, R] : Fin 3 → ℝ) = 0) :
+    binaryHankelMul a b c d e (![1, 0, 1] : Fin 3 → ℝ) = 0 := by
+  have hscale :
+      (![R, 0, R] : Fin 3 → ℝ) = R • (![1, 0, 1] : Fin 3 → ℝ) := by
+    ext i
+    fin_cases i <;> simp [Pi.smul_apply]
+  rw [hscale] at hker
+  exact binaryHankelMul_eq_zero_of_smul_eq_zero (a := a) (b := b)
+    (c := c) (d := d) (e := e) (k := R) hR hker
+
 theorem exists_nonzero_binaryHankel_kernel_equations_of_finrank_range_le_two
     {a b c d e : ℝ}
     (hrank :
