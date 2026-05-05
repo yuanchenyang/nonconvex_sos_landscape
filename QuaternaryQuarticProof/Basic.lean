@@ -371,6 +371,26 @@ def HasRankTwoNegativeSquareData
                   (x : Poly) ≠ 0 ∧
                     B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0
 
+def HasRankTwoExistentialBinaryFormData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+      A ≤ linearAnnihilator B p u →
+        IsCompl A W →
+          x ∈ W →
+            (x : Poly) ≠ 0 →
+              Module.finrank ℝ A = 2 →
+                Module.finrank ℝ W = 2 →
+                  ∃ y : linSubmodule,
+                    y ∈ W ∧
+                      y ∉ ℝ ∙ x ∧
+                        HasBinaryLowRankNegativeNormalForm
+                          (binaryRestrictionCoeffA B p u x)
+                          (binaryRestrictionCoeffB B p u x y)
+                          (binaryRestrictionCoeffC B p u x y)
+                          (binaryRestrictionCoeffD B p u x y)
+                          (binaryRestrictionCoeffE B p u y)
+
 def HasRankCaseKernelDecompositionApolarData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u) : Prop :=
@@ -1392,6 +1412,47 @@ theorem hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_rankTwo
   · intro hrank3
     exact hbound3 hrank3
 
+theorem hasRankTwoNegativeSquareData_of_existentialBinaryFormData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hforms : HasRankTwoExistentialBinaryFormData B p u) :
+    HasRankTwoNegativeSquareData B p u := by
+  intro hrank2 A W hAann hAW hAdim hWdim
+  have hWpos : 0 < Module.finrank ℝ W := by omega
+  rcases exists_mem_ne_zero_of_finrank_pos (K := ℝ) (V := linSubmodule)
+      (s := W) hWpos with
+    ⟨x, hxW, hxne⟩
+  have hx : (x : Poly) ≠ 0 := by
+    intro hzero
+    exact hxne (Subtype.ext hzero)
+  rcases hforms hrank2 A W x hAann hAW hxW hx hAdim hWdim with
+    ⟨y, hyW, hynot, hform⟩
+  rcases exists_negative_pure_square_of_binaryLowRankNormalForm
+      (B := B) (p := p) (u := u)
+      (x := x) (y := y) hform
+      (binaryRestriction_eval_eq B p u x y) with
+    ⟨z, hzspan, hneg⟩
+  have hzW : z ∈ W := by
+    have hspan : Submodule.span ℝ ({x, y} : Set linSubmodule) = W :=
+      span_rank_two_support_pair_eq hx hxW hyW hynot hWdim
+    rwa [hspan] at hzspan
+  have hz : (z : Poly) ≠ 0 := by
+    intro hzero
+    have hval_zero :
+        B ((linProduct z z : quadSubmodule).1^2) (residual p u) = 0 := by
+      simp [linProduct, hzero]
+    linarith
+  exact ⟨z, hzW, hz, hneg⟩
+
+theorem hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_binaryForms
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hbounds : HasRankCaseAnnihilatorMapBounds B p u)
+    (hforms : HasRankTwoExistentialBinaryFormData B p u) :
+    HasRankCaseNegativeSquareApolarData B p u hu :=
+  hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_rankTwo
+    (hu := hu) hbounds
+    (hasRankTwoNegativeSquareData_of_existentialBinaryFormData hforms)
+
 theorem hasRankCaseKernelDecompositionApolarData_of_productIndependenceApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -1779,6 +1840,19 @@ theorem residual_eq_zero_of_annihilatorBounds_and_rankTwoNegativeSquare
     (hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_rankTwo
       (hu := hu) hbounds hneg2)
 
+theorem residual_eq_zero_of_annihilatorBounds_and_binaryForms
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hbounds : HasRankCaseAnnihilatorMapBounds B p u)
+    (hforms : HasRankTwoExistentialBinaryFormData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_negativeSquareApolarData
+    (B := B) hu hp hsocp
+    (hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_binaryForms
+      (hu := hu) hbounds hforms)
+
 theorem residual_eq_zero_of_rankCaseSupportData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -1976,6 +2050,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_annihilatorBounds_and_ra
     (B := B) hu hp hsocp
     (hbounds B p u hu hB hp hsocp)
     (hneg2 B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_annihilatorBounds_and_binaryForms
+    (hbounds :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseAnnihilatorMapBounds B p u)
+    (hforms :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialBinaryFormData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_annihilatorBounds_and_binaryForms
+    (B := B) hu hp hsocp
+    (hbounds B p u hu hB hp hsocp)
+    (hforms B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseSupportData
     (hdata :

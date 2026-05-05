@@ -6655,4 +6655,47 @@ negative-square theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Separating binary forms from negative squares}
+
+\paragraph{Gap targeted.}
+The binary normal-form-to-negative-square implication was still embedded in a
+larger rank-case bridge.  It is one of the remaining blueprint components and
+should be exposed directly.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankTwoExistentialBinaryFormData}
+\]
+and proved
+\[
+\texttt{hasRankTwoNegativeSquareData\_of\_existentialBinaryFormData}.
+\]
+This theorem chooses a nonzero vector in the two-dimensional support plane,
+uses the existential binary normal form to complete it to a pair, applies the
+binary negative-square lemma, and returns the negative pure square in the same
+plane.
+
+Added the combined bridge and root reduction theorem for
+\[
+\texttt{HasRankCaseAnnihilatorMapBounds}
+\]
+together with
+\[
+\texttt{HasRankTwoExistentialBinaryFormData}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+completes successfully.
+
+\paragraph{Remaining blockers.}
+The formal proof is now organized around two named inputs matching the
+blueprint: low-rank apolar support bounds and the rank-two binary normal-form
+or negative-square theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
