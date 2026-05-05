@@ -2557,6 +2557,18 @@ theorem residual_eq_zero_of_rankCaseAnnihilatorMapBounds_and_canonicalKernelData
     (hasLowRankApolarAnnihilatorMapTheorem_of_rankCaseAnnihilatorMapBounds hbounds)
     hcanon
 
+theorem residual_eq_zero_of_rankCaseAnnihilatorMapBounds_and_kernelEquationData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hbounds : HasRankCaseAnnihilatorMapBounds B p u)
+    (hcases : HasRankTwoExistentialKernelEquationData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_rankCaseAnnihilatorMapBounds_and_canonicalKernelData
+    (B := B) hu hp hsocp hbounds
+    (hasRankTwoExistentialCanonicalKernelData_of_kernelEquationData hcases)
+
 theorem residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -3087,6 +3099,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseAnnihilatorMapBo
     (B := B) hu hp hsocp
     (hbounds B p u hu hB hp hsocp)
     (hcanon B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseAnnihilatorMapBounds_and_kernelEquationData
+    (hbounds :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseAnnihilatorMapBounds B p u)
+    (hcases :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialKernelEquationData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_rankCaseAnnihilatorMapBounds_and_kernelEquationData
+    (B := B) hu hp hsocp
+    (hbounds B p u hu hB hp hsocp)
+    (hcases B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
     (hprod :

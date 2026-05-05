@@ -7976,4 +7976,42 @@ arguments.
 
 No Julia numerical claims were used in this round.
 
+\section*{Root route from exact bounds and kernel equations}
+
+\paragraph{Gap targeted.}
+The newest root reductions still required future proof code to pass through
+canonical or normalized rank-two packages, even when the blueprint naturally
+produces the three kernel-equation cases.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{residual\_eq\_zero\_of\_rankCaseAnnihilatorMapBounds\_and\_kernelEquationData}
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_rankCaseAnnihilatorMapBounds\_and\_kernelEquationData}.
+\]
+These use the new kernel-equation-to-canonical bridge internally.
+
+\paragraph{Strategy change.}
+The proof can now target the blueprint-shaped pair of inputs directly:
+exact-rank annihilator-map bounds and rank-two kernel-equation cases.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The remaining mathematical work is proving the exact-rank annihilator-map
+bounds and rank-two kernel-equation cases from the apolar Hilbert-function and
+binary change-of-basis arguments.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
