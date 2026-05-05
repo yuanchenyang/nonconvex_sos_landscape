@@ -3055,6 +3055,29 @@ theorem hasRankTwoUniversalNormalizedHankelData_of_universalNormalizedPosition_a
     hpos hneg
     (universalBinaryHankelRankBound_of_universalNormalizedKernelPositionData hpos)
 
+theorem hasRankTwoUniversalNormalizedHankelData_of_universalNormalizedPosition_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u) :
+    HasRankTwoUniversalNormalizedHankelData B p u :=
+  hasRankTwoUniversalNormalizedHankelData_of_universalNormalizedPosition_and_HankelNegative
+    hpos
+    (hasRankTwoUniversalHankelNegativeData_of_point
+      (B := B) (p := p) (u := u) hu hp hfocp)
+
+theorem hasRankTwoUniversalKernelBranchData_of_universalNormalizedPosition_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u) :
+    HasRankTwoUniversalKernelBranchData B p u :=
+  hasRankTwoUniversalKernelBranchData_of_universalNormalizedHankelData
+    (hasRankTwoUniversalNormalizedHankelData_of_universalNormalizedPosition_of_point
+      (B := B) (p := p) (u := u) hu hp hfocp hpos)
+
 theorem hasRankCaseKernelEquationApolarData_of_annihilatorBounds_and_universalKernelEquationData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

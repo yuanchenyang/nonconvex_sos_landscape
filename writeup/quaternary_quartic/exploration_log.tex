@@ -9406,4 +9406,44 @@ kernel-position component for the rank-two branch.
 
 No Julia numerical claims were used in this round.
 
+\section*{Pointwise normalized position packages full rank-two branch data}
+
+\paragraph{Gap targeted.}
+The normalized-position route had several equivalent packages in Lean, but the
+pointwise conversion from normalized position to the full normalized-Hankel and
+kernel-branch packages was not named directly.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankTwoUniversalNormalizedHankelData\_of\_universalNormalizedPosition\_of\_point}
+\]
+and
+\[
+\texttt{hasRankTwoUniversalKernelBranchData\_of\_universalNormalizedPosition\_of\_point}.
+\]
+Both use the previously formalized theorem deriving universal Hankel
+negativity from the point hypotheses, then apply the existing normalized
+position conversions.
+
+\paragraph{Strategy change.}
+Any future proof of the universal normalized kernel-position component can now
+be fed directly into either the normalized-Hankel route or the kernel-branch
+route for actual SOCP points.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove rank-case apolar support bounds and construct the universal normalized
+kernel-position component for the rank-two branch.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
