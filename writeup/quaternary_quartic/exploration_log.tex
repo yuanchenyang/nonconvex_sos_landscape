@@ -14105,4 +14105,33 @@ Hilbert-first and rank-three Macaulay/O-sequence growth.
 
 No Julia numerical claims were used in this round.
 
+\section*{Expose rank-two support branch}
+
+\paragraph{Gap targeted.}
+The rank-two remaining obligation was phrased as a Hilbert-first inequality.
+The existing support development uses the equivalent statement that the
+linear annihilator has codimension at most two.
+
+\paragraph{Lean progress.}
+Added the global package
+\[
+\texttt{HasGlobalRankTwoApolarSupportBound}
+\]
+and proved it equivalent to both the rank-two essential quotient package and
+the rank-two Hilbert-first package.  Added the root equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoSupport\_and\_rankThreeMacaulayBound}.
+\]
+
+\paragraph{Strategy change.}
+The remaining proof can now be attacked through two concrete branches: the
+rank-two support/codimension theorem and the rank-three Macaulay/O-sequence
+bound.  This aligns the rank-two branch with the support-geometry lemmas
+already present in \texttt{QuaternaryQuarticProof/Support.lean}.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -870,6 +870,15 @@ def HasGlobalRankTwoThreeApolarSupportBounds : Prop :=
           (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
             HasLinearAnnihilatorCodimAtMost B p u 3)
 
+def HasGlobalRankTwoApolarSupportBound : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+            HasLinearAnnihilatorCodimAtMost B p u 2
+
 def HasGlobalRankTwoThreeApolarEssentialQuotientBounds : Prop :=
   ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u),
@@ -8515,6 +8524,26 @@ theorem globalRankTwoThreeApolarSupportBounds_of_globalRankTwoThreeApolarEssenti
     rankThreeSupportBound_of_rankThreeEssentialQuotientBound
       (hquot B p u hu hB hp hsocp).2⟩
 
+theorem globalRankTwoApolarSupportBound_of_globalRankTwoApolarEssentialQuotientBound
+    (hquot : HasGlobalRankTwoApolarEssentialQuotientBound) :
+    HasGlobalRankTwoApolarSupportBound := by
+  intro B p u hu hB hp hsocp
+  exact rankTwoSupportBound_of_rankTwoEssentialQuotientBound
+    (hquot B p u hu hB hp hsocp)
+
+theorem globalRankTwoApolarEssentialQuotientBound_of_globalRankTwoApolarSupportBound
+    (hsupport : HasGlobalRankTwoApolarSupportBound) :
+    HasGlobalRankTwoApolarEssentialQuotientBound := by
+  intro B p u hu hB hp hsocp
+  exact rankTwoEssentialQuotientBound_of_rankTwoSupportBound
+    (hsupport B p u hu hB hp hsocp)
+
+theorem globalRankTwoApolarSupportBound_iff_globalRankTwoApolarEssentialQuotientBound :
+    HasGlobalRankTwoApolarSupportBound ↔
+      HasGlobalRankTwoApolarEssentialQuotientBound :=
+  ⟨globalRankTwoApolarEssentialQuotientBound_of_globalRankTwoApolarSupportBound,
+    globalRankTwoApolarSupportBound_of_globalRankTwoApolarEssentialQuotientBound⟩
+
 theorem globalRankTwoThreeApolarEssentialQuotientBounds_iff_globalRankTwoThreeApolarSupportBounds :
     HasGlobalRankTwoThreeApolarEssentialQuotientBounds ↔
       HasGlobalRankTwoThreeApolarSupportBounds :=
@@ -8663,6 +8692,26 @@ theorem globalRankTwoApolarHilbertFirstBound_iff_globalRankTwoApolarEssentialQuo
   ⟨globalRankTwoApolarEssentialQuotientBound_of_globalRankTwoApolarHilbertFirstBound,
     globalRankTwoApolarHilbertFirstBound_of_globalRankTwoApolarEssentialQuotientBound⟩
 
+theorem globalRankTwoApolarSupportBound_of_globalRankTwoApolarHilbertFirstBound
+    (hhilbert : HasGlobalRankTwoApolarHilbertFirstBound) :
+    HasGlobalRankTwoApolarSupportBound :=
+  globalRankTwoApolarSupportBound_of_globalRankTwoApolarEssentialQuotientBound
+    (globalRankTwoApolarEssentialQuotientBound_of_globalRankTwoApolarHilbertFirstBound
+      hhilbert)
+
+theorem globalRankTwoApolarHilbertFirstBound_of_globalRankTwoApolarSupportBound
+    (hsupport : HasGlobalRankTwoApolarSupportBound) :
+    HasGlobalRankTwoApolarHilbertFirstBound :=
+  globalRankTwoApolarHilbertFirstBound_of_globalRankTwoApolarEssentialQuotientBound
+    (globalRankTwoApolarEssentialQuotientBound_of_globalRankTwoApolarSupportBound
+      hsupport)
+
+theorem globalRankTwoApolarSupportBound_iff_globalRankTwoApolarHilbertFirstBound :
+    HasGlobalRankTwoApolarSupportBound ↔
+      HasGlobalRankTwoApolarHilbertFirstBound :=
+  ⟨globalRankTwoApolarHilbertFirstBound_of_globalRankTwoApolarSupportBound,
+    globalRankTwoApolarSupportBound_of_globalRankTwoApolarHilbertFirstBound⟩
+
 theorem globalRankThreeApolarHilbertFirstBound_of_globalRankThreeApolarEssentialQuotientBound
     (hquot : HasGlobalRankThreeApolarEssentialQuotientBound) :
     HasGlobalRankThreeApolarHilbertFirstBound := by
@@ -8786,6 +8835,32 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoHilbertFir
     exact ⟨hdata.1, hdata.2.2⟩
   · intro hdata
     exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoHilbertFirst_and_rankThreeMacaulayBound
+      hdata.1 hdata.2
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoSupport_and_rankThreeMacaulayBound
+    (hsupport2 : HasGlobalRankTwoApolarSupportBound)
+    (hmac3 : HasGlobalRankThreeApolarBadBranchMacaulayBound) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoHilbertFirst_and_rankThreeMacaulayBound
+    (globalRankTwoApolarHilbertFirstBound_of_globalRankTwoApolarSupportBound
+      hsupport2)
+    hmac3
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoSupport_and_rankThreeMacaulayBound :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoApolarSupportBound ∧
+        HasGlobalRankThreeApolarBadBranchMacaulayBound := by
+  constructor
+  · intro hmain
+    have hdata :=
+      (quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoHilbertFirst_and_rankThreeMacaulayBound).mp
+        hmain
+    exact ⟨
+      globalRankTwoApolarSupportBound_of_globalRankTwoApolarHilbertFirstBound
+        hdata.1,
+      hdata.2⟩
+  · intro hdata
+    exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoSupport_and_rankThreeMacaulayBound
       hdata.1 hdata.2
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch
