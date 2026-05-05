@@ -378,6 +378,65 @@ theorem elliptic_shearX_diagonal_yCoeff_ne_zero
   have hD : binaryKernelDiscriminant r s t ≠ 0 := ne_of_lt hdisc_neg
   exact div_ne_zero (neg_ne_zero.mpr hD) (mul_ne_zero (by norm_num) hr)
 
+theorem isBinaryQuadraticPullback_diagonal_to_equal_coeff
+    {R T : ℝ} (hT : T ≠ 0) (hratio : 0 < R / T) :
+    IsBinaryQuadraticPullback R 0 T R 0 R 1 0 0 (Real.sqrt (R / T)) := by
+  convert isBinaryQuadraticPullback_diagonal R 0 T 1 (Real.sqrt (R / T)) using 1
+  · ring
+  · ring
+  · rw [Real.sq_sqrt (le_of_lt hratio)]
+    field_simp [hT]
+
+theorem elliptic_shearX_diagonal_ratio_pos
+    {r s t : ℝ}
+    (hdisc_neg : binaryKernelDiscriminant r s t < 0) :
+    0 < r / (-binaryKernelDiscriminant r s t / (4 * r)) := by
+  have hr : r ≠ 0 := elliptic_xCoeff_ne_zero
+    (r := r) (s := s) (t := t) hdisc_neg
+  have hr_sq_pos : 0 < r^2 := sq_pos_of_ne_zero hr
+  have hnegD_pos : 0 < -binaryKernelDiscriminant r s t := by linarith
+  have hratio_eq :
+      r / (-binaryKernelDiscriminant r s t / (4 * r)) =
+        (4 * r^2) / (-binaryKernelDiscriminant r s t) := by
+    field_simp [hr, ne_of_gt hnegD_pos]
+  rw [hratio_eq]
+  exact div_pos (by nlinarith) hnegD_pos
+
+theorem isBinaryQuadraticPullback_elliptic_diagonal_to_equal_coeff
+    {r s t : ℝ}
+    (hdisc_neg : binaryKernelDiscriminant r s t < 0) :
+    IsBinaryQuadraticPullback
+      r 0 (-binaryKernelDiscriminant r s t / (4 * r))
+      r 0 r 1 0 0
+      (Real.sqrt (r / (-binaryKernelDiscriminant r s t / (4 * r)))) := by
+  exact isBinaryQuadraticPullback_diagonal_to_equal_coeff
+    (R := r) (T := -binaryKernelDiscriminant r s t / (4 * r))
+    (elliptic_shearX_diagonal_yCoeff_ne_zero
+      (r := r) (s := s) (t := t) hdisc_neg)
+    (elliptic_shearX_diagonal_ratio_pos
+      (r := r) (s := s) (t := t) hdisc_neg)
+
+theorem exists_binaryQuadraticPullback_elliptic_to_equal_coeff
+    {r s t : ℝ}
+    (hdisc_neg : binaryKernelDiscriminant r s t < 0) :
+    ∃ alpha beta gamma delta R : ℝ,
+      R ≠ 0 ∧
+        IsBinaryQuadraticPullback r s t R 0 R alpha beta gamma delta := by
+  have hr : r ≠ 0 := elliptic_xCoeff_ne_zero
+    (r := r) (s := s) (t := t) hdisc_neg
+  let T := -binaryKernelDiscriminant r s t / (4 * r)
+  let delta := Real.sqrt (r / T)
+  have hfirst : IsBinaryQuadraticPullback r s t r 0 T 1 (-s / (2 * r)) 0 1 := by
+    simpa [T] using
+      isBinaryQuadraticPullback_elliptic_shearX_to_diagonal
+        (r := r) (s := s) (t := t) hdisc_neg
+  have hsecond : IsBinaryQuadraticPullback r 0 T r 0 r 1 0 0 delta := by
+    simpa [T, delta] using
+      isBinaryQuadraticPullback_elliptic_diagonal_to_equal_coeff
+        (r := r) (s := s) (t := t) hdisc_neg
+  refine ⟨1, -s / (2 * r) * delta, 0, delta, r, hr, ?_⟩
+  simpa [T, delta, add_comm, add_left_comm, add_assoc] using hfirst.comp hsecond
+
 def binaryHankelMul (a b c d e : ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ![a * v 0 + b * v 1 + c * v 2,
     b * v 0 + c * v 1 + d * v 2,

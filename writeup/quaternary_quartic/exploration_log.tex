@@ -11066,4 +11066,52 @@ pullbacks to transformed binary Hankel canonical data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Elliptic binary kernel equal-diagonal scaling}
+
+\paragraph{Gap targeted.}
+The previous elliptic round diagonalized the kernel quadratic to
+\[
+rX^2-\frac{D}{4r}Y^2
+\]
+with \(D<0\).  The next scalar step is to rescale \(Y\) so the diagonal
+coefficients are equal, matching a scalar multiple of \(X^2+Y^2\).
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{isBinaryQuadraticPullback\_diagonal\_to\_equal\_coeff},
+\quad
+\texttt{elliptic\_shearX\_diagonal\_ratio\_pos},
+\]
+\[
+\texttt{isBinaryQuadraticPullback\_elliptic\_diagonal\_to\_equal\_coeff},
+\quad
+\texttt{exists\_binaryQuadraticPullback\_elliptic\_to\_equal\_coeff}.
+\]
+The final theorem states that a negative-discriminant binary quadratic admits a
+quadratic pullback to \((R,0,R)\) with \(R\ne0\).
+
+\paragraph{Strategy change.}
+The scalar elliptic branch is now complete at the quadratic-normalization
+level.  Remaining binary work should connect these normalized quadratic
+pullbacks to transformed Hankel kernel data, then reuse the existing canonical
+elliptic branch.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support and the
+link from normalized quadratic pullbacks to transformed binary Hankel canonical
+data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
