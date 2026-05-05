@@ -13,6 +13,9 @@ def binaryQuarticEval (a b c d e x y : ℝ) : ℝ :=
 def binaryHankelQuad (a b c d e r s t : ℝ) : ℝ :=
   a * r^2 + 2 * b * r * s + 2 * c * r * t + c * s^2 + 2 * d * s * t + e * t^2
 
+def HasBinaryHankelNegativeValue (a b c d e : ℝ) : Prop :=
+  ∃ r s t : ℝ, binaryHankelQuad a b c d e r s t < 0
+
 def HasBinaryLowRankNegativeNormalForm (a b c d e : ℝ) : Prop :=
   (∃ ρ α β : ℝ,
     ρ < 0 ∧
@@ -75,6 +78,13 @@ theorem HasBinaryLowRankNegativeNormalForm.xyKernel
     HasBinaryLowRankNegativeNormalForm a 0 0 0 e := by
   exact Or.inr (Or.inl ⟨rfl, rfl, rfl, hneg⟩)
 
+theorem HasBinaryLowRankNegativeNormalForm.xyKernel_of_negative_hankel
+    {a e : ℝ} (hneg : HasBinaryHankelNegativeValue a 0 0 0 e) :
+    HasBinaryLowRankNegativeNormalForm a 0 0 0 e := by
+  rcases hneg with ⟨r, _s, t, hneg⟩
+  exact HasBinaryLowRankNegativeNormalForm.xyKernel
+    ⟨r, t, by simpa [binaryHankelQuad] using hneg⟩
+
 theorem HasBinaryLowRankNegativeNormalForm.ySqKernel
     {a b : ℝ} (hb : b ≠ 0) :
     HasBinaryLowRankNegativeNormalForm a b 0 0 0 := by
@@ -84,6 +94,21 @@ theorem HasBinaryLowRankNegativeNormalForm.ellipticKernel
     {a b : ℝ} (hne : a ≠ 0 ∨ b ≠ 0) :
     HasBinaryLowRankNegativeNormalForm a b (-a) (-b) a := by
   exact Or.inr (Or.inr (Or.inr ⟨rfl, rfl, rfl, hne⟩))
+
+theorem ellipticKernel_nonzero_of_negative_hankel
+    {a b : ℝ} (hneg : HasBinaryHankelNegativeValue a b (-a) (-b) a) :
+    a ≠ 0 ∨ b ≠ 0 := by
+  by_contra hzero
+  push Not at hzero
+  rcases hneg with ⟨r, s, t, hneg⟩
+  rw [hzero.1, hzero.2] at hneg
+  norm_num [binaryHankelQuad] at hneg
+
+theorem HasBinaryLowRankNegativeNormalForm.ellipticKernel_of_negative_hankel
+    {a b : ℝ} (hneg : HasBinaryHankelNegativeValue a b (-a) (-b) a) :
+    HasBinaryLowRankNegativeNormalForm a b (-a) (-b) a :=
+  HasBinaryLowRankNegativeNormalForm.ellipticKernel
+    (ellipticKernel_nonzero_of_negative_hankel hneg)
 
 theorem HasBinaryLowRankNegativeNormalForm.of_xyKernel_equations
     {a b c d e : ℝ}

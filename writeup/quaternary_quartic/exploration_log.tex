@@ -6823,4 +6823,46 @@ remain the two main mathematical inputs.
 
 No Julia numerical claims were used in this round.
 
+\section*{Hankel negativity side conditions}
+
+\paragraph{Gap targeted.}
+The binary kernel cases still carried side conditions in different forms:
+the \(xy\)-kernel branch needed a negative diagonal quadratic value, and the
+elliptic branch needed \(a\ne0\) or \(b\ne0\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasBinaryHankelNegativeValue}
+\]
+as a named predicate for a negative value of the \(3\times3\) Hankel quadratic
+form.  Proved that this predicate supplies the diagonal negative value in the
+\(xy\)-kernel case via
+\[
+\texttt{HasBinaryLowRankNegativeNormalForm.xyKernel\_of\_negative\_hankel},
+\]
+and supplies the nonzero side condition in the elliptic case via
+\[
+\texttt{ellipticKernel\_nonzero\_of\_negative\_hankel}
+\]
+and
+\[
+\texttt{HasBinaryLowRankNegativeNormalForm.ellipticKernel\_of\_negative\_hankel}.
+\]
+
+\paragraph{Strategy change.}
+The eventual rank-two Hankel classification can now pass around a single
+negative-Hankel-value hypothesis for the diagonal and elliptic kernel branches,
+rather than separately deriving each downstream side condition.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The rank-two \(y^2\)-kernel branch still needs the rank-two/nonzero-minor
+argument that forces \(b\ne0\).  The low-rank apolar support theorem is still
+the other main blocker.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
