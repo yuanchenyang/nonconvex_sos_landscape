@@ -7330,4 +7330,40 @@ rank-two scalar Hankel data theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Universal binary classification separated from scalar facts}
+
+\paragraph{Gap targeted.}
+The rank-two scalar Hankel interface bundled the universal scalar
+classification theorem with the local restricted-Hankel negativity and rank
+facts.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasUniversalBinaryRankTwoCanonicalKernelClassification}
+\]
+for the coefficient-only theorem, and
+\[
+\texttt{HasRankTwoExistentialScalarHankelFacts}
+\]
+for the local existence of a second support direction with a negative Hankel
+value and restricted Hankel rank at most two.  Proved bridges from the
+universal theorem plus scalar facts to scalar Hankel data, canonical data,
+binary normal-form data, residual zero, and the root reduction.
+
+\paragraph{Strategy change.}
+The binary blocker is now split into a reusable scalar classification theorem
+over five real coefficients and a separate geometric/restriction theorem that
+supplies the local rank and negativity facts.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The open inputs are the product-kernel low-rank support decomposition, the
+universal scalar binary classification theorem, and the rank-two scalar Hankel
+facts theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

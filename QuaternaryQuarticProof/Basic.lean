@@ -518,6 +518,38 @@ def HasRankTwoExistentialScalarHankelData
                               (binaryRestrictionCoeffD B p u x y)
                               (binaryRestrictionCoeffE B p u y))) ≤ 2
 
+def HasUniversalBinaryRankTwoCanonicalKernelClassification : Prop :=
+  ∀ a b c d e : ℝ,
+    HasBinaryRankTwoCanonicalKernelClassification a b c d e
+
+def HasRankTwoExistentialScalarHankelFacts
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+      A ≤ linearAnnihilator B p u →
+        IsCompl A W →
+          x ∈ W →
+            (x : Poly) ≠ 0 →
+              Module.finrank ℝ A = 2 →
+                Module.finrank ℝ W = 2 →
+                  ∃ y : linSubmodule,
+                    y ∈ W ∧
+                      y ∉ ℝ ∙ x ∧
+                        HasBinaryHankelNegativeValue
+                          (binaryRestrictionCoeffA B p u x)
+                          (binaryRestrictionCoeffB B p u x y)
+                          (binaryRestrictionCoeffC B p u x y)
+                          (binaryRestrictionCoeffD B p u x y)
+                          (binaryRestrictionCoeffE B p u y) ∧
+                        Module.finrank ℝ
+                          (LinearMap.range
+                            (binaryHankelLinearMap
+                              (binaryRestrictionCoeffA B p u x)
+                              (binaryRestrictionCoeffB B p u x y)
+                              (binaryRestrictionCoeffC B p u x y)
+                              (binaryRestrictionCoeffD B p u x y)
+                              (binaryRestrictionCoeffE B p u y))) ≤ 2
+
 def HasRankCaseKernelDecompositionApolarData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u) : Prop :=
@@ -1642,6 +1674,30 @@ theorem hasRankTwoExistentialCanonicalKernelData_of_scalarHankelData
     ⟨y, hyW, hynot, hclass, hneg, hrank⟩
   exact ⟨y, hyW, hynot, hclass hneg hrank⟩
 
+theorem hasRankTwoExistentialScalarHankelData_of_universal_and_facts
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hclass : HasUniversalBinaryRankTwoCanonicalKernelClassification)
+    (hfacts : HasRankTwoExistentialScalarHankelFacts B p u) :
+    HasRankTwoExistentialScalarHankelData B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases hfacts hrank2 A W x hAann hAW hxW hx hAdim hWdim with
+    ⟨y, hyW, hynot, hneg, hrank⟩
+  refine ⟨y, hyW, hynot, ?_, hneg, hrank⟩
+  exact hclass
+    (binaryRestrictionCoeffA B p u x)
+    (binaryRestrictionCoeffB B p u x y)
+    (binaryRestrictionCoeffC B p u x y)
+    (binaryRestrictionCoeffD B p u x y)
+    (binaryRestrictionCoeffE B p u y)
+
+theorem hasRankTwoExistentialCanonicalKernelData_of_universal_and_facts
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hclass : HasUniversalBinaryRankTwoCanonicalKernelClassification)
+    (hfacts : HasRankTwoExistentialScalarHankelFacts B p u) :
+    HasRankTwoExistentialCanonicalKernelData B p u :=
+  hasRankTwoExistentialCanonicalKernelData_of_scalarHankelData
+    (hasRankTwoExistentialScalarHankelData_of_universal_and_facts hclass hfacts)
+
 theorem hasRankTwoExistentialBinaryFormData_of_canonicalKernelData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hcanon : HasRankTwoExistentialCanonicalKernelData B p u) :
@@ -1658,6 +1714,14 @@ theorem hasRankTwoExistentialBinaryFormData_of_scalarHankelData
     HasRankTwoExistentialBinaryFormData B p u :=
   hasRankTwoExistentialBinaryFormData_of_canonicalKernelData
     (hasRankTwoExistentialCanonicalKernelData_of_scalarHankelData hscalar)
+
+theorem hasRankTwoExistentialBinaryFormData_of_universal_and_facts
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hclass : HasUniversalBinaryRankTwoCanonicalKernelClassification)
+    (hfacts : HasRankTwoExistentialScalarHankelFacts B p u) :
+    HasRankTwoExistentialBinaryFormData B p u :=
+  hasRankTwoExistentialBinaryFormData_of_scalarHankelData
+    (hasRankTwoExistentialScalarHankelData_of_universal_and_facts hclass hfacts)
 
 theorem hasRankTwoNegativeSquareData_of_existentialBinaryFormData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -2211,6 +2275,19 @@ theorem residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_scalarHa
     (B := B) hu hp hsocp hprod
     (hasRankTwoExistentialCanonicalKernelData_of_scalarHankelData hscalar)
 
+theorem residual_eq_zero_of_productKernelSupport_and_universalBinaryClassification_and_scalarFacts
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hprod : HasLowRankApolarProductKernelDecomposition B p u)
+    (hclass : HasUniversalBinaryRankTwoCanonicalKernelClassification)
+    (hfacts : HasRankTwoExistentialScalarHankelFacts B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_scalarHankelData
+    (B := B) hu hp hsocp hprod
+    (hasRankTwoExistentialScalarHankelData_of_universal_and_facts hclass hfacts)
+
 theorem residual_eq_zero_of_rankCaseSupportData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -2615,6 +2692,31 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarProductKern
     (B := B) hu hp hsocp
     (hprod B p u hu hB hp hsocp)
     (hscalar B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_productKernelSupport_and_universalBinaryClassification_and_scalarFacts
+    (hprod :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarProductKernelDecomposition B p u)
+    (hclass : HasUniversalBinaryRankTwoCanonicalKernelClassification)
+    (hfacts :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialScalarHankelFacts B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_productKernelSupport_and_universalBinaryClassification_and_scalarFacts
+    (B := B) hu hp hsocp
+    (hprod B p u hu hB hp hsocp)
+    hclass
+    (hfacts B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseSupportData
     (hdata :
