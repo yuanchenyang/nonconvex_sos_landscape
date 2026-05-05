@@ -2598,6 +2598,18 @@ theorem hasRankTwoUniversalKernelEquationData_of_universalKernelBranchData
   exact binaryRestriction_kernelEquationCase_of_kernelBranchCertificate
     (hbranches hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim)
 
+theorem hasRankTwoUniversalNormalizedHankelData_of_universalKernelBranchData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hbranches : HasRankTwoUniversalKernelBranchData B p u) :
+    HasRankTwoUniversalNormalizedHankelData B p u := by
+  intro hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+  have hcert :=
+    hbranches hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+  exact ⟨
+    binaryNormalizedKernelPosition_of_kernelBranchCertificate hcert,
+    binaryHankelNegativeValue_of_kernelBranchCertificate hcert,
+    binaryHankelLinearMap_finrank_range_le_two_of_kernelBranchCertificate hcert⟩
+
 theorem hasRankTwoUniversalNormalizedHankelData_of_universalCanonicalKernelData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hcanon : HasRankTwoUniversalCanonicalKernelData B p u) :

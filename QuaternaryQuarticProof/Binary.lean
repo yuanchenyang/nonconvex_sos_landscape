@@ -998,6 +998,44 @@ theorem binaryHankelNegativeValue_of_canonicalKernelData
     exact y_sq_kernel_binaryHankelNegativeValue_of_column_linearIndependent hySq.2
   · exact hell.2
 
+theorem binaryNormalizedKernelPosition_of_kernelBranchCertificate
+    {a b c d e : ℝ}
+    (hcert : HasBinaryKernelBranchCertificate a b c d e) :
+    HasBinaryNormalizedKernelPosition a b c d e := by
+  rcases hcert with hxy | hySq | hell
+  · rcases hxy with ⟨hb, hc, hd, _hneg⟩
+    exact Or.inl (by
+      ext i
+      fin_cases i <;> simp [binaryHankelMul, hb, hc, hd])
+  · rcases hySq with ⟨hc, hd, he, hLI⟩
+    exact Or.inr (Or.inl ⟨by
+      ext i
+      fin_cases i <;> simp [binaryHankelMul, hc, hd, he], hLI⟩)
+  · rcases hell with ⟨hc, hd, he, _hneg⟩
+    exact Or.inr (Or.inr (by
+      ext i
+      fin_cases i <;> simp [binaryHankelMul, hc, hd, he]))
+
+theorem binaryHankelNegativeValue_of_kernelBranchCertificate
+    {a b c d e : ℝ}
+    (hcert : HasBinaryKernelBranchCertificate a b c d e) :
+    HasBinaryHankelNegativeValue a b c d e := by
+  rcases hcert with hxy | hySq | hell
+  · exact hxy.2.2.2
+  · rcases hySq with ⟨hc, hd, he, hLI⟩
+    subst c
+    subst d
+    subst e
+    exact y_sq_kernel_binaryHankelNegativeValue_of_column_linearIndependent hLI
+  · exact hell.2.2.2
+
+theorem binaryHankelLinearMap_finrank_range_le_two_of_kernelBranchCertificate
+    {a b c d e : ℝ}
+    (hcert : HasBinaryKernelBranchCertificate a b c d e) :
+    Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2 :=
+  binaryHankelLinearMap_finrank_range_le_two_of_normalizedKernelPosition
+    (binaryNormalizedKernelPosition_of_kernelBranchCertificate hcert)
+
 theorem y_sq_kernel_binaryQuarticEval_exists_negative_of_rank_two
     (a b : ℝ) (_hneg : ∃ r s : ℝ, a * r^2 + 2 * b * r * s < 0)
     (hb : b ≠ 0) :

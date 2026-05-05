@@ -8749,4 +8749,39 @@ normalized-Hankel data theorem; then replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Branch certificates recover normalized Hankel data}
+
+\paragraph{Gap targeted.}
+The previous rounds routed normalized data into branch certificates, but the
+reverse direction was still implicit.  This made the two rank-two binary
+interfaces less interchangeable than the blueprint suggests.
+
+\paragraph{Lean progress.}
+Added binary lemmas proving that a branch certificate gives normalized kernel
+position, a Hankel-negative value, and the rank-two Hankel range bound.  Added
+\[
+\texttt{hasRankTwoUniversalNormalizedHankelData\_of\_universalKernelBranchData}.
+\]
+
+\paragraph{Strategy change.}
+The universal branch and universal normalized-Hankel packages are now connected
+in both directions, so later proof work can choose whichever formulation is
+easier to establish locally.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded after this
+change.  The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness
+built the selected targets and found the root theorem, then failed only at the
+final axiom audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the apolar support/decomposition theorem and one universal rank-two
+binary package; then replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
