@@ -4863,4 +4863,42 @@ blueprint.
 
 No Julia numerical claims were used in this round.
 
+\section*{Reducing the rank-three apolar branch to explicit negative support}
+
+\paragraph{Gap targeted.}
+The previous apolar assembler still accepted the rank-three branch as opaque
+\(\texttt{HasRankThreeAnnihilatorSupportData}\).  In the blueprint, rank three
+comes from an annihilator direction plus an explicitly negative quadratic
+supported on the remaining variables, so this should be exposed in Lean.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_component\_obligations\_with\_rank\_three\_support}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  It extends the previous
+assembler by replacing the opaque rank-three support-data input with:
+\begin{enumerate}
+\item \(\dim\operatorname{range}(\texttt{linearAnnihilatorMap})\le3\);
+\item an explicit \(q\in\texttt{linProductSubmodule W W}\) with
+  \(B(q^2,\texttt{residual p u})<0\).
+\end{enumerate}
+The proof constructs
+\(\texttt{HasLinearAnnihilatorCodimAtMost B p u 3}\) from the annihilator-map
+bound and then invokes the existing rank-three support constructor.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is still the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+All three rank branches are now exposed as concrete component obligations.
+The largest remaining mathematical gap is proving those obligations from the
+low-rank catalecticant support theorem and SOS negativity argument.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
