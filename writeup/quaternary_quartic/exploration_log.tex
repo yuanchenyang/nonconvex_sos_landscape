@@ -15291,4 +15291,48 @@ cokernel inequality follows from the formalized lemmas.
 
 No Julia numerical claims were used in this round.
 
+\section*{Low-codimension sym-square dimension consequences}
+
+\paragraph{Gap targeted.}
+The remaining Macaulay normal-form gap requires knowing exactly what a
+quadratic quotient of dimension \(1\) or \(2\) says about the underlying
+quadratic subspace.  This is needed to turn a future lex-containment
+normal-form statement into equality with the formalized lex models.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{finrank\_add\_finrank\_symSquare\_quotient\_eq\_six\_of\_le}.
+\]
+For \(P\subseteq\operatorname{Sym}^2(A)\), it gives
+\[
+\dim P+\dim(\operatorname{Sym}^2(A)/P)=6.
+\]
+Specializing this, proved
+\[
+\texttt{finrank\_eq\_five\_of\_symSquare\_quotient\_eq\_one},
+\qquad
+\texttt{finrank\_eq\_four\_of\_symSquare\_quotient\_eq\_two}.
+\]
+Finally, if \(P\) contains the corresponding lex model and has the matching
+quotient dimension, proved it is exactly that model:
+\[
+\texttt{eq\_spanPairProductsExceptZeroZero\_of\_le\_and\_quotient\_eq\_one},
+\]
+\[
+\texttt{eq\_spanPairProductsExceptZeroZeroZeroOne\_of\_le\_and\_quotient\_eq\_two}.
+\]
+
+\paragraph{Strategy change.}
+The finite Macaulay side is now ready to consume a coordinate-normal-form
+lemma.  The unresolved central algebraic point is solely to obtain the
+appropriate basis and lex containment/equality for arbitrary codimension-one
+and codimension-two quadratic subspaces.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
