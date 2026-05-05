@@ -7828,4 +7828,49 @@ construction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Root routes from exact annihilator bounds}
+
+\paragraph{Gap targeted.}
+After bridging exact-rank annihilator bounds to the monotone annihilator-map
+theorem, the root-facing reductions still exposed only the monotone interface.
+
+\paragraph{Lean progress.}
+Added residual and root reductions from
+\[
+\texttt{HasRankCaseAnnihilatorMapBounds}
+\]
+paired with either
+\[
+\texttt{HasRankTwoExistentialCanonicalKernelData}
+\]
+or
+\[
+\texttt{HasRankTwoExistentialNormalizedHankelData}.
+\]
+These reductions use
+\[
+\texttt{hasLowRankApolarAnnihilatorMapTheorem\_of\_rankCaseAnnihilatorMapBounds}
+\]
+internally.
+
+\paragraph{Strategy change.}
+The final theorem can now be reduced directly from exact-rank apolar
+annihilator bounds, matching the proof's rank \(1,2,3\) case split, plus either
+rank-two binary normal-form package.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The open mathematical inputs are exact-rank annihilator-map bounds and the
+rank-two canonical/normalized binary kernel construction.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
