@@ -947,6 +947,48 @@ theorem bounded_totalDegree_two_eq_add_bounded_totalDegree_one :
     _ = S1 + S1 := by
       rw [hS1D1]
 
+theorem bounded_totalDegree_three_eq_add_bounded_totalDegree_one_two :
+    ({s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 3} : Set (Fin 3 →₀ ℕ)) =
+      {s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 1} +
+        {s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 2} := by
+  let S1 : Set (Fin 3 →₀ ℕ) := {s | s.sum (fun _ e => e) ≤ 1}
+  let S2 : Set (Fin 3 →₀ ℕ) := {s | s.sum (fun _ e => e) ≤ 2}
+  let S3 : Set (Fin 3 →₀ ℕ) := {s | s.sum (fun _ e => e) ≤ 3}
+  let D1 : Set (Fin 3 →₀ ℕ) := Finsupp.degree ⁻¹' Set.Iic 1
+  let D2 : Set (Fin 3 →₀ ℕ) := Finsupp.degree ⁻¹' Set.Iic 2
+  let D3 : Set (Fin 3 →₀ ℕ) := Finsupp.degree ⁻¹' Set.Iic 3
+  have hS1D1 : S1 = D1 := by
+    ext s
+    simp [S1, D1, Set.mem_Iic, finsupp_degree_eq_total]
+  have hS2D2 : S2 = D2 := by
+    ext s
+    simp [S2, D2, Set.mem_Iic, finsupp_degree_eq_total]
+  have hS3D3 : S3 = D3 := by
+    ext s
+    simp [S3, D3, Set.mem_Iic, finsupp_degree_eq_total]
+  have hIic : (Set.Iic 1 + Set.Iic 2 : Set ℕ) = Set.Iic 3 := by
+    ext n
+    constructor
+    · rintro ⟨a, ha, b, hb, rfl⟩
+      simp only [Set.mem_Iic] at ha hb ⊢
+      omega
+    · intro hn
+      simp only [Set.mem_Iic] at hn
+      interval_cases n
+      · exact ⟨0, by norm_num, 0, by norm_num, by norm_num⟩
+      · exact ⟨1, by norm_num, 0, by norm_num, by norm_num⟩
+      · exact ⟨1, by norm_num, 1, by norm_num, by norm_num⟩
+      · exact ⟨1, by norm_num, 2, by norm_num, by norm_num⟩
+  change S3 = S1 + S2
+  calc
+    S3 = D3 := hS3D3
+    _ = Finsupp.degree ⁻¹' (Set.Iic 1 + Set.Iic 2 : Set ℕ) := by
+      rw [hIic]
+    _ = D1 + D2 :=
+      Finsupp.degree_preimage_add (σ := Fin 3) (Set.Iic 1) (Set.Iic 2)
+    _ = S1 + S2 := by
+      rw [hS1D1, hS2D2]
+
 theorem linSubmodule_mul_linSubmodule_eq_quadSubmodule :
     linSubmodule * linSubmodule = quadSubmodule := by
   rw [linSubmodule_eq_restrictTotalDegree, quadSubmodule_eq_restrictTotalDegree]
@@ -959,6 +1001,66 @@ theorem linSubmodule_mul_linSubmodule_eq_quadSubmodule :
         ({s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 2} : Set (Fin 3 →₀ ℕ))
   rw [← MvPolynomial.restrictSupport_add]
   rw [← bounded_totalDegree_two_eq_add_bounded_totalDegree_one]
+
+theorem linSubmodule_mul_quadSubmodule_le_cubicSubmodule :
+    linSubmodule * quadSubmodule ≤ cubicSubmodule := by
+  rw [Submodule.mul_le]
+  intro p hp q hq
+  exact mul_lin_quad_mem_cubic hp hq
+
+theorem map_subtype_linQuadProductSubmodule_top_top :
+    (linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤).map
+        cubicSubmodule.subtype =
+      linSubmodule * quadSubmodule := by
+  apply le_antisymm
+  · rw [linQuadProductSubmodule, Submodule.map_span]
+    refine Submodule.span_le.mpr ?_
+    rintro q ⟨x, hx, rfl⟩
+    rcases hx with ⟨aq, rfl⟩
+    exact Submodule.mul_mem_mul aq.1.1.2 aq.2.1.2
+  · rw [Submodule.mul_le]
+    intro p hp q hq
+    let a : linSubmodule := ⟨p, hp⟩
+    let r : quadSubmodule := ⟨q, hq⟩
+    refine ⟨linQuadProduct a r, ?_, rfl⟩
+    exact linQuadProduct_mem_linQuadProductSubmodule
+      (⟨a, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+      (⟨r, trivial⟩ : (⊤ : Submodule ℝ quadSubmodule))
+
+theorem linSubmodule_mul_quadSubmodule_eq_cubicSubmodule :
+    linSubmodule * quadSubmodule = cubicSubmodule := by
+  rw [linSubmodule_eq_restrictTotalDegree, quadSubmodule_eq_restrictTotalDegree,
+    cubicSubmodule_eq_restrictTotalDegree]
+  change
+    MvPolynomial.restrictSupport ℝ
+        ({s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 1} : Set (Fin 3 →₀ ℕ)) *
+      MvPolynomial.restrictSupport ℝ
+        ({s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 2} : Set (Fin 3 →₀ ℕ)) =
+      MvPolynomial.restrictSupport ℝ
+        ({s : Fin 3 →₀ ℕ | s.sum (fun _ e => e) ≤ 3} : Set (Fin 3 →₀ ℕ))
+  rw [← MvPolynomial.restrictSupport_add]
+  rw [← bounded_totalDegree_three_eq_add_bounded_totalDegree_one_two]
+
+theorem map_subtype_linQuadProductSubmodule_top_top_eq_cubicSubmodule :
+    (linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤).map
+        cubicSubmodule.subtype =
+      cubicSubmodule := by
+  rw [map_subtype_linQuadProductSubmodule_top_top]
+  exact linSubmodule_mul_quadSubmodule_eq_cubicSubmodule
+
+theorem linQuadProductSubmodule_top_top_eq_top :
+    linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤ = ⊤ := by
+  rw [eq_top_iff]
+  intro q _hq
+  have hqmap :
+      (q : Poly) ∈
+        (linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤).map
+          cubicSubmodule.subtype := by
+    rw [map_subtype_linQuadProductSubmodule_top_top_eq_cubicSubmodule]
+    exact q.2
+  rcases hqmap with ⟨q', hq', hqeq⟩
+  have hq'q : q' = q := Subtype.ext hqeq
+  simpa [hq'q] using hq'
 
 theorem map_subtype_linProductSubmodule_top_top_eq_quadSubmodule :
     (linProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤).map
@@ -1043,6 +1145,116 @@ theorem linearIndependent_basis_products_fin_four
   rw [linearIndependent_iff_card_eq_finrank_span]
   rw [Set.finrank, span_basis_products_eq_top β]
   rw [finrank_top, finrank_quadSubmodule_eq_ten]
+  decide
+
+theorem linQuadProduct_reassociate
+    (a b c : linSubmodule) :
+    linQuadProduct a (linProduct b c) =
+      linQuadProduct b (linProduct a c) := by
+  ext
+  simp [linQuadProduct, linProduct, mul_left_comm]
+
+theorem linQuadProduct_reassociate_right
+    (a b c : linSubmodule) :
+    linQuadProduct a (linProduct b c) =
+      linQuadProduct b (linProduct c a) := by
+  rw [linQuadProduct_reassociate]
+  rw [linProduct_comm]
+
+theorem linQuadProductSubmodule_top_top_le_span_basis_cubic_products
+    (β : Module.Basis (Fin 4) ℝ linSubmodule) :
+    linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤ ≤
+      Submodule.span ℝ
+        (Set.range fun ijk :
+          {ijk : (Fin 4 × Fin 4) × Fin 4 // ijk.1.1 ≤ ijk.1.2 ∧ ijk.1.2 ≤ ijk.2} =>
+          linQuadProduct (β ijk.1.1.1)
+            (linProduct (β ijk.1.1.2) (β ijk.1.2))) := by
+  let Pair4 := {ij : Fin 4 × Fin 4 // ij.1 ≤ ij.2}
+  let Triple4 := {ijk : (Fin 4 × Fin 4) × Fin 4 // ijk.1.1 ≤ ijk.1.2 ∧ ijk.1.2 ≤ ijk.2}
+  let quadBasis : Module.Basis Pair4 ℝ quadSubmodule :=
+    Module.Basis.mk
+      (by
+        simpa [Pair4] using linearIndependent_basis_products_fin_four β)
+      (by
+        simpa [Pair4] using span_basis_products_eq_top β)
+  have hquadBasis_apply (jk : Pair4) :
+      quadBasis jk = linProduct (β jk.1.1) (β jk.1.2) := by
+    exact Module.Basis.mk_apply
+      (by
+        simpa [Pair4] using linearIndependent_basis_products_fin_four β)
+      (by
+        simpa [Pair4] using span_basis_products_eq_top β) jk
+  refine linQuadProductSubmodule_le_of_generators ?_
+  intro a q
+  have hrepr :=
+    LinearMap.sum_repr_mul_repr_mul
+      (b₁' := β) (b₂' := quadBasis) (B := linQuadProductBilin) a.1 q.1
+  change (linQuadProductBilin a.1) q.1 ∈
+    Submodule.span ℝ
+      (Set.range fun ijk : Triple4 =>
+        linQuadProduct (β ijk.1.1.1)
+          (linProduct (β ijk.1.1.2) (β ijk.1.2)))
+  rw [← hrepr]
+  rw [Finsupp.sum_fintype]
+  swap
+  · simp
+  refine Submodule.sum_mem _ ?_
+  intro i _hi
+  rw [Finsupp.sum_fintype]
+  swap
+  · simp
+  refine Submodule.sum_mem _ ?_
+  intro jk _hjk
+  refine Submodule.smul_mem _ _ ?_
+  refine Submodule.smul_mem _ _ ?_
+  rw [hquadBasis_apply jk]
+  change linQuadProduct (β i) (linProduct (β jk.1.1) (β jk.1.2)) ∈
+    Submodule.span ℝ
+      (Set.range fun ijk : Triple4 =>
+        linQuadProduct (β ijk.1.1.1)
+          (linProduct (β ijk.1.1.2) (β ijk.1.2)))
+  by_cases hij : i ≤ jk.1.1
+  · exact Submodule.subset_span
+      ⟨⟨((i, jk.1.1), jk.1.2), hij, jk.2⟩, rfl⟩
+  · have hji : jk.1.1 ≤ i := le_of_not_ge hij
+    by_cases hik : i ≤ jk.1.2
+    · rw [linQuadProduct_reassociate]
+      exact Submodule.subset_span
+        ⟨⟨((jk.1.1, i), jk.1.2), hji, hik⟩, rfl⟩
+    · have hki : jk.1.2 ≤ i := le_of_not_ge hik
+      rw [linQuadProduct_reassociate_right]
+      exact Submodule.subset_span
+        ⟨⟨((jk.1.1, jk.1.2), i), jk.2, hki⟩, rfl⟩
+
+theorem span_basis_cubic_products_eq_top
+    (β : Module.Basis (Fin 4) ℝ linSubmodule) :
+    Submodule.span ℝ
+        (Set.range fun ijk :
+          {ijk : (Fin 4 × Fin 4) × Fin 4 // ijk.1.1 ≤ ijk.1.2 ∧ ijk.1.2 ≤ ijk.2} =>
+          linQuadProduct (β ijk.1.1.1)
+            (linProduct (β ijk.1.1.2) (β ijk.1.2))) =
+      ⊤ := by
+  rw [← linQuadProductSubmodule_top_top_eq_top]
+  exact le_antisymm
+    (by
+      refine Submodule.span_le.mpr ?_
+      rintro q ⟨ijk, rfl⟩
+      exact linQuadProduct_mem_linQuadProductSubmodule
+        (⟨β ijk.1.1.1, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+        (⟨linProduct (β ijk.1.1.2) (β ijk.1.2), trivial⟩ :
+          (⊤ : Submodule ℝ quadSubmodule)))
+    (linQuadProductSubmodule_top_top_le_span_basis_cubic_products β)
+
+theorem linearIndependent_basis_cubic_products_fin_four
+    (β : Module.Basis (Fin 4) ℝ linSubmodule) :
+    LinearIndependent ℝ
+      (fun ijk :
+        {ijk : (Fin 4 × Fin 4) × Fin 4 // ijk.1.1 ≤ ijk.1.2 ∧ ijk.1.2 ≤ ijk.2} =>
+        linQuadProduct (β ijk.1.1.1)
+          (linProduct (β ijk.1.1.2) (β ijk.1.2))) := by
+  rw [linearIndependent_iff_card_eq_finrank_span]
+  rw [Set.finrank, span_basis_cubic_products_eq_top β]
+  rw [finrank_top, finrank_cubicSubmodule_eq_twenty]
   decide
 
 theorem exists_rank_one_adapted_basis

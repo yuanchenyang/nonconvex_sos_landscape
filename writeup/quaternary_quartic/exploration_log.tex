@@ -14923,4 +14923,47 @@ inequality in the rank-three bad branch.
 
 No Julia numerical claims were used in this round.
 
+\section*{Cubic basis products for finite Macaulay count}
+
+\paragraph{Gap targeted.}
+The special Macaulay inequality for the rank-three bad branch requires a
+finite-dimensional count in the degree-three product space.  After adding
+\texttt{cubicSubmodule}, the next missing piece was a concrete basis-product
+spanning and independence result for cubic products of four linear basis
+elements.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{linSubmodule\_mul\_quadSubmodule\_eq\_cubicSubmodule}
+\]
+and the corresponding top-span theorem
+\[
+\texttt{linQuadProductSubmodule\_top\_top\_eq\_top}.
+\]
+Then proved that for any basis \(\beta\) of the four-dimensional linear
+space, the sorted cubic products
+\[
+\beta_i\beta_j\beta_k,\qquad i\le j\le k,
+\]
+span \texttt{cubicSubmodule}:
+\[
+\texttt{span\_basis\_cubic\_products\_eq\_top}.
+\]
+Using the computed finrank \(20\), proved their linear independence:
+\[
+\texttt{linearIndependent\_basis\_cubic\_products\_fin\_four}.
+\]
+
+\paragraph{Strategy change.}
+The remaining Macaulay proof can now be attacked as a finite product-span
+count among explicit quadratic and cubic basis products, rather than through a
+general graded-algebra API.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
