@@ -198,6 +198,46 @@ theorem parabolic_zero_xCoeff_mixedCoeff_eq_zero
   rw [hr] at hdisc
   nlinarith [sq_nonneg s]
 
+theorem hyperbolic_shearX_mixedCoeff_eq_sqrt_discriminant
+    {r s t : ℝ} (hr : r ≠ 0) :
+    2 * r * ((-s + Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)) + s =
+      Real.sqrt (binaryKernelDiscriminant r s t) := by
+  field_simp [hr]
+  ring
+
+theorem hyperbolic_shearX_ySqCoeff_eq_zero
+    {r s t : ℝ} (hr : r ≠ 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t) :
+    r * ((-s + Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r))^2 +
+        s * ((-s + Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)) + t =
+      0 := by
+  let D := binaryKernelDiscriminant r s t
+  have hD_nonneg : 0 ≤ D := le_of_lt hdisc_pos
+  have hsqrt_sq : (Real.sqrt D)^2 = D := Real.sq_sqrt hD_nonneg
+  have hD_def : D = s^2 - 4 * r * t := by
+    simp [D, binaryKernelDiscriminant]
+  field_simp [hr]
+  nlinarith
+
+theorem hyperbolic_shearX_sqrt_discriminant_ne_zero
+    {r s t : ℝ}
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t) :
+    Real.sqrt (binaryKernelDiscriminant r s t) ≠ 0 := by
+  exact ne_of_gt (Real.sqrt_pos_of_pos hdisc_pos)
+
+theorem isBinaryQuadraticPullback_hyperbolic_shearX_to_zero_ySq
+    {r s t : ℝ} (hr : r ≠ 0)
+    (hdisc_pos : 0 < binaryKernelDiscriminant r s t) :
+    IsBinaryQuadraticPullback r s t
+      r (Real.sqrt (binaryKernelDiscriminant r s t)) 0
+      1 ((-s + Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)) 0 1 := by
+  convert isBinaryQuadraticPullback_shearX r s t
+      ((-s + Real.sqrt (binaryKernelDiscriminant r s t)) / (2 * r)) using 1
+  · exact (hyperbolic_shearX_mixedCoeff_eq_sqrt_discriminant
+      (r := r) (s := s) (t := t) hr).symm
+  · exact (hyperbolic_shearX_ySqCoeff_eq_zero
+      (r := r) (s := s) (t := t) hr hdisc_pos).symm
+
 def binaryHankelMul (a b c d e : ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ![a * v 0 + b * v 1 + c * v 2,
     b * v 0 + c * v 1 + d * v 2,
