@@ -15702,4 +15702,44 @@ statement: in the non-injective contraction-evaluation branch, prove
 
 No Julia numerical claims were used in this round.
 
+\section*{Closed quotient-dimension-two Macaulay branch}
+
+\paragraph{Gap targeted.}
+The largest remaining central algebraic gap was the non-injective q=2
+contraction-evaluation image bound.  This round proved that image bound and
+used it to close the quotient-dimension-two Macaulay step.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{finrank\_range\_cubicProductAnnihilatorContractionEval\_le\_one\_of\_ker\_ne\_bot}.
+\]
+The proof uses a nonzero kernel cubic \(\phi_0\).  Its contractions lie in the
+one-dimensional square-evaluation slice and, by contraction symmetry,
+annihilate all products \(a_0c\).  If contraction evaluation at \(a_0\) had
+two-dimensional image, a preimage of the slice generator would force the same
+quantity on \(a_0b\) to be both zero and nonzero after choosing \(b\) with
+nonzero square evaluation.
+
+Then split on whether the contraction-evaluation kernel is zero and proved
+\[
+\texttt{finrank\_cubicProductAnnihilator\_le\_two\_of\_dualAnnihilator\_finrank\_eq\_two}
+\]
+and the final q=2 wrapper
+\[
+\texttt{macaulay\_cokernel\_bound\_of\_finrank\_symSquare\_quotient\_eq\_two}.
+\]
+
+\paragraph{Strategy status.}
+The direct inverse-system Macaulay route now covers quadratic quotient
+dimensions \(0\), \(1\), and \(2\).  The next largest gap is to wire these
+three local Macaulay bounds into the global rank-two apolar growth datum and
+then through the existing rank-three obstruction pipeline.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
