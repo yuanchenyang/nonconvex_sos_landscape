@@ -532,6 +532,11 @@ def HasLowRankApolarHilbertData
   HasRankTwoApolarMacaulayGrowthData B p u ∧
     HasRankThreeApolarExactSequenceData B p u
 
+def HasLowRankApolarBlueprintHilbertData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  HasRankTwoApolarQuotientGrowthData B p u ∧
+    HasRankThreeApolarBadBranchExactSequenceData B p u
+
 def HasRankTwoUniversalKernelEquationData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
@@ -2567,6 +2572,13 @@ theorem lowRankApolarHilbertData_of_rankTwoQuotientGrowthData_rankThreeBadBranch
   lowRankApolarHilbertData_of_rankTwoQuotientGrowthData_rankThreeExactSequenceData
     hdata2
     (rankThreeExactSequenceData_of_rankThreeBadBranchExactSequenceData hdata3)
+
+theorem lowRankApolarHilbertData_of_lowRankApolarBlueprintHilbertData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasLowRankApolarBlueprintHilbertData B p u) :
+    HasLowRankApolarHilbertData B p u :=
+  lowRankApolarHilbertData_of_rankTwoQuotientGrowthData_rankThreeBadBranchExactSequenceData
+    hdata.1 hdata.2
 
 theorem hasRankCaseAnnihilatorMapBounds_of_rankTwoMacaulayGrowthData_rankThreeMacaulayObstruction
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -5282,6 +5294,17 @@ theorem residual_eq_zero_of_lowRankApolarHilbertData_direct
     (B := B) hu hp hsocp
     (hasRankCaseAnnihilatorMapBounds_of_lowRankApolarHilbertData hdata)
 
+theorem residual_eq_zero_of_lowRankApolarBlueprintHilbertData_direct
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata : HasLowRankApolarBlueprintHilbertData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarHilbertData_direct
+    (B := B) hu hp hsocp
+    (lowRankApolarHilbertData_of_lowRankApolarBlueprintHilbertData hdata)
+
 theorem residual_eq_zero_of_supportDecomposition_and_normalizedHankelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -7219,6 +7242,21 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarHilbertData
   intro B p u hB hp hu hsocp
   letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
   exact residual_eq_zero_of_lowRankApolarHilbertData_direct
+    (B := B) hu hp hsocp
+    (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarBlueprintHilbertData_direct
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarBlueprintHilbertData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarBlueprintHilbertData_direct
     (B := B) hu hp hsocp
     (hdata B p u hu hB hp hsocp)
 

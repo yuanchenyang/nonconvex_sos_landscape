@@ -12956,4 +12956,47 @@ Hilbert data that violates Macaulay growth.
 
 No Julia numerical claims were used in this round.
 
+\section*{Blueprint Hilbert-data package}
+
+\paragraph{Gap targeted.}
+After restating rank two as quotient growth and rank three as bad-branch
+exact-sequence data, the two remaining blueprint-shaped assumptions were still
+separate.  A single named package makes the remaining formal target clearer.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasLowRankApolarBlueprintHilbertData},
+\]
+defined as the conjunction of:
+\[
+\texttt{HasRankTwoApolarQuotientGrowthData}
+\]
+and:
+\[
+\texttt{HasRankThreeApolarBadBranchExactSequenceData}.
+\]
+Proved:
+\[
+\texttt{lowRankApolarHilbertData\_of\_lowRankApolarBlueprintHilbertData},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarBlueprintHilbertData\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarBlueprintHilbertData\_direct}.
+\]
+
+\paragraph{Strategy change.}
+The remaining mathematical proof target is now one interface that mirrors the
+blueprint's Hilbert-function paragraph: rank-two quotient growth and rank-three
+bad-branch exact-sequence data.  All downstream conversion to the landscape
+theorem is formalized.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
