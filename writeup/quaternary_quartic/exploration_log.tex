@@ -5389,4 +5389,42 @@ combined product linear independence.  The separate rank-two
 
 No Julia numerical claims were used in this round.
 
+\section*{Removing the separate rank-two symmetric-square obligation upstairs}
+
+\paragraph{Gap targeted.}
+The support-level rank-two constructor now derives \(\dim\Sym^2A=3\) from the
+combined product-linear-independence hypothesis.  The top-level apolar
+assembler should therefore no longer ask for a separate rank-two symmetric
+product independence hypothesis.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_rank\_two\_productLI\_component\_obligations}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  Compared with the previous
+product-independence assembler, the rank-two inputs are reduced to:
+\begin{enumerate}
+\item the annihilator-map rank bound;
+\item the binary kernel-equation case;
+\item the combined product-linear-independence family.
+\end{enumerate}
+The exact \(\Sym^2A\) dimension is derived internally by
+\(\texttt{hasRankTwoSupportComponentHypothesis\_of\_binary\_cases\_and\_productLI}\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+Rank two now has only two structural obligations beyond the annihilator-map
+bound: binary kernel equations and combined product linear independence.  Rank
+one still separately needs symmetric product independence and the negative
+pure-square coefficient.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
