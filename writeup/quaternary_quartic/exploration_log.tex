@@ -12801,4 +12801,39 @@ convenient for the Macaulay/Hilbert argument can feed the existing pipeline.
 
 No Julia numerical claims were used in this round.
 
+\section*{Hilbert data and quotient bounds equivalence}
+
+\paragraph{Gap targeted.}
+The previous reductions used \texttt{HasLowRankApolarHilbertData} and
+\texttt{HasLowRankApolarEssentialQuotientBounds} as closely related
+interfaces, but only one direction had been formalized.  This left later proof
+steps sensitive to which encoding of the same Hilbert-function information
+they produced.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{rankTwoEssentialQuotientBound\_of\_rankTwoHilbertFirstBound},
+\qquad
+\texttt{rankThreeEssentialQuotientBound\_of\_rankThreeHilbertFirstBound}.
+\]
+Using these, added:
+\[
+\texttt{lowRankApolarEssentialQuotientBounds\_of\_lowRankApolarHilbertData},
+\]
+and the equivalence:
+\[
+\texttt{lowRankApolarHilbertData\_iff\_lowRankApolarEssentialQuotientBounds}.
+\]
+
+\paragraph{Strategy change.}
+The rank-two/rank-three Hilbert-data package and the essential quotient-bound
+package are now interchangeable.  Future Macaulay formalization can produce
+either package and still feed the existing theorem pipeline.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
