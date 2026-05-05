@@ -7400,4 +7400,39 @@ Hankel facts theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Equivalence of support decomposition formulations}
+
+\paragraph{Gap targeted.}
+The low-rank support blocker appears in two equivalent blueprint forms:
+\(A\le\Ann_1(\lambda)\) and \(AE\subseteq K\).  The product-kernel-to-support
+direction was formalized, but not the reverse.
+
+\paragraph{Lean progress.}
+Proved
+\[
+\texttt{hasLowRankApolarProductKernelDecomposition\_of\_supportDecomposition}
+\]
+using the existing lemma that \(A\le\Ann_1\) implies
+\[
+\texttt{linProductSubmodule A top <= ker catalecticantMap}.
+\]
+Added the iff theorem
+\[
+\texttt{hasLowRankApolarProductKernelDecomposition\_iff\_supportDecomposition}.
+\]
+
+\paragraph{Strategy change.}
+The support theorem can now be supplied in either equivalent blueprint
+formulation without changing downstream proof code.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The open inputs remain the low-rank support decomposition theorem, the
+universal normalized scalar classification theorem, and the rank-two scalar
+Hankel facts theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

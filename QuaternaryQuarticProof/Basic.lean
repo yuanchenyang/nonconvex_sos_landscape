@@ -1628,12 +1628,30 @@ theorem hasLowRankApolarSupportDecomposition_of_productKernelDecomposition
     le_linearAnnihilator_of_linProductSubmodule_top_le_ker hAE,
     hAW, hWdim, hAdim⟩
 
+theorem hasLowRankApolarProductKernelDecomposition_of_supportDecomposition
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdecomp : HasLowRankApolarSupportDecomposition B p u) :
+    HasLowRankApolarProductKernelDecomposition B p u := by
+  intro k hk hrank_le
+  rcases hdecomp k hk hrank_le with
+    ⟨A, W, hAann, hAW, hWdim, hAdim⟩
+  exact ⟨A, W,
+    linProductSubmodule_le_ker_of_le_linearAnnihilator hAann,
+    hAW, hWdim, hAdim⟩
+
 theorem hasLowRankApolarSupportTheorem_of_productKernelDecomposition
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hprod : HasLowRankApolarProductKernelDecomposition B p u) :
     HasLowRankApolarSupportTheorem B p u :=
   hasLowRankApolarSupportTheorem_of_decomposition
     (hasLowRankApolarSupportDecomposition_of_productKernelDecomposition hprod)
+
+theorem hasLowRankApolarProductKernelDecomposition_iff_supportDecomposition
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarProductKernelDecomposition B p u ↔
+      HasLowRankApolarSupportDecomposition B p u :=
+  ⟨hasLowRankApolarSupportDecomposition_of_productKernelDecomposition,
+    hasLowRankApolarProductKernelDecomposition_of_supportDecomposition⟩
 
 theorem hasRankTwoExistentialBinaryFormData_of_kernelEquationData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
