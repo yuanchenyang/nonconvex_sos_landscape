@@ -9774,6 +9774,31 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoMacaulayGr
     exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch
       hdata.1 hdata.2
 
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeMacaulayBound
+    (hgrowth2 : HasGlobalRankTwoApolarMacaulayGrowthBound)
+    (hmac3 : HasGlobalRankThreeApolarBadBranchMacaulayBound) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch
+    hgrowth2
+    (globalRankThreeApolarBadBranchContradiction_of_globalRankThreeApolarBadBranchMacaulayBound
+      hmac3)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoMacaulayGrowth_and_rankThreeMacaulayBound :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoApolarMacaulayGrowthBound ∧
+        HasGlobalRankThreeApolarBadBranchMacaulayBound := by
+  constructor
+  · intro hmain
+    have hdata :=
+      (quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch).mp
+        hmain
+    exact ⟨hdata.1,
+      globalRankThreeApolarBadBranchMacaulayBound_of_globalRankThreeApolarBadBranchContradiction
+        hdata.2⟩
+  · intro hdata
+    exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeMacaulayBound
+      hdata.1 hdata.2
+
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_quotientLocalComponents_direct
     (hsymm2 :
       ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)

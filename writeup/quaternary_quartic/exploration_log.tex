@@ -14467,4 +14467,37 @@ rank argument.
 
 No Julia numerical claims were used in this round.
 
+\section*{Expose split Macaulay-bound target}
+
+\paragraph{Gap targeted.}
+After globalizing the blueprint Hilbert packages, the remaining local
+blueprint components still passed through the rank-three bad-branch
+contradiction formulation.  The blueprint states this branch using the
+Macaulay inequality bound after the exact-sequence shape has been chosen, so
+the root theorem should expose that arithmetic target directly.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_globalRankTwoMacaulayGrowth\_and\_rankThreeMacaulayBound}
+\]
+and the equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoMacaulayGrowth\_and\_rankThreeMacaulayBound}.
+\]
+The proof uses the already formalized equivalence between the rank-three
+Macaulay-bound package and the rank-three bad-branch contradiction.
+
+\paragraph{Strategy change.}
+The remaining blueprint arithmetic gap can now be stated as exactly two
+global obligations: rank-two Macaulay growth and rank-three bad-branch
+Macaulay bound.  The rank-three exact-sequence shape remains a direct
+construction in the current scaffold, so it no longer needs to obscure this
+split target.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
