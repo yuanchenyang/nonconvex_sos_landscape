@@ -534,10 +534,24 @@ end ExactSubspaces
 
 section MacaulayNumerics
 
+theorem rankTwoMacaulayGrowth_forces_hilbertFirst_le_two
+    {h1 h2 h3 : ℕ}
+    (hh2 : h2 = 2) (hsymm : h1 = h3) (hgrowth : h3 ≤ h2) :
+    h1 ≤ 2 := by
+  omega
+
 theorem rankThreeMacaulayNumericalContradiction
     {b : ℕ} (hbpos : 1 ≤ b) (hbtop : b ≤ 3) :
     ¬ 4 - b ≤ 3 - b := by
   omega
+
+theorem rankThreeExactSequenceNumericalContradiction
+    {b q2 q3 : ℕ}
+    (hbpos : 1 ≤ b) (hbtop : b ≤ 3)
+    (hq2 : q2 = 3 - b) (hq3 : q3 = 4 - b)
+    (hmac : q3 ≤ q2) :
+    False := by
+  exact rankThreeMacaulayNumericalContradiction hbpos hbtop (by omega)
 
 theorem rankThreeMacaulayCaseOne :
     ¬ 4 - 1 ≤ (3 - 1 : ℕ) := by

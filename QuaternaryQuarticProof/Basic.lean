@@ -2301,6 +2301,8 @@ theorem rankTwoHilbertFirstBound_of_rankTwoMacaulayGrowthData
     HasRankTwoApolarHilbertFirstBound B p u := by
   intro hrank2
   rcases hdata hrank2 with ⟨h1, h2, h3, hh1, hh2, hsymm, hgrowth⟩
+  have hh1_le : h1 ≤ 2 :=
+    rankTwoMacaulayGrowth_forces_hilbertFirst_le_two hh2 hsymm hgrowth
   omega
 
 theorem rankTwoDimensionBound_of_rankTwoMacaulayGrowthData
@@ -2404,7 +2406,9 @@ theorem rankThreeMacaulayObstruction_of_rankThreeExactSequenceData
   rcases hdata hrank3 hzero with
     ⟨b, q2, q3, hbpos, hbtop, hq2, hq3, hineq⟩
   refine ⟨b, hbpos, hbtop, ?_⟩
-  omega
+  exfalso
+  exact rankThreeExactSequenceNumericalContradiction
+    hbpos hbtop hq2 hq3 hineq
 
 theorem rankThreeHilbertFirstBound_of_rankThreeExactSequenceData
     {B : DotForm} {p : Poly} {u : RankSevenVec}

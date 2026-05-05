@@ -12836,4 +12836,41 @@ either package and still feed the existing theorem pipeline.
 
 No Julia numerical claims were used in this round.
 
+\section*{Named Macaulay numerical cores}
+
+\paragraph{Gap targeted.}
+The rank-two growth and rank-three exact-sequence bridges still used local
+arithmetic automation for the core Macaulay conclusions.  The blueprint treats
+these as the finite numerical heart of the argument, so they should be named
+and reusable.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof.Dimension}:
+\[
+\texttt{rankTwoMacaulayGrowth\_forces\_hilbertFirst\_le\_two},
+\]
+which proves \(h_1\le2\) from \(h_2=2\), \(h_1=h_3\), and \(h_3\le h_2\).
+Also added:
+\[
+\texttt{rankThreeExactSequenceNumericalContradiction},
+\]
+which packages the contradiction from
+\[
+1\le b\le3,\qquad q_2=3-b,\qquad q_3=4-b,\qquad q_3\le q_2.
+\]
+
+Updated the rank-two Hilbert-first bridge and rank-three exact-sequence bridge
+in \texttt{QuaternaryQuarticProof.Basic} to use these named lemmas.
+
+\paragraph{Strategy change.}
+The finite Macaulay arithmetic is now isolated in \texttt{Dimension}.  The
+remaining gap is no longer numerical; it is the construction of the Hilbert
+growth/exact-sequence data from the apolar algebra.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Dimension} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
