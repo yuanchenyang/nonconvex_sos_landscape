@@ -468,6 +468,40 @@ theorem exists_nonzero_binaryHankelMul_kernel_of_finrank_range_le_two
     ⟨v, hv, hker⟩
   exact ⟨v, hv, by simpa using hker⟩
 
+theorem binaryHankelLinearMap_finrank_ker_eq_one_of_finrank_range_eq_two
+    {a b c d e : ℝ}
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) = 2) :
+    Module.finrank ℝ (LinearMap.ker (binaryHankelLinearMap a b c d e)) = 1 := by
+  let f := binaryHankelLinearMap a b c d e
+  change Module.finrank ℝ (LinearMap.ker f) = 1
+  have hsum :
+      Module.finrank ℝ (LinearMap.range f) +
+          Module.finrank ℝ (LinearMap.ker f) =
+        3 := by
+    simpa [f] using (LinearMap.finrank_range_add_finrank_ker f)
+  have hrankf : Module.finrank ℝ (LinearMap.range f) = 2 := by
+    simpa [f] using hrank
+  rw [hrankf] at hsum
+  omega
+
+theorem exists_nonzero_binaryHankelKernel_and_finrank_ker_eq_one_of_finrank_range_eq_two
+    {a b c d e : ℝ}
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) = 2) :
+    ∃ v : Fin 3 → ℝ,
+      v ≠ 0 ∧
+        binaryHankelLinearMap a b c d e v = 0 ∧
+          Module.finrank ℝ
+            (LinearMap.ker (binaryHankelLinearMap a b c d e)) = 1 := by
+  rcases exists_nonzero_binaryHankelKernel_of_finrank_range_le_two
+      (a := a) (b := b) (c := c) (d := d) (e := e)
+      (by rw [hrank]) with
+    ⟨v, hv, hker⟩
+  exact ⟨v, hv, hker,
+    binaryHankelLinearMap_finrank_ker_eq_one_of_finrank_range_eq_two
+      (a := a) (b := b) (c := c) (d := d) (e := e) hrank⟩
+
 theorem binaryHankelMul_eq_zero_iff
     (a b c d e r s t : ℝ) :
     binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0 ↔
