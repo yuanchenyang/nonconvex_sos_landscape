@@ -11828,4 +11828,39 @@ The rank-zero case is already handled separately by
 
 No Julia numerical claims were used in this round.
 
+\section*{Dimension-bound form of the apolar gap}
+
+\paragraph{Gap targeted.}
+The blueprint's apolar Hilbert-function argument proves that the degree-one
+apolar annihilator has dimension at least \(4-k\) when the catalecticant has
+rank \(k \le 3\).  This is the dimension-bound form of the same support
+statement, and it is the closest Lean interface to the proof text.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{residual\_eq\_zero\_of\_annihilatorDimensionBounds\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_annihilatorDimensionBounds\_direct}.
+\]
+These compose the existing conversion from
+\texttt{HasRankCaseApolarAnnihilatorDimensionBounds} to
+\texttt{HasRankCaseAnnihilatorMapBounds} with the direct rank-case final
+pipeline.
+
+\paragraph{Strategy change.}
+The main structural proof can now target the rank-one, rank-two, and rank-three
+dimension lower bounds on \texttt{linearAnnihilator} directly.  This matches
+the Hilbert-function portion of the blueprint: prove enough degree-one
+annihilators, then let the existing finite-dimensional conversions handle
+support complements, annihilator-map ranks, binary negativity, and the root
+SOCP theorem.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

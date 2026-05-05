@@ -4640,6 +4640,17 @@ theorem residual_eq_zero_of_rankCaseAnnihilatorMapBounds_direct
     (B := B) hu hp hsocp
     (hasLowRankApolarAnnihilatorMapTheorem_of_rankCaseAnnihilatorMapBounds hbounds)
 
+theorem residual_eq_zero_of_annihilatorDimensionBounds_direct
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdims : HasRankCaseApolarAnnihilatorDimensionBounds B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_rankCaseAnnihilatorMapBounds_direct
+    (B := B) hu hp hsocp
+    (hasRankCaseAnnihilatorMapBounds_of_dimensionBounds hdims)
+
 theorem residual_eq_zero_of_supportDecomposition_and_normalizedHankelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -6366,6 +6377,21 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseAnnihilatorMapBo
   exact residual_eq_zero_of_rankCaseAnnihilatorMapBounds_direct
     (B := B) hu hp hsocp
     (hbounds B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_annihilatorDimensionBounds_direct
+    (hdims :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseApolarAnnihilatorDimensionBounds B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_annihilatorDimensionBounds_direct
+    (B := B) hu hp hsocp
+    (hdims B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheorem_and_universalNormalizedPosition_and_scalarFacts
     (hsupport :
