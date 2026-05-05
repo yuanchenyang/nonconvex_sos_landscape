@@ -4415,6 +4415,32 @@ theorem residual_eq_zero_of_supportDecomposition_and_universalNormalizedBinaryCl
     (hasLowRankApolarProductKernelDecomposition_of_supportDecomposition hdecomp)
     hclass hfacts
 
+theorem residual_eq_zero_of_supportDecomposition_and_universalNormalizedBinaryClassification
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdecomp : HasLowRankApolarSupportDecomposition B p u)
+    (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification) :
+    residual p u = 0 :=
+  residual_eq_zero_of_supportDecomposition_and_universalNormalizedBinaryClassification_and_scalarFacts
+    (B := B) hu hp hsocp hdecomp hclass
+    (hasRankTwoExistentialScalarHankelFacts_of_point
+      (B := B) (p := p) (u := u) hu hp hsocp.1)
+
+theorem residual_eq_zero_of_lowRankApolarSupportTheorem_and_universalNormalizedBinaryClassification
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hsupport : HasLowRankApolarSupportTheorem B p u)
+    (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification) :
+    residual p u = 0 :=
+  residual_eq_zero_of_supportDecomposition_and_universalNormalizedBinaryClassification
+    (B := B) hu hp hsocp
+    (hasLowRankApolarSupportDecomposition_of_lowRankApolarSupportTheorem hsupport)
+    hclass
+
 theorem residual_eq_zero_of_supportDecomposition_and_normalizedHankelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -5969,6 +5995,23 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_supportDecomposition_and
     hclass
     (hfacts B p u hu hB hp hsocp)
 
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_supportDecomposition_and_universalNormalizedBinaryClassification
+    (hdecomp :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarSupportDecomposition B p u)
+    (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_supportDecomposition_and_universalNormalizedBinaryClassification
+    (B := B) hu hp hsocp
+    (hdecomp B p u hu hB hp hsocp)
+    hclass
+
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_supportDecomposition_and_normalizedHankelData
     (hdecomp :
       ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
@@ -6045,6 +6088,23 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheo
     (B := B) hu hp hsocp
     (hsupport B p u hu hB hp hsocp)
     (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheorem_and_universalNormalizedBinaryClassification
+    (hsupport :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarSupportTheorem B p u)
+    (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarSupportTheorem_and_universalNormalizedBinaryClassification
+    (B := B) hu hp hsocp
+    (hsupport B p u hu hB hp hsocp)
+    hclass
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheorem_and_universalNormalizedPosition_and_scalarFacts
     (hsupport :

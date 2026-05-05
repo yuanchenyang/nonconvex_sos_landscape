@@ -10235,4 +10235,48 @@ rank-two binary scalar classification/normalization theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Removing scalar facts from theorem wrappers}
+
+\paragraph{Gap targeted.}
+The main theorem wrappers for the scalar-classification route still accepted
+existential scalar Hankel facts as a separate global input, even though those
+facts are now derived from the point hypotheses.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{residual\_eq\_zero\_of\_supportDecomposition\_and\_universalNormalizedBinaryClassification},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarSupportTheorem\_and\_universalNormalizedBinaryClassification},
+\]
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_supportDecomposition\_and\_universalNormalizedBinaryClassification},
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarSupportTheorem\_and\_universalNormalizedBinaryClassification}.
+\]
+
+\paragraph{Strategy change.}
+The scalar-classification final route now has only two external mathematical
+inputs: the low-rank apolar support theorem and the rank-two binary scalar
+classification.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support and
+rank-two binary scalar classification before the placeholder axiom can be
+removed.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
