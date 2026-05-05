@@ -3073,8 +3073,11 @@ theorem rankThreeBadBranchExactSequenceShape_of_badBranchContradiction
 theorem rankThreeBadBranchExactSequenceShape_direct
     (B : DotForm) (p : Poly) (u : RankSevenVec) :
     HasRankThreeApolarBadBranchExactSequenceShape B p u := by
-  intro _hrank3 _hbad
-  exact ⟨1, 2, 3, by norm_num, by norm_num, by norm_num, by norm_num⟩
+  intro hrank3 hbad
+  rcases exists_rankThreeBadBranch_leftMultiplication_degreeThreeCokernel
+      (B := B) (p := p) (u := u) hrank3 hbad with
+    ⟨_a, b, q2, q3, _ha_ne, _hb, hbpos, hbtop, hq2, _hq2fin, hq3, _hq3fin⟩
+  exact ⟨b, q2, q3, hbpos, hbtop, hq2, hq3⟩
 
 theorem rankThreeBadBranchContradiction_of_shape_and_macaulayBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}

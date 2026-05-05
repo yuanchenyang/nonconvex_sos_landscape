@@ -14780,4 +14780,37 @@ identification, but the Macaulay-growth contradiction applied to the pair
 
 No Julia numerical claims were used in this round.
 
+\section*{Use actual rank-three exact-sequence shape}
+
+\paragraph{Gap targeted.}
+The rank-three bad-branch exact-sequence shape in
+\texttt{QuaternaryQuarticProof.Basic} was still proved by a bare numerical
+witness.  After the previous rounds, the same shape should come from the
+actual catalecticant multiplication maps and their degree-two and degree-three
+cokernel computations.
+
+\paragraph{Lean progress.}
+Replaced the proof of
+\[
+\texttt{rankThreeBadBranchExactSequenceShape\_direct}
+\]
+with an application of
+\[
+\texttt{exists\_rankThreeBadBranch\_leftMultiplication\_degreeThreeCokernel}.
+\]
+Thus the bad-branch shape package now extracts \(b,q_2,q_3\) from a chosen
+nonzero linear form and the formalized exact-sequence dimension calculations,
+rather than from an arbitrary arithmetic tuple.
+
+\paragraph{Strategy change.}
+The rank-three exact-sequence shape is now tied to the central algebraic
+construction.  The remaining rank-three gap is the Macaulay/O-sequence bound
+for the quotient by the chosen linear form, which should provide
+\(q_3\le q_2\) and trigger the existing numerical contradiction.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
