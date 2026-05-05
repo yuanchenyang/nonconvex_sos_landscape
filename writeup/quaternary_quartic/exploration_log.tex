@@ -12873,4 +12873,45 @@ growth/exact-sequence data from the apolar algebra.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two quotient-growth interface}
+
+\paragraph{Gap targeted.}
+The rank-two Hilbert-growth interface still used abstract numerical entries
+\(h_1,h_2,h_3\).  The blueprint's apolar algebra argument should ultimately
+produce these entries as dimensions of graded quotients.  The rank-two bridge
+can therefore be stated closer to the actual quotient spaces.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasRankTwoApolarQuotientGrowthData},
+\]
+which says that in catalecticant rank two, the degree-one essential quotient
+dimension agrees with a degree-three entry bounded by the degree-two quotient
+\[
+\texttt{quadSubmodule}/\ker(\texttt{catalecticantMap}).
+\]
+Proved:
+\[
+\texttt{rankTwoEssentialQuotientBound\_of\_rankTwoQuotientGrowthData},
+\]
+using
+\[
+\texttt{finrank\_quotient\_ker\_catalecticantMap\_eq\_two\_of\_rank\_two}.
+\]
+Also added:
+\[
+\texttt{lowRankApolarHilbertData\_of\_rankTwoQuotientGrowthData\_rankThreeExactSequenceData}.
+\]
+
+\paragraph{Strategy change.}
+The rank-two remaining task can now be expressed as a quotient-space
+symmetry/growth statement rather than a bare numerical tuple.  This better
+matches the blueprint's Artinian Gorenstein Hilbert-function proof.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
