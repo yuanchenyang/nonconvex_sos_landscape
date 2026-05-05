@@ -9596,4 +9596,41 @@ position.
 
 No Julia numerical claims were used in this round.
 
+\section*{Kernel-equation apolar data contains the final scaffold inputs}
+
+\paragraph{Gap targeted.}
+After reducing the final scaffold to support bounds plus universal kernel
+equation data, it was useful to expose that the existing rank-case
+kernel-equation apolar data package supplies both inputs.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{supportBounds\_and\_universalKernelEquationData\_of\_kernelEquationApolarData}.
+\]
+This packages the two existing projections from
+\(\texttt{HasRankCaseKernelEquationApolarData}\): support bounds and universal
+rank-two kernel-equation data.
+
+\paragraph{Strategy change.}
+The remaining proof can be targeted as a single rank-case
+kernel-equation-apolar-data construction, or equivalently as the two final
+scaffold inputs separately.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Construct the rank-case kernel-equation apolar data, or independently prove
+rank-case support bounds and universal rank-two kernel-equation/normalized
+position data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

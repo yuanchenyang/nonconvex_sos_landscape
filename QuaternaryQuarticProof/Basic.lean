@@ -2903,6 +2903,15 @@ theorem hasRankTwoUniversalKernelEquationData_of_kernelEquationApolarData
   rcases hdata with ⟨_hdata1, hdata2, _hdata3⟩
   exact (hdata2 hrank2).2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
 
+theorem supportBounds_and_universalKernelEquationData_of_kernelEquationApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseKernelEquationApolarData B p u hu) :
+    HasRankCaseApolarSupportBounds B p u ∧
+      HasRankTwoUniversalKernelEquationData B p u :=
+  ⟨hasRankCaseApolarSupportBounds_of_kernelEquationApolarData hdata,
+    hasRankTwoUniversalKernelEquationData_of_kernelEquationApolarData hdata⟩
+
 theorem hasRankTwoUniversalCanonicalKernelData_of_universalKernelEquationData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hcases : HasRankTwoUniversalKernelEquationData B p u) :
