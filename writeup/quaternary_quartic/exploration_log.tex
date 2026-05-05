@@ -5353,4 +5353,40 @@ low-rank apolar theorem that supplies these from catalecticant rank.
 
 No Julia numerical claims were used in this round.
 
+\section*{Deriving rank-two symmetric-square dimension from combined product independence}
+
+\paragraph{Gap targeted.}
+The rank-two product-linear-independence hypothesis already includes the
+symmetric products \(\beta_i\beta_j\).  Therefore rank two should not need a
+separate exact \(\dim\Sym^2A=3\) or symmetric-product-independence input.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankTwoSupportComponentHypothesis\_of\_binary\_cases\_and\_productLI}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  After choosing
+\(y\in W\setminus\mathbb{R}x\), the proof applies the product-LI hypothesis at
+\(z=x\).  The right half of the resulting \(\texttt{Sum.elim}\) linear
+independence gives linear independence of the symmetric product family, hence
+\[
+\dim\Sym^2A=3.
+\]
+The same product-LI hypothesis supplies the disjointness field for arbitrary
+nonzero \(z\in W\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two support branch now needs only binary kernel-equation cases and
+combined product linear independence.  The separate rank-two
+\(\Sym^2A\)-dimension obligation has been removed.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
