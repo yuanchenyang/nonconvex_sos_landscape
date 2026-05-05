@@ -8405,4 +8405,47 @@ universal binary Hankel rank bound; then replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Hankel rank bound from normalized position}
+
+\paragraph{Gap targeted.}
+The normalized-Hankel component split exposed a separate universal binary
+Hankel rank-bound obligation.  This bound should not be independent: every
+normalized kernel-position branch already supplies a nonzero kernel vector for
+the binary Hankel map.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{binaryHankelLinearMap\_finrank\_range\_le\_two\_of\_normalizedKernelPosition}
+\]
+in \texttt{QuaternaryQuarticProof.Binary}, proving the rank bound directly from
+the normalized kernel position by dispatching to the three existing branch
+kernel-vector lemmas.  Lifted this to
+\[
+\texttt{universalBinaryHankelRankBound\_of\_universalNormalizedKernelPositionData}
+\]
+in \texttt{QuaternaryQuarticProof.Basic}.  Added residual and root reductions
+requiring only the three split annihilator-map bounds, universal normalized
+kernel-position data, and universal Hankel-negativity data.
+
+\paragraph{Strategy change.}
+The universal binary Hankel rank bound is no longer an independent remaining
+blocker; it is a consequence of normalized position.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the three split exact annihilator-map bounds, universal normalized
+kernel-position data, and universal Hankel-negativity data; then replace the
+root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

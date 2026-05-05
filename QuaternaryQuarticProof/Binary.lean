@@ -274,6 +274,16 @@ theorem binaryHankelLinearMap_finrank_range_le_two_of_canonicalKernelData
   · exact binaryHankelLinearMap_finrank_range_le_two_of_ySq_kernel hySq.1
   · exact binaryHankelLinearMap_finrank_range_le_two_of_elliptic_kernel hell.1
 
+theorem binaryHankelLinearMap_finrank_range_le_two_of_normalizedKernelPosition
+    {a b c d e : ℝ}
+    (hpos : HasBinaryNormalizedKernelPosition a b c d e) :
+    Module.finrank ℝ
+      (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2 := by
+  rcases hpos with hxy | hySq | hell
+  · exact binaryHankelLinearMap_finrank_range_le_two_of_xy_kernel hxy
+  · exact binaryHankelLinearMap_finrank_range_le_two_of_ySq_kernel hySq.1
+  · exact binaryHankelLinearMap_finrank_range_le_two_of_elliptic_kernel hell
+
 def HasBinaryLowRankNegativeNormalForm (a b c d e : ℝ) : Prop :=
   (∃ ρ α β : ℝ,
     ρ < 0 ∧
