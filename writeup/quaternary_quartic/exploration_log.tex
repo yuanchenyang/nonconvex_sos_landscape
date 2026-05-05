@@ -9446,4 +9446,39 @@ kernel-position component for the rank-two branch.
 
 No Julia numerical claims were used in this round.
 
+\section*{Kernel-equation cases imply normalized position}
+
+\paragraph{Gap targeted.}
+The remaining normalized-position blocker can be attacked through the blueprint's
+explicit binary kernel equation cases, but the Lean interface did not expose a
+direct conversion from universal kernel-equation data to universal normalized
+kernel position.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankTwoUniversalNormalizedKernelPositionData\_of\_universalKernelEquationData}.
+\]
+The proof converts each binary kernel-equation case to canonical kernel data and
+then extracts the normalized kernel-position predicate.
+
+\paragraph{Strategy change.}
+The rank-two normalized-position blocker can now be replaced by the more
+concrete task of proving the universal binary kernel-equation cases.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove rank-case apolar support bounds and the universal rank-two binary
+kernel-equation cases.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

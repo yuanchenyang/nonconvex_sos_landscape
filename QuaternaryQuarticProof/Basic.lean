@@ -2896,6 +2896,15 @@ theorem hasRankTwoUniversalCanonicalKernelData_of_universalKernelEquationData
   exact binaryRestriction_canonicalKernelData_of_kernelEquationCase
     (hcases hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim)
 
+theorem hasRankTwoUniversalNormalizedKernelPositionData_of_universalKernelEquationData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hcases : HasRankTwoUniversalKernelEquationData B p u) :
+    HasRankTwoUniversalNormalizedKernelPositionData B p u := by
+  intro hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+  exact binaryNormalizedKernelPosition_of_canonicalKernelData
+    (binaryRestriction_canonicalKernelData_of_kernelEquationCase
+      (hcases hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim))
+
 theorem hasRankTwoUniversalKernelEquationData_of_universalCanonicalKernelData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hcanon : HasRankTwoUniversalCanonicalKernelData B p u) :
