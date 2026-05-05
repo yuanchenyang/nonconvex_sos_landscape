@@ -228,6 +228,29 @@ def HasRankCaseProductFreeApolarData
         q ∈ linProductSubmodule W W ∧
           B (q.1^2) (residual p u) < 0)
 
+def HasRankCaseRankOneFreeApolarData
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u) : Prop :=
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 1) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 2 ∧
+      ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              y ∈ W →
+                y ∉ ℝ ∙ x →
+                  (x : Poly) ≠ 0 →
+                    Module.finrank ℝ A = 2 →
+                      Module.finrank ℝ W = 2 →
+                        HasBinaryRestrictionKernelEquationCase B p u x y) ∧
+  (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 3 ∧
+      ∃ (W : Submodule ℝ linSubmodule) (q : quadSubmodule),
+        q ∈ linProductSubmodule W W ∧
+          B (q.1^2) (residual p u) < 0)
+
 def HasRankCaseKernelDecompositionApolarData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u) : Prop :=
@@ -1056,6 +1079,27 @@ theorem hasRankCaseApolarComponentData_of_productFreeApolarData
     (fun hrank3 => (hdata3 hrank3).1)
     (fun hrank3 => (hdata3 hrank3).2)
 
+theorem hasRankCaseProductFreeApolarData_of_rankOneFreeApolarData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hdata : HasRankCaseRankOneFreeApolarData B p u hu) :
+    HasRankCaseProductFreeApolarData B p u hu := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    refine ⟨hdata1 hrank1, ?_⟩
+    intro A W x hAann hAW hxW hx _hAdim hWdim
+    exact rank_one_binaryRestrictionCoeffA_neg_of_annihilator_complement
+      (B := B) (p := p) (u := u) hu hp hfocp hrank1
+      hAann hAW hxW hx hWdim
+  constructor
+  · intro hrank2
+    exact hdata2 hrank2
+  · intro hrank3
+    exact hdata3 hrank3
+
 theorem hasRankCaseKernelDecompositionApolarData_of_productIndependenceApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -1420,6 +1464,18 @@ theorem residual_eq_zero_of_productFreeApolarData
     (B := B) hu hp hsocp
     (hasRankCaseApolarComponentData_of_productFreeApolarData hdata)
 
+theorem residual_eq_zero_of_rankOneFreeApolarData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdata : HasRankCaseRankOneFreeApolarData B p u hu) :
+    residual p u = 0 :=
+  residual_eq_zero_of_productFreeApolarData
+    (B := B) hu hp hsocp
+    (hasRankCaseProductFreeApolarData_of_rankOneFreeApolarData
+      (B := B) hp hsocp.1 hdata)
+
 theorem residual_eq_zero_of_kernelDecompositionApolarData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -1556,6 +1612,20 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_productFreeApolarData
   intro B p u hB hp hu hsocp
   letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
   exact residual_eq_zero_of_productFreeApolarData
+    (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankOneFreeApolarData
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseRankOneFreeApolarData B p u hu) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_rankOneFreeApolarData
     (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_kernelDecompositionApolarData

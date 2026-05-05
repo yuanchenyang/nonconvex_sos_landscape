@@ -516,6 +516,45 @@ theorem exists_rank_one_combined_product_independence
     span_rank_one_support_vector_eq hx hxW hWdim
   exact ⟨β, linearIndependent_rank_one_combined_products_of_isCompl hAW β hxspan⟩
 
+theorem rank_one_binaryRestrictionCoeffA_neg_of_annihilator_complement
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1)
+    {A W : Submodule ℝ linSubmodule} {x : linSubmodule}
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hAW : IsCompl A W)
+    (hxW : x ∈ W)
+    (hx : (x : Poly) ≠ 0)
+    (hWdim : Module.finrank ℝ W = 1) :
+    binaryRestrictionCoeffA B p u x < 0 := by
+  rcases exists_negative_sos_summand_of_catalecticantMap_rank_eq_one
+      (B := B) hu hp hfocp hrank with
+    ⟨q, hq, hqneg⟩
+  let qQuad : quadSubmodule := ⟨q, hq⟩
+  rcases exists_catalecticantKernel_decomposition_of_annihilator_complement
+      (B := B) (p := p) (u := u) hAann hAW qQuad with
+    ⟨qW, qK, hqdecomp, hqW, hqK⟩
+  have hqWneg : B (qW.1^2) (residual p u) < 0 :=
+    residualEval_sq_lt_of_eq_add_mem_ker_catalecticantMap
+      (B := B) (p := p) (u := u) hqdecomp hqK hqneg
+  have hxspan : ℝ ∙ x = W :=
+    span_rank_one_support_vector_eq hx hxW hWdim
+  have hqWspan : qW ∈ ℝ ∙ linProduct x x :=
+    (linProductSubmodule_le_span_square_of_span_eq hxspan) hqW
+  rcases Submodule.mem_span_singleton.mp hqWspan with ⟨c, hc⟩
+  have hscale :
+      B (qW.1^2) (residual p u) =
+        c^2 * B ((linProduct x x : quadSubmodule).1^2) (residual p u) := by
+    rw [← hc]
+    exact residualEval_sq_smul (B := B) (p := p) (u := u) c (linProduct x x)
+  have hscaled_neg :
+      c^2 * B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0 := by
+    rwa [← hscale]
+  change B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0
+  nlinarith [sq_nonneg c]
+
 theorem not_mem_left_of_support_complement_mem_ne_zero
     {A W : Submodule ℝ linSubmodule} {z : linSubmodule}
     (hAW : IsCompl A W)

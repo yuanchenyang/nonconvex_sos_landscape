@@ -6311,4 +6311,60 @@ independence as an external input.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one negativity from decomposition}
+
+\paragraph{Gap targeted.}
+The product-free apolar interface still assumed the rank-one negativity
+\(\lambda(x^4)<0\) for every nonzero complement generator \(x\).  In the
+rank-one case this follows from the negative SOS summand and the
+annihilator-complement decomposition, so it should not remain an external
+input.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{linProductSubmodule\_le\_span\_square\_of\_span\_eq}
+\]
+and
+\[
+\texttt{residualEval\_sq\_smul}.
+\]
+The first says that if \(W=\mathbb R x\), then \(WW\) is contained in the line
+spanned by \(x^2\).  The second records the quadratic scaling rule
+\(\lambda((c q)^2)=c^2\lambda(q^2)\).
+
+Added to \texttt{QuaternaryQuarticProof/Support.lean}:
+\[
+\texttt{rank\_one\_binaryRestrictionCoeffA\_neg\_of\_annihilator\_complement}.
+\]
+Given rank one, SOS, FOCP, an annihilator complement \(A\oplus W\), and a
+nonzero \(x\in W\) with \(\dim W=1\), it obtains a negative SOS summand,
+decomposes it as \(q_W+q_K\), rewrites \(q_W\in WW\) as a scalar multiple of
+\(x^2\), and concludes \(\lambda(x^4)<0\).
+
+Added to \texttt{QuaternaryQuarticProof/Basic.lean}:
+\[
+\texttt{HasRankCaseRankOneFreeApolarData}
+\]
+and bridges to the product-free interface and root reduction theorem.  This
+new package no longer includes rank-one negativity as an assumption; it is
+derived internally from the rank-one theorem above.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Support}
+\]
+and
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+complete successfully.
+
+\paragraph{Remaining blockers.}
+The remaining high-level apolar inputs are the annihilator-map bounds, the
+rank-two binary kernel-equation cases, and the rank-three negative product
+data.  Rank-one negativity is now discharged from SOS and decomposition.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

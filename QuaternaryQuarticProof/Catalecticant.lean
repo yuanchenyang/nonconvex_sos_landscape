@@ -437,6 +437,24 @@ theorem linProductSubmodule_le_of_generators
   rintro q ⟨x, rfl⟩
   exact hgen x.1 x.2
 
+theorem linProductSubmodule_le_span_square_of_span_eq
+    {W : Submodule ℝ linSubmodule} {x : linSubmodule}
+    (hxspan : ℝ ∙ x = W) :
+    linProductSubmodule W W ≤ ℝ ∙ linProduct x x := by
+  refine linProductSubmodule_le_of_generators ?_
+  intro a b
+  have ha : (a.1 : linSubmodule) ∈ ℝ ∙ x := by
+    rw [hxspan]
+    exact a.2
+  have hb : (b.1 : linSubmodule) ∈ ℝ ∙ x := by
+    rw [hxspan]
+    exact b.2
+  rcases Submodule.mem_span_singleton.mp ha with ⟨r, hr⟩
+  rcases Submodule.mem_span_singleton.mp hb with ⟨s, hs⟩
+  rw [← hr, ← hs]
+  rw [linProduct_smul_left, linProduct_smul_right, smul_smul]
+  exact Submodule.smul_mem _ (r * s) (Submodule.subset_span rfl)
+
 theorem finrank_symSquareSubmodule_le_three_of_finrank_eq_two
     {A : Submodule ℝ linSubmodule}
     (hA : Module.finrank ℝ A = 2) :
@@ -1939,6 +1957,13 @@ theorem residualEval_sq_lt_of_eq_add_mem_ker_catalecticantMap
   rw [residualEval_sq_eq_of_eq_add_mem_ker_catalecticantMap
     (B := B) (p := p) (u := u) hdecomp hK] at hneg
   exact hneg
+
+theorem residualEval_sq_smul
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (c : ℝ) (q : quadSubmodule) :
+    B (((c • q : quadSubmodule).1)^2) (residual p u) =
+      c^2 * B (q.1^2) (residual p u) := by
+  simp [pow_two, mul_assoc, mul_comm]
 
 theorem finrank_quotient_ker_catalecticantMap_eq_rank
     (B : DotForm) (p : Poly) (u : RankSevenVec) :
