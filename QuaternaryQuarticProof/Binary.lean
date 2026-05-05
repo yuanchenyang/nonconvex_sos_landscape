@@ -10,6 +10,9 @@ namespace QuaternaryQuartic
 def binaryQuarticEval (a b c d e x y : ℝ) : ℝ :=
   a * x^4 + 4 * b * x^3 * y + 6 * c * x^2 * y^2 + 4 * d * x * y^3 + e * y^4
 
+def binaryHankelQuad (a b c d e r s t : ℝ) : ℝ :=
+  a * r^2 + 2 * b * r * s + 2 * c * r * t + c * s^2 + 2 * d * s * t + e * t^2
+
 def HasBinaryLowRankNegativeNormalForm (a b c d e : ℝ) : Prop :=
   (∃ ρ α β : ℝ,
     ρ < 0 ∧
@@ -30,6 +33,42 @@ theorem HasBinaryLowRankNegativeNormalForm.rankOne
       (ρ * α^4) (ρ * α^3 * β) (ρ * α^2 * β^2)
       (ρ * α * β^3) (ρ * β^4) := by
   exact Or.inl ⟨ρ, α, β, hρ, hvec, rfl, rfl, rfl, rfl, rfl⟩
+
+theorem binaryHankelQuad_rankOne_eq (ρ α β r s t : ℝ) :
+    binaryHankelQuad
+        (ρ * α^4) (ρ * α^3 * β) (ρ * α^2 * β^2)
+        (ρ * α * β^3) (ρ * β^4) r s t =
+      ρ * (α^2 * r + α * β * s + β^2 * t)^2 := by
+  unfold binaryHankelQuad
+  ring
+
+theorem rankOne_hankel_scalar_neg_of_negative
+    {ρ α β : ℝ}
+    (hneg : ∃ r s t : ℝ,
+      binaryHankelQuad
+        (ρ * α^4) (ρ * α^3 * β) (ρ * α^2 * β^2)
+        (ρ * α * β^3) (ρ * β^4) r s t < 0) :
+    ρ < 0 := by
+  rcases hneg with ⟨r, s, t, hneg⟩
+  rw [binaryHankelQuad_rankOne_eq] at hneg
+  by_contra hρ
+  have hρ_nonneg : 0 ≤ ρ := le_of_not_gt hρ
+  have hsquare : 0 ≤ (α^2 * r + α * β * s + β^2 * t)^2 :=
+    sq_nonneg _
+  nlinarith
+
+theorem HasBinaryLowRankNegativeNormalForm.rankOne_of_negative_hankel
+    {ρ α β : ℝ}
+    (hvec : α ≠ 0 ∨ β ≠ 0)
+    (hneg : ∃ r s t : ℝ,
+      binaryHankelQuad
+        (ρ * α^4) (ρ * α^3 * β) (ρ * α^2 * β^2)
+        (ρ * α * β^3) (ρ * β^4) r s t < 0) :
+    HasBinaryLowRankNegativeNormalForm
+      (ρ * α^4) (ρ * α^3 * β) (ρ * α^2 * β^2)
+      (ρ * α * β^3) (ρ * β^4) :=
+  HasBinaryLowRankNegativeNormalForm.rankOne
+    (rankOne_hankel_scalar_neg_of_negative hneg) hvec
 
 theorem HasBinaryLowRankNegativeNormalForm.xyKernel
     {a e : ℝ} (hneg : ∃ r t : ℝ, a * r^2 + e * t^2 < 0) :

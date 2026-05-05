@@ -6785,4 +6785,42 @@ the rank-two Hankel-kernel classification/existence of a support basis.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one Hankel sign branch}
+
+\paragraph{Gap targeted.}
+The binary low-rank lemma's rank-one branch requires showing that a rank-one
+Hankel matrix with a negative quadratic value has a negative scalar
+factorization coefficient.
+
+\paragraph{Lean progress.}
+Added the scalar Hankel quadratic form
+\[
+\texttt{binaryHankelQuad}
+\]
+and proved its rank-one factorization identity
+\[
+\texttt{binaryHankelQuad\_rankOne\_eq}.
+\]
+From this, proved
+\[
+\texttt{rankOne\_hankel\_scalar\_neg\_of\_negative}
+\]
+and the normal-form constructor
+\[
+\texttt{HasBinaryLowRankNegativeNormalForm.rankOne\_of\_negative\_hankel}.
+\]
+
+\paragraph{Strategy change.}
+The rank-one binary case no longer needs the sign \(\rho<0\) as an external
+input once a negative Hankel quadratic value is available.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The rank-two kernel classification and the low-rank apolar support theorem
+remain the two main mathematical inputs.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
