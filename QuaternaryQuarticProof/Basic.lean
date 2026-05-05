@@ -2319,6 +2319,22 @@ theorem hasLowRankApolarSupportTheorem_of_annihilatorMapTheorem
     (B := B) (p := p) (u := u) (k := k) (by omega)
     (hann k hk hrank_le)
 
+theorem hasLowRankApolarAnnihilatorMapTheorem_of_supportTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupport : HasLowRankApolarSupportTheorem B p u) :
+    HasLowRankApolarAnnihilatorMapTheorem B p u := by
+  intro k hk hrank_le
+  exact annihilatorMap_range_le_of_hasLinearAnnihilatorCodimAtMost
+    (B := B) (p := p) (u := u) (k := k) (by omega)
+    (hsupport k hk hrank_le)
+
+theorem hasLowRankApolarAnnihilatorMapTheorem_iff_supportTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarAnnihilatorMapTheorem B p u ↔
+      HasLowRankApolarSupportTheorem B p u :=
+  ⟨hasLowRankApolarSupportTheorem_of_annihilatorMapTheorem,
+    hasLowRankApolarAnnihilatorMapTheorem_of_supportTheorem⟩
+
 theorem hasRankCaseApolarSupportBounds_of_lowRankApolarSupportTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupport : HasLowRankApolarSupportTheorem B p u) :
@@ -2454,6 +2470,28 @@ theorem hasLowRankApolarProductKernelDecomposition_iff_supportDecomposition
       HasLowRankApolarSupportDecomposition B p u :=
   ⟨hasLowRankApolarSupportDecomposition_of_productKernelDecomposition,
     hasLowRankApolarProductKernelDecomposition_of_supportDecomposition⟩
+
+theorem hasLowRankApolarAnnihilatorMapTheorem_of_productKernelDecomposition
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hprod : HasLowRankApolarProductKernelDecomposition B p u) :
+    HasLowRankApolarAnnihilatorMapTheorem B p u :=
+  hasLowRankApolarAnnihilatorMapTheorem_of_supportTheorem
+    (hasLowRankApolarSupportTheorem_of_productKernelDecomposition hprod)
+
+theorem hasLowRankApolarProductKernelDecomposition_of_annihilatorMapTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hann : HasLowRankApolarAnnihilatorMapTheorem B p u) :
+    HasLowRankApolarProductKernelDecomposition B p u :=
+  hasLowRankApolarProductKernelDecomposition_of_supportDecomposition
+    (hasLowRankApolarSupportDecomposition_of_lowRankApolarSupportTheorem
+      (hasLowRankApolarSupportTheorem_of_annihilatorMapTheorem hann))
+
+theorem hasLowRankApolarAnnihilatorMapTheorem_iff_productKernelDecomposition
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarAnnihilatorMapTheorem B p u ↔
+      HasLowRankApolarProductKernelDecomposition B p u :=
+  ⟨hasLowRankApolarProductKernelDecomposition_of_annihilatorMapTheorem,
+    hasLowRankApolarAnnihilatorMapTheorem_of_productKernelDecomposition⟩
 
 theorem hasRankCaseProductIndependenceGeometryData_of_apolarSupportBounds
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}

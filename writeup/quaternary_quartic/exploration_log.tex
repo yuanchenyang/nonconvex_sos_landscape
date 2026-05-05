@@ -9674,4 +9674,55 @@ reached more directly.
 
 No Julia numerical claims were used in this round.
 
+\section*{Low-rank apolar support and annihilator-map equivalences}
+
+\paragraph{Gap targeted.}
+The remaining apolar theorem can be stated either as a low-rank
+annihilator-map bound or as a low-rank support/codimension statement.  The
+rank-case conversion existed, but the low-rank theorem-level reverse direction
+was not exposed.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasLowRankApolarAnnihilatorMapTheorem\_of\_supportTheorem}
+\]
+and the equivalence
+\[
+\texttt{hasLowRankApolarAnnihilatorMapTheorem\_iff\_supportTheorem}.
+\]
+Also added the corresponding bridges between the annihilator-map theorem and
+the product-kernel decomposition package:
+\[
+\texttt{hasLowRankApolarAnnihilatorMapTheorem\_of\_productKernelDecomposition},
+\]
+\[
+\texttt{hasLowRankApolarProductKernelDecomposition\_of\_annihilatorMapTheorem},
+\]
+and
+\[
+\texttt{hasLowRankApolarAnnihilatorMapTheorem\_iff\_productKernelDecomposition}.
+\]
+
+\paragraph{Strategy change.}
+The apolar support gap can now be attacked in whichever form is most convenient:
+annihilator-map rank bounds, support decompositions, or product-kernel
+decompositions are interconvertible at the low-rank theorem level.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The substantive blocker is still to prove one of the equivalent low-rank
+apolar statements from the catalecticant hypotheses, together with the rank-two
+binary kernel-equation/normalized-position input.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
