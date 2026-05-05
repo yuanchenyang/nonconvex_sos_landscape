@@ -9173,4 +9173,40 @@ one of the equivalent rank-two branch/normalized certificate packages.
 
 No Julia numerical claims were used in this round.
 
+\section*{Exact-rank support route with scalar Hankel facts}
+
+\paragraph{Gap targeted.}
+After proving that exact-rank support bounds imply the monotone low-rank support
+theorem, the lighter scalar-Hankel rank-two route still exposed only the
+low-rank support theorem and support-decomposition interfaces.
+
+\paragraph{Lean progress.}
+Added residual and root reductions from
+\[
+\texttt{HasRankCaseApolarSupportBounds}
+\]
+together with universal normalized kernel position and existential scalar
+Hankel facts.  The proof uses the new conversion from exact-rank support bounds
+to the low-rank support theorem.
+
+\paragraph{Strategy change.}
+The current preferred high-level route can now close from the blueprint's
+rank-by-rank support bounds plus the lighter rank-two scalar-Hankel facts,
+without requiring a caller to package support as a monotone theorem first.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove rank-case apolar support bounds and construct the rank-two normalized
+position plus scalar Hankel facts.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
