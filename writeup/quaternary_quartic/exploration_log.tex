@@ -14732,4 +14732,52 @@ The remaining exact-sequence dimension step is the degree-three term
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three degree-three adjoint cokernel}
+
+\paragraph{Gap targeted.}
+The exact-sequence argument also requires the degree-three quotient term
+\(q_3=4-b\).  This is the adjoint multiplication calculation: multiplication
+by a fixed nonzero linear form \(\ell\) from degree one to the degree-two
+catalecticant quotient has the same rank as the induced degree-three map
+obtained by pairing with the nondegenerate quotient catalecticant form.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved that the quotient
+catalecticant map onto the dual quotient is surjective:
+\[
+\texttt{range\_quotientCatalecticantMap\_eq\_top}.
+\]
+Defined the proof-serving adjoint degree-three map
+\[
+\texttt{leftMultiplicationDegreeThreeMap}
+\]
+as the dual of the degree-two multiplication map composed with the quotient
+catalecticant pairing.  Proved its image has the same finrank as the
+degree-two multiplication image:
+\[
+\texttt{finrank\_range\_leftMultiplicationDegreeThreeMap\_eq}.
+\]
+Consequently proved
+\[
+\texttt{rankThree\_leftMultiplication\_degreeThreeCokernel\_finrank\_eq\_four\_sub},
+\]
+and combined it with the previous \(q_2=3-b\) package in
+\[
+\texttt{exists\_rankThreeBadBranch\_leftMultiplication\_degreeThreeCokernel},
+\]
+which now yields \(1\le b\le3\), \(q_2=3-b\), and \(q_3=4-b\) for the same
+chosen linear form.
+
+\paragraph{Strategy change.}
+This closes the dimension-count part of the rank-three bad-branch exact
+sequence.  The next largest remaining central gap is no longer the adjoint
+identification, but the Macaulay-growth contradiction applied to the pair
+\((q_2,q_3)=(3-b,4-b)\).
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

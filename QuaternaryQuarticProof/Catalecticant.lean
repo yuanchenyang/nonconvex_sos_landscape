@@ -1956,6 +1956,13 @@ theorem finrank_range_quotientCatalecticantMap_eq_finrank_quotient
   simp at hsum
   omega
 
+theorem range_quotientCatalecticantMap_eq_top
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    LinearMap.range (quotientCatalecticantMap B p u) = ⊤ := by
+  apply Submodule.eq_top_of_finrank_eq
+  rw [finrank_range_quotientCatalecticantMap_eq_finrank_quotient,
+    Subspace.dual_finrank_eq]
+
 theorem quotientCatalecticantMap_linearProducts_reassociate
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (w x y z : linSubmodule) :
@@ -2428,6 +2435,71 @@ theorem exists_rankThreeBadBranch_leftMultiplication_degreeTwoCokernel
   rw [rankThree_leftMultiplication_degreeTwoCokernel_finrank_eq_three_sub
     (B := B) (p := p) (u := u) hrank a]
   rw [hb]
+
+def leftMultiplicationDegreeThreeMap
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (a : linSubmodule) :
+    (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) →ₗ[ℝ]
+      Module.Dual ℝ linSubmodule :=
+  (linearAnnihilatorMap B p u a).dualMap.comp
+    (quotientCatalecticantMap B p u)
+
+@[simp] theorem leftMultiplicationDegreeThreeMap_apply
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (a : linSubmodule)
+    (q : quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u))
+    (e : linSubmodule) :
+    leftMultiplicationDegreeThreeMap B p u a q e =
+      quotientCatalecticantMap B p u q (linearAnnihilatorMap B p u a e) :=
+  rfl
+
+theorem range_leftMultiplicationDegreeThreeMap_eq_range_dualMap
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (a : linSubmodule) :
+    LinearMap.range (leftMultiplicationDegreeThreeMap B p u a) =
+      LinearMap.range (linearAnnihilatorMap B p u a).dualMap := by
+  rw [leftMultiplicationDegreeThreeMap, LinearMap.range_comp,
+    range_quotientCatalecticantMap_eq_top, Submodule.map_top]
+
+theorem finrank_range_leftMultiplicationDegreeThreeMap_eq
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (a : linSubmodule) :
+    Module.finrank ℝ (LinearMap.range (leftMultiplicationDegreeThreeMap B p u a)) =
+      Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) := by
+  rw [range_leftMultiplicationDegreeThreeMap_eq_range_dualMap,
+    LinearMap.finrank_range_dualMap_eq_finrank_range]
+
+theorem rankThree_leftMultiplication_degreeThreeCokernel_finrank_eq_four_sub
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (a : linSubmodule) :
+    Module.finrank ℝ
+        (Module.Dual ℝ linSubmodule ⧸
+          LinearMap.range (leftMultiplicationDegreeThreeMap B p u a)) =
+      4 - Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) := by
+  haveI : Module.Projective ℝ linSubmodule := inferInstance
+  haveI : Module.Finite ℝ (Module.Dual ℝ linSubmodule) := Module.dual_finite
+  rw [Submodule.finrank_quotient,
+    finrank_range_leftMultiplicationDegreeThreeMap_eq,
+    Subspace.dual_finrank_eq, finrank_linSubmodule_eq_four]
+
+theorem exists_rankThreeBadBranch_leftMultiplication_degreeThreeCokernel
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4) :
+    ∃ (a : linSubmodule) (b q2 q3 : ℕ),
+      a ≠ 0 ∧
+        Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) = b ∧
+          1 ≤ b ∧ b ≤ 3 ∧
+            q2 = 3 - b ∧
+              Module.finrank ℝ
+                  ((quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) ⧸
+                    LinearMap.range (linearAnnihilatorMap B p u a)) = q2 ∧
+                q3 = 4 - b ∧
+                  Module.finrank ℝ
+                      (Module.Dual ℝ linSubmodule ⧸
+                        LinearMap.range (leftMultiplicationDegreeThreeMap B p u a)) = q3 := by
+  rcases exists_rankThreeBadBranch_leftMultiplication_degreeTwoCokernel
+      (B := B) (p := p) (u := u) hrank hquot with
+    ⟨a, b, q2, ha_ne, hb, hbpos, hbtop, hq2, hq2fin⟩
+  refine ⟨a, b, q2, 4 - b, ha_ne, hb, hbpos, hbtop, hq2, hq2fin, rfl, ?_⟩
+  rw [rankThree_leftMultiplication_degreeThreeCokernel_finrank_eq_four_sub,
+    hb]
 
 def scalarizedLinearAnnihilatorMap
     (B : DotForm) (p : Poly) (u : RankSevenVec)
