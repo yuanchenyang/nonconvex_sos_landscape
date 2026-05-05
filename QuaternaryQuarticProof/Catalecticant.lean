@@ -2521,6 +2521,25 @@ theorem exists_rankThreeBadBranch_leftMultiplication_cokernel_not_macaulay
   exact rankThreeExactSequenceNumericalContradiction
     hbpos hbtop hq2 hq3 (by omega)
 
+theorem rankThreeBadBranchContradiction_of_leftMultiplication_cokernel_macaulay
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4)
+    (hmac :
+      ∀ a : linSubmodule,
+        a ≠ 0 →
+          Module.finrank ℝ
+              (Module.Dual ℝ linSubmodule ⧸
+                LinearMap.range (leftMultiplicationDegreeThreeMap B p u a)) ≤
+            Module.finrank ℝ
+              ((quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) ⧸
+                LinearMap.range (linearAnnihilatorMap B p u a))) :
+    False := by
+  rcases exists_rankThreeBadBranch_leftMultiplication_cokernel_not_macaulay
+      (B := B) (p := p) (u := u) hrank hquot with
+    ⟨a, ha_ne, hnot⟩
+  exact hnot (hmac a ha_ne)
+
 def scalarizedLinearAnnihilatorMap
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (T :

@@ -14846,4 +14846,40 @@ Combining such a theorem with the new Lean lemma would close the bad branch.
 
 No Julia numerical claims were used in this round.
 
+\section*{Bridge actual cokernel inequality to bad-branch contradiction}
+
+\paragraph{Gap targeted.}
+The previous round exposed that the constructed bad-branch cokernels violate
+the expected Macaulay inequality.  The next useful reduction is to state the
+contradiction directly in terms of the actual multiplication maps, so the
+remaining Macaulay proof has a precise target and no extra numerical
+packaging.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{rankThreeBadBranchContradiction\_of\_leftMultiplication\_cokernel\_macaulay}.
+\]
+It says that the rank-three bad branch is impossible if every nonzero linear
+form satisfies the concrete cokernel inequality
+\[
+\dim\left(A_3/\ell A_2\right)\le
+\dim\left(A_2/\ell A_1\right),
+\]
+as represented by
+\texttt{leftMultiplicationDegreeThreeMap} and
+\texttt{linearAnnihilatorMap}.  The proof uses the constructed nonzero
+linear form whose exact-sequence dimensions are \(4-b\) and \(3-b\).
+
+\paragraph{Strategy change.}
+The rank-three branch is now reduced to a single concrete Macaulay/O-sequence
+lemma about these cokernels.  This keeps the next work item narrow: prove the
+inequality for the quotient by a nonzero linear form, then apply this bridge.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
