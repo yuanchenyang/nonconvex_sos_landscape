@@ -928,6 +928,30 @@ def HasGlobalRankTwoThreeApolarAnnihilatorContradictions : Prop :=
         IsSOCP B p u →
           HasRankTwoThreeApolarAnnihilatorContradictions B p u
 
+def HasGlobalRankTwoApolarLowAnnihilatorContradiction : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankTwoApolarLowAnnihilatorContradiction B p u
+
+def HasGlobalRankThreeApolarZeroAnnihilatorContradiction : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankThreeApolarZeroAnnihilatorContradiction B p u
+
+def HasGlobalRankThreeApolarMacaulayObstruction : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankThreeApolarMacaulayObstruction B p u
+
 def HasGlobalRankTwoThreeApolarEssentialQuotientBounds : Prop :=
   ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u),
@@ -2923,6 +2947,28 @@ theorem rankThreeZeroAnnihilatorContradiction_iff_rankThreeDimensionBound
       HasRankThreeApolarAnnihilatorDimensionBound B p u :=
   ⟨rankThreeDimensionBound_of_zeroAnnihilatorContradiction,
     rankThreeZeroAnnihilatorContradiction_of_rankThreeDimensionBound⟩
+
+theorem rankThreeZeroAnnihilatorContradiction_of_macaulayObstruction
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hobstruction : HasRankThreeApolarMacaulayObstruction B p u) :
+    HasRankThreeApolarZeroAnnihilatorContradiction B p u := by
+  intro hrank3 hzero
+  rcases hobstruction hrank3 hzero with ⟨b, hbpos, hbtop, hineq⟩
+  exact rankThreeMacaulayNumericalContradiction hbpos hbtop hineq
+
+theorem rankThreeMacaulayObstruction_of_zeroAnnihilatorContradiction
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hcontra : HasRankThreeApolarZeroAnnihilatorContradiction B p u) :
+    HasRankThreeApolarMacaulayObstruction B p u := by
+  intro hrank3 hzero
+  exact False.elim (hcontra hrank3 hzero)
+
+theorem rankThreeMacaulayObstruction_iff_zeroAnnihilatorContradiction
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankThreeApolarMacaulayObstruction B p u ↔
+      HasRankThreeApolarZeroAnnihilatorContradiction B p u :=
+  ⟨rankThreeZeroAnnihilatorContradiction_of_macaulayObstruction,
+    rankThreeMacaulayObstruction_of_zeroAnnihilatorContradiction⟩
 
 theorem rankTwoThreeAnnihilatorContradictions_of_dimensionBounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -8653,6 +8699,51 @@ theorem globalRankTwoThreeApolarAnnihilatorContradictions_iff_globalRankTwoThree
   ⟨globalRankTwoThreeApolarAnnihilatorDimensionBounds_of_globalRankTwoThreeApolarAnnihilatorContradictions,
     globalRankTwoThreeApolarAnnihilatorContradictions_of_globalRankTwoThreeApolarAnnihilatorDimensionBounds⟩
 
+theorem globalRankTwoThreeApolarAnnihilatorContradictions_of_splitGlobalAnnihilatorContradictions
+    (hlow2 : HasGlobalRankTwoApolarLowAnnihilatorContradiction)
+    (hzero3 : HasGlobalRankThreeApolarZeroAnnihilatorContradiction) :
+    HasGlobalRankTwoThreeApolarAnnihilatorContradictions := by
+  intro B p u hu hB hp hsocp
+  exact ⟨hlow2 B p u hu hB hp hsocp,
+    hzero3 B p u hu hB hp hsocp⟩
+
+theorem splitGlobalAnnihilatorContradictions_of_globalRankTwoThreeApolarAnnihilatorContradictions
+    (hcontra : HasGlobalRankTwoThreeApolarAnnihilatorContradictions) :
+    HasGlobalRankTwoApolarLowAnnihilatorContradiction ∧
+      HasGlobalRankThreeApolarZeroAnnihilatorContradiction := by
+  exact ⟨
+    fun B p u hu hB hp hsocp => (hcontra B p u hu hB hp hsocp).1,
+    fun B p u hu hB hp hsocp => (hcontra B p u hu hB hp hsocp).2⟩
+
+theorem globalRankTwoThreeApolarAnnihilatorContradictions_iff_splitGlobalAnnihilatorContradictions :
+    HasGlobalRankTwoThreeApolarAnnihilatorContradictions ↔
+      HasGlobalRankTwoApolarLowAnnihilatorContradiction ∧
+        HasGlobalRankThreeApolarZeroAnnihilatorContradiction :=
+  ⟨splitGlobalAnnihilatorContradictions_of_globalRankTwoThreeApolarAnnihilatorContradictions,
+    fun hdata =>
+      globalRankTwoThreeApolarAnnihilatorContradictions_of_splitGlobalAnnihilatorContradictions
+        hdata.1 hdata.2⟩
+
+theorem globalRankThreeApolarZeroAnnihilatorContradiction_of_globalRankThreeApolarMacaulayObstruction
+    (hobstruction : HasGlobalRankThreeApolarMacaulayObstruction) :
+    HasGlobalRankThreeApolarZeroAnnihilatorContradiction := by
+  intro B p u hu hB hp hsocp
+  exact rankThreeZeroAnnihilatorContradiction_of_macaulayObstruction
+    (hobstruction B p u hu hB hp hsocp)
+
+theorem globalRankThreeApolarMacaulayObstruction_of_globalRankThreeApolarZeroAnnihilatorContradiction
+    (hcontra : HasGlobalRankThreeApolarZeroAnnihilatorContradiction) :
+    HasGlobalRankThreeApolarMacaulayObstruction := by
+  intro B p u hu hB hp hsocp
+  exact rankThreeMacaulayObstruction_of_zeroAnnihilatorContradiction
+    (hcontra B p u hu hB hp hsocp)
+
+theorem globalRankThreeApolarMacaulayObstruction_iff_globalRankThreeApolarZeroAnnihilatorContradiction :
+    HasGlobalRankThreeApolarMacaulayObstruction ↔
+      HasGlobalRankThreeApolarZeroAnnihilatorContradiction :=
+  ⟨globalRankThreeApolarZeroAnnihilatorContradiction_of_globalRankThreeApolarMacaulayObstruction,
+    globalRankThreeApolarMacaulayObstruction_of_globalRankThreeApolarZeroAnnihilatorContradiction⟩
+
 theorem globalRankCaseApolarSupportBounds_of_globalRankTwoThreeApolarSupportBounds
     (hsupport : HasGlobalRankTwoThreeApolarSupportBounds) :
     HasGlobalRankCaseApolarSupportBounds := by
@@ -9281,6 +9372,35 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeApola
         ((quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeApolarAnnihilatorDimensionBounds).mp
           hmain),
     quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarAnnihilatorContradictions⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoLowAnnihilator_and_rankThreeMacaulayObstruction
+    (hlow2 : HasGlobalRankTwoApolarLowAnnihilatorContradiction)
+    (hobstruction3 : HasGlobalRankThreeApolarMacaulayObstruction) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarAnnihilatorContradictions
+    (globalRankTwoThreeApolarAnnihilatorContradictions_of_splitGlobalAnnihilatorContradictions
+      hlow2
+      (globalRankThreeApolarZeroAnnihilatorContradiction_of_globalRankThreeApolarMacaulayObstruction
+        hobstruction3))
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoLowAnnihilator_and_rankThreeMacaulayObstruction :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoApolarLowAnnihilatorContradiction ∧
+        HasGlobalRankThreeApolarMacaulayObstruction := by
+  constructor
+  · intro hmain
+    have hcontra :=
+      (quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeApolarAnnihilatorContradictions).mp
+        hmain
+    have hsplit :=
+      splitGlobalAnnihilatorContradictions_of_globalRankTwoThreeApolarAnnihilatorContradictions
+        hcontra
+    exact ⟨hsplit.1,
+      globalRankThreeApolarMacaulayObstruction_of_globalRankThreeApolarZeroAnnihilatorContradiction
+        hsplit.2⟩
+  · intro hdata
+    exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoLowAnnihilator_and_rankThreeMacaulayObstruction
+      hdata.1 hdata.2
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch
     (hgrowth2 : HasGlobalRankTwoApolarMacaulayGrowthBound)
