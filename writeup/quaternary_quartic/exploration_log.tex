@@ -6457,4 +6457,45 @@ derived internally.
 
 No Julia numerical claims were used in this round.
 
+\section*{Kernel data projected to binary-form interface}
+
+\paragraph{Gap targeted.}
+The kernel-decomposition route still carried stronger rank-one and rank-three
+fields than the newest binary-form-and-annihilator interface needs.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseBinaryFormAndAnnihilatorData\_of\_kernelDecompositionApolarData}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  It projects the kernel
+decomposition package to the newest interface: rank one keeps only the
+annihilator-map bound, rank two converts kernel-equation cases to binary
+low-rank normal forms, and rank three keeps only the annihilator-map bound.
+
+Updated
+\[
+\texttt{residual\_eq\_zero\_of\_kernelDecompositionApolarData}
+\]
+to route through
+\[
+\texttt{residual\_eq\_zero\_of\_binaryFormAndAnnihilatorData}.
+\]
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+completes successfully.
+
+\paragraph{Remaining blockers.}
+The cleanest current high-level target is
+\[
+\texttt{HasRankCaseBinaryFormAndAnnihilatorData}.
+\]
+It remains to prove the annihilator-map bounds and the rank-two binary
+low-rank normal form from the catalecticant rank hypotheses.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

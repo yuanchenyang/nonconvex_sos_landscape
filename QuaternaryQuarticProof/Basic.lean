@@ -1290,6 +1290,24 @@ theorem hasRankCaseProductFreeApolarData_of_kernelDecompositionApolarData
       residualEval_sq_lt_of_eq_add_mem_ker_catalecticantMap
         (B := B) (p := p) (u := u) hqdecomp hqK hqneg⟩
 
+theorem hasRankCaseBinaryFormAndAnnihilatorData_of_kernelDecompositionApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseKernelDecompositionApolarData B p u hu) :
+    HasRankCaseBinaryFormAndAnnihilatorData B p u hu := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    exact (hdata1 hrank1).1
+  constructor
+  · intro hrank2
+    refine ⟨(hdata2 hrank2).1, ?_⟩
+    intro A W x y hAann hAW hxW hyW hy hx hAdim hWdim
+    exact binaryRestriction_lowRankNegativeNormalForm_of_kernelEquationCase
+      ((hdata2 hrank2).2.1 A W x y hAann hAW hxW hyW hy hx hAdim hWdim)
+  · intro hrank3
+    exact (hdata3 hrank3).1
+
 theorem hasRankCaseApolarComponentData_of_kernelDecompositionApolarData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -1627,10 +1645,9 @@ theorem residual_eq_zero_of_kernelDecompositionApolarData
     (hsocp : IsSOCP B p u)
     (hdata : HasRankCaseKernelDecompositionApolarData B p u hu) :
     residual p u = 0 :=
-  residual_eq_zero_of_productFreeApolarData
+  residual_eq_zero_of_binaryFormAndAnnihilatorData
     (B := B) hu hp hsocp
-    (hasRankCaseProductFreeApolarData_of_kernelDecompositionApolarData
-      (B := B) hp hsocp.1 hdata)
+    (hasRankCaseBinaryFormAndAnnihilatorData_of_kernelDecompositionApolarData hdata)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseNegativeCertificates
     (hcert :
