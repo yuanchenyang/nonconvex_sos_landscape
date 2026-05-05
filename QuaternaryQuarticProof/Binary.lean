@@ -181,6 +181,22 @@ theorem parabolic_shearX_ySqCoeff_eq_zero
   field_simp [hr]
   nlinarith
 
+theorem parabolic_shearY_mixedCoeff_eq_zero
+    {r s : ℝ} (hr : r ≠ 0) :
+    s - 2 * r * (s / (2 * r)) = 0 := by
+  field_simp [hr]
+  ring
+
+theorem parabolic_shearY_ySqCoeff_eq_zero
+    {r s t : ℝ} (hr : r ≠ 0)
+    (hdisc : binaryKernelDiscriminant r s t = 0) :
+    r * (s / (2 * r))^2 - s * (s / (2 * r)) + t = 0 := by
+  have hdisc' : s^2 = 4 * r * t := by
+    unfold binaryKernelDiscriminant at hdisc
+    nlinarith
+  field_simp [hr]
+  nlinarith
+
 theorem isBinaryQuadraticPullback_parabolic_shearX_to_xSq
     {r s t : ℝ} (hr : r ≠ 0)
     (hdisc : binaryKernelDiscriminant r s t = 0) :
@@ -981,6 +997,75 @@ theorem elliptic_kernel_of_nonzero_scalar_elliptic_kernel
   rw [hscale] at hker
   exact binaryHankelMul_eq_zero_of_smul_eq_zero (a := a) (b := b)
     (c := c) (d := d) (e := e) (k := R) hR hker
+
+theorem ySq_kernel_of_nonzero_scalar_ySq_kernel
+    {a b c d e T : ℝ}
+    (hT : T ≠ 0)
+    (hker : binaryHankelMul a b c d e (![0, 0, T] : Fin 3 → ℝ) = 0) :
+    binaryHankelMul a b c d e (![0, 0, 1] : Fin 3 → ℝ) = 0 := by
+  have hscale :
+      (![0, 0, T] : Fin 3 → ℝ) = T • (![0, 0, 1] : Fin 3 → ℝ) := by
+    ext i
+    fin_cases i <;> simp [Pi.smul_apply]
+  rw [hscale] at hker
+  exact binaryHankelMul_eq_zero_of_smul_eq_zero (a := a) (b := b)
+    (c := c) (d := d) (e := e) (k := T) hT hker
+
+theorem binaryHankelMul_parabolic_shearY_dual_xSq_kernel
+    {a b c d e r s t : ℝ}
+    (hr : r ≠ 0)
+    (hdisc : binaryKernelDiscriminant r s t = 0)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0) :
+    binaryHankelMul
+        (a + 4 * b * (s / (2 * r)) + 6 * c * (s / (2 * r))^2 +
+          4 * d * (s / (2 * r))^3 + e * (s / (2 * r))^4)
+        (b + 3 * c * (s / (2 * r)) + 3 * d * (s / (2 * r))^2 +
+          e * (s / (2 * r))^3)
+        (c + 2 * d * (s / (2 * r)) + e * (s / (2 * r))^2)
+        (d + e * (s / (2 * r)))
+        e
+        (![r, 0, 0] : Fin 3 → ℝ) = 0 := by
+  have htransport := binaryHankelMul_shearY_dual_kernel
+    (a := a) (b := b) (c := c) (d := d) (e := e)
+    (r := r) (s := s) (t := t) (tau := s / (2 * r)) hker
+  have hmix : s - 2 * r * (s / (2 * r)) = 0 :=
+    parabolic_shearY_mixedCoeff_eq_zero (r := r) (s := s) hr
+  have hy : r * (s / (2 * r))^2 - s * (s / (2 * r)) + t = 0 :=
+    parabolic_shearY_ySqCoeff_eq_zero (r := r) (s := s) (t := t) hr hdisc
+  simpa [hmix, hy] using htransport
+
+theorem ySq_kernel_of_parabolic_shearY_swap_dual_kernel
+    {a b c d e r s t : ℝ}
+    (hr : r ≠ 0)
+    (hdisc : binaryKernelDiscriminant r s t = 0)
+    (hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0) :
+    binaryHankelMul
+        e
+        (d + e * (s / (2 * r)))
+        (c + 2 * d * (s / (2 * r)) + e * (s / (2 * r))^2)
+        (b + 3 * c * (s / (2 * r)) + 3 * d * (s / (2 * r))^2 +
+          e * (s / (2 * r))^3)
+        (a + 4 * b * (s / (2 * r)) + 6 * c * (s / (2 * r))^2 +
+          4 * d * (s / (2 * r))^3 + e * (s / (2 * r))^4)
+        (![0, 0, 1] : Fin 3 → ℝ) = 0 := by
+  let A := a + 4 * b * (s / (2 * r)) + 6 * c * (s / (2 * r))^2 +
+    4 * d * (s / (2 * r))^3 + e * (s / (2 * r))^4
+  let B := b + 3 * c * (s / (2 * r)) + 3 * d * (s / (2 * r))^2 +
+    e * (s / (2 * r))^3
+  let C := c + 2 * d * (s / (2 * r)) + e * (s / (2 * r))^2
+  let D := d + e * (s / (2 * r))
+  have hx :
+      binaryHankelMul A B C D e (![r, 0, 0] : Fin 3 → ℝ) = 0 := by
+    simpa [A, B, C, D] using
+      binaryHankelMul_parabolic_shearY_dual_xSq_kernel
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc hker
+  have hswap : binaryHankelMul e D C B A (![0, 0, r] : Fin 3 → ℝ) = 0 := by
+    simpa [A, B, C, D] using
+      binaryHankelMul_swap_dual_kernel (a := A) (b := B) (c := C)
+        (d := D) (e := e) (r := r) (s := 0) (t := 0) hx
+  exact ySq_kernel_of_nonzero_scalar_ySq_kernel (a := e) (b := D)
+    (c := C) (d := B) (e := A) (T := r) hr (by simpa [A, B, C, D] using hswap)
 
 theorem exists_nonzero_binaryHankel_kernel_equations_of_finrank_range_le_two
     {a b c d e : ℝ}

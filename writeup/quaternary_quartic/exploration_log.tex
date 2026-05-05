@@ -11215,4 +11215,53 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Parabolic binary kernel transport to the canonical branch}
+
+\paragraph{Gap targeted.}
+After the dual transport lemmas, the next rank-two binary subcase is the
+parabolic discriminant branch.  When \(s^2-4rt=0\) and \(r\ne0\), a dual shear
+should turn the transported kernel into a scalar \(x^2\) kernel, and a swap
+should put it in the canonical \(y^2\) branch already used by the binary
+certificate code.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{parabolic\_shearY\_mixedCoeff\_eq\_zero},
+\quad
+\texttt{parabolic\_shearY\_ySqCoeff\_eq\_zero},
+\]
+\[
+\texttt{ySq\_kernel\_of\_nonzero\_scalar\_ySq\_kernel},
+\quad
+\texttt{binaryHankelMul\_parabolic\_shearY\_dual\_xSq\_kernel},
+\]
+and
+\[
+\texttt{ySq\_kernel\_of\_parabolic\_shearY\_swap\_dual\_kernel}.
+\]
+The final theorem packages the nonzero-\(r\) parabolic branch: starting from a
+Hankel kernel \((r,s,t)\), the shear by \(s/(2r)\) followed by a swap gives a
+transformed binary Hankel map that kills the exact canonical vector
+\((0,0,1)\).
+
+\paragraph{Strategy change.}
+The parabolic nonzero-leading branch can now feed the existing
+\texttt{ySq} canonical branch certificate after coefficient transformation.
+The remaining binary classification work is to package the zero-leading
+parabolic branch together with the hyperbolic and elliptic transported
+normalizations.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}
