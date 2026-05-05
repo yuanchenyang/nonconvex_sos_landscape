@@ -152,6 +152,48 @@ theorem binaryRestriction_lowRankNegativeNormalForm_of_ellipticKernel_equations
       (binaryRestrictionCoeffE B p u y) :=
   HasBinaryLowRankNegativeNormalForm.of_ellipticKernel_equations hc hd he hne
 
+def HasBinaryRestrictionKernelEquationCase
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule) : Prop :=
+  (binaryRestrictionCoeffB B p u x y = 0 ∧
+    binaryRestrictionCoeffC B p u x y = 0 ∧
+      binaryRestrictionCoeffD B p u x y = 0 ∧
+        ∃ r t : ℝ,
+          binaryRestrictionCoeffA B p u x * r^2 +
+              binaryRestrictionCoeffE B p u y * t^2 <
+            0) ∨
+  (binaryRestrictionCoeffC B p u x y = 0 ∧
+    binaryRestrictionCoeffD B p u x y = 0 ∧
+      binaryRestrictionCoeffE B p u y = 0 ∧
+        binaryRestrictionCoeffB B p u x y ≠ 0) ∨
+  (binaryRestrictionCoeffC B p u x y =
+      -binaryRestrictionCoeffA B p u x ∧
+    binaryRestrictionCoeffD B p u x y =
+      -binaryRestrictionCoeffB B p u x y ∧
+    binaryRestrictionCoeffE B p u y =
+      binaryRestrictionCoeffA B p u x ∧
+    (binaryRestrictionCoeffA B p u x ≠ 0 ∨
+      binaryRestrictionCoeffB B p u x y ≠ 0))
+
+theorem binaryRestriction_lowRankNegativeNormalForm_of_kernelEquationCase
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}
+    (hcase : HasBinaryRestrictionKernelEquationCase B p u x y) :
+    HasBinaryLowRankNegativeNormalForm
+      (binaryRestrictionCoeffA B p u x)
+      (binaryRestrictionCoeffB B p u x y)
+      (binaryRestrictionCoeffC B p u x y)
+      (binaryRestrictionCoeffD B p u x y)
+      (binaryRestrictionCoeffE B p u y) := by
+  rcases hcase with hxy | hySq | hell
+  · rcases hxy with ⟨hb, hc, hd, hneg⟩
+    exact binaryRestriction_lowRankNegativeNormalForm_of_xyKernel_equations
+      hb hc hd hneg
+  · rcases hySq with ⟨hc, hd, he, hb⟩
+    exact binaryRestriction_lowRankNegativeNormalForm_of_ySqKernel_equations
+      hc hd he hb
+  · rcases hell with ⟨hc, hd, he, hne⟩
+    exact binaryRestriction_lowRankNegativeNormalForm_of_ellipticKernel_equations
+      hc hd he hne
+
 theorem binaryRestriction_pow_eq_C
     (x y : linSubmodule) (X Y : ℝ) :
     (linProduct (X • x + Y • y) (X • x + Y • y) :

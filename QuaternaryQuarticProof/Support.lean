@@ -453,6 +453,48 @@ theorem hasRankTwoSupportComponentHypothesis_of_independent_binary_data
     fun z hzW hz =>
       hdisj A W z hAann hAW hzW hz hAdim hWdim⟩
 
+theorem hasRankTwoSupportComponentHypothesis_of_independent_binary_cases
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hSym :
+      ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              (x : Poly) ≠ 0 →
+                Module.finrank ℝ A = 2 →
+                  Module.finrank ℝ W = 2 →
+                    Module.finrank ℝ (symSquareSubmodule A) = 3)
+    (hcase :
+      ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              y ∈ W →
+                y ∉ ℝ ∙ x →
+                  (x : Poly) ≠ 0 →
+                    Module.finrank ℝ A = 2 →
+                      Module.finrank ℝ W = 2 →
+                        HasBinaryRestrictionKernelEquationCase B p u x y)
+    (hdisj :
+      ∀ (A W : Submodule ℝ linSubmodule) (z : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            z ∈ W →
+              (z : Poly) ≠ 0 →
+                Module.finrank ℝ A = 2 →
+                  Module.finrank ℝ W = 2 →
+                    LinearMap.range (linProductLeftMapOn z A) ⊓
+                        symSquareSubmodule A =
+                      ⊥) :
+    HasRankTwoSupportComponentHypothesis B p u :=
+  hasRankTwoSupportComponentHypothesis_of_independent_binary_data
+    (B := B) (p := p) (u := u)
+    hSym
+    (fun A W x y hAann hAW hxW hyW hynot hx hAdim hWdim =>
+      binaryRestriction_lowRankNegativeNormalForm_of_kernelEquationCase
+        (hcase A W x y hAann hAW hxW hyW hynot hx hAdim hWdim))
+    hdisj
+
 theorem hasRankOneSupportComponentHypothesis_of_self_negative
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hSym :

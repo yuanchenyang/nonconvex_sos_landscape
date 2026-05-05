@@ -4693,4 +4693,52 @@ The proof still needs that case split and the geometric disjointness fact.
 
 No Julia numerical claims were used in this round.
 
+\section*{Packaging rank-two binary kernel-equation cases}
+
+\paragraph{Gap targeted.}
+The rank-two apolar proof should not need to build
+\(\texttt{HasBinaryLowRankNegativeNormalForm}\) directly.  Its natural output
+is a case split on the binary catalecticant kernel equations.  The formal
+pipeline needed a single predicate for those alternatives and a support-level
+constructor consuming it.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasBinaryRestrictionKernelEquationCase}
+\]
+to \texttt{QuaternaryQuarticProof/Binary.lean}, bundling the three canonical
+coefficient alternatives corresponding to the \(xy\), \(y^2\), and
+\(x^2+y^2\) kernel-vector cases.  Added
+\[
+\texttt{binaryRestriction\_lowRankNegativeNormalForm\_of\_kernelEquationCase}
+\]
+to eliminate this package into the exact normal-form predicate.
+
+Added
+\[
+\texttt{hasRankTwoSupportComponentHypothesis\_of\_independent\_binary\_cases}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It combines the existing
+independent second-coordinate choice with exact \(\Sym^2A\) dimension,
+kernel-equation cases, and product disjointness to produce
+\(\texttt{HasRankTwoSupportComponentHypothesis}\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Binary}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the expected
+remaining failure is still the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two branch now asks for the apolar proof to supply three concrete
+facts: exact \(\Sym^2A\) dimension, the packaged kernel-equation case, and
+\(zA\cap\Sym^2A=0\) for nonzero \(z\in W\).  The coefficient normal-form
+plumbing is no longer a separate blocker.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
