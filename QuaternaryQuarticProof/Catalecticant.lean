@@ -1208,6 +1208,54 @@ theorem catalecticantMap_pair_comm
     catalecticantMap B p u q r = catalecticantMap B p u r q := by
   simp [mul_comm]
 
+theorem catalecticantMap_eq_zero_of_residual_eq_zero
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hres : residual p u = 0) :
+    catalecticantMap B p u = 0 := by
+  ext q r
+  simp [hres]
+
+theorem finrank_range_catalecticantMap_eq_zero_of_residual_eq_zero
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hres : residual p u = 0) :
+    Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 0 := by
+  rw [catalecticantMap_eq_zero_of_residual_eq_zero hres]
+  simp
+
+theorem residual_ne_zero_of_catalecticantMap_rank_pos
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : 0 < Module.finrank ℝ (LinearMap.range (catalecticantMap B p u))) :
+    residual p u ≠ 0 := by
+  intro hres
+  have hzero :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 0 :=
+    finrank_range_catalecticantMap_eq_zero_of_residual_eq_zero hres
+  omega
+
+theorem residual_ne_zero_of_catalecticantMap_rank_eq_one
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1) :
+    residual p u ≠ 0 :=
+  residual_ne_zero_of_catalecticantMap_rank_pos (by
+    rw [hrank]
+    norm_num)
+
+theorem residual_ne_zero_of_catalecticantMap_rank_eq_two
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2) :
+    residual p u ≠ 0 :=
+  residual_ne_zero_of_catalecticantMap_rank_pos (by
+    rw [hrank]
+    norm_num)
+
+theorem residual_ne_zero_of_catalecticantMap_rank_eq_three
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3) :
+    residual p u ≠ 0 :=
+  residual_ne_zero_of_catalecticantMap_rank_pos (by
+    rw [hrank]
+    norm_num)
+
 theorem spanUQuad_le_ker_catalecticantMap {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
     (hfocp : IsFOCP B p u) :

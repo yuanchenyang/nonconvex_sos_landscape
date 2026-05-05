@@ -4901,4 +4901,43 @@ low-rank catalecticant support theorem and SOS negativity argument.
 
 No Julia numerical claims were used in this round.
 
+\section*{Separating positive catalecticant rank from residual zero}
+
+\paragraph{Gap targeted.}
+Several remaining apolar obligations, especially the negative-square inputs in
+rank one, rank two, and rank three, are only meaningful when the residual is
+nonzero.  The rank-case hypotheses provide positive catalecticant rank, so the
+formal development needs a direct bridge from positive catalecticant rank to
+\(\texttt{residual p u \(\ne\) 0}\).
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{catalecticantMap\_eq\_zero\_of\_residual\_eq\_zero},
+\]
+\[
+\texttt{finrank\_range\_catalecticantMap\_eq\_zero\_of\_residual\_eq\_zero},
+\]
+\[
+\texttt{residual\_ne\_zero\_of\_catalecticantMap\_rank\_pos},
+\]
+and the rank-one, rank-two, and rank-three specializations.  These lemmas
+show that if the residual vanishes then the catalecticant map is zero and has
+range rank zero; hence any rank \(1,2,3\) case implies nonzero residual.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is still the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The apolar branches can now obtain nonzero residual directly from their rank
+hypotheses.  The main missing work is still deriving the annihilator-map
+dimension bounds and support/normal-form facts from the low-rank
+catalecticant support theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
