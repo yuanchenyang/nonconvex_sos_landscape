@@ -14167,4 +14167,35 @@ blueprint interpretation.
 
 No Julia numerical claims were used in this round.
 
+\section*{Reduce rank-two support to dimension}
+
+\paragraph{Gap targeted.}
+The rank-two support branch still carried an existential support subspace.
+The essential content is the finite-dimensional inequality
+\[
+2\le \dim \Ann_1(\lambda),
+\]
+under the rank-two catalecticant hypothesis.
+
+\paragraph{Lean progress.}
+Added the global package
+\[
+\texttt{HasGlobalRankTwoApolarAnnihilatorDimensionBound}.
+\]
+Proved local and global equivalences between the rank-two support package and
+the rank-two annihilator-dimension bound.  Added the root equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoDimension\_and\_rankThreeBadBranch}.
+\]
+
+\paragraph{Strategy change.}
+The remaining exposed obligations are now purely dimension/contradiction
+statements: rank two must provide a two-dimensional linear annihilator, and
+rank three must rule out the bad branch.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
