@@ -603,6 +603,14 @@ def HasGlobalLowRankApolarQuotientCoreData : Prop :=
         IsSOCP B p u →
           HasLowRankApolarQuotientCoreData B p u
 
+def HasGlobalLowRankApolarEssentialQuotientTheorem : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasLowRankApolarEssentialQuotientTheorem B p u
+
 def HasRankTwoUniversalKernelEquationData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
@@ -7940,6 +7948,45 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarQuot
       HasGlobalLowRankApolarQuotientCoreData :=
   ⟨globalLowRankApolarQuotientCoreData_of_quaternaryQuartic_rankSeven_no_spurious_socp,
     quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarQuotientCoreData⟩
+
+theorem globalLowRankApolarQuotientCoreData_of_globalLowRankApolarEssentialQuotientTheorem
+    (hquot : HasGlobalLowRankApolarEssentialQuotientTheorem) :
+    HasGlobalLowRankApolarQuotientCoreData := by
+  intro B p u hu hB hp hsocp
+  exact lowRankApolarQuotientCoreData_of_lowRankApolarEssentialQuotientTheorem
+    (hquot B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarEssentialQuotientTheorem_of_globalLowRankApolarQuotientCoreData
+    (hcore : HasGlobalLowRankApolarQuotientCoreData) :
+    HasGlobalLowRankApolarEssentialQuotientTheorem := by
+  intro B p u hu hB hp hsocp
+  exact lowRankApolarEssentialQuotientTheorem_of_coreData
+    (hcore B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarQuotientCoreData_iff_globalLowRankApolarEssentialQuotientTheorem :
+    HasGlobalLowRankApolarQuotientCoreData ↔
+      HasGlobalLowRankApolarEssentialQuotientTheorem :=
+  ⟨globalLowRankApolarEssentialQuotientTheorem_of_globalLowRankApolarQuotientCoreData,
+    globalLowRankApolarQuotientCoreData_of_globalLowRankApolarEssentialQuotientTheorem⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarEssentialQuotientTheorem
+    (hquot : HasGlobalLowRankApolarEssentialQuotientTheorem) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarEssentialQuotientTheorem_direct
+    hquot
+
+theorem globalLowRankApolarEssentialQuotientTheorem_of_quaternaryQuartic_rankSeven_no_spurious_socp
+    (hmain : QuaternaryQuarticRankSevenNoSpuriousSOCP) :
+    HasGlobalLowRankApolarEssentialQuotientTheorem := by
+  exact globalLowRankApolarEssentialQuotientTheorem_of_globalLowRankApolarQuotientCoreData
+    (globalLowRankApolarQuotientCoreData_of_quaternaryQuartic_rankSeven_no_spurious_socp
+      hmain)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarEssentialQuotientTheorem :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalLowRankApolarEssentialQuotientTheorem :=
+  ⟨globalLowRankApolarEssentialQuotientTheorem_of_quaternaryQuartic_rankSeven_no_spurious_socp,
+    quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarEssentialQuotientTheorem⟩
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_quotientLocalComponents_direct
     (hsymm2 :

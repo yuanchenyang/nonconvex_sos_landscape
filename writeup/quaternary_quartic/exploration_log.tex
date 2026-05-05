@@ -13773,4 +13773,36 @@ No stronger auxiliary assumptions were introduced.
 
 No Julia numerical claims were used in this round.
 
+\section*{Global essential quotient equivalence}
+
+\paragraph{Gap targeted.}
+The quotient-core package is the shortest Lean target, but the blueprint is
+stated as a Hilbert-function quotient bound.  The remaining gap therefore
+needed a global bridge from the root theorem to the essential quotient theorem
+itself.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasGlobalLowRankApolarEssentialQuotientTheorem}
+\]
+and proved:
+\[
+\texttt{globalLowRankApolarQuotientCoreData\_iff\_globalLowRankApolarEssentialQuotientTheorem},
+\]
+as well as the root equivalence:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalLowRankApolarEssentialQuotientTheorem}.
+\]
+
+\paragraph{Strategy change.}
+The remaining gap can now be stated either as the global quotient-core package
+or, equivalently, as the global low-rank essential quotient theorem.  The
+latter matches the blueprint's Hilbert-function formulation more closely.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
