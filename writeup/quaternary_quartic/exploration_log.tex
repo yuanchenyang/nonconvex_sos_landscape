@@ -10078,4 +10078,49 @@ rank-two binary kernel normalization/equations.
 
 No Julia numerical claims were used in this round.
 
+\section*{Normalized-position route to negative-square apolar data}
+
+\paragraph{Gap targeted.}
+The residual-level proof graph already accepted low-rank apolar support plus
+universal normalized rank-two kernel position, using the point hypotheses to
+recover Hankel negativity.  The negative-square apolar data package still
+required either rank-two negative-square data directly or universal
+kernel-equation data.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{hasRankTwoNegativeSquareData\_of\_universalNormalizedPosition\_of\_point},
+\]
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_annihilatorBounds\_and\_universalNormalizedPosition\_of\_point},
+\]
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_lowRankApolarAnnihilatorMapTheorem\_and\_universalNormalizedPosition\_of\_point},
+\]
+and
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_lowRankApolarSupportTheorem\_and\_universalNormalizedPosition\_of\_point}.
+\]
+
+\paragraph{Strategy change.}
+The final contradiction certificate can now be assembled as negative-square
+apolar data from the low-rank apolar theorem and universal normalized position,
+without separately assuming kernel-equation or branch data.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The core mathematical blockers remain the low-rank apolar support theorem and
+the construction of universal normalized rank-two kernel position.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
