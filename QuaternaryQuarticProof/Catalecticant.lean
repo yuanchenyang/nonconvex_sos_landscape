@@ -1308,6 +1308,58 @@ theorem exists_rank_one_adapted_basis
       exact Module.Basis.mk_apply hLI htop_le ⟨3, by norm_num⟩]
     exact hv_last
 
+theorem linearIndependent_basis_cubic_products_fin_three_of_isCompl_line
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) :
+    LinearIndependent ℝ
+      (fun ijk :
+        {ijk : (Fin 3 × Fin 3) × Fin 3 // ijk.1.1 ≤ ijk.1.2 ∧ ijk.1.2 ≤ ijk.2} =>
+        linQuadProduct (β ijk.1.1.1).1
+          (linProduct (β ijk.1.1.2).1 (β ijk.1.2).1)) := by
+  rcases exists_rank_one_adapted_basis hAL β hxspan with
+    ⟨β4, hβA, _hβx⟩
+  let Triple3 :=
+    {ijk : (Fin 3 × Fin 3) × Fin 3 // ijk.1.1 ≤ ijk.1.2 ∧ ijk.1.2 ≤ ijk.2}
+  let Triple4 :=
+    {ijk : (Fin 4 × Fin 4) × Fin 4 // ijk.1.1 ≤ ijk.1.2 ∧ ijk.1.2 ≤ ijk.2}
+  let φ : Triple3 → Triple4 := fun ijk =>
+    ⟨((Fin.castSucc ijk.1.1.1, Fin.castSucc ijk.1.1.2), Fin.castSucc ijk.1.2), by
+      constructor
+      · exact (Fin.castSucc_le_castSucc_iff).mpr ijk.2.1
+      · exact (Fin.castSucc_le_castSucc_iff).mpr ijk.2.2⟩
+  have hφinj : Function.Injective φ := by
+    intro a b h
+    apply Subtype.ext
+    have hp := congrArg Subtype.val h
+    have hfstfst :
+        Fin.castSucc a.1.1.1 = Fin.castSucc b.1.1.1 :=
+      congrArg (fun t => t.1.1) hp
+    have hfstsnd :
+        Fin.castSucc a.1.1.2 = Fin.castSucc b.1.1.2 :=
+      congrArg (fun t => t.1.2) hp
+    have hsnd :
+        Fin.castSucc a.1.2 = Fin.castSucc b.1.2 :=
+      congrArg Prod.snd hp
+    exact Prod.ext
+      (Prod.ext ((Fin.castSucc_injective 3) hfstfst)
+        ((Fin.castSucc_injective 3) hfstsnd))
+      ((Fin.castSucc_injective 3) hsnd)
+  have hsub := (linearIndependent_basis_cubic_products_fin_four β4).comp φ hφinj
+  let target : Triple3 → cubicSubmodule := fun ijk =>
+    linQuadProduct (β ijk.1.1.1).1
+      (linProduct (β ijk.1.1.2).1 (β ijk.1.2).1)
+  let pulled : Triple3 → cubicSubmodule := fun ijk =>
+    linQuadProduct (β4 (φ ijk).1.1.1)
+      (linProduct (β4 (φ ijk).1.1.2) (β4 (φ ijk).1.2))
+  have hpulled : pulled = target := by
+    funext ijk
+    dsimp [pulled, target, φ]
+    rw [hβA ijk.1.1.1, hβA ijk.1.1.2, hβA ijk.1.2]
+  change LinearIndependent ℝ pulled at hsub
+  change LinearIndependent ℝ target
+  exact hpulled ▸ hsub
+
 theorem linearIndependent_rank_one_combined_products_of_isCompl
     {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
     (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}

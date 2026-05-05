@@ -14966,4 +14966,38 @@ general graded-algebra API.
 
 No Julia numerical claims were used in this round.
 
+\section*{Three-variable cubic products in a line complement}
+
+\paragraph{Gap targeted.}
+The Macaulay step is applied after quotienting by a nonzero linear form,
+leaving a three-dimensional linear space.  The finite product-count proof
+therefore needs linear independence of the ten sorted cubic products in such
+a three-variable complement.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{linearIndependent\_basis\_cubic\_products\_fin\_three\_of\_isCompl\_line}.
+\]
+Given a complement \(A\) to a line \(L=\mathbb{R}x\) and a basis of \(A\),
+the ten products
+\[
+\beta_i\beta_j\beta_k,\qquad i\le j\le k,
+\]
+are linearly independent in \texttt{cubicSubmodule}.  The proof extends the
+three-variable basis by \(x\) to a four-variable basis and restricts the
+already formalized independence of the twenty sorted cubic products.
+
+\paragraph{Strategy change.}
+The next Macaulay subgoal can now be stated and proved inside this
+three-variable product basis: a degree-two subspace of codimension at most
+two in \(\operatorname{Sym}^2 A\) must have degree-three product span of
+codimension no larger.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
