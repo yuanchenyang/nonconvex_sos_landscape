@@ -9725,4 +9725,51 @@ binary kernel-equation/normalized-position input.
 
 No Julia numerical claims were used in this round.
 
+\section*{Product-kernel route with universal normalized position}
+
+\paragraph{Gap targeted.}
+The proof scaffold already closed the residual from support decompositions plus
+universal rank-two normalized kernel position, and product-kernel
+decompositions were known equivalent to support decompositions.  The direct
+product-kernel route was not exposed at the residual or theorem level.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarProductKernelDecomposition\_and\_universalNormalizedPosition}
+\]
+and
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarProductKernelDecomposition\_and\_universalNormalizedHankelData}.
+\]
+Also added the matching theorem-level routes:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarProductKernelDecomposition\_and\_universalNormalizedPosition}
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarProductKernelDecomposition\_and\_universalNormalizedHankelData}.
+\]
+
+\paragraph{Strategy change.}
+The final route can now target the blueprint's product-kernel apolar
+decomposition directly, paired with the rank-two normalized-position theorem.
+The Hankel negativity side is supplied from the pointwise SOS/FOCP data already
+formalized in Lean.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+It remains to prove the product-kernel apolar decomposition from low
+catalecticant rank and to formalize the rank-two normalized-position input.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
