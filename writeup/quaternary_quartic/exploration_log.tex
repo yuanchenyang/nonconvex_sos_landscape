@@ -13180,4 +13180,47 @@ exact-sequence shape, and rank-three Macaulay/O-sequence bound.
 
 No Julia numerical claims were used in this round.
 
+\section*{Local and bundled blueprint data equivalence}
+
+\paragraph{Gap targeted.}
+The four-piece local blueprint data had been shown to imply the bundled
+blueprint Hilbert-data package.  The reverse direction was also useful: it
+shows that splitting the interface introduced no stronger assumption.
+
+\paragraph{Lean progress.}
+Added rank-two projections:
+\[
+\texttt{rankTwoGorensteinSymmetryData\_of\_rankTwoQuotientGrowthData},
+\qquad
+\texttt{rankTwoMacaulayGrowthBound\_of\_rankTwoQuotientGrowthData}.
+\]
+Added rank-three projections:
+\[
+\texttt{rankThreeBadBranchExactSequenceShape\_of\_data},
+\qquad
+\texttt{rankThreeBadBranchMacaulayBound\_of\_data}.
+\]
+The rank-three Macaulay-bound projection uses the existing numerical
+contradiction: once the bundled exact-sequence data exists in the bad branch,
+that branch is inconsistent, so any requested Macaulay inequality follows.
+
+Proved:
+\[
+\texttt{lowRankApolarBlueprintLocalData\_of\_lowRankApolarBlueprintHilbertData},
+\]
+and:
+\[
+\texttt{lowRankApolarBlueprintLocalData\_iff\_lowRankApolarBlueprintHilbertData}.
+\]
+
+\paragraph{Strategy change.}
+The four-piece local interface is now known to be equivalent to the bundled
+blueprint interface.  Future work can use the more granular interface without
+changing the mathematical target.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

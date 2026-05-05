@@ -2677,6 +2677,57 @@ theorem lowRankApolarBlueprintHilbertData_of_lowRankApolarBlueprintLocalData
     rankThreeBadBranchExactSequenceData_of_shape_and_macaulayBound
       hdata.2.2.1 hdata.2.2.2⟩
 
+theorem rankTwoGorensteinSymmetryData_of_rankTwoQuotientGrowthData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoApolarQuotientGrowthData B p u) :
+    HasRankTwoApolarGorensteinSymmetryData B p u := by
+  intro hrank2
+  rcases hdata hrank2 with ⟨h3, hsymm, _hgrowth⟩
+  exact ⟨h3, hsymm⟩
+
+theorem rankTwoMacaulayGrowthBound_of_rankTwoQuotientGrowthData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoApolarQuotientGrowthData B p u) :
+    HasRankTwoApolarMacaulayGrowthBound B p u := by
+  intro hrank2 h3 hh3
+  rcases hdata hrank2 with ⟨h3', hsymm', hgrowth'⟩
+  omega
+
+theorem rankThreeBadBranchExactSequenceShape_of_data
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankThreeApolarBadBranchExactSequenceData B p u) :
+    HasRankThreeApolarBadBranchExactSequenceShape B p u := by
+  intro hrank3 hbad
+  rcases hdata hrank3 hbad with ⟨b, q2, q3, hbpos, hbtop, hq2, hq3, _hmac⟩
+  exact ⟨b, q2, q3, hbpos, hbtop, hq2, hq3⟩
+
+theorem rankThreeBadBranchMacaulayBound_of_data
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankThreeApolarBadBranchExactSequenceData B p u) :
+    HasRankThreeApolarBadBranchMacaulayBound B p u := by
+  intro hrank3 hbad b q2 q3 hbpos hbtop hq2 hq3
+  rcases hdata hrank3 hbad with
+    ⟨b', q2', q3', hbpos', hbtop', hq2', hq3', hmac'⟩
+  exfalso
+  exact rankThreeExactSequenceNumericalContradiction
+    hbpos' hbtop' hq2' hq3' hmac'
+
+theorem lowRankApolarBlueprintLocalData_of_lowRankApolarBlueprintHilbertData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasLowRankApolarBlueprintHilbertData B p u) :
+    HasLowRankApolarBlueprintLocalData B p u :=
+  ⟨rankTwoGorensteinSymmetryData_of_rankTwoQuotientGrowthData hdata.1,
+    rankTwoMacaulayGrowthBound_of_rankTwoQuotientGrowthData hdata.1,
+    rankThreeBadBranchExactSequenceShape_of_data hdata.2,
+    rankThreeBadBranchMacaulayBound_of_data hdata.2⟩
+
+theorem lowRankApolarBlueprintLocalData_iff_lowRankApolarBlueprintHilbertData
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarBlueprintLocalData B p u ↔
+      HasLowRankApolarBlueprintHilbertData B p u :=
+  ⟨lowRankApolarBlueprintHilbertData_of_lowRankApolarBlueprintLocalData,
+    lowRankApolarBlueprintLocalData_of_lowRankApolarBlueprintHilbertData⟩
+
 theorem lowRankApolarHilbertData_of_lowRankApolarBlueprintHilbertData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hdata : HasLowRankApolarBlueprintHilbertData B p u) :
