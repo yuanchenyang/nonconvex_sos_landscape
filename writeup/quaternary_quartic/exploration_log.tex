@@ -8816,4 +8816,39 @@ binary package; then replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Component route with universal branch data}
+
+\paragraph{Gap targeted.}
+The apolar component constructor still required a rank-two kernel-equation
+family even when universal branch certificates were available.  That kept the
+component route tied to an older rank-two interface.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_combined\_productLI\_and\_universalKernelBranchData}.
+\]
+It reuses the existing combined product-independence component constructor and
+derives the rank-two kernel-equation cases from universal branch certificates.
+
+\paragraph{Strategy change.}
+The apolar component route can now combine product-independence geometry with
+the same universal branch package used by the newer root reductions.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the rank-case annihilator/product-independence geometry and one universal
+rank-two branch package, or prove the low-rank apolar support theorem plus a
+universal rank-two package; then replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
