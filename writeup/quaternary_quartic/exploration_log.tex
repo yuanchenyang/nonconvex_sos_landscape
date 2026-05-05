@@ -10778,4 +10778,51 @@ normalization branches.
 
 No Julia numerical claims were used in this round.
 
+\section*{Parabolic zero-leading subcase}
+
+\paragraph{Gap targeted.}
+The previous parabolic round handled \(D=0\) with \(r\ne0\).  The remaining
+parabolic scalar subcase is \(r=0\), where the discriminant equation forces the
+mixed coefficient to vanish and the nonzero kernel must be a multiple of
+\(y^2\).
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{parabolic\_zero\_xCoeff\_mixedCoeff\_eq\_zero}
+\]
+and
+\[
+\texttt{ySq\_kernel\_of\_parabolic\_zero\_xCoeff\_kernel\_equations}.
+\]
+The second theorem takes the scalar Hankel kernel equations, the nonzero kernel
+condition, \(r=0\), and \(D=0\), and derives the canonical
+\[
+\texttt{binaryHankelMul}\;a\;b\;c\;d\;e\;![0,0,1]=0
+\]
+kernel.
+
+\paragraph{Strategy change.}
+The parabolic branch now has both scalar subcases available: \(r\ne0\) reduces
+to a pure \(x^2\) kernel after shear, while \(r=0\) directly gives the existing
+\(y^2\) canonical kernel.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support and the
+hyperbolic/elliptic binary normalization branches.  The nonzero-\(r\)
+parabolic shear still needs to be connected from transformed kernel
+normalization to canonical Hankel data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

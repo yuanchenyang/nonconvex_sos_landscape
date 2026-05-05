@@ -190,6 +190,14 @@ theorem isBinaryQuadraticPullback_parabolic_shearX_to_xSq
   · exact (parabolic_shearX_ySqCoeff_eq_zero
       (r := r) (s := s) (t := t) hr hdisc).symm
 
+theorem parabolic_zero_xCoeff_mixedCoeff_eq_zero
+    {r s t : ℝ} (hr : r = 0)
+    (hdisc : binaryKernelDiscriminant r s t = 0) :
+    s = 0 := by
+  unfold binaryKernelDiscriminant at hdisc
+  rw [hr] at hdisc
+  nlinarith [sq_nonneg s]
+
 def binaryHankelMul (a b c d e : ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ![a * v 0 + b * v 1 + c * v 2,
     b * v 0 + c * v 1 + d * v 2,
@@ -476,6 +484,35 @@ theorem binaryHankelMul_eq_zero_iff
   · intro h
     ext i
     fin_cases i <;> simp [binaryHankelMul, h.1, h.2.1, h.2.2]
+
+theorem ySq_kernel_of_parabolic_zero_xCoeff_kernel_equations
+    {a b c d e r s t : ℝ}
+    (hr : r = 0)
+    (hdisc : binaryKernelDiscriminant r s t = 0)
+    (hnonzero : r ≠ 0 ∨ s ≠ 0 ∨ t ≠ 0)
+    (h0 : a * r + b * s + c * t = 0)
+    (h1 : b * r + c * s + d * t = 0)
+    (h2 : c * r + d * s + e * t = 0) :
+    binaryHankelMul a b c d e (![0, 0, 1] : Fin 3 → ℝ) = 0 := by
+  have hs : s = 0 :=
+    parabolic_zero_xCoeff_mixedCoeff_eq_zero (r := r) (s := s) (t := t)
+      hr hdisc
+  have ht : t ≠ 0 := by
+    rcases hnonzero with hr_ne | hs_ne | ht_ne
+    · exact (hr_ne hr).elim
+    · exact (hs_ne hs).elim
+    · exact ht_ne
+  have hc_mul : c * t = 0 := by
+    simpa [hr, hs] using h0
+  have hd_mul : d * t = 0 := by
+    simpa [hr, hs] using h1
+  have he_mul : e * t = 0 := by
+    simpa [hr, hs] using h2
+  have hc : c = 0 := (mul_eq_zero.mp hc_mul).resolve_right ht
+  have hd : d = 0 := (mul_eq_zero.mp hd_mul).resolve_right ht
+  have he : e = 0 := (mul_eq_zero.mp he_mul).resolve_right ht
+  ext i
+  fin_cases i <;> simp [binaryHankelMul, hc, hd, he]
 
 theorem exists_nonzero_binaryHankel_kernel_equations_of_finrank_range_le_two
     {a b c d e : ℝ}
