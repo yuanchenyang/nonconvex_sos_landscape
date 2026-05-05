@@ -89,6 +89,44 @@ theorem residualEval_mul_six
   simp
   ring
 
+theorem residualEval_C_mul_mul_four
+    (B : DotForm) (r : ℝ) (q s : Poly) :
+    B ((MvPolynomial.C r * q) * (4 : Poly)) s = 4 * r * B q s := by
+  rw [residualEval_mul_four]
+  rw [residualEval_C_mul]
+  ring
+
+theorem residualEval_C_mul_mul_six
+    (B : DotForm) (r : ℝ) (q s : Poly) :
+    B ((MvPolynomial.C r * q) * (6 : Poly)) s = 6 * r * B q s := by
+  rw [residualEval_mul_six]
+  rw [residualEval_C_mul]
+  ring
+
+theorem binaryRestriction_eval_eq
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule) :
+    ∀ X Y : ℝ,
+      B ((linProduct (X • x + Y • y) (X • x + Y • y) :
+          quadSubmodule).1^2) (residual p u) =
+        binaryQuarticEval
+          (binaryRestrictionCoeffA B p u x)
+          (binaryRestrictionCoeffB B p u x y)
+          (binaryRestrictionCoeffC B p u x y)
+          (binaryRestrictionCoeffD B p u x y)
+          (binaryRestrictionCoeffE B p u y) X Y := by
+  intro X Y
+  rw [binaryRestriction_pow_eq_C]
+  simp only [map_add, LinearMap.add_apply]
+  rw [residualEval_C_mul]
+  rw [residualEval_C_mul_mul_four]
+  rw [residualEval_C_mul_mul_six]
+  rw [residualEval_C_mul_mul_four]
+  rw [residualEval_C_mul]
+  simp [binaryRestrictionCoeffA, binaryRestrictionCoeffB,
+    binaryRestrictionCoeffC, binaryRestrictionCoeffD, binaryRestrictionCoeffE,
+    binaryQuarticEval]
+  ring
+
 theorem binaryRestriction_eval_eq_of_pow_expansion
     (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule)
     (hpow : ∀ X Y : ℝ,

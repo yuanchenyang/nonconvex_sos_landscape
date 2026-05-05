@@ -4201,4 +4201,58 @@ hypothesis.
 
 No Julia numerical claims were used in this round.
 
+\section*{Canonical binary evaluation and rank-case reducer}
+
+\paragraph{Gap targeted.}
+The binary-restriction bridge still carried an explicit evaluation identity.
+After the polynomial expansion and scalar-extraction lemmas, this identity can
+be proved directly for the canonical binary restriction coefficients.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{residualEval\_C\_mul\_mul\_four},\quad
+\texttt{residualEval\_C\_mul\_mul\_six},
+\quad
+\texttt{binaryRestriction\_eval\_eq}
+\]
+to \texttt{QuaternaryQuarticProof/Binary.lean}.  The final theorem proves
+directly that evaluating the residual functional on \((Xx+Yy)^4\) is exactly
+\(\texttt{binaryQuarticEval}\) with the canonical coefficients
+\(\texttt{binaryRestrictionCoeffA},\ldots,\texttt{binaryRestrictionCoeffE}\).
+
+Added canonical-coefficient support constructors
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_binaryRestriction\_coefficients}
+\]
+and
+\[
+\texttt{hasRankOneProductSupportData\_of\_binaryRestriction\_coefficients}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  These no longer require an
+external evaluation identity.
+
+Added \(\texttt{HasRankCaseBinaryRestrictionData}\) and corresponding reducers
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  The global reduction now asks
+for rank-one/rank-two normal forms of the canonical binary restriction
+coefficients, exact symmetric-square dimensions, rank-two disjointness, and
+the existing rank-three support data.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Support}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The binary evaluation identity is closed.  The largest remaining gap is now
+the genuine normal-form/support theorem: derive the canonical binary
+restriction normal forms and the exact component dimension/disjointness facts
+from the rank-one and rank-two catalecticant cases.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
