@@ -7469,4 +7469,41 @@ Hankel facts theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Normalized scalar kernel-position predicate}
+
+\paragraph{Gap targeted.}
+The normalized scalar classification interface needed an explicit predicate
+recording that the chosen binary coordinates put the kernel generator into one
+of the canonical positions.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasBinaryNormalizedKernelPosition}
+\]
+for the three normalized kernel-position alternatives.  Proved
+\[
+\texttt{binaryCanonicalKernelData\_of\_normalizedKernelPosition}
+\]
+from normalized position plus negative Hankel value, and packaged this as
+\[
+\texttt{binaryRankTwoNormalizedKernelClassification\_of\_normalizedKernelPosition}.
+\]
+
+\paragraph{Strategy change.}
+The remaining scalar classification is now reduced to producing a normalized
+kernel-position certificate after the binary change of basis.  Once such a
+certificate is available, the normalized classification interface follows
+without further coefficient algebra.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The open inputs remain the low-rank support decomposition theorem, the
+normalized kernel-position/change-of-basis theorem, and the rank-two scalar
+Hankel facts theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

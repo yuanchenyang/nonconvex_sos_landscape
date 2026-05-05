@@ -94,6 +94,13 @@ def HasBinaryCanonicalKernelData (a b c d e : ℝ) : Prop :=
   (binaryHankelMul a b c d e (![1, 0, 1] : Fin 3 → ℝ) = 0 ∧
     HasBinaryHankelNegativeValue a b c d e)
 
+def HasBinaryNormalizedKernelPosition (a b c d e : ℝ) : Prop :=
+  binaryHankelMul a b c d e (![0, 1, 0] : Fin 3 → ℝ) = 0 ∨
+  (binaryHankelMul a b c d e (![0, 0, 1] : Fin 3 → ℝ) = 0 ∧
+    LinearIndependent ℝ
+      ![(![a, b, 0] : Fin 3 → ℝ), (![b, 0, 0] : Fin 3 → ℝ)]) ∨
+  binaryHankelMul a b c d e (![1, 0, 1] : Fin 3 → ℝ) = 0
+
 def HasBinaryRankTwoNormalizedKernelClassification (a b c d e : ℝ) : Prop :=
   HasBinaryHankelNegativeValue a b c d e →
     Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2 →
@@ -167,6 +174,23 @@ theorem binaryKernelBranchCertificate_of_canonicalKernelData
   · exact binaryKernelBranchCertificate_of_xy_kernel hxy.1 hxy.2
   · exact binaryKernelBranchCertificate_of_ySq_kernel hySq.1 hySq.2
   · exact binaryKernelBranchCertificate_of_elliptic_kernel hell.1 hell.2
+
+theorem binaryCanonicalKernelData_of_normalizedKernelPosition
+    {a b c d e : ℝ}
+    (hpos : HasBinaryNormalizedKernelPosition a b c d e)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    HasBinaryCanonicalKernelData a b c d e := by
+  rcases hpos with hxy | hySq | hell
+  · exact Or.inl ⟨hxy, hneg⟩
+  · exact Or.inr (Or.inl hySq)
+  · exact Or.inr (Or.inr ⟨hell, hneg⟩)
+
+theorem binaryRankTwoNormalizedKernelClassification_of_normalizedKernelPosition
+    {a b c d e : ℝ}
+    (hpos : HasBinaryNormalizedKernelPosition a b c d e) :
+    HasBinaryRankTwoNormalizedKernelClassification a b c d e := by
+  intro hneg _hrank
+  exact binaryCanonicalKernelData_of_normalizedKernelPosition hpos hneg
 
 def HasBinaryLowRankNegativeNormalForm (a b c d e : ℝ) : Prop :=
   (∃ ρ α β : ℝ,
