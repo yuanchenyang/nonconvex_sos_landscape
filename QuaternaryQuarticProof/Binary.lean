@@ -359,6 +359,25 @@ theorem ySqKernel_b_ne_zero_of_column_linearIndependent
     fin_cases i <;> simp [hb]
   exact (LinearIndependent.ne_zero (R := ℝ) (1 : Fin 2) hLI) hcol
 
+theorem ySqKernel_column_linearIndependent_of_b_ne_zero
+    {a b : ℝ} (hb : b ≠ 0) :
+    LinearIndependent ℝ
+      ![(![a, b, 0] : Fin 3 → ℝ), (![b, 0, 0] : Fin 3 → ℝ)] := by
+  rw [LinearIndependent.pair_iff']
+  · intro t ht
+    have hcoord1 := congrArg (fun v : Fin 3 → ℝ => v 1) ht
+    have htzero : t = 0 := by
+      have hmul : t * b = 0 := by
+        simpa [Pi.smul_apply] using hcoord1
+      exact (mul_eq_zero.mp hmul).resolve_right hb
+    have hcoord0 := congrArg (fun v : Fin 3 → ℝ => v 0) ht
+    rw [htzero] at hcoord0
+    simp at hcoord0
+    exact hb hcoord0.symm
+  · intro hzero
+    have hcoord1 := congrArg (fun v : Fin 3 → ℝ => v 1) hzero
+    simpa using hb hcoord1
+
 theorem HasBinaryLowRankNegativeNormalForm.ySqKernel_of_column_linearIndependent
     {a b : ℝ}
     (hLI : LinearIndependent ℝ
@@ -380,6 +399,29 @@ theorem ellipticKernel_nonzero_of_negative_hankel
   rcases hneg with ⟨r, s, t, hneg⟩
   rw [hzero.1, hzero.2] at hneg
   norm_num [binaryHankelQuad] at hneg
+
+theorem ellipticKernel_binaryHankelNegativeValue
+    {a b : ℝ} (hne : a ≠ 0 ∨ b ≠ 0) :
+    HasBinaryHankelNegativeValue a b (-a) (-b) a := by
+  by_cases ha : a = 0
+  · rcases hne with ha_ne | hb
+    · exact (ha_ne ha).elim
+    · by_cases hbpos : 0 < b
+      · refine ⟨0, 1, 1, ?_⟩
+        unfold binaryHankelQuad
+        nlinarith
+      · have hbneg : b < 0 := lt_of_le_of_ne (le_of_not_gt hbpos) hb
+        refine ⟨1, 1, 0, ?_⟩
+        unfold binaryHankelQuad
+        nlinarith
+  · by_cases hapos : 0 < a
+    · refine ⟨0, 1, 0, ?_⟩
+      unfold binaryHankelQuad
+      nlinarith
+    · have haneg : a < 0 := lt_of_le_of_ne (le_of_not_gt hapos) ha
+      refine ⟨1, 0, 0, ?_⟩
+      unfold binaryHankelQuad
+      nlinarith
 
 theorem HasBinaryLowRankNegativeNormalForm.ellipticKernel_of_negative_hankel
     {a b : ℝ} (hneg : HasBinaryHankelNegativeValue a b (-a) (-b) a) :
@@ -534,6 +576,34 @@ theorem binaryRestriction_lowRankNegativeNormalForm_of_kernelEquationCase
   · rcases hell with ⟨hc, hd, he, hne⟩
     exact binaryRestriction_lowRankNegativeNormalForm_of_ellipticKernel_equations
       hc hd he hne
+
+theorem binaryRestriction_canonicalKernelData_of_kernelEquationCase
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}
+    (hcase : HasBinaryRestrictionKernelEquationCase B p u x y) :
+    HasBinaryCanonicalKernelData
+      (binaryRestrictionCoeffA B p u x)
+      (binaryRestrictionCoeffB B p u x y)
+      (binaryRestrictionCoeffC B p u x y)
+      (binaryRestrictionCoeffD B p u x y)
+      (binaryRestrictionCoeffE B p u y) := by
+  rcases hcase with hxy | hySq | hell
+  · rcases hxy with ⟨hb, hc, hd, hneg⟩
+    refine Or.inl ⟨?_, ?_⟩
+    · ext i
+      fin_cases i <;> simp [binaryHankelMul, hb, hc, hd]
+    · rcases hneg with ⟨r, t, hrt⟩
+      refine ⟨r, 0, t, ?_⟩
+      simpa [binaryHankelQuad, hb, hc, hd] using hrt
+  · rcases hySq with ⟨hc, hd, he, hb⟩
+    refine Or.inr (Or.inl ⟨?_, ?_⟩)
+    · ext i
+      fin_cases i <;> simp [binaryHankelMul, hc, hd, he]
+    · exact ySqKernel_column_linearIndependent_of_b_ne_zero hb
+  · rcases hell with ⟨hc, hd, he, hne⟩
+    refine Or.inr (Or.inr ⟨?_, ?_⟩)
+    · ext i
+      fin_cases i <;> simp [binaryHankelMul, hc, hd, he]
+    · simpa [hc, hd, he] using ellipticKernel_binaryHankelNegativeValue hne
 
 theorem binaryLowRankNegativeNormalForm_of_kernelBranchCertificate
     {a b c d e : ℝ}

@@ -1815,6 +1815,16 @@ theorem hasRankTwoExistentialBinaryFormData_of_kernelEquationData
   exact ⟨y, hyW, hynot,
     binaryRestriction_lowRankNegativeNormalForm_of_kernelEquationCase hcase⟩
 
+theorem hasRankTwoExistentialCanonicalKernelData_of_kernelEquationData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hcases : HasRankTwoExistentialKernelEquationData B p u) :
+    HasRankTwoExistentialCanonicalKernelData B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases hcases hrank2 A W x hAann hAW hxW hx hAdim hWdim with
+    ⟨y, hyW, hynot, hcase⟩
+  exact ⟨y, hyW, hynot,
+    binaryRestriction_canonicalKernelData_of_kernelEquationCase hcase⟩
+
 theorem hasRankTwoExistentialBinaryFormData_of_kernelBranchData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hbranches : HasRankTwoExistentialKernelBranchData B p u) :
@@ -1855,6 +1865,13 @@ theorem hasRankTwoExistentialNormalizedHankelData_of_canonicalKernelData
     binaryNormalizedKernelPosition_of_canonicalKernelData hcanon_y,
     binaryHankelNegativeValue_of_canonicalKernelData hcanon_y,
     binaryHankelLinearMap_finrank_range_le_two_of_canonicalKernelData hcanon_y⟩
+
+theorem hasRankTwoExistentialNormalizedHankelData_of_kernelEquationData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hcases : HasRankTwoExistentialKernelEquationData B p u) :
+    HasRankTwoExistentialNormalizedHankelData B p u :=
+  hasRankTwoExistentialNormalizedHankelData_of_canonicalKernelData
+    (hasRankTwoExistentialCanonicalKernelData_of_kernelEquationData hcases)
 
 theorem hasRankTwoExistentialScalarHankelData_of_universal_and_facts
     {B : DotForm} {p : Poly} {u : RankSevenVec}

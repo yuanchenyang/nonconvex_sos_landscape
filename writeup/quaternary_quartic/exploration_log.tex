@@ -7873,4 +7873,55 @@ rank-two canonical/normalized binary kernel construction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Kernel-equation cases imply canonical binary data}
+
+\paragraph{Gap targeted.}
+The rank-two binary reduction still had two parallel interfaces: kernel
+equation cases from the blueprint and canonical/normalized kernel data used by
+the newest root routes.  The existing bridge only produced a low-rank negative
+normal form, losing the explicit kernel data needed downstream.
+
+\paragraph{Lean progress.}
+In \texttt{Binary.lean}, proved the missing scalar facts:
+\[
+\texttt{ySqKernel\_column\_linearIndependent\_of\_b\_ne\_zero}
+\]
+and
+\[
+\texttt{ellipticKernel\_binaryHankelNegativeValue}.
+\]
+Then proved
+\[
+\texttt{binaryRestriction\_canonicalKernelData\_of\_kernelEquationCase}.
+\]
+In \texttt{Basic.lean}, lifted this to
+\[
+\texttt{hasRankTwoExistentialCanonicalKernelData\_of\_kernelEquationData}
+\]
+and
+\[
+\texttt{hasRankTwoExistentialNormalizedHankelData\_of\_kernelEquationData}.
+\]
+
+\paragraph{Strategy change.}
+The rank-two binary normal-form obligation can now be discharged by the
+blueprint's three kernel-equation cases.  The canonical and normalized Hankel
+routes no longer require a separate binary classification theorem once those
+kernel equations are available.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The open mathematical inputs are exact-rank annihilator-map bounds and a proof
+of the rank-two kernel-equation cases from the binary change-of-basis argument.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
