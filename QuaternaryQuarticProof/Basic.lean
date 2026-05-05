@@ -570,6 +570,17 @@ def HasRankTwoUniversalHankelNegativeData
                         (binaryRestrictionCoeffD B p u x y)
                         (binaryRestrictionCoeffE B p u y)
 
+theorem hasRankTwoUniversalHankelNegativeData_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u) :
+    HasRankTwoUniversalHankelNegativeData B p u := by
+  intro hrank A W x y hAann hAW hxW hyW hynot hx _hAdim hWdim
+  exact rank_two_binaryHankelNegativeValue_of_annihilator_complement_pair
+    (B := B) (p := p) (u := u) hu hp hfocp hrank
+    hAann hAW hxW hyW hynot hx hWdim
+
 def HasRankTwoUniversalBinaryHankelRankBound
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →

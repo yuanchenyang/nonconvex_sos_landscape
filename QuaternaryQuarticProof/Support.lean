@@ -617,6 +617,41 @@ theorem exists_rank_two_exact_annihilator_complement_pair
   exact ⟨A, W, x, y, hAann, hAW, hxW, hyW, hx, hy, hxnotA, hynotA,
     hynot, hspan, hAdim, hWdim⟩
 
+theorem rank_two_binaryHankelNegativeValue_of_annihilator_complement_pair
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2)
+    {A W : Submodule ℝ linSubmodule} {x y : linSubmodule}
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hAW : IsCompl A W)
+    (hxW : x ∈ W)
+    (hyW : y ∈ W)
+    (hynot : y ∉ ℝ ∙ x)
+    (hx : (x : Poly) ≠ 0)
+    (hWdim : Module.finrank ℝ W = 2) :
+    HasBinaryHankelNegativeValue
+      (binaryRestrictionCoeffA B p u x)
+      (binaryRestrictionCoeffB B p u x y)
+      (binaryRestrictionCoeffC B p u x y)
+      (binaryRestrictionCoeffD B p u x y)
+      (binaryRestrictionCoeffE B p u y) := by
+  rcases exists_negative_sos_summand_of_catalecticantMap_rank_eq_two
+      (B := B) hu hp hfocp hrank with
+    ⟨q, hq, hqneg⟩
+  let qQuad : quadSubmodule := ⟨q, hq⟩
+  rcases exists_catalecticantKernel_decomposition_of_annihilator_complement
+      (B := B) (p := p) (u := u) hAann hAW qQuad with
+    ⟨qW, qK, hqdecomp, hqW, hqK⟩
+  have hqWneg : B (qW.1^2) (residual p u) < 0 :=
+    residualEval_sq_lt_of_eq_add_mem_ker_catalecticantMap
+      (B := B) (p := p) (u := u) hqdecomp hqK hqneg
+  have hspan : Submodule.span ℝ ({x, y} : Set linSubmodule) = W :=
+    span_rank_two_support_pair_eq hx hxW hyW hynot hWdim
+  exact binaryHankelNegativeValue_of_mem_linProductSubmodule_span_pair
+    (B := B) (p := p) (u := u) hspan hqW hqWneg
+
 theorem exists_rank_one_exact_annihilator_complement_generator
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupp : HasLinearAnnihilatorCodimAtMost B p u 1) :

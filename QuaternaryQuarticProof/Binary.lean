@@ -927,6 +927,25 @@ theorem binaryHankelNegativeValue_of_quadraticCombination
   refine ⟨r, s, t, ?_⟩
   rwa [← binaryRestriction_hankelQuad_eval_eq B p u x y r s t]
 
+theorem binaryHankelNegativeValue_of_mem_linProductSubmodule_span_pair
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {W : Submodule ℝ linSubmodule} {x y : linSubmodule} {q : quadSubmodule}
+    (hspan : Submodule.span ℝ ({x, y} : Set linSubmodule) = W)
+    (hq : q ∈ linProductSubmodule W W)
+    (hneg : B (q.1^2) (residual p u) < 0) :
+    HasBinaryHankelNegativeValue
+      (binaryRestrictionCoeffA B p u x)
+      (binaryRestrictionCoeffB B p u x y)
+      (binaryRestrictionCoeffC B p u x y)
+      (binaryRestrictionCoeffD B p u x y)
+      (binaryRestrictionCoeffE B p u y) := by
+  rcases exists_quadraticCombination_of_mem_linProductSubmodule_span_pair
+      hspan hq with ⟨r, s, t, hqeq⟩
+  refine binaryHankelNegativeValue_of_quadraticCombination
+    (B := B) (p := p) (u := u) (x := x) (y := y)
+    (r := r) (s := s) (t := t) ?_
+  simpa [← hqeq] using hneg
+
 theorem binaryRestriction_eval_eq_of_pow_expansion
     (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule)
     (hpow : ∀ X Y : ℝ,

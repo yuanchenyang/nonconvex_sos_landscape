@@ -455,6 +455,47 @@ theorem linProductSubmodule_le_span_square_of_span_eq
   rw [linProduct_smul_left, linProduct_smul_right, smul_smul]
   exact Submodule.smul_mem _ (r * s) (Submodule.subset_span rfl)
 
+theorem linProductSubmodule_le_span_pair_products_of_span_eq
+    {W : Submodule ℝ linSubmodule} {x y : linSubmodule}
+    (hspan : Submodule.span ℝ ({x, y} : Set linSubmodule) = W) :
+    linProductSubmodule W W ≤
+      Submodule.span ℝ
+        ({linProduct x x, linProduct x y, linProduct y y} :
+          Set quadSubmodule) := by
+  refine linProductSubmodule_le_of_generators ?_
+  intro a b
+  have ha : (a.1 : linSubmodule) ∈
+      Submodule.span ℝ ({x, y} : Set linSubmodule) := by
+    rw [hspan]
+    exact a.2
+  have hb : (b.1 : linSubmodule) ∈
+      Submodule.span ℝ ({x, y} : Set linSubmodule) := by
+    rw [hspan]
+    exact b.2
+  rcases Submodule.mem_span_pair.mp ha with ⟨r, s, haeq⟩
+  rcases Submodule.mem_span_pair.mp hb with ⟨u, v, hbeq⟩
+  rw [Submodule.mem_span_triple]
+  refine ⟨r * u, r * v + s * u, s * v, ?_⟩
+  rw [← haeq, ← hbeq]
+  simp [linProduct_add_right, smul_add, add_smul, smul_smul, linProduct_comm,
+    mul_comm]
+  abel_nf
+
+theorem exists_quadraticCombination_of_mem_linProductSubmodule_span_pair
+    {W : Submodule ℝ linSubmodule} {x y : linSubmodule} {q : quadSubmodule}
+    (hspan : Submodule.span ℝ ({x, y} : Set linSubmodule) = W)
+    (hq : q ∈ linProductSubmodule W W) :
+    ∃ r s t : ℝ,
+      q = r • linProduct x x + s • linProduct x y + t • linProduct y y := by
+  have hmem :
+      q ∈
+        Submodule.span ℝ
+          ({linProduct x x, linProduct x y, linProduct y y} :
+            Set quadSubmodule) :=
+    (linProductSubmodule_le_span_pair_products_of_span_eq hspan) hq
+  rcases Submodule.mem_span_triple.mp hmem with ⟨r, s, t, hqeq⟩
+  exact ⟨r, s, t, hqeq.symm⟩
+
 theorem finrank_symSquareSubmodule_le_three_of_finrank_eq_two
     {A : Submodule ℝ linSubmodule}
     (hA : Module.finrank ℝ A = 2) :
