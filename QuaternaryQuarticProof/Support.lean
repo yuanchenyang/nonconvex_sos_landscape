@@ -405,6 +405,21 @@ theorem finrank_span_rank_two_support_pair_eq_two
       exact hx (congrArg (fun z : linSubmodule => (z : Poly)) h))
     hy
 
+theorem span_rank_two_support_pair_eq
+    {W : Submodule ℝ linSubmodule} {x y : linSubmodule}
+    (hx : (x : Poly) ≠ 0)
+    (hxW : x ∈ W)
+    (hyW : y ∈ W)
+    (hy : y ∉ ℝ ∙ x)
+    (hW : Module.finrank ℝ W = 2) :
+    Submodule.span ℝ ({x, y} : Set linSubmodule) = W :=
+  span_pair_eq_of_mem_of_notMem_span_singleton_of_finrank_two
+    (K := ℝ) (V := linSubmodule)
+    (by
+      intro h
+      exact hx (congrArg (fun z : linSubmodule => (z : Poly)) h))
+    hxW hyW hy hW
+
 theorem hasRankTwoSupportComponentHypothesis_of_independent_binary_data
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hSym :

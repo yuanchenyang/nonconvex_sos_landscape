@@ -4741,4 +4741,46 @@ plumbing is no longer a separate blocker.
 
 No Julia numerical claims were used in this round.
 
+\section*{Identifying the chosen binary pair with the rank-two support plane}
+
+\paragraph{Gap targeted.}
+After choosing \(y\in W\setminus\mathbb{R}x\), later rank-two arguments need
+to freely replace the abstract complement plane \(W\) by the binary coordinate
+plane \(\operatorname{span}\{x,y\}\).  The proof needed this equality as a
+separate dimension lemma.
+
+\paragraph{Lean progress.}
+Added the generic theorem
+\[
+\texttt{span\_pair\_eq\_of\_mem\_of\_notMem\_span\_singleton\_of\_finrank\_two}
+\]
+to \texttt{QuaternaryQuarticProof/Dimension.lean}.  It proves that if
+\(x,y\in W\), \(x\ne0\), \(y\notin Kx\), and \(\dim W=2\), then
+\[
+\operatorname{span}\{x,y\}=W.
+\]
+Added the support-level wrapper
+\[
+\texttt{span\_rank\_two\_support\_pair\_eq}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}, again translating the
+existing \(\texttt{(x : Poly) \(\ne\) 0}\) hypothesis into subtype
+nonzeroness.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Dimension}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the expected
+remaining failure is still the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two proof can now move cleanly from the selected binary coordinate
+pair to the whole complement plane.  The hard remaining facts are still the
+apolar kernel-equation case split and the product-disjointness theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

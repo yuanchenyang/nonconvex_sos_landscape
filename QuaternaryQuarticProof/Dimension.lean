@@ -258,6 +258,25 @@ theorem finrank_span_pair_eq_two_of_notMem_span_singleton
   rw [hrange] at hfin
   simpa using hfin
 
+theorem span_pair_eq_of_mem_of_notMem_span_singleton_of_finrank_two
+    {W : Submodule K V} {x y : V}
+    (hxne : x ≠ 0)
+    (hxW : x ∈ W)
+    (hyW : y ∈ W)
+    (hy : y ∉ K ∙ x)
+    (hW : finrank K W = 2) :
+    Submodule.span K ({x, y} : Set V) = W := by
+  have hspan_le : Submodule.span K ({x, y} : Set V) ≤ W := by
+    refine Submodule.span_le.mpr ?_
+    intro z hz
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hz
+    rcases hz with rfl | rfl
+    · exact hxW
+    · exact hyW
+  exact Submodule.eq_of_le_of_finrank_eq hspan_le (by
+    rw [finrank_span_pair_eq_two_of_notMem_span_singleton
+      (K := K) (V := V) hxne hy, hW])
+
 end SubspaceChoice
 
 section ExactSubspaces
