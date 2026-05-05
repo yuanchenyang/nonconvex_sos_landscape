@@ -24,6 +24,28 @@ def HasBinaryLowRankNegativeNormalForm (a b c d e : ℝ) : Prop :=
   (c = 0 ∧ d = 0 ∧ e = 0 ∧ b ≠ 0) ∨
   (c = -a ∧ d = -b ∧ e = a ∧ (a ≠ 0 ∨ b ≠ 0))
 
+theorem HasBinaryLowRankNegativeNormalForm.rankOne
+    {ρ α β : ℝ} (hρ : ρ < 0) (hvec : α ≠ 0 ∨ β ≠ 0) :
+    HasBinaryLowRankNegativeNormalForm
+      (ρ * α^4) (ρ * α^3 * β) (ρ * α^2 * β^2)
+      (ρ * α * β^3) (ρ * β^4) := by
+  exact Or.inl ⟨ρ, α, β, hρ, hvec, rfl, rfl, rfl, rfl, rfl⟩
+
+theorem HasBinaryLowRankNegativeNormalForm.xyKernel
+    {a e : ℝ} (hneg : ∃ r t : ℝ, a * r^2 + e * t^2 < 0) :
+    HasBinaryLowRankNegativeNormalForm a 0 0 0 e := by
+  exact Or.inr (Or.inl ⟨rfl, rfl, rfl, hneg⟩)
+
+theorem HasBinaryLowRankNegativeNormalForm.ySqKernel
+    {a b : ℝ} (hb : b ≠ 0) :
+    HasBinaryLowRankNegativeNormalForm a b 0 0 0 := by
+  exact Or.inr (Or.inr (Or.inl ⟨rfl, rfl, rfl, hb⟩))
+
+theorem HasBinaryLowRankNegativeNormalForm.ellipticKernel
+    {a b : ℝ} (hne : a ≠ 0 ∨ b ≠ 0) :
+    HasBinaryLowRankNegativeNormalForm a b (-a) (-b) a := by
+  exact Or.inr (Or.inr (Or.inr ⟨rfl, rfl, rfl, hne⟩))
+
 def binaryRestrictionCoeffA
     (B : DotForm) (p : Poly) (u : RankSevenVec) (x : linSubmodule) : ℝ :=
   B ((linProduct x x : quadSubmodule).1^2) (residual p u)

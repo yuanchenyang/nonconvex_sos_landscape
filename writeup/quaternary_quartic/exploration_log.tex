@@ -4434,4 +4434,41 @@ direct-sum disjointness.
 
 No Julia numerical claims were used in this round.
 
+\section*{Named binary normal-form constructors}
+
+\paragraph{Gap targeted.}
+The rank-two classification still needs to prove that the canonical binary
+restriction lies in one of the low-rank normal forms.  The target disjunction
+was usable but awkward to construct directly in later proofs.
+
+\paragraph{Lean progress.}
+Added named constructors to \texttt{QuaternaryQuarticProof/Binary.lean}:
+\[
+\texttt{HasBinaryLowRankNegativeNormalForm.rankOne},
+\quad
+\texttt{HasBinaryLowRankNegativeNormalForm.xyKernel},
+\]
+\[
+\texttt{HasBinaryLowRankNegativeNormalForm.ySqKernel},
+\quad
+\texttt{HasBinaryLowRankNegativeNormalForm.ellipticKernel}.
+\]
+These correspond exactly to the four cases in the blueprint: rank-one outer
+product, \(xy\)-kernel diagonal, \(y^2\)-kernel, and elliptic
+\(x^2+y^2\)-kernel.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+Future rank-two classification work can now target one of these named
+constructors after deriving the corresponding coefficient equalities and
+nondegeneracy/negativity facts from the catalecticant kernel.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
