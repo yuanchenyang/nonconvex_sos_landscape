@@ -8193,4 +8193,38 @@ and the universal rank-two kernel-equation classification from the blueprint.
 
 No Julia numerical claims were used in this round.
 
+\section*{Product-independence projection to kernel equations}
+
+\paragraph{Gap targeted.}
+The product-independence apolar package also contains the exact bounds and
+rank-two kernel-equation cases, but it was not yet connected directly to the
+minimal kernel-equation route.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseKernelEquationApolarData\_of\_productIndependenceApolarData}
+\]
+and the residual/root reductions through that projection.
+
+\paragraph{Strategy change.}
+All nearby stronger rank-case apolar packages that contain the rank-two
+kernel-equation cases now feed the same minimal interface.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The remaining mathematical work is proving the exact annihilator-map bounds and
+the universal rank-two kernel-equation theorem, or any stronger package that
+projects to them.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
