@@ -10732,4 +10732,50 @@ quadratics to canonical binary Hankel kernel data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Parabolic binary kernel shear}
+
+\paragraph{Gap targeted.}
+The parabolic binary kernel branch \(D=0\) should reduce a nonzero quadratic
+kernel to a pure square by an elementary shear.  This is the first
+branch-specific normalization step beyond the general pullback infrastructure.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{parabolic\_shearX\_mixedCoeff\_eq\_zero},
+\qquad
+\texttt{parabolic\_shearX\_ySqCoeff\_eq\_zero},
+\]
+and
+\[
+\texttt{isBinaryQuadraticPullback\_parabolic\_shearX\_to\_xSq}.
+\]
+For \(r\ne0\) and \(s^2-4rt=0\), the shear
+\[
+x=X-\frac{s}{2r}Y,\qquad y=Y
+\]
+pulls the kernel quadratic back to \(rX^2\).
+
+\paragraph{Strategy change.}
+The parabolic branch can now split on whether \(r\ne0\).  The nonzero-\(r\)
+subcase has a proved kernel normalization; the remaining zero-\(r\) subcase
+should collapse directly to the existing pure-square canonical kernel.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support, the
+remaining parabolic zero-\(r\) subcase, and the hyperbolic/elliptic binary
+normalization branches.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

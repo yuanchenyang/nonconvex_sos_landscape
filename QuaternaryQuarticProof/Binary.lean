@@ -165,6 +165,31 @@ theorem binaryKernelDiscriminant_shearY (r s t tau : ℝ) :
   unfold binaryKernelDiscriminant
   ring
 
+theorem parabolic_shearX_mixedCoeff_eq_zero
+    {r s : ℝ} (hr : r ≠ 0) :
+    2 * r * (-s / (2 * r)) + s = 0 := by
+  field_simp [hr]
+  ring
+
+theorem parabolic_shearX_ySqCoeff_eq_zero
+    {r s t : ℝ} (hr : r ≠ 0)
+    (hdisc : binaryKernelDiscriminant r s t = 0) :
+    r * (-s / (2 * r))^2 + s * (-s / (2 * r)) + t = 0 := by
+  have hdisc' : s^2 = 4 * r * t := by
+    unfold binaryKernelDiscriminant at hdisc
+    nlinarith
+  field_simp [hr]
+  nlinarith
+
+theorem isBinaryQuadraticPullback_parabolic_shearX_to_xSq
+    {r s t : ℝ} (hr : r ≠ 0)
+    (hdisc : binaryKernelDiscriminant r s t = 0) :
+    IsBinaryQuadraticPullback r s t r 0 0 1 (-s / (2 * r)) 0 1 := by
+  convert isBinaryQuadraticPullback_shearX r s t (-s / (2 * r)) using 1
+  · exact (parabolic_shearX_mixedCoeff_eq_zero (r := r) (s := s) hr).symm
+  · exact (parabolic_shearX_ySqCoeff_eq_zero
+      (r := r) (s := s) (t := t) hr hdisc).symm
+
 def binaryHankelMul (a b c d e : ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ![a * v 0 + b * v 1 + c * v 2,
     b * v 0 + c * v 1 + d * v 2,
