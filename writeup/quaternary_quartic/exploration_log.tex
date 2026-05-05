@@ -8851,4 +8851,43 @@ universal rank-two package; then replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Split product geometry from rank-two branch data}
+
+\paragraph{Gap targeted.}
+\texttt{HasRankCaseProductIndependenceApolarData} bundled product-independence
+geometry with the rank-two kernel-equation classification.  Since rank-two
+classification is now represented by universal branch data, this bundled
+predicate made the component route harder to reuse.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankCaseProductIndependenceGeometryData}
+\]
+for the product-independence and rank-one/rank-three geometric obligations
+without rank-two kernel equations.  Added projections from the bundled product
+independence data to this geometry-only predicate, a component-data theorem
+combining geometry-only data with universal branch data, and residual/root
+reductions for that split interface.
+
+\paragraph{Strategy change.}
+The product-independence path now separates apolar geometry from binary
+rank-two classification, matching the blueprint's division of labor.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the product-independence geometry package and one universal rank-two
+branch package, or prove the low-rank support theorem plus a universal rank-two
+package; then replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
