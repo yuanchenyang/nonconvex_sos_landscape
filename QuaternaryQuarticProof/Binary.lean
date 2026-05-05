@@ -416,6 +416,13 @@ theorem binaryLowRankNegativeNormalForm_of_kernelBranchCertificate
     subst e
     exact HasBinaryLowRankNegativeNormalForm.ellipticKernel_of_negative_hankel hneg
 
+theorem binaryLowRankNegativeNormalForm_of_canonicalKernelData
+    {a b c d e : ℝ}
+    (hcanon : HasBinaryCanonicalKernelData a b c d e) :
+    HasBinaryLowRankNegativeNormalForm a b c d e :=
+  binaryLowRankNegativeNormalForm_of_kernelBranchCertificate
+    (binaryKernelBranchCertificate_of_canonicalKernelData hcanon)
+
 theorem binaryRestriction_lowRankNegativeNormalForm_of_kernelBranchCertificate
     {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}
     (hcert :
@@ -432,6 +439,23 @@ theorem binaryRestriction_lowRankNegativeNormalForm_of_kernelBranchCertificate
       (binaryRestrictionCoeffD B p u x y)
       (binaryRestrictionCoeffE B p u y) :=
   binaryLowRankNegativeNormalForm_of_kernelBranchCertificate hcert
+
+theorem binaryRestriction_lowRankNegativeNormalForm_of_canonicalKernelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}
+    (hcanon :
+      HasBinaryCanonicalKernelData
+        (binaryRestrictionCoeffA B p u x)
+        (binaryRestrictionCoeffB B p u x y)
+        (binaryRestrictionCoeffC B p u x y)
+        (binaryRestrictionCoeffD B p u x y)
+        (binaryRestrictionCoeffE B p u y)) :
+    HasBinaryLowRankNegativeNormalForm
+      (binaryRestrictionCoeffA B p u x)
+      (binaryRestrictionCoeffB B p u x y)
+      (binaryRestrictionCoeffC B p u x y)
+      (binaryRestrictionCoeffD B p u x y)
+      (binaryRestrictionCoeffE B p u y) :=
+  binaryLowRankNegativeNormalForm_of_canonicalKernelData hcanon
 
 theorem binaryRestriction_pow_eq_C
     (x y : linSubmodule) (X Y : ℝ) :

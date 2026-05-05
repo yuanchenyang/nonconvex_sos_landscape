@@ -1602,9 +1602,12 @@ theorem hasRankTwoExistentialKernelBranchData_of_canonicalKernelData
 theorem hasRankTwoExistentialBinaryFormData_of_canonicalKernelData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hcanon : HasRankTwoExistentialCanonicalKernelData B p u) :
-    HasRankTwoExistentialBinaryFormData B p u :=
-  hasRankTwoExistentialBinaryFormData_of_kernelBranchData
-    (hasRankTwoExistentialKernelBranchData_of_canonicalKernelData hcanon)
+    HasRankTwoExistentialBinaryFormData B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases hcanon hrank2 A W x hAann hAW hxW hx hAdim hWdim with
+    ⟨y, hyW, hynot, hcanon_y⟩
+  exact ⟨y, hyW, hynot,
+    binaryRestriction_lowRankNegativeNormalForm_of_canonicalKernelData hcanon_y⟩
 
 theorem hasRankTwoNegativeSquareData_of_existentialBinaryFormData
     {B : DotForm} {p : Poly} {u : RankSevenVec}

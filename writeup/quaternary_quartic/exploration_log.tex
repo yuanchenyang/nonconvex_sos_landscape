@@ -7226,4 +7226,35 @@ and the rank-two canonical kernel data theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Canonical kernel data directly gives binary normal form}
+
+\paragraph{Gap targeted.}
+The rank-two canonical-kernel route still passed through the branch
+certificate interface before reaching the binary normal form.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{binaryLowRankNegativeNormalForm\_of\_canonicalKernelData}
+\]
+and its binary-restriction specialization.  Updated
+\[
+\texttt{hasRankTwoExistentialBinaryFormData\_of\_canonicalKernelData}
+\]
+to use this direct canonical-to-normal-form theorem.
+
+\paragraph{Strategy change.}
+Once the rank-two canonical kernel data theorem is proved, the downstream
+binary normal-form input follows in one step.  The branch-certificate layer
+remains available but is no longer required by this bridge.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The two open inputs remain the product-kernel low-rank support decomposition
+and the rank-two canonical kernel data theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
