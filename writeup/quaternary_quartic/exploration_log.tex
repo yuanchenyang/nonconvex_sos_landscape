@@ -7271,7 +7271,7 @@ Added the linear map
 \]
 whose underlying function is \(\texttt{binaryHankelMul}\).  Added
 \[
-\texttt{HasBinaryRankTwoCanonicalKernelClassification}
+\texttt{HasBinaryRankTwoNormalizedKernelClassification}
 \]
 as the scalar rank-two classification interface:
 a negative Hankel value and range dimension at most two imply canonical kernel
@@ -7340,7 +7340,7 @@ facts.
 \paragraph{Lean progress.}
 Added
 \[
-\texttt{HasUniversalBinaryRankTwoCanonicalKernelClassification}
+\texttt{HasUniversalBinaryRankTwoNormalizedKernelClassification}
 \]
 for the coefficient-only theorem, and
 \[
@@ -7363,6 +7363,40 @@ Pending the next Lean harness run.
 The open inputs are the product-kernel low-rank support decomposition, the
 universal scalar binary classification theorem, and the rank-two scalar Hankel
 facts theorem.
+
+No Julia numerical claims were used in this round.
+
+\section*{Normalized scalar classification naming}
+
+\paragraph{Gap targeted.}
+The scalar classification interface introduced in the previous round was meant
+to represent the blueprint's post-change-of-basis normalized binary
+classification, but its name suggested an arbitrary-coordinate theorem.
+
+\paragraph{Lean progress.}
+Renamed the scalar interface to
+\[
+\texttt{HasBinaryRankTwoNormalizedKernelClassification}
+\]
+and the universal version to
+\[
+\texttt{HasUniversalBinaryRankTwoNormalizedKernelClassification}.
+\]
+Updated the downstream residual and root reduction theorem names accordingly.
+
+\paragraph{Strategy change.}
+The remaining binary classification theorem is now explicitly a normalized
+coordinate statement, matching the blueprint step where the binary quadratic
+kernel generator is put into one of the canonical forms by a real change of
+basis.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The open inputs remain the product-kernel low-rank support decomposition, the
+universal normalized scalar classification theorem, and the rank-two scalar
+Hankel facts theorem.
 
 No Julia numerical claims were used in this round.
 

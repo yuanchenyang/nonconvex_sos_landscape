@@ -94,7 +94,7 @@ def HasBinaryCanonicalKernelData (a b c d e : ℝ) : Prop :=
   (binaryHankelMul a b c d e (![1, 0, 1] : Fin 3 → ℝ) = 0 ∧
     HasBinaryHankelNegativeValue a b c d e)
 
-def HasBinaryRankTwoCanonicalKernelClassification (a b c d e : ℝ) : Prop :=
+def HasBinaryRankTwoNormalizedKernelClassification (a b c d e : ℝ) : Prop :=
   HasBinaryHankelNegativeValue a b c d e →
     Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2 →
       HasBinaryCanonicalKernelData a b c d e
@@ -457,9 +457,9 @@ theorem binaryLowRankNegativeNormalForm_of_canonicalKernelData
   binaryLowRankNegativeNormalForm_of_kernelBranchCertificate
     (binaryKernelBranchCertificate_of_canonicalKernelData hcanon)
 
-theorem binaryLowRankNegativeNormalForm_of_rankTwoCanonicalKernelClassification
+theorem binaryLowRankNegativeNormalForm_of_rankTwoNormalizedKernelClassification
     {a b c d e : ℝ}
-    (hclass : HasBinaryRankTwoCanonicalKernelClassification a b c d e)
+    (hclass : HasBinaryRankTwoNormalizedKernelClassification a b c d e)
     (hneg : HasBinaryHankelNegativeValue a b c d e)
     (hrank :
       Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2) :
