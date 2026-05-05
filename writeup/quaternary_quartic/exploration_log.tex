@@ -5685,4 +5685,54 @@ quadratics under the apolar support split.  This is closer to the blueprint’s
 
 No Julia numerical claims were used in this round.
 
+\section*{Packaging rank-three kernel decomposition in the final apolar interface}
+
+\paragraph{Gap targeted.}
+The reduced apolar package still asked directly for rank-three negative support,
+even though the rank-three proof now reduces that support to decomposing a
+negative SOS summand into supported and kernel pieces.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasRankCaseKernelDecompositionApolarData}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  This package keeps the reduced
+rank-one and rank-two combined product-linear-independence obligations, and
+replaces the rank-three direct negative-support input by the decomposition
+principle
+\[
+q=q_W+q_K,\qquad q_W\in WW,\qquad q_K\in\ker C_\lambda
+\]
+for every negative quadratic \(q\).
+
+Added
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_kernelDecompositionApolarData},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_kernelDecompositionApolarData},
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_kernelDecompositionApolarData}.
+\]
+Thus proving this kernel-decomposition apolar package for every SOCP instance
+is now sufficient to prove the immutable target.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The final formal gap is reduced to proving
+\(\texttt{HasRankCaseKernelDecompositionApolarData}\): annihilator-map bounds,
+combined product independence in ranks one and two, binary kernel equations in
+rank two, and the rank-three kernel decomposition.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
