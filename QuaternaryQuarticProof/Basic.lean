@@ -3312,6 +3312,38 @@ theorem hasRankTwoNegativeSquareData_of_universalKernelEquationData
     (hasRankTwoExistentialBinaryFormData_of_kernelEquationData
       (hasRankTwoExistentialKernelEquationData_of_universalKernelEquationData hcases))
 
+theorem hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_universalKernelEquationData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hbounds : HasRankCaseAnnihilatorMapBounds B p u)
+    (hcases : HasRankTwoUniversalKernelEquationData B p u) :
+    HasRankCaseNegativeSquareApolarData B p u hu :=
+  hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_rankTwo
+    (hu := hu) hbounds
+    (hasRankTwoNegativeSquareData_of_universalKernelEquationData hcases)
+
+theorem hasRankCaseNegativeSquareApolarData_of_lowRankApolarAnnihilatorMapTheorem_and_universalKernelEquationData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hann : HasLowRankApolarAnnihilatorMapTheorem B p u)
+    (hcases : HasRankTwoUniversalKernelEquationData B p u) :
+    HasRankCaseNegativeSquareApolarData B p u hu :=
+  hasRankCaseNegativeSquareApolarData_of_annihilatorBounds_and_universalKernelEquationData
+    (hu := hu)
+    (hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem hann)
+    hcases
+
+theorem hasRankCaseNegativeSquareApolarData_of_lowRankApolarSupportTheorem_and_universalKernelEquationData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hsupport : HasLowRankApolarSupportTheorem B p u)
+    (hcases : HasRankTwoUniversalKernelEquationData B p u) :
+    HasRankCaseNegativeSquareApolarData B p u hu :=
+  hasRankCaseNegativeSquareApolarData_of_lowRankApolarAnnihilatorMapTheorem_and_universalKernelEquationData
+    (hu := hu)
+    (hasLowRankApolarAnnihilatorMapTheorem_of_supportTheorem hsupport)
+    hcases
+
 theorem hasRankTwoExistentialKernelEquationData_of_kernelEquationApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

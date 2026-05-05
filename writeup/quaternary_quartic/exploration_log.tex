@@ -10039,4 +10039,43 @@ normalization/kernel-equation construction for the binary rank-two case.
 
 No Julia numerical claims were used in this round.
 
+\section*{Negative-square apolar data from low-rank kernel equations}
+
+\paragraph{Gap targeted.}
+After adding conversions into rank-two negative-square data, the rank-case
+negative-square apolar package still needed a direct constructor from the
+low-rank apolar theorem plus universal kernel-equation data.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_annihilatorBounds\_and\_universalKernelEquationData},
+\]
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_lowRankApolarAnnihilatorMapTheorem\_and\_universalKernelEquationData},
+\]
+and
+\[
+\texttt{hasRankCaseNegativeSquareApolarData\_of\_lowRankApolarSupportTheorem\_and\_universalKernelEquationData}.
+\]
+
+\paragraph{Strategy change.}
+The final proof can now route the two remaining inputs into either the
+kernel-equation apolar scaffold or the older negative-square apolar scaffold.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The core mathematical blockers are unchanged: low-rank apolar support and
+rank-two binary kernel normalization/equations.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
