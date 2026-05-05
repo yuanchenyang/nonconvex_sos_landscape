@@ -4767,6 +4767,15 @@ theorem range_linearAnnihilatorMap_apply_eq_map_mkQ_range_linProductLeftMap
     rw [← hq', ← heq]
     rfl
 
+theorem ker_linearAnnihilatorMap_apply_eq_linProductLeftPreimage
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (a : linSubmodule) :
+    LinearMap.ker (linearAnnihilatorMap B p u a) =
+      linProductLeftPreimage a (LinearMap.ker (catalecticantMap B p u)) := by
+  ext e
+  change linearAnnihilatorMap B p u a e = 0 ↔
+    linProduct a e ∈ LinearMap.ker (catalecticantMap B p u)
+  simp [Submodule.Quotient.mk_eq_zero]
+
 theorem linearAnnihilator_eq_ker_linearAnnihilatorMap
     (B : DotForm) (p : Poly) (u : RankSevenVec) :
     linearAnnihilator B p u = LinearMap.ker (linearAnnihilatorMap B p u) := by
@@ -5143,6 +5152,187 @@ theorem rankThree_leftMultiplication_degreeThreeCokernel_finrank_eq_four_sub
     finrank_range_leftMultiplicationDegreeThreeMap_eq,
     Subspace.dual_finrank_eq, finrank_linSubmodule_eq_four]
 
+theorem finrank_leftMultiplication_degreeThreeCokernel_eq_ker_linearAnnihilatorMap_apply
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (a : linSubmodule) :
+    Module.finrank ℝ
+        (Module.Dual ℝ linSubmodule ⧸
+          LinearMap.range (leftMultiplicationDegreeThreeMap B p u a)) =
+      Module.finrank ℝ (LinearMap.ker (linearAnnihilatorMap B p u a)) := by
+  have hsum :=
+    LinearMap.finrank_range_add_finrank_ker (linearAnnihilatorMap B p u a)
+  have hsum4 :
+      Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) +
+        Module.finrank ℝ (LinearMap.ker (linearAnnihilatorMap B p u a)) = 4 := by
+    rw [finrank_linSubmodule_eq_four] at hsum
+    exact hsum
+  rw [rankThree_leftMultiplication_degreeThreeCokernel_finrank_eq_four_sub]
+  omega
+
+theorem finrank_leftMultiplication_degreeThreeCokernel_eq_linProductLeftPreimage
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (a : linSubmodule) :
+    Module.finrank ℝ
+        (Module.Dual ℝ linSubmodule ⧸
+          LinearMap.range (leftMultiplicationDegreeThreeMap B p u a)) =
+      Module.finrank ℝ
+        (linProductLeftPreimage a (LinearMap.ker (catalecticantMap B p u))) := by
+  rw [finrank_leftMultiplication_degreeThreeCokernel_eq_ker_linearAnnihilatorMap_apply,
+    ker_linearAnnihilatorMap_apply_eq_linProductLeftPreimage]
+
+def linProductLeftPreimageCubicAnnihilatorMap
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (a : linSubmodule) :
+    linProductLeftPreimage a (LinearMap.ker (catalecticantMap B p u)) →ₗ[ℝ]
+      cubicProductAnnihilator (⊤ : Submodule ℝ linSubmodule)
+        (LinearMap.ker (catalecticantMap B p u) ⊔
+          LinearMap.range (linProductLeftMap a)) where
+  toFun b :=
+    ⟨{ toFun := fun z => B (b.1.1 * (z.1 : cubicSubmodule).1) (residual p u)
+       map_add' := by
+        intro z w
+        simp [mul_add]
+       map_smul' := by
+        intro r z
+        simp },
+      by
+        change
+          _ ∈
+            ((linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule)
+                (LinearMap.ker (catalecticantMap B p u) ⊔
+                  LinearMap.range (linProductLeftMap a))).comap
+              (linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule)
+                (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule))).subtype).dualAnnihilator
+        rw [Submodule.mem_dualAnnihilator]
+        intro z hz
+        change B (b.1.1 * (z.1 : cubicSubmodule).1) (residual p u) = 0
+        refine Submodule.span_induction
+          (p := fun y hy => B (b.1.1 * y.1) (residual p u) = 0)
+          ?_ ?_ ?_ ?_ hz
+        · intro y hygen
+          rcases hygen with ⟨eq, rfl⟩
+          let e : linSubmodule := eq.1.1
+          let q : quadSubmodule := eq.2.1
+          have hq :
+              q ∈ LinearMap.ker (catalecticantMap B p u) ⊔
+                LinearMap.range (linProductLeftMap a) := eq.2.2
+          rcases Submodule.mem_sup.mp hq with ⟨k, hk, t, ht, hkt⟩
+          have hkzero :
+              B (b.1.1 * (e.1 * k.1)) (residual p u) = 0 := by
+            have hval := congrArg
+              (fun φ : Module.Dual ℝ quadSubmodule => φ (linProduct b.1 e)) hk
+            calc
+              B (b.1.1 * (e.1 * k.1)) (residual p u) =
+                  B (k.1 * (linProduct b.1 e).1) (residual p u) := by
+                    simp [linProduct, mul_comm, mul_left_comm]
+              _ = 0 := by
+                    simpa using hval
+          rcases ht with ⟨c, rfl⟩
+          have hbker :
+              linProduct a b.1 ∈ LinearMap.ker (catalecticantMap B p u) := b.2
+          have htzero :
+              B (b.1.1 * (e.1 * (a.1 * c.1))) (residual p u) = 0 := by
+            have hval := congrArg
+              (fun φ : Module.Dual ℝ quadSubmodule => φ (linProduct e c)) hbker
+            calc
+              B (b.1.1 * (e.1 * (a.1 * c.1))) (residual p u) =
+                  B ((linProduct a b.1).1 * (linProduct e c).1) (residual p u) := by
+                    simp [linProduct, mul_comm, mul_left_comm]
+              _ = 0 := by
+                    simpa using hval
+          change B (b.1.1 * (e.1 * q.1)) (residual p u) = 0
+          rw [← hkt]
+          change B (b.1.1 * (e.1 * (k.1 + a.1 * c.1)))
+            (residual p u) = 0
+          simp [mul_add, hkzero, htzero]
+        · simp
+        · intro x y hx hy hxzero hyzero
+          change B (b.1.1 * (x.1 + y.1)) (residual p u) = 0
+          simp [mul_add, hxzero, hyzero]
+        · intro r x hx hxzero
+          change B (b.1.1 * (r • x.1)) (residual p u) = 0
+          simp [hxzero]⟩
+  map_add' b c := by
+    ext z
+    change B ((b.1.1 + c.1.1) * (z.1 : cubicSubmodule).1) (residual p u) =
+      B (b.1.1 * (z.1 : cubicSubmodule).1) (residual p u) +
+        B (c.1.1 * (z.1 : cubicSubmodule).1) (residual p u)
+    simp [add_mul]
+  map_smul' r b := by
+    ext z
+    change B ((r • b.1.1) * (z.1 : cubicSubmodule).1) (residual p u) =
+      r * B (b.1.1 * (z.1 : cubicSubmodule).1) (residual p u)
+    simp
+
+@[simp] theorem linProductLeftPreimageCubicAnnihilatorMap_apply
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (a : linSubmodule)
+    (b : linProductLeftPreimage a (LinearMap.ker (catalecticantMap B p u)))
+    (z : linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule)
+      (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule))) :
+    (linProductLeftPreimageCubicAnnihilatorMap B p u a b).1 z =
+      B (b.1.1 * (z.1 : cubicSubmodule).1) (residual p u) :=
+  rfl
+
+theorem linProductLeftPreimageCubicAnnihilatorMap_ker_eq_bot_of_linearAnnihilator_eq_bot
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {a : linSubmodule}
+    (hbot : linearAnnihilator B p u = ⊥) :
+    LinearMap.ker (linProductLeftPreimageCubicAnnihilatorMap B p u a) = ⊥ := by
+  apply (Submodule.eq_bot_iff _).2
+  intro b hb
+  apply Subtype.ext
+  have hb_ann : (b.1 : linSubmodule) ∈ linearAnnihilator B p u := by
+    intro e
+    change catalecticantMap B p u (linProduct b.1 e) = 0
+    ext q
+    let z : linQuadProductSubmodule (⊤ : Submodule ℝ linSubmodule)
+        (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule)) :=
+      ⟨linQuadProduct e q,
+        linQuadProduct_mem_linQuadProductSubmodule
+          (U := (⊤ : Submodule ℝ linSubmodule))
+          (P := symSquareSubmodule (⊤ : Submodule ℝ linSubmodule))
+          ⟨e, trivial⟩
+          ⟨q, by
+            rw [symSquareSubmodule, linProductSubmodule_top_top_eq_top]
+            trivial⟩⟩
+    have hmap :
+        linProductLeftPreimageCubicAnnihilatorMap B p u a b = 0 := by
+      simpa [LinearMap.mem_ker] using hb
+    have hval := congrArg
+      (fun φ : cubicProductAnnihilator (⊤ : Submodule ℝ linSubmodule)
+          (LinearMap.ker (catalecticantMap B p u) ⊔
+            LinearMap.range (linProductLeftMap a)) => φ.1 z) hmap
+    calc
+      B ((linProduct b.1 e).1 * q.1) (residual p u) =
+          B (b.1.1 * (z.1 : cubicSubmodule).1) (residual p u) := by
+            simp [z, linProduct, linQuadProduct, mul_comm, mul_left_comm]
+      _ = 0 := by
+            simpa using hval
+  have hb_zero : (b.1 : linSubmodule) ∈ (⊥ : Submodule ℝ linSubmodule) := by
+    simpa [hbot] using hb_ann
+  simpa using hb_zero
+
+theorem linProductLeftPreimageCubicAnnihilatorMap_injective_of_linearAnnihilator_eq_bot
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {a : linSubmodule}
+    (hbot : linearAnnihilator B p u = ⊥) :
+    Function.Injective (linProductLeftPreimageCubicAnnihilatorMap B p u a) := by
+  rw [← LinearMap.ker_eq_bot]
+  exact
+    linProductLeftPreimageCubicAnnihilatorMap_ker_eq_bot_of_linearAnnihilator_eq_bot
+      (B := B) (p := p) (u := u) (a := a) hbot
+
+theorem finrank_leftMultiplication_degreeThreeCokernel_le_cubicProductAnnihilator_sup_range
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {a : linSubmodule}
+    (hbot : linearAnnihilator B p u = ⊥) :
+    Module.finrank ℝ
+        (Module.Dual ℝ linSubmodule ⧸
+          LinearMap.range (leftMultiplicationDegreeThreeMap B p u a)) ≤
+      Module.finrank ℝ
+        (cubicProductAnnihilator (⊤ : Submodule ℝ linSubmodule)
+          (LinearMap.ker (catalecticantMap B p u) ⊔
+            LinearMap.range (linProductLeftMap a))) := by
+  rw [finrank_leftMultiplication_degreeThreeCokernel_eq_linProductLeftPreimage]
+  exact LinearMap.finrank_le_finrank_of_injective
+    (f := linProductLeftPreimageCubicAnnihilatorMap B p u a)
+    (linProductLeftPreimageCubicAnnihilatorMap_injective_of_linearAnnihilator_eq_bot
+      (B := B) (p := p) (u := u) (a := a) hbot)
+
 theorem exists_rankThreeBadBranch_leftMultiplication_degreeThreeCokernel
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
@@ -5204,6 +5394,107 @@ theorem rankThreeBadBranchContradiction_of_leftMultiplication_cokernel_macaulay
       (B := B) (p := p) (u := u) hrank hquot with
     ⟨a, ha_ne, hnot⟩
   exact hnot (hmac a ha_ne)
+
+theorem rankThreeBadBranch_leftMultiplication_cokernel_macaulay
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4) :
+    ∀ a : linSubmodule,
+      a ≠ 0 →
+        Module.finrank ℝ
+            (Module.Dual ℝ linSubmodule ⧸
+              LinearMap.range (leftMultiplicationDegreeThreeMap B p u a)) ≤
+          Module.finrank ℝ
+            ((quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) ⧸
+              LinearMap.range (linearAnnihilatorMap B p u a)) := by
+  intro a ha
+  let P : Submodule ℝ quadSubmodule :=
+    LinearMap.ker (catalecticantMap B p u) ⊔
+      LinearMap.range (linProductLeftMap a)
+  have hbot : linearAnnihilator B p u = ⊥ :=
+    linearAnnihilator_eq_bot_of_finrank_quotient_linearAnnihilator_eq_four hquot
+  have hleft_le_cubic :
+      Module.finrank ℝ
+          (Module.Dual ℝ linSubmodule ⧸
+            LinearMap.range (leftMultiplicationDegreeThreeMap B p u a)) ≤
+        Module.finrank ℝ
+          (cubicProductAnnihilator (⊤ : Submodule ℝ linSubmodule) P) := by
+    change Module.finrank ℝ
+          (Module.Dual ℝ linSubmodule ⧸
+            LinearMap.range (leftMultiplicationDegreeThreeMap B p u a)) ≤
+        Module.finrank ℝ
+          (cubicProductAnnihilator (⊤ : Submodule ℝ linSubmodule)
+            (LinearMap.ker (catalecticantMap B p u) ⊔
+              LinearMap.range (linProductLeftMap a)))
+    exact finrank_leftMultiplication_degreeThreeCokernel_le_cubicProductAnnihilator_sup_range
+      (B := B) (p := p) (u := u) (a := a) hbot
+  have hright_le_two :
+      Module.finrank ℝ
+          ((quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) ⧸
+            LinearMap.range (linearAnnihilatorMap B p u a)) ≤ 2 := by
+    rw [rankThree_leftMultiplication_degreeTwoCokernel_finrank_eq_three_sub
+      (B := B) (p := p) (u := u) hrank a]
+    have hbpos :
+        1 ≤ Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u a)) :=
+      (rankThreeBadBranch_leftMultiplication_finrank_range_between
+        (B := B) (p := p) (u := u) hrank hquot ha).1
+    omega
+  have hsym_eq_right :
+      Module.finrank ℝ
+          (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule) ⧸
+            P.comap (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule)).subtype) =
+        Module.finrank ℝ
+          ((quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) ⧸
+            LinearMap.range (linearAnnihilatorMap B p u a)) := by
+    rw [finrank_symSquare_top_quotient_eq_finrank_quad_quotient]
+    simpa [P] using
+      (finrank_leftMultiplication_degreeTwoCokernel_eq_quotient_sup_range
+        B p u a).symm
+  have hsym_le_two :
+      Module.finrank ℝ
+          (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule) ⧸
+            P.comap (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule)).subtype) ≤ 2 := by
+    rw [hsym_eq_right]
+    exact hright_le_two
+  have hP_le : P ≤ symSquareSubmodule (⊤ : Submodule ℝ linSubmodule) := by
+    rw [symSquareSubmodule, linProductSubmodule_top_top_eq_top]
+    exact le_top
+  have hlocal :=
+    macaulay_cokernel_bound_of_finrank_symSquare_quotient_le_two
+      (A := (⊤ : Submodule ℝ linSubmodule)) (P := P) hP_le hsym_le_two
+  have hcubic_le_sym :
+      Module.finrank ℝ
+          (cubicProductAnnihilator (⊤ : Submodule ℝ linSubmodule) P) ≤
+        Module.finrank ℝ
+          (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule) ⧸
+            P.comap (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule)).subtype) := by
+    rw [← finrank_linQuadProductSubmodule_quotient_eq_finrank_cubicProductAnnihilator]
+    exact hlocal
+  calc
+    Module.finrank ℝ
+        (Module.Dual ℝ linSubmodule ⧸
+          LinearMap.range (leftMultiplicationDegreeThreeMap B p u a)) ≤
+        Module.finrank ℝ
+          (cubicProductAnnihilator (⊤ : Submodule ℝ linSubmodule) P) :=
+          hleft_le_cubic
+    _ ≤ Module.finrank ℝ
+          (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule) ⧸
+            P.comap (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule)).subtype) :=
+          hcubic_le_sym
+    _ = Module.finrank ℝ
+          ((quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) ⧸
+            LinearMap.range (linearAnnihilatorMap B p u a)) :=
+          hsym_eq_right
+
+theorem rankThreeBadBranchContradiction_direct
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4) :
+    False :=
+  rankThreeBadBranchContradiction_of_leftMultiplication_cokernel_macaulay
+    (B := B) (p := p) (u := u) hrank hquot
+    (rankThreeBadBranch_leftMultiplication_cokernel_macaulay
+      (B := B) (p := p) (u := u) hrank hquot)
 
 def scalarizedLinearAnnihilatorMap
     (B : DotForm) (p : Poly) (u : RankSevenVec)

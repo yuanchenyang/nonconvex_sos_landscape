@@ -15862,4 +15862,43 @@ annihilator attached to the same quotient.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three bad branch closed and root theorem verified}
+
+\paragraph{Gap targeted.}
+The remaining central algebraic gap was the rank-three bad branch: prove the
+left-multiplication Macaulay inequality, derive the contradiction, and replace
+the root placeholder with a genuine proof.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, identified the
+degree-three cokernel with the preimage of \(\ker C_\lambda\) under
+multiplication by \(a\), constructed the cubic-annihilator map
+\[
+b \mapsto (z \mapsto \lambda(bz)),
+\]
+proved it is injective when the linear annihilator is zero, and used the local
+Macaulay bound to prove
+\[
+\texttt{rankThreeBadBranch\_leftMultiplication\_cokernel\_macaulay}.
+\]
+This gives
+\[
+\texttt{rankThreeBadBranchContradiction\_direct}.
+\]
+In \texttt{QuaternaryQuarticProof.Basic}, added
+\[
+\texttt{globalRankThreeApolarBadBranchContradiction\_direct}.
+\]
+The root theorem in \texttt{QuaternaryQuarticProof.lean} now invokes the
+direct global rank-three contradiction together with the previously formalized
+rank-two Macaulay growth route.  The temporary placeholder axiom was removed.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof} succeeded.  The stable harness
+\texttt{./scripts/verify\_quaternary\_quartic.sh} succeeded; the final theorem
+depends only on \texttt{propext}, \texttt{Classical.choice}, and
+\texttt{Quot.sound}.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

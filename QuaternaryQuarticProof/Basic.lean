@@ -9499,6 +9499,11 @@ theorem globalRankThreeApolarBadBranchExactSequenceShape_direct :
   intro B p u _hu _hB _hp _hsocp
   exact rankThreeBadBranchExactSequenceShape_direct B p u
 
+theorem globalRankThreeApolarBadBranchContradiction_direct :
+    HasGlobalRankThreeApolarBadBranchContradiction := by
+  intro B p u _hu _hB _hp _hsocp
+  exact rankThreeBadBranchContradiction_direct
+
 theorem globalRankThreeApolarBadBranchContradiction_of_globalRankThreeApolarBadBranchMacaulayBound
     (hmac : HasGlobalRankThreeApolarBadBranchMacaulayBound) :
     HasGlobalRankThreeApolarBadBranchContradiction := by
@@ -10414,18 +10419,5 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_kernelDecompositionApola
   letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
   exact residual_eq_zero_of_kernelDecompositionApolarData
     (B := B) hu hp hsocp (hdata B p u hu hB hp hsocp)
-
-/-
-Helper lemmas for the quaternary quartic rank-7 proof go here.
-Exploration agents should add new Lean code to files in this folder
-(`QuaternaryQuarticProof/`), not to the root `QuaternaryQuarticProof.lean`.
-
-The theorem below is a temporary scaffold axiom used to keep the new proof
-track buildable while the actual proof decomposition is still being developed.
-It must be replaced by proof-serving lemmas and a real derivation.
--/
-
-axiom quaternaryQuartic_rankSeven_no_spurious_socp_placeholder :
-    QuaternaryQuarticRankSevenNoSpuriousSOCP
 
 end QuaternaryQuartic
