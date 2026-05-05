@@ -2830,6 +2830,14 @@ theorem binaryQuarticEval_exists_negative_of_pullback_lowRankNegativeNormalForm
   binaryQuarticEval_exists_negative_of_pullback hpull
     (binaryQuarticEval_exists_negative_of_lowRankNegativeNormalForm hform)
 
+theorem binaryQuarticEval_exists_negative_of_pullback_canonicalKernelData
+    {a b c d e A B C D E α β γ δ : ℝ}
+    (hpull : IsBinaryQuarticPullback a b c d e A B C D E α β γ δ)
+    (hcanon : HasBinaryCanonicalKernelData A B C D E) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 :=
+  binaryQuarticEval_exists_negative_of_pullback_lowRankNegativeNormalForm hpull
+    (binaryLowRankNegativeNormalForm_of_canonicalKernelData hcanon)
+
 theorem binaryQuarticEval_exists_negative_of_canonicalKernelData
     {a b c d e : ℝ}
     (hcanon : HasBinaryCanonicalKernelData a b c d e) :

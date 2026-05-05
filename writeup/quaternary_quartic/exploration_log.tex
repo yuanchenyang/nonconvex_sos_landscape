@@ -11549,12 +11549,21 @@ independent, giving the \(y^2\) branch.  If \(D=0\), the already proved
 \(y^2\) kernel equations also force the \(xy\) kernel equations, and the
 transported negative witness gives the \(xy\) branch.
 
+Also added the generic bridge
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_pullback\_canonicalKernelData},
+\]
+which turns canonical kernel data for pulled-back coefficients into a negative
+value for the original binary quartic.  This separates the branch-specific
+normalization work from the final negative-pure-square evaluation step.
+
 \paragraph{Strategy change.}
 All discriminant branches with a chosen nonzero kernel vector now have
-transport-to-canonical-data lemmas.  The next binary gap is to assemble these
-branch lemmas into a single classifier driven by
-\texttt{HasBinaryHankelKernelDiscriminantData}; after that the remaining large
-gap returns to the apolar support theorem.
+transport-to-canonical-data lemmas, and canonical pulled-back data now feeds
+directly into binary negativity.  The next binary gap is to assemble these
+branch lemmas with the matching quartic pullbacks into a single classifier
+driven by \texttt{HasBinaryHankelKernelDiscriminantData}; after that the
+remaining large gap returns to the apolar support theorem.
 
 \paragraph{Verification.}
 \texttt{lake build QuaternaryQuarticProof.Binary} and
