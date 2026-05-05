@@ -8973,4 +8973,46 @@ classification certificates; then replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Normalized Hankel package from position and negativity}
+
+\paragraph{Gap targeted.}
+The universal normalized-Hankel package still exposed three rank-two
+obligations: normalized kernel position, Hankel negativity, and an explicit
+binary Hankel rank bound.  The rank bound is already a consequence of
+normalized kernel position, so keeping it as a separate input inflated the
+rank-two certificate interface.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankTwoUniversalNormalizedHankelData\_of\_universalNormalizedPosition\_and\_HankelNegative}
+\]
+using the existing rank-bound theorem derived from normalized kernel position.
+Also added residual and root reductions from
+\[
+\texttt{HasRankCaseAnnihilatorMapBounds}
+\]
+plus the two true rank-two normalized-Hankel components.
+
+\paragraph{Strategy change.}
+Future normalized-Hankel routes can target normalized position and Hankel
+negativity directly; the binary Hankel rank bound no longer needs to be tracked
+as an independent remaining certificate.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the rank-case annihilator-map bounds, universal normalized kernel
+position, and universal Hankel negativity, or route those through existing
+support and branch certificates; then replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

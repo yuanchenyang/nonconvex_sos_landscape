@@ -2886,6 +2886,15 @@ theorem universalBinaryHankelRankBound_of_universalNormalizedKernelPositionData
   exact binaryHankelLinearMap_finrank_range_le_two_of_normalizedKernelPosition
     (hpos hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim)
 
+theorem hasRankTwoUniversalNormalizedHankelData_of_universalNormalizedPosition_and_HankelNegative
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u)
+    (hneg : HasRankTwoUniversalHankelNegativeData B p u) :
+    HasRankTwoUniversalNormalizedHankelData B p u :=
+  hasRankTwoUniversalNormalizedHankelData_of_components
+    hpos hneg
+    (universalBinaryHankelRankBound_of_universalNormalizedKernelPositionData hpos)
+
 theorem hasRankCaseKernelEquationApolarData_of_annihilatorBounds_and_universalKernelEquationData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -3514,6 +3523,20 @@ theorem residual_eq_zero_of_annihilatorBounds_and_universalNormalizedHankelData
   residual_eq_zero_of_annihilatorBounds_and_universalKernelBranchData
     (B := B) hu hp hsocp hbounds
     (hasRankTwoUniversalKernelBranchData_of_universalNormalizedHankelData hdata)
+
+theorem residual_eq_zero_of_annihilatorBounds_and_universalNormalizedPosition_and_HankelNegative
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hbounds : HasRankCaseAnnihilatorMapBounds B p u)
+    (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u)
+    (hneg : HasRankTwoUniversalHankelNegativeData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_annihilatorBounds_and_universalNormalizedHankelData
+    (B := B) hu hp hsocp hbounds
+    (hasRankTwoUniversalNormalizedHankelData_of_universalNormalizedPosition_and_HankelNegative
+      hpos hneg)
 
 theorem residual_eq_zero_of_splitAnnihilatorBounds_and_universalNormalizedHankelComponents
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
@@ -4492,6 +4515,37 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_annihilatorBounds_and_un
     (B := B) hu hp hsocp
     (hbounds B p u hu hB hp hsocp)
     (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_annihilatorBounds_and_universalNormalizedPosition_and_HankelNegative
+    (hbounds :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseAnnihilatorMapBounds B p u)
+    (hpos :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoUniversalNormalizedKernelPositionData B p u)
+    (hneg :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoUniversalHankelNegativeData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_annihilatorBounds_and_universalNormalizedPosition_and_HankelNegative
+    (B := B) hu hp hsocp
+    (hbounds B p u hu hB hp hsocp)
+    (hpos B p u hu hB hp hsocp)
+    (hneg B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_splitAnnihilatorBounds_and_universalNormalizedHankelComponents
     (hbound1 :
