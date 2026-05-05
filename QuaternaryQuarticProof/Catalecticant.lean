@@ -2128,6 +2128,12 @@ def linearAnnihilator (B : DotForm) (p : Poly) (u : RankSevenVec) :
     rw [linProduct_smul_left]
     exact Submodule.smul_mem _ r (ha e)
 
+theorem finrank_quotient_linearAnnihilator_eq_sub
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) =
+      4 - Module.finrank ℝ (linearAnnihilator B p u) := by
+  rw [Submodule.finrank_quotient, finrank_linSubmodule_eq_four]
+
 @[simp] theorem mem_linearAnnihilator {B : DotForm} {p : Poly} {u : RankSevenVec}
     {a : linSubmodule} :
     a ∈ linearAnnihilator B p u ↔

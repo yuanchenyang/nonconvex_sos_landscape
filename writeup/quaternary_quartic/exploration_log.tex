@@ -12467,4 +12467,49 @@ are already formalized.
 
 No Julia numerical claims were used in this round.
 
+\section*{Essential quotient dimension}
+
+\paragraph{Gap targeted.}
+The blueprint's \(h_1\) is the number of essential linear variables, more
+naturally represented as the quotient dimension
+\[
+\dim(\texttt{linSubmodule}/\texttt{linearAnnihilator}).
+\]
+Previous interfaces used the arithmetic expression
+\(4-\dim\texttt{linearAnnihilator}\) directly, which made the formal target
+less close to the apolar-algebra statement.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof.Catalecticant}:
+\[
+\texttt{finrank\_quotient\_linearAnnihilator\_eq\_sub}.
+\]
+This proves:
+\[
+\dim(\texttt{linSubmodule}/\texttt{linearAnnihilator})
+=4-\dim(\texttt{linearAnnihilator}).
+\]
+
+Added quotient-bound interfaces:
+\[
+\texttt{HasRankTwoApolarEssentialQuotientBound},
+\qquad
+\texttt{HasRankThreeApolarEssentialQuotientBound},
+\]
+and proved they imply the existing Hilbert-first and annihilator-dimension
+bounds.  Added direct wrappers reducing the root theorem to these rank-two and
+rank-three essential quotient bounds.
+
+\paragraph{Strategy change.}
+Future Hilbert-function work can now target the quotient dimension directly,
+which matches the mathematical \(h_1\) in the blueprint.  The conversion from
+that quotient bound to \(\dim\Ann_1\) and then to the annihilator-map bound is
+formalized.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
