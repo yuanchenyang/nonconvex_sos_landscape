@@ -5801,4 +5801,45 @@ remaining product-independence proofs.
 
 No Julia numerical claims were used in this round.
 
+\section*{Exact complement generator packages}
+
+\paragraph{Gap targeted.}
+The largest remaining formal gap is still the apolar support theorem producing
+rank-case kernel-decomposition data.  Its rank-one and rank-two product
+independence subgoals repeatedly need the complement \(W\) of an exact
+annihilator \(A\) in coordinates: a generator when \(\dim W=1\), and a spanning
+pair when \(\dim W=2\).  Lean had the exact complements and some local span
+lemmas, but not packaged witnesses with all hypotheses carried together.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Support.lean}:
+\[
+\texttt{exists\_rank\_two\_exact\_annihilator\_complement\_pair}
+\]
+and
+\[
+\texttt{exists\_rank\_one\_exact\_annihilator\_complement\_generator}.
+\]
+The rank-two package returns \(A,W,x,y\) with \(A\le\Ann\), \(A\oplus W\),
+\(x,y\in W\), nonzeroness after coercion to \(\texttt{Poly}\), \(x,y\notin A\),
+\(y\notin\mathbb R x\), \(\Span\{x,y\}=W\), and the exact dimensions
+\(\dim A=\dim W=2\).  The rank-one package similarly returns a nonzero
+complement generator \(x\) with \(\mathbb R x=W\), \(x\notin A\),
+\(\dim A=3\), and \(\dim W=1\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The exact complement witnesses are now in the shape needed to start proving
+the direct-sum product-independence facts.  The unproved content remains the
+actual product-independence/binary-kernel-equation construction and the
+rank-three kernel decomposition for arbitrary SOCP input.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

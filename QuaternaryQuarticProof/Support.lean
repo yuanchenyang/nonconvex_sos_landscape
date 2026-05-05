@@ -491,6 +491,64 @@ theorem not_mem_right_of_annihilator_complement_mem_ne_zero
       intro hzero
       exact hz (congrArg (fun q : linSubmodule => (q : Poly)) hzero))
 
+theorem exists_rank_two_exact_annihilator_complement_pair
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 2) :
+    ∃ A W : Submodule ℝ linSubmodule,
+      ∃ x y : linSubmodule,
+        A ≤ linearAnnihilator B p u ∧
+          IsCompl A W ∧
+            x ∈ W ∧
+              y ∈ W ∧
+                (x : Poly) ≠ 0 ∧
+                  (y : Poly) ≠ 0 ∧
+                    x ∉ A ∧
+                      y ∉ A ∧
+                        y ∉ ℝ ∙ x ∧
+                          Submodule.span ℝ ({x, y} : Set linSubmodule) = W ∧
+                            Module.finrank ℝ A = 2 ∧
+                              Module.finrank ℝ W = 2 := by
+  rcases exists_rank_two_exact_annihilator_complement_vector
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, W, x, hAann, hAW, hxW, hx, hxnotA, hAdim, hWdim⟩
+  rcases exists_rank_two_complement_second_direction
+      (W := W) (x := x) hx hWdim with
+    ⟨y, hyW, hynot⟩
+  have hyne : y ≠ 0 := by
+    intro hzero
+    exact hynot (by
+      rw [hzero]
+      simp)
+  have hy : (y : Poly) ≠ 0 := by
+    intro hzero
+    exact hyne (Subtype.ext hzero)
+  have hynotA : y ∉ A :=
+    not_mem_left_of_support_complement_mem_ne_zero hAW hyW hy
+  have hspan : Submodule.span ℝ ({x, y} : Set linSubmodule) = W :=
+    span_rank_two_support_pair_eq hx hxW hyW hynot hWdim
+  exact ⟨A, W, x, y, hAann, hAW, hxW, hyW, hx, hy, hxnotA, hynotA,
+    hynot, hspan, hAdim, hWdim⟩
+
+theorem exists_rank_one_exact_annihilator_complement_generator
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 1) :
+    ∃ A W : Submodule ℝ linSubmodule,
+      ∃ x : linSubmodule,
+        A ≤ linearAnnihilator B p u ∧
+          IsCompl A W ∧
+            x ∈ W ∧
+              (x : Poly) ≠ 0 ∧
+                x ∉ A ∧
+                  ℝ ∙ x = W ∧
+                    Module.finrank ℝ A = 3 ∧
+                      Module.finrank ℝ W = 1 := by
+  rcases exists_rank_one_exact_annihilator_complement_vector
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, W, x, hAann, hAW, hxW, hx, hxnotA, hAdim, hWdim⟩
+  have hspan : ℝ ∙ x = W :=
+    span_rank_one_support_vector_eq hx hxW hWdim
+  exact ⟨A, W, x, hAann, hAW, hxW, hx, hxnotA, hspan, hAdim, hWdim⟩
+
 theorem hasRankTwoSupportComponentHypothesis_of_independent_binary_data
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hSym :
