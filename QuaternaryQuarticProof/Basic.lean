@@ -2912,6 +2912,15 @@ theorem supportBounds_and_universalKernelEquationData_of_kernelEquationApolarDat
   ⟨hasRankCaseApolarSupportBounds_of_kernelEquationApolarData hdata,
     hasRankTwoUniversalKernelEquationData_of_kernelEquationApolarData hdata⟩
 
+theorem supportBounds_and_universalKernelEquationData_of_kernelDecompositionApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseKernelDecompositionApolarData B p u hu) :
+    HasRankCaseApolarSupportBounds B p u ∧
+      HasRankTwoUniversalKernelEquationData B p u :=
+  supportBounds_and_universalKernelEquationData_of_kernelEquationApolarData
+    (hasRankCaseKernelEquationApolarData_of_kernelDecompositionApolarData hdata)
+
 theorem hasRankTwoUniversalCanonicalKernelData_of_universalKernelEquationData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hcases : HasRankTwoUniversalKernelEquationData B p u) :

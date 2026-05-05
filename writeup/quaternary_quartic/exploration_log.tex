@@ -9633,4 +9633,45 @@ position data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Kernel-decomposition apolar data contains the final scaffold inputs}
+
+\paragraph{Gap targeted.}
+The stronger kernel-decomposition apolar data package already implies the
+kernel-equation apolar data package.  The final scaffold, however, consumed
+support bounds plus universal rank-two kernel-equation data, so this implication
+was still one step away from the current target shape.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{supportBounds\_and\_universalKernelEquationData\_of\_kernelDecompositionApolarData}.
+\]
+It composes the existing conversion
+\[
+\texttt{hasRankCaseKernelEquationApolarData\_of\_kernelDecompositionApolarData}
+\]
+with the kernel-equation scaffold package from the previous round.
+
+\paragraph{Strategy change.}
+A future proof may now aim at the stronger kernel-decomposition apolar package
+without adding another bridge to the theorem-level scaffold.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after moving the new
+theorem below the package theorem it uses.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Construct a rank-case apolar data source, preferably the kernel-decomposition
+package if the blueprint's syzygy/decomposition arguments are formalized first,
+or the weaker kernel-equation package if the normalized binary analysis is
+reached more directly.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
