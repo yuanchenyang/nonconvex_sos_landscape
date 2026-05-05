@@ -13523,4 +13523,38 @@ as the main local blueprint target.
 
 No Julia numerical claims were used in this round.
 
+\section*{Direct three-component root wrapper}
+
+\paragraph{Gap targeted.}
+The quotient-local data package exposed the three shortest remaining
+components, but callers still had to package them before using the root theorem
+wrapper.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{residual\_eq\_zero\_of\_quotientLocalComponents\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_quotientLocalComponents\_direct}.
+\]
+These take the current three local targets separately:
+\[
+\texttt{HasRankTwoApolarGorensteinSymmetryData},
+\quad
+\texttt{HasRankTwoApolarMacaulayGrowthBound},
+\quad
+\texttt{HasRankThreeApolarBadBranchContradiction}.
+\]
+
+\paragraph{Strategy change.}
+The root theorem now has a direct reduction from the three shortest remaining
+local Hilbert-function obligations.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
