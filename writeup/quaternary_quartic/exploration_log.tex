@@ -6538,4 +6538,50 @@ form.
 
 No Julia numerical claims were used in this round.
 
+\section*{Negative-square apolar interface}
+
+\paragraph{Gap targeted.}
+The existential binary normal-form interface was still stronger than the
+certificate construction needs.  The rank-two syzygy argument only uses a
+negative pure square \(x^4\) in the two-dimensional complement, not an explicit
+normal form for the whole binary quartic.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_negative\_square}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  For a rank-two annihilator
+complement \(A\oplus W\), a nonzero \(x\in W\), and
+\(\lambda(x^4)<0\), it derives the required preimage-product support data.
+The \(\Sym^2A\) dimension and range/symmetric-square disjointness are obtained
+from the rank-two combined product-independence theorem.
+
+Added
+\[
+\texttt{HasRankCaseNegativeSquareApolarData}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  The corresponding bridge
+\[
+\texttt{hasRankCaseNegativeCertificateFamily\_of\_negativeSquareApolarData}
+\]
+proves the rank-case negative certificate family directly: rank one derives
+negativity internally, rank two uses the supplied negative pure square, and
+rank three derives the negative product from the annihilator bound and a
+negative SOS summand.  Added residual and root reduction theorems for this
+interface.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+completes successfully.
+
+\paragraph{Remaining blockers.}
+The main remaining mathematical inputs now match the blueprint more closely:
+the low-rank apolar support bounds and the binary rank-two negative-square
+statement.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

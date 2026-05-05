@@ -1702,6 +1702,46 @@ theorem hasPreimageProductSupportData_of_rank_two_supportAmbient_of_components
     (five_le_finrank_supportAmbient_of_rank_two_components hx hAdim hsym hdisj)
     hAdim hneg
 
+theorem hasPreimageProductSupportData_of_rank_two_negative_square
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2)
+    {A W : Submodule ℝ linSubmodule} {x : linSubmodule}
+    (hAann : A ≤ linearAnnihilator B p u)
+    (hAW : IsCompl A W)
+    (hxW : x ∈ W)
+    (hx : (x : Poly) ≠ 0)
+    (hAdim : Module.finrank ℝ A = 2)
+    (hWdim : Module.finrank ℝ W = 2)
+    (hneg : B ((linProduct x x : quadSubmodule).1^2) (residual p u) < 0) :
+    HasPreimageProductSupportData B p u hu := by
+  rcases exists_rank_two_complement_second_direction
+      (W := W) (x := x) hx hWdim with
+    ⟨y, hyW, hynot⟩
+  have hxspan : x ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) :=
+    Submodule.subset_span (by simp)
+  rcases exists_rank_two_combined_product_independence
+      hAW hxW hyW hynot hx hAdim hWdim hxspan hx with
+    ⟨β, hLI⟩
+  have hSymLI :
+      LinearIndependent ℝ
+        (fun ij : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+          linProduct (β ij.1.1).1 (β ij.1.2).1) := by
+    simpa [Function.comp_def] using (linearIndependent_sum.mp hLI).2.1
+  have hSymdim : Module.finrank ℝ (symSquareSubmodule A) = 3 :=
+    finrank_symSquareSubmodule_eq_three_of_basis_products_linearIndependent β hSymLI
+  have hdisj :
+      LinearMap.range (linProductLeftMapOn x A) ⊓ symSquareSubmodule A = ⊥ :=
+    range_linProductLeftMapOn_inf_symSquare_eq_bot_of_basis_products_linearIndependent
+      (A := A) (z := x) β hLI
+  exact hasPreimageProductSupportData_of_rank_two_supportAmbient_of_components
+    (B := B) (p := p) (u := u) (hu := hu)
+    hfocp hrelker hrank
+    (x := x) (A := A)
+    hx hAann hAdim hSymdim hdisj hneg
+
 theorem hasPreimageProductSupportData_of_rank_two_binaryNormalForm
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
