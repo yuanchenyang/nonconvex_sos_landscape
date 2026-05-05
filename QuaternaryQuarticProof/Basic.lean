@@ -2836,6 +2836,13 @@ theorem rankThreeBadBranchContradiction_of_shape_and_macaulayBound
   exact rankThreeExactSequenceNumericalContradiction
     hbpos hbtop hq2 hq3 (hmac hrank3 hbad b q2 q3 hbpos hbtop hq2 hq3)
 
+theorem rankThreeBadBranchContradiction_of_macaulayBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hmac : HasRankThreeApolarBadBranchMacaulayBound B p u) :
+    HasRankThreeApolarBadBranchContradiction B p u :=
+  rankThreeBadBranchContradiction_of_shape_and_macaulayBound
+    (rankThreeBadBranchExactSequenceShape_direct B p u) hmac
+
 theorem rankThreeEssentialQuotientBound_of_shape_and_macaulayBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hshape : HasRankThreeApolarBadBranchExactSequenceShape B p u)
@@ -2855,6 +2862,13 @@ theorem rankThreeBadBranchContradiction_iff_shape_and_macaulayBound
     fun hdata =>
       rankThreeBadBranchContradiction_of_shape_and_macaulayBound
         hdata.1 hdata.2⟩
+
+theorem rankThreeBadBranchMacaulayBound_iff_badBranchContradiction
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankThreeApolarBadBranchMacaulayBound B p u ↔
+      HasRankThreeApolarBadBranchContradiction B p u :=
+  ⟨rankThreeBadBranchContradiction_of_macaulayBound,
+    rankThreeBadBranchMacaulayBound_of_badBranchContradiction⟩
 
 theorem rankThreeExactSequenceData_of_rankThreeEssentialQuotientBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -8672,6 +8686,19 @@ theorem globalRankThreeApolarBadBranchExactSequenceShape_direct :
   intro B p u _hu _hB _hp _hsocp
   exact rankThreeBadBranchExactSequenceShape_direct B p u
 
+theorem globalRankThreeApolarBadBranchContradiction_of_globalRankThreeApolarBadBranchMacaulayBound
+    (hmac : HasGlobalRankThreeApolarBadBranchMacaulayBound) :
+    HasGlobalRankThreeApolarBadBranchContradiction := by
+  intro B p u hu hB hp hsocp
+  exact rankThreeBadBranchContradiction_of_macaulayBound
+    (hmac B p u hu hB hp hsocp)
+
+theorem globalRankThreeApolarBadBranchMacaulayBound_iff_globalRankThreeApolarBadBranchContradiction :
+    HasGlobalRankThreeApolarBadBranchMacaulayBound ↔
+      HasGlobalRankThreeApolarBadBranchContradiction :=
+  ⟨globalRankThreeApolarBadBranchContradiction_of_globalRankThreeApolarBadBranchMacaulayBound,
+    globalRankThreeApolarBadBranchMacaulayBound_of_globalRankThreeApolarBadBranchContradiction⟩
+
 theorem globalRankTwoApolarHilbertFirstBound_of_globalRankTwoApolarEssentialQuotientBound
     (hquot : HasGlobalRankTwoApolarEssentialQuotientBound) :
     HasGlobalRankTwoApolarHilbertFirstBound := by
@@ -8861,6 +8888,31 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoSupport_an
       hdata.2⟩
   · intro hdata
     exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoSupport_and_rankThreeMacaulayBound
+      hdata.1 hdata.2
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoSupport_and_rankThreeBadBranch
+    (hsupport2 : HasGlobalRankTwoApolarSupportBound)
+    (hbad3 : HasGlobalRankThreeApolarBadBranchContradiction) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoSupport_and_rankThreeMacaulayBound
+    hsupport2
+    (globalRankThreeApolarBadBranchMacaulayBound_of_globalRankThreeApolarBadBranchContradiction
+      hbad3)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoSupport_and_rankThreeBadBranch :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoApolarSupportBound ∧
+        HasGlobalRankThreeApolarBadBranchContradiction := by
+  constructor
+  · intro hmain
+    have hdata :=
+      (quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoSupport_and_rankThreeMacaulayBound).mp
+        hmain
+    exact ⟨hdata.1,
+      globalRankThreeApolarBadBranchContradiction_of_globalRankThreeApolarBadBranchMacaulayBound
+        hdata.2⟩
+  · intro hdata
+    exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoSupport_and_rankThreeBadBranch
       hdata.1 hdata.2
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch

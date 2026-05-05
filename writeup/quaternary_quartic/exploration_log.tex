@@ -14134,4 +14134,37 @@ already present in \texttt{QuaternaryQuarticProof/Support.lean}.
 
 No Julia numerical claims were used in this round.
 
+\section*{Collapse rank-three Macaulay package to bad branch}
+
+\paragraph{Gap targeted.}
+After discharging the rank-three shape package, the global rank-three
+Macaulay/O-sequence package and the bad-branch contradiction should be
+equivalent in the current abstraction.
+
+\paragraph{Lean progress.}
+Added local and global equivalences between
+\[
+\texttt{HasRankThreeApolarBadBranchMacaulayBound}
+\]
+and
+\[
+\texttt{HasRankThreeApolarBadBranchContradiction}.
+\]
+The forward direction uses the direct exact-sequence shape and the already
+formalized numerical contradiction.  Added the root equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoSupport\_and\_rankThreeBadBranch}.
+\]
+
+\paragraph{Strategy change.}
+The exposed remaining obligations are now the rank-two support/codimension
+branch and the rank-three bad-branch contradiction.  This removes a layer of
+Macaulay-bound packaging from the final reduction while preserving the
+blueprint interpretation.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
