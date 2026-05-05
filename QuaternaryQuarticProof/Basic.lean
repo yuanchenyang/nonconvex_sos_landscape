@@ -628,6 +628,22 @@ def HasGlobalLowRankApolarEssentialQuotientTheorem : Prop :=
         IsSOCP B p u →
           HasLowRankApolarEssentialQuotientTheorem B p u
 
+def HasGlobalLowRankApolarBlueprintHilbertData : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasLowRankApolarBlueprintHilbertData B p u
+
+def HasGlobalLowRankApolarBlueprintLocalData : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasLowRankApolarBlueprintLocalData B p u
+
 def HasRankTwoUniversalKernelEquationData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
@@ -8571,6 +8587,76 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarEsse
       HasGlobalLowRankApolarEssentialQuotientTheorem :=
   ⟨globalLowRankApolarEssentialQuotientTheorem_of_quaternaryQuartic_rankSeven_no_spurious_socp,
     quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarEssentialQuotientTheorem⟩
+
+theorem globalLowRankApolarBlueprintHilbertData_of_globalLowRankApolarEssentialQuotientTheorem
+    (hquot : HasGlobalLowRankApolarEssentialQuotientTheorem) :
+    HasGlobalLowRankApolarBlueprintHilbertData := by
+  intro B p u hu hB hp hsocp
+  exact lowRankApolarBlueprintHilbertData_of_lowRankApolarEssentialQuotientTheorem
+    (hquot B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarEssentialQuotientTheorem_of_globalLowRankApolarBlueprintHilbertData
+    (hdata : HasGlobalLowRankApolarBlueprintHilbertData) :
+    HasGlobalLowRankApolarEssentialQuotientTheorem := by
+  intro B p u hu hB hp hsocp
+  exact lowRankApolarEssentialQuotientTheorem_of_lowRankApolarBlueprintHilbertData
+    (hdata B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarBlueprintHilbertData_iff_globalLowRankApolarEssentialQuotientTheorem :
+    HasGlobalLowRankApolarBlueprintHilbertData ↔
+      HasGlobalLowRankApolarEssentialQuotientTheorem :=
+  ⟨globalLowRankApolarEssentialQuotientTheorem_of_globalLowRankApolarBlueprintHilbertData,
+    globalLowRankApolarBlueprintHilbertData_of_globalLowRankApolarEssentialQuotientTheorem⟩
+
+theorem globalLowRankApolarBlueprintLocalData_of_globalLowRankApolarEssentialQuotientTheorem
+    (hquot : HasGlobalLowRankApolarEssentialQuotientTheorem) :
+    HasGlobalLowRankApolarBlueprintLocalData := by
+  intro B p u hu hB hp hsocp
+  exact lowRankApolarBlueprintLocalData_of_lowRankApolarEssentialQuotientTheorem
+    (hquot B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarEssentialQuotientTheorem_of_globalLowRankApolarBlueprintLocalData
+    (hdata : HasGlobalLowRankApolarBlueprintLocalData) :
+    HasGlobalLowRankApolarEssentialQuotientTheorem := by
+  intro B p u hu hB hp hsocp
+  exact lowRankApolarEssentialQuotientTheorem_of_lowRankApolarBlueprintLocalData
+    (hdata B p u hu hB hp hsocp)
+
+theorem globalLowRankApolarBlueprintLocalData_iff_globalLowRankApolarEssentialQuotientTheorem :
+    HasGlobalLowRankApolarBlueprintLocalData ↔
+      HasGlobalLowRankApolarEssentialQuotientTheorem :=
+  ⟨globalLowRankApolarEssentialQuotientTheorem_of_globalLowRankApolarBlueprintLocalData,
+    globalLowRankApolarBlueprintLocalData_of_globalLowRankApolarEssentialQuotientTheorem⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarBlueprintHilbertData
+    (hdata : HasGlobalLowRankApolarBlueprintHilbertData) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarBlueprintHilbertData_direct
+    hdata
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarBlueprintHilbertData :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalLowRankApolarBlueprintHilbertData :=
+  ⟨fun hmain =>
+      globalLowRankApolarBlueprintHilbertData_of_globalLowRankApolarEssentialQuotientTheorem
+        (globalLowRankApolarEssentialQuotientTheorem_of_quaternaryQuartic_rankSeven_no_spurious_socp
+          hmain),
+    quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarBlueprintHilbertData⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarBlueprintLocalData
+    (hdata : HasGlobalLowRankApolarBlueprintLocalData) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarBlueprintLocalData_direct
+    hdata
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarBlueprintLocalData :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalLowRankApolarBlueprintLocalData :=
+  ⟨fun hmain =>
+      globalLowRankApolarBlueprintLocalData_of_globalLowRankApolarEssentialQuotientTheorem
+        (globalLowRankApolarEssentialQuotientTheorem_of_quaternaryQuartic_rankSeven_no_spurious_socp
+          hmain),
+    quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarBlueprintLocalData⟩
 
 theorem globalLowRankApolarAnnihilatorMapTheorem_of_globalLowRankApolarEssentialQuotientTheorem
     (hquot : HasGlobalLowRankApolarEssentialQuotientTheorem) :

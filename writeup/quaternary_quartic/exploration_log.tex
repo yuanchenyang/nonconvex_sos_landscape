@@ -14426,4 +14426,45 @@ assumptions or changing the root theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Globalize blueprint Hilbert packages}
+
+\paragraph{Gap targeted.}
+The local blueprint-native Hilbert packages were already connected to the
+essential quotient theorem, but the global SOCP-indexed layer only exposed the
+quotient and generic Hilbert-data formulations.  This left the remaining gap
+less directly aligned with the exact language of the blueprint.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasGlobalLowRankApolarBlueprintHilbertData},
+\qquad
+\texttt{HasGlobalLowRankApolarBlueprintLocalData}.
+\]
+Proved both are equivalent to
+\[
+\texttt{HasGlobalLowRankApolarEssentialQuotientTheorem}.
+\]
+Also added root equivalences
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalLowRankApolarBlueprintHilbertData}
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalLowRankApolarBlueprintLocalData}.
+\]
+
+\paragraph{Strategy change.}
+The remaining non-placeholder proof obligation can now be stated globally in
+the blueprint's own Hilbert/exact-sequence component language: rank-two
+quotient growth plus rank-three bad-branch exact-sequence data, or the
+corresponding decomposed local components.  This avoids relying only on the
+more compressed quotient formulation when continuing the low catalecticant
+rank argument.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
