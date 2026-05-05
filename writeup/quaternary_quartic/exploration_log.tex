@@ -8500,4 +8500,48 @@ replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Support bounds to annihilator dimensions}
+
+\paragraph{Gap targeted.}
+The new annihilator-dimension route and the existing apolar-support route were
+morally the same, but there was no direct bridge between them.  This left two
+parallel ways to state the annihilator side of the blueprint.
+
+\paragraph{Lean progress.}
+Added rank-specific bridges from
+\[
+\texttt{HasLinearAnnihilatorCodimAtMost}
+\]
+to the corresponding annihilator-dimension predicates, and bundled them into
+\[
+\texttt{hasRankCaseApolarAnnihilatorDimensionBounds\_of\_apolarSupportBounds}.
+\]
+Also proved the converse
+\[
+\texttt{hasRankCaseApolarSupportBounds\_of\_annihilatorDimensionBounds}
+\]
+by taking the full \texttt{linearAnnihilator} as the support subspace.  Added
+residual and root reductions from apolar support bounds plus universal
+normalized kernel-position and Hankel-negativity data.
+
+\paragraph{Strategy change.}
+The annihilator geometry can now be supplied either as apolar support bounds or
+as direct dimension bounds for \texttt{linearAnnihilator}; both feed the same
+normalized-Hankel route.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the apolar support/dimension bounds, universal normalized kernel-position
+data, and universal Hankel-negativity data; then replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
