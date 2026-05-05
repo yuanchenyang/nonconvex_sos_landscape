@@ -439,6 +439,65 @@ def HasRankTwoUniversalNormalizedHankelData
                             (binaryRestrictionCoeffD B p u x y)
                             (binaryRestrictionCoeffE B p u y))) ≤ 2
 
+def HasRankTwoUniversalNormalizedKernelPositionData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+      A ≤ linearAnnihilator B p u →
+        IsCompl A W →
+          x ∈ W →
+            y ∈ W →
+              y ∉ ℝ ∙ x →
+                (x : Poly) ≠ 0 →
+                  Module.finrank ℝ A = 2 →
+                    Module.finrank ℝ W = 2 →
+                      HasBinaryNormalizedKernelPosition
+                        (binaryRestrictionCoeffA B p u x)
+                        (binaryRestrictionCoeffB B p u x y)
+                        (binaryRestrictionCoeffC B p u x y)
+                        (binaryRestrictionCoeffD B p u x y)
+                        (binaryRestrictionCoeffE B p u y)
+
+def HasRankTwoUniversalHankelNegativeData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+      A ≤ linearAnnihilator B p u →
+        IsCompl A W →
+          x ∈ W →
+            y ∈ W →
+              y ∉ ℝ ∙ x →
+                (x : Poly) ≠ 0 →
+                  Module.finrank ℝ A = 2 →
+                    Module.finrank ℝ W = 2 →
+                      HasBinaryHankelNegativeValue
+                        (binaryRestrictionCoeffA B p u x)
+                        (binaryRestrictionCoeffB B p u x y)
+                        (binaryRestrictionCoeffC B p u x y)
+                        (binaryRestrictionCoeffD B p u x y)
+                        (binaryRestrictionCoeffE B p u y)
+
+def HasRankTwoUniversalBinaryHankelRankBound
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+      A ≤ linearAnnihilator B p u →
+        IsCompl A W →
+          x ∈ W →
+            y ∈ W →
+              y ∉ ℝ ∙ x →
+                (x : Poly) ≠ 0 →
+                  Module.finrank ℝ A = 2 →
+                    Module.finrank ℝ W = 2 →
+                      Module.finrank ℝ
+                        (LinearMap.range
+                          (binaryHankelLinearMap
+                            (binaryRestrictionCoeffA B p u x)
+                            (binaryRestrictionCoeffB B p u x y)
+                            (binaryRestrictionCoeffC B p u x y)
+                            (binaryRestrictionCoeffD B p u x y)
+                            (binaryRestrictionCoeffE B p u y))) ≤ 2
+
 def HasRankCaseKernelEquationApolarData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u) : Prop :=
@@ -2354,6 +2413,39 @@ theorem hasRankTwoUniversalCanonicalKernelData_of_universalNormalizedHankelData
     ⟨hpos, hneg, _hrank⟩
   exact binaryCanonicalKernelData_of_normalizedKernelPosition hpos hneg
 
+theorem hasRankTwoUniversalNormalizedHankelData_of_components
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u)
+    (hneg : HasRankTwoUniversalHankelNegativeData B p u)
+    (hrank : HasRankTwoUniversalBinaryHankelRankBound B p u) :
+    HasRankTwoUniversalNormalizedHankelData B p u := by
+  intro hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+  exact ⟨
+    hpos hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim,
+    hneg hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim,
+    hrank hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim⟩
+
+theorem universalNormalizedKernelPositionData_of_universalNormalizedHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoUniversalNormalizedHankelData B p u) :
+    HasRankTwoUniversalNormalizedKernelPositionData B p u := by
+  intro hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+  exact (hdata hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim).1
+
+theorem universalHankelNegativeData_of_universalNormalizedHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoUniversalNormalizedHankelData B p u) :
+    HasRankTwoUniversalHankelNegativeData B p u := by
+  intro hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+  exact (hdata hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim).2.1
+
+theorem universalBinaryHankelRankBound_of_universalNormalizedHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hdata : HasRankTwoUniversalNormalizedHankelData B p u) :
+    HasRankTwoUniversalBinaryHankelRankBound B p u := by
+  intro hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim
+  exact (hdata hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim).2.2
+
 theorem hasRankCaseKernelEquationApolarData_of_annihilatorBounds_and_universalKernelEquationData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}
@@ -2929,6 +3021,22 @@ theorem residual_eq_zero_of_splitAnnihilatorBounds_and_universalNormalizedHankel
   residual_eq_zero_of_splitAnnihilatorBounds_and_universalCanonicalKernelData
     (B := B) hu hp hsocp hbound1 hbound2 hbound3
     (hasRankTwoUniversalCanonicalKernelData_of_universalNormalizedHankelData hdata)
+
+theorem residual_eq_zero_of_splitAnnihilatorBounds_and_universalNormalizedHankelComponents
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hbound1 : HasRankOneApolarAnnihilatorMapBound B p u)
+    (hbound2 : HasRankTwoApolarAnnihilatorMapBound B p u)
+    (hbound3 : HasRankThreeApolarAnnihilatorMapBound B p u)
+    (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u)
+    (hneg : HasRankTwoUniversalHankelNegativeData B p u)
+    (hrank : HasRankTwoUniversalBinaryHankelRankBound B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_splitAnnihilatorBounds_and_universalNormalizedHankelData
+    (B := B) hu hp hsocp hbound1 hbound2 hbound3
+    (hasRankTwoUniversalNormalizedHankelData_of_components hpos hneg hrank)
 
 theorem residual_eq_zero_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
@@ -3670,6 +3778,61 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_splitAnnihilatorBounds_a
     (hbound2 B p u hu hB hp hsocp)
     (hbound3 B p u hu hB hp hsocp)
     (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_splitAnnihilatorBounds_and_universalNormalizedHankelComponents
+    (hbound1 :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankOneApolarAnnihilatorMapBound B p u)
+    (hbound2 :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoApolarAnnihilatorMapBound B p u)
+    (hbound3 :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankThreeApolarAnnihilatorMapBound B p u)
+    (hpos :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoUniversalNormalizedKernelPositionData B p u)
+    (hneg :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoUniversalHankelNegativeData B p u)
+    (hrank :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoUniversalBinaryHankelRankBound B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_splitAnnihilatorBounds_and_universalNormalizedHankelComponents
+    (B := B) hu hp hsocp
+    (hbound1 B p u hu hB hp hsocp)
+    (hbound2 B p u hu hB hp hsocp)
+    (hbound3 B p u hu hB hp hsocp)
+    (hpos B p u hu hB hp hsocp)
+    (hneg B p u hu hB hp hsocp)
+    (hrank B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarProductKernelDecomposition_and_canonicalKernelData
     (hprod :

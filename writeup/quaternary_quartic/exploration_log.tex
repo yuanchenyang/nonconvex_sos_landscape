@@ -8360,4 +8360,49 @@ rank-two Hankel data, then replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Normalized Hankel component split}
+
+\paragraph{Gap targeted.}
+The universal normalized-Hankel package still bundled three different facts:
+the normalized kernel position, existence of a negative Hankel value, and the
+rank bound for the binary Hankel map.
+
+\paragraph{Lean progress.}
+Added the component predicates
+\[
+\begin{gathered}
+\texttt{HasRankTwoUniversalNormalizedKernelPositionData},\\
+\texttt{HasRankTwoUniversalHankelNegativeData},\\
+\texttt{HasRankTwoUniversalBinaryHankelRankBound}.
+\end{gathered}
+\]
+Proved their assembly into
+\[
+\texttt{HasRankTwoUniversalNormalizedHankelData}
+\]
+and projections back out of the bundled normalized-Hankel predicate.  Added a
+root reduction from the three split annihilator-map bounds plus the three
+rank-two normalized-Hankel components.
+
+\paragraph{Strategy change.}
+The remaining rank-two normalized-Hankel theorem can now be attacked as three
+separate obligations, matching the blueprint's distinction between normal
+form, negativity, and rank control.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the three split exact annihilator-map bounds, the universal normalized
+kernel-position statement, the universal Hankel-negativity statement, and the
+universal binary Hankel rank bound; then replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
