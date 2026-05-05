@@ -11789,4 +11789,43 @@ dimension bound for \texttt{linearAnnihilatorMap}.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-case annihilator-map reduction}
+
+\paragraph{Gap targeted.}
+The direct annihilator-map theorem still packaged the apolar support argument as
+a uniform \(k \le 3\) statement.  Since the proof blueprint naturally separates
+the low-rank Hilbert-function analysis into ranks one, two, and three, this
+round exposed that rank-case split at the final theorem interface.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{hasLowRankApolarAnnihilatorMapTheorem\_iff\_rankCaseAnnihilatorMapBounds},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_rankCaseAnnihilatorMapBounds\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_rankCaseAnnihilatorMapBounds\_direct}.
+\]
+The root target now follows directly from
+\texttt{HasRankCaseAnnihilatorMapBounds} for every admissible SOCP instance,
+without any remaining binary-normal-form or normalized-Hankel assumptions.
+
+\paragraph{Strategy change.}
+The leading formal gap is split into the three concrete obligations
+\[
+\operatorname{rank} C = i \Rightarrow
+\dim \operatorname{range}(\texttt{linearAnnihilatorMap}) \le i,
+\quad i=1,2,3.
+\]
+The rank-zero case is already handled separately by
+\texttt{finrank\_range\_linearAnnihilatorMap\_eq\_zero\_of\_catalecticantMap\_rank\_zero}.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
