@@ -2730,6 +2730,13 @@ theorem rankTwoQuotientGrowthData_of_symmetry_and_macaulayGrowth
   rcases hsymm hrank2 with ⟨h3, hh3⟩
   exact ⟨h3, hh3, hgrowth hrank2 h3 hh3⟩
 
+theorem rankTwoQuotientGrowthData_of_macaulayGrowth
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hgrowth : HasRankTwoApolarMacaulayGrowthBound B p u) :
+    HasRankTwoApolarQuotientGrowthData B p u :=
+  rankTwoQuotientGrowthData_of_symmetry_and_macaulayGrowth
+    (rankTwoApolarGorensteinSymmetryData_direct B p u) hgrowth
+
 theorem rankTwoEssentialQuotientBound_of_symmetry_and_macaulayGrowth
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsymm : HasRankTwoApolarGorensteinSymmetryData B p u)
@@ -3461,6 +3468,13 @@ theorem rankTwoMacaulayGrowthBound_of_rankTwoQuotientGrowthData
   rcases hdata hrank2 with ⟨h3', hsymm', hgrowth'⟩
   omega
 
+theorem rankTwoQuotientGrowthData_iff_macaulayGrowth
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankTwoApolarQuotientGrowthData B p u ↔
+      HasRankTwoApolarMacaulayGrowthBound B p u :=
+  ⟨rankTwoMacaulayGrowthBound_of_rankTwoQuotientGrowthData,
+    rankTwoQuotientGrowthData_of_macaulayGrowth⟩
+
 theorem rankThreeBadBranchExactSequenceShape_of_data
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hdata : HasRankThreeApolarBadBranchExactSequenceData B p u) :
@@ -3479,6 +3493,20 @@ theorem rankThreeBadBranchMacaulayBound_of_data
   exfalso
   exact rankThreeExactSequenceNumericalContradiction
     hbpos' hbtop' hq2' hq3' hmac'
+
+theorem rankThreeBadBranchExactSequenceData_of_macaulayBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hmac : HasRankThreeApolarBadBranchMacaulayBound B p u) :
+    HasRankThreeApolarBadBranchExactSequenceData B p u :=
+  rankThreeBadBranchExactSequenceData_of_shape_and_macaulayBound
+    (rankThreeBadBranchExactSequenceShape_direct B p u) hmac
+
+theorem rankThreeBadBranchExactSequenceData_iff_macaulayBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankThreeApolarBadBranchExactSequenceData B p u ↔
+      HasRankThreeApolarBadBranchMacaulayBound B p u :=
+  ⟨rankThreeBadBranchMacaulayBound_of_data,
+    rankThreeBadBranchExactSequenceData_of_macaulayBound⟩
 
 theorem lowRankApolarBlueprintLocalData_of_lowRankApolarBlueprintHilbertData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -8718,6 +8746,62 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoQuotientGr
     fun hdata =>
       quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoQuotientGrowth_and_rankThreeBadBranchExactSequenceData
         hdata.1 hdata.2⟩
+
+theorem globalRankTwoApolarQuotientGrowthData_of_globalRankTwoApolarMacaulayGrowthBound
+    (hgrowth : HasGlobalRankTwoApolarMacaulayGrowthBound) :
+    HasGlobalRankTwoApolarQuotientGrowthData := by
+  intro B p u hu hB hp hsocp
+  exact rankTwoQuotientGrowthData_of_macaulayGrowth
+    (hgrowth B p u hu hB hp hsocp)
+
+theorem globalRankTwoApolarMacaulayGrowthBound_of_globalRankTwoApolarQuotientGrowthData
+    (hdata : HasGlobalRankTwoApolarQuotientGrowthData) :
+    HasGlobalRankTwoApolarMacaulayGrowthBound := by
+  intro B p u hu hB hp hsocp
+  exact rankTwoMacaulayGrowthBound_of_rankTwoQuotientGrowthData
+    (hdata B p u hu hB hp hsocp)
+
+theorem globalRankTwoApolarQuotientGrowthData_iff_globalRankTwoApolarMacaulayGrowthBound :
+    HasGlobalRankTwoApolarQuotientGrowthData ↔
+      HasGlobalRankTwoApolarMacaulayGrowthBound :=
+  ⟨globalRankTwoApolarMacaulayGrowthBound_of_globalRankTwoApolarQuotientGrowthData,
+    globalRankTwoApolarQuotientGrowthData_of_globalRankTwoApolarMacaulayGrowthBound⟩
+
+theorem globalRankThreeApolarBadBranchExactSequenceData_of_globalRankThreeApolarBadBranchMacaulayBound
+    (hmac : HasGlobalRankThreeApolarBadBranchMacaulayBound) :
+    HasGlobalRankThreeApolarBadBranchExactSequenceData := by
+  intro B p u hu hB hp hsocp
+  exact rankThreeBadBranchExactSequenceData_of_macaulayBound
+    (hmac B p u hu hB hp hsocp)
+
+theorem globalRankThreeApolarBadBranchMacaulayBound_of_globalRankThreeApolarBadBranchExactSequenceData
+    (hdata : HasGlobalRankThreeApolarBadBranchExactSequenceData) :
+    HasGlobalRankThreeApolarBadBranchMacaulayBound := by
+  intro B p u hu hB hp hsocp
+  exact rankThreeBadBranchMacaulayBound_of_data
+    (hdata B p u hu hB hp hsocp)
+
+theorem globalRankThreeApolarBadBranchExactSequenceData_iff_globalRankThreeApolarBadBranchMacaulayBound :
+    HasGlobalRankThreeApolarBadBranchExactSequenceData ↔
+      HasGlobalRankThreeApolarBadBranchMacaulayBound :=
+  ⟨globalRankThreeApolarBadBranchMacaulayBound_of_globalRankThreeApolarBadBranchExactSequenceData,
+    globalRankThreeApolarBadBranchExactSequenceData_of_globalRankThreeApolarBadBranchMacaulayBound⟩
+
+theorem splitGlobalBlueprintHilbertData_iff_splitGlobalMacaulayGrowthAndBound :
+    (HasGlobalRankTwoApolarQuotientGrowthData ∧
+        HasGlobalRankThreeApolarBadBranchExactSequenceData) ↔
+      HasGlobalRankTwoApolarMacaulayGrowthBound ∧
+        HasGlobalRankThreeApolarBadBranchMacaulayBound :=
+  ⟨fun hdata =>
+      ⟨globalRankTwoApolarMacaulayGrowthBound_of_globalRankTwoApolarQuotientGrowthData
+          hdata.1,
+        globalRankThreeApolarBadBranchMacaulayBound_of_globalRankThreeApolarBadBranchExactSequenceData
+          hdata.2⟩,
+    fun hdata =>
+      ⟨globalRankTwoApolarQuotientGrowthData_of_globalRankTwoApolarMacaulayGrowthBound
+          hdata.1,
+        globalRankThreeApolarBadBranchExactSequenceData_of_globalRankThreeApolarBadBranchMacaulayBound
+          hdata.2⟩⟩
 
 theorem globalLowRankApolarAnnihilatorMapTheorem_of_globalLowRankApolarEssentialQuotientTheorem
     (hquot : HasGlobalLowRankApolarEssentialQuotientTheorem) :

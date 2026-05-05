@@ -14535,4 +14535,44 @@ catalecticant rank argument.
 
 No Julia numerical claims were used in this round.
 
+\section*{Identify split Hilbert and arithmetic branches}
+
+\paragraph{Gap targeted.}
+The newly split blueprint Hilbert target should not remain parallel to the
+split Macaulay arithmetic target.  Each side has the same mathematical
+content, but this had not yet been stated directly at the global level.
+
+\paragraph{Lean progress.}
+Added local equivalences
+\[
+\texttt{rankTwoQuotientGrowthData\_iff\_macaulayGrowth}
+\]
+and
+\[
+\texttt{rankThreeBadBranchExactSequenceData\_iff\_macaulayBound}.
+\]
+Lifted these to global equivalences for
+\[
+\texttt{HasGlobalRankTwoApolarQuotientGrowthData}
+\]
+and
+\[
+\texttt{HasGlobalRankThreeApolarBadBranchExactSequenceData}.
+\]
+Finally proved
+\[
+\texttt{splitGlobalBlueprintHilbertData\_iff\_splitGlobalMacaulayGrowthAndBound}.
+\]
+
+\paragraph{Strategy change.}
+The split blueprint Hilbert obligations and the split arithmetic obligations
+are now definitionally connected by named theorems.  Future work can choose
+whichever branch formulation is more convenient without creating another
+unlinked proof target.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
