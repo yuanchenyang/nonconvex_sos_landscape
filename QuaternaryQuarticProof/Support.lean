@@ -380,6 +380,32 @@ def HasRankTwoSupportComponentHypothesis
                                   symSquareSubmodule A =
                                 ⊥
 
+theorem hasRankOneSupportComponentHypothesis_of_self_negative
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hSym :
+      ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              (x : Poly) ≠ 0 →
+                Module.finrank ℝ A = 3 →
+                  Module.finrank ℝ W = 1 →
+                    Module.finrank ℝ (symSquareSubmodule A) = 6)
+    (hneg :
+      ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              (x : Poly) ≠ 0 →
+                Module.finrank ℝ A = 3 →
+                  Module.finrank ℝ W = 1 →
+                    binaryRestrictionCoeffA B p u x < 0) :
+    HasRankOneSupportComponentHypothesis B p u := by
+  intro A W x hAann hAW hxW hx hAdim hWdim
+  refine ⟨x, hSym A W x hAann hAW hxW hx hAdim hWdim, ?_⟩
+  exact rankOneSelf_binaryLowRankNegativeNormalForm
+    (hneg A W x hAann hAW hxW hx hAdim hWdim)
+
 theorem exists_rank_one_binaryRestrictionComponentData_of_support
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupp : HasLinearAnnihilatorCodimAtMost B p u 1)

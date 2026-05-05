@@ -4391,4 +4391,47 @@ and prove the named support component hypotheses, plus rank-three support data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one self-direction normal form}
+
+\paragraph{Gap targeted.}
+The rank-one support component hypothesis still asked for a full binary
+low-rank normal form.  In a one-dimensional support complement, the same
+linear form can be used for both binary coordinates, so a negative pure fourth
+power already gives a rank-one binary normal form.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{rankOneSelf\_binaryLowRankNegativeNormalForm}
+\]
+to \texttt{QuaternaryQuarticProof/Binary.lean}.  If
+\(\lambda(x^4)<0\), then the binary restriction with coordinates \((x,x)\)
+has the rank-one outer-product normal form with negative scalar.
+
+Added
+\[
+\texttt{hasRankOneSupportComponentHypothesis\_of\_self\_negative}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  This reduces the rank-one
+support component hypothesis to two smaller facts for every extracted
+one-dimensional complement direction \(x\): exact
+\(\dim\Sym^2A=6\), and negativity of \(\lambda(x^4)\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Binary}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-one binary normal-form obligation is now reduced to a negative
+pure-square theorem for the complement direction and exact symmetric-square
+dimension.  Rank two still needs the full binary classification and
+direct-sum disjointness.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

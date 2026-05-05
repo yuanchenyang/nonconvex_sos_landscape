@@ -103,6 +103,30 @@ theorem residualEval_C_mul_mul_six
   rw [residualEval_C_mul]
   ring
 
+theorem rankOneSelf_binaryLowRankNegativeNormalForm
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {x : linSubmodule}
+    (hneg : binaryRestrictionCoeffA B p u x < 0) :
+    HasBinaryLowRankNegativeNormalForm
+      (binaryRestrictionCoeffA B p u x)
+      (binaryRestrictionCoeffB B p u x x)
+      (binaryRestrictionCoeffC B p u x x)
+      (binaryRestrictionCoeffD B p u x x)
+      (binaryRestrictionCoeffE B p u x) := by
+  left
+  refine ⟨binaryRestrictionCoeffA B p u x, 1, 1, hneg, Or.inl (by norm_num),
+    ?_, ?_, ?_, ?_, ?_⟩
+  · ring
+  · simp [binaryRestrictionCoeffA, binaryRestrictionCoeffB]
+    change (B ((x : Poly) * x * (x * x))) (residual p u) =
+      (B (((x : Poly) * x) ^ 2)) (residual p u)
+    rw [show (x : Poly) * x * (x * x) = ((x : Poly) * x) ^ 2 by ring]
+  · simp [binaryRestrictionCoeffA, binaryRestrictionCoeffC]
+  · simp [binaryRestrictionCoeffA, binaryRestrictionCoeffD]
+    change (B ((x : Poly) * x * (x * x))) (residual p u) =
+      (B (((x : Poly) * x) ^ 2)) (residual p u)
+    rw [show (x : Poly) * x * (x * x) = ((x : Poly) * x) ^ 2 by ring]
+  · simp [binaryRestrictionCoeffA, binaryRestrictionCoeffE]
+
 theorem binaryRestriction_eval_eq
     (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule) :
     ∀ X Y : ℝ,
