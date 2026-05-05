@@ -5968,4 +5968,71 @@ complements \(E=A\oplus W\), not just the ambient equality
 
 No Julia numerical claims were used in this round.
 
+\section*{Direct-sum product decomposition}
+
+\paragraph{Gap targeted.}
+After formalizing \(\Lin\cdot\Lin=\Quad\), the largest remaining rank-three
+gap was the decomposition step: for an annihilator subspace \(A\) and
+complement \(W\), write an arbitrary quadratic as a supported \(W^2\) term
+plus a catalecticant-kernel term.  This is the decomposition required by
+\(\texttt{HasRankCaseKernelDecompositionApolarData}\).
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{linProduct\_mem\_sup\_of\_isCompl},
+\quad
+\texttt{linProductSubmodule\_top\_top\_le\_sup\_of\_isCompl},
+\]
+\[
+\texttt{sup\_linProductSubmodule\_eq\_top\_of\_isCompl},
+\quad
+\texttt{exists\_linProduct\_decomposition\_of\_isCompl},
+\]
+and
+\[
+\texttt{exists\_catalecticantKernel\_decomposition\_of\_annihilator\_complement}.
+\]
+The proof expands products after decomposing both affine-linear factors through
+\(A\oplus W\), so all mixed terms land in \(A\cdot\top\) and the remaining term
+lands in \(W^2\).  If \(A\le\Ann\), the \(A\cdot\top\) term lies in the
+catalecticant kernel.
+
+Added to \texttt{QuaternaryQuarticProof/Support.lean}:
+\[
+\texttt{exists\_rank\_three\_catalecticantKernel\_decomposition}
+\]
+and
+\[
+\texttt{exists\_rank\_three\_catalecticantKernel\_decomposition\_of\_annihilatorMap\_range}.
+\]
+These use the exact rank-three annihilator complement package to produce the
+required decomposition for every quadratic.
+
+Added to \texttt{QuaternaryQuarticProof/Basic.lean}:
+\[
+\texttt{hasRankCaseKernelDecompositionApolarData\_of\_productIndependenceApolarData}.
+\]
+Thus the rank-three kernel-decomposition obligation now follows from the
+annihilator-map bound already present in product-independence apolar data.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Support}
+\]
+and
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+complete successfully.  The full quaternary harness is run for the commit; the
+expected remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-three decomposition part of the kernel-decomposition interface is no
+longer an independent blocker.  The main remaining construction is now the
+rank-one/rank-two product-independence and binary kernel-equation data,
+together with the apolar annihilator-map bounds.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -1026,6 +1026,37 @@ theorem exists_rank_three_exact_annihilator_complement_generator
     omega
   exact ⟨A, W, z, hAann, hAW, hzA, hz, hznotW, hspan, hAfin, hWfin⟩
 
+theorem exists_rank_three_catalecticantKernel_decomposition
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 3)
+    (q : quadSubmodule) :
+    ∃ (W : Submodule ℝ linSubmodule) (qW qK : quadSubmodule),
+      q = qW + qK ∧
+        qW ∈ linProductSubmodule W W ∧
+          qK ∈ LinearMap.ker (catalecticantMap B p u) := by
+  rcases exists_rank_three_exact_annihilator_complement_generator
+      (B := B) (p := p) (u := u) hsupp with
+    ⟨A, W, _z, hAann, hAW, _hzA, _hz, _hznotW, _hspan, _hAfin, _hWfin⟩
+  rcases exists_catalecticantKernel_decomposition_of_annihilator_complement
+      (B := B) (p := p) (u := u) hAann hAW q with
+    ⟨qW, qK, hqdecomp, hqW, hqK⟩
+  exact ⟨W, qW, qK, hqdecomp, hqW, hqK⟩
+
+theorem exists_rank_three_catalecticantKernel_decomposition_of_annihilatorMap_range
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrange :
+      Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 3)
+    (q : quadSubmodule) :
+    ∃ (W : Submodule ℝ linSubmodule) (qW qK : quadSubmodule),
+      q = qW + qK ∧
+        qW ∈ linProductSubmodule W W ∧
+          qK ∈ LinearMap.ker (catalecticantMap B p u) :=
+  exists_rank_three_catalecticantKernel_decomposition
+    (B := B) (p := p) (u := u)
+    (hasLinearAnnihilatorCodimAtMost_three_of_annihilatorMap_range
+      (B := B) (p := p) (u := u) hrange)
+    q
+
 theorem exists_rank_one_exact_annihilator_symSquare
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupp : HasLinearAnnihilatorCodimAtMost B p u 1) :

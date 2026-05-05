@@ -941,6 +941,24 @@ theorem hasRankCaseApolarComponentData_of_productIndependenceApolarData
     (fun hrank3 => (hdata3 hrank3).1)
     (fun hrank3 => (hdata3 hrank3).2)
 
+theorem hasRankCaseKernelDecompositionApolarData_of_productIndependenceApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseProductIndependenceApolarData B p u hu) :
+    HasRankCaseKernelDecompositionApolarData B p u hu := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    exact hdata1 hrank1
+  constructor
+  · intro hrank2
+    exact hdata2 hrank2
+  · intro hrank3
+    refine ⟨(hdata3 hrank3).1, ?_⟩
+    intro q _hqneg
+    exact exists_rank_three_catalecticantKernel_decomposition_of_annihilatorMap_range
+      (B := B) (p := p) (u := u) (hdata3 hrank3).1 q
+
 theorem hasRankCaseProductIndependenceApolarData_of_kernelDecompositionApolarData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

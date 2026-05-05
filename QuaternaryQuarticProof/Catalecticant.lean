@@ -722,6 +722,74 @@ theorem linProductSubmodule_top_top_eq_top :
   have hq'q : q' = q := Subtype.ext hqeq
   simpa [hq'q] using hq'
 
+theorem linProduct_mem_sup_of_isCompl
+    {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
+    (x y : linSubmodule) :
+    linProduct x y ∈ linProductSubmodule A ⊤ ⊔ linProductSubmodule W W := by
+  have hxAW : x ∈ A ⊔ W := by
+    rw [hAW.codisjoint.eq_top]
+    trivial
+  have hyAW : y ∈ A ⊔ W := by
+    rw [hAW.codisjoint.eq_top]
+    trivial
+  rcases Submodule.mem_sup.mp hxAW with ⟨xA, hxA, xW, hxW, hxeq⟩
+  rcases Submodule.mem_sup.mp hyAW with ⟨yA, hyA, yW, hyW, hyeq⟩
+  subst x
+  subst y
+  have hAA : linProduct xA yA ∈ linProductSubmodule A ⊤ := by
+    exact linProduct_mem_linProductSubmodule
+      (⟨xA, hxA⟩ : A) (⟨yA, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+  have hAWprod : linProduct xA yW ∈ linProductSubmodule A ⊤ := by
+    exact linProduct_mem_linProductSubmodule
+      (⟨xA, hxA⟩ : A) (⟨yW, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+  have hWAprod : linProduct xW yA ∈ linProductSubmodule A ⊤ := by
+    rw [linProduct_comm]
+    exact linProduct_mem_linProductSubmodule
+      (⟨yA, hyA⟩ : A) (⟨xW, trivial⟩ : (⊤ : Submodule ℝ linSubmodule))
+  have hWW : linProduct xW yW ∈ linProductSubmodule W W := by
+    exact linProduct_mem_linProductSubmodule (⟨xW, hxW⟩ : W) (⟨yW, hyW⟩ : W)
+  have hsum :
+      linProduct xA yA + linProduct xA yW + linProduct xW yA + linProduct xW yW ∈
+        linProductSubmodule A ⊤ ⊔ linProductSubmodule W W := by
+    repeat' first
+      | apply Submodule.add_mem
+      | exact Submodule.mem_sup_left hAA
+      | exact Submodule.mem_sup_left hAWprod
+      | exact Submodule.mem_sup_left hWAprod
+      | exact Submodule.mem_sup_right hWW
+  simpa [add_assoc, add_left_comm, add_comm] using hsum
+
+theorem linProductSubmodule_top_top_le_sup_of_isCompl
+    {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W) :
+    linProductSubmodule (⊤ : Submodule ℝ linSubmodule) ⊤ ≤
+      linProductSubmodule A ⊤ ⊔ linProductSubmodule W W := by
+  refine linProductSubmodule_le_of_generators ?_
+  intro x y
+  exact linProduct_mem_sup_of_isCompl hAW x.1 y.1
+
+theorem sup_linProductSubmodule_eq_top_of_isCompl
+    {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W) :
+    linProductSubmodule A ⊤ ⊔ linProductSubmodule W W = ⊤ := by
+  rw [← linProductSubmodule_top_top_eq_top]
+  refine le_antisymm ?_ (linProductSubmodule_top_top_le_sup_of_isCompl hAW)
+  exact sup_le
+    (linProductSubmodule_mono le_top le_rfl)
+    (linProductSubmodule_mono le_top le_top)
+
+theorem exists_linProduct_decomposition_of_isCompl
+    {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
+    (q : quadSubmodule) :
+    ∃ qA qW : quadSubmodule,
+      qA ∈ linProductSubmodule A ⊤ ∧
+        qW ∈ linProductSubmodule W W ∧
+          q = qW + qA := by
+  have hq :
+      q ∈ linProductSubmodule A ⊤ ⊔ linProductSubmodule W W := by
+    rw [sup_linProductSubmodule_eq_top_of_isCompl hAW]
+    trivial
+  rcases Submodule.mem_sup.mp hq with ⟨qA, hqA, qW, hqW, hsum⟩
+  exact ⟨qA, qW, hqA, hqW, by rw [← hsum, add_comm]⟩
+
 def linProductLeftMap (a : linSubmodule) : linSubmodule →ₗ[ℝ] quadSubmodule where
   toFun b := linProduct a b
   map_add' b c := linProduct_add_right a b c
@@ -1657,6 +1725,21 @@ theorem linProductSubmodule_le_ker_of_le_linearAnnihilator
     linProductSubmodule A ⊤ ≤ LinearMap.ker (catalecticantMap B p u) :=
   linProductSubmodule_mono hA le_rfl |>.trans
     linProductSubmodule_linearAnnihilator_top_le_ker
+
+theorem exists_catalecticantKernel_decomposition_of_annihilator_complement
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {A W : Submodule ℝ linSubmodule}
+    (hA : A ≤ linearAnnihilator B p u)
+    (hAW : IsCompl A W)
+    (q : quadSubmodule) :
+    ∃ qW qK : quadSubmodule,
+      q = qW + qK ∧
+        qW ∈ linProductSubmodule W W ∧
+          qK ∈ LinearMap.ker (catalecticantMap B p u) := by
+  rcases exists_linProduct_decomposition_of_isCompl hAW q with
+    ⟨qK, qW, hqKprod, hqW, hqdecomp⟩
+  exact ⟨qW, qK, hqdecomp, hqW,
+    linProductSubmodule_le_ker_of_le_linearAnnihilator hA hqKprod⟩
 
 theorem supportAmbient_le_ker_of_range_and_symSquare
     {B : DotForm} {p : Poly} {u : RankSevenVec}
