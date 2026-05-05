@@ -12512,4 +12512,49 @@ formalized.
 
 No Julia numerical claims were used in this round.
 
+\section*{Consolidated apolar Hilbert-data interface}
+
+\paragraph{Gap targeted.}
+The current best remaining proof target was split across two assumptions:
+rank-two Macaulay growth data and rank-three exact-sequence data.  For the
+next formalization steps it is useful to name the combined apolar Hilbert-data
+interface directly.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{HasLowRankApolarHilbertData},
+\]
+defined as the conjunction of:
+\[
+\texttt{HasRankTwoApolarMacaulayGrowthData}
+\]
+and:
+\[
+\texttt{HasRankThreeApolarExactSequenceData}.
+\]
+Proved:
+\[
+\texttt{hasRankCaseAnnihilatorMapBounds\_of\_lowRankApolarHilbertData},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarHilbertData\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarHilbertData\_direct}.
+\]
+
+\paragraph{Strategy change.}
+The main theorem can now be obtained from one local Hilbert-data theorem:
+for each admissible SOCP, prove \texttt{HasLowRankApolarHilbertData}.  This
+single interface contains exactly the remaining rank-two and rank-three
+Macaulay/Hilbert-function content from the blueprint; all downstream
+annihilator and landscape reductions are formalized.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
