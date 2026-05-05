@@ -15420,4 +15420,39 @@ improve the crude Hom-space bound to the desired quotient-dimension bound.
 
 No Julia numerical claims were used in this round.
 
+\section*{Symmetry of cubic annihilator contractions}
+
+\paragraph{Gap targeted.}
+The injective contraction map still has too large a codomain if treated as an
+arbitrary Hom space.  The next algebraic constraint is that its image satisfies
+the symmetry coming from associativity and commutativity of multiplication.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{cubicProductAnnihilatorContraction\_pair\_symm}.
+\]
+For \(\Phi\in\texttt{cubicProductAnnihilator}\ A\ P\) and
+\(a,b,c\in A\), it states
+\[
+(\partial_a\Phi)(bc)=(\partial_b\Phi)(ac).
+\]
+Formally, this is obtained from the existing reassociation lemma
+\[
+\texttt{linQuadProduct\_reassociate}.
+\]
+
+\paragraph{Strategy change.}
+The remaining small Macaulay theorem is now reduced to a finite-dimensional
+linear algebra statement about symmetric contraction data: an injective map
+from cubic annihilators into contractions, plus the newly formalized symmetry
+constraint, should force the desired dimension bound when the quadratic
+quotient has dimension at most two.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

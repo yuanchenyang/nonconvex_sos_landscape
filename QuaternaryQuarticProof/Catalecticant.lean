@@ -2221,6 +2221,29 @@ theorem cubicProductAnnihilatorContraction_injective
   rw [← LinearMap.ker_eq_bot]
   exact cubicProductAnnihilatorContraction_ker_eq_bot A P
 
+theorem cubicProductAnnihilatorContraction_pair_symm
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    (φ : cubicProductAnnihilator A P) (a b c : A) :
+    ((cubicProductAnnihilatorContraction A P φ) a).1
+        ⟨linProduct b.1 c.1,
+          linProduct_mem_linProductSubmodule b c⟩ =
+      ((cubicProductAnnihilatorContraction A P φ) b).1
+        ⟨linProduct a.1 c.1,
+          linProduct_mem_linProductSubmodule a c⟩ := by
+  change φ.1
+      ⟨linQuadProduct a.1 (linProduct b.1 c.1),
+        linQuadProduct_mem_linQuadProductSubmodule a
+          (⟨linProduct b.1 c.1,
+            linProduct_mem_linProductSubmodule b c⟩ : symSquareSubmodule A)⟩ =
+    φ.1
+      ⟨linQuadProduct b.1 (linProduct a.1 c.1),
+        linQuadProduct_mem_linQuadProductSubmodule b
+          (⟨linProduct a.1 c.1,
+            linProduct_mem_linProductSubmodule a c⟩ : symSquareSubmodule A)⟩
+  apply congrArg φ.1
+  apply Subtype.ext
+  exact linQuadProduct_reassociate a.1 b.1 c.1
+
 theorem finrank_linQuadProductSubmodule_quotient_eq_finrank_cubicProductAnnihilator
     {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule} :
     Module.finrank ℝ
