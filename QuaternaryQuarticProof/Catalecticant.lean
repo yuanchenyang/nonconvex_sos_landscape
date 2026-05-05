@@ -3117,6 +3117,60 @@ theorem macaulay_cokernel_bound_of_finrank_symSquare_quotient_eq_two
   exact finrank_cubicProductAnnihilator_le_two_of_dualAnnihilator_finrank_eq_two
     (A := A) (P := P) hfin
 
+theorem macaulay_cokernel_bound_of_finrank_symSquare_quotient_le_two
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    (hP_le : P ≤ symSquareSubmodule A)
+    (hquot_le :
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) ≤ 2) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) := by
+  by_cases hzero :
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 0
+  · exact macaulay_cokernel_bound_of_finrank_symSquare_quotient_eq_zero
+      (A := A) (P := P) hP_le hzero
+  by_cases hone :
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 1
+  · exact macaulay_cokernel_bound_of_finrank_symSquare_quotient_eq_one
+      (A := A) (P := P) hone
+  have htwo :
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 2 := by
+    omega
+  exact macaulay_cokernel_bound_of_finrank_symSquare_quotient_eq_two
+    (A := A) (P := P) htwo
+
+theorem finrank_symSquare_top_quotient_eq_finrank_quad_quotient
+    (P : Submodule ℝ quadSubmodule) :
+    Module.finrank ℝ
+        (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule) ⧸
+          P.comap (symSquareSubmodule (⊤ : Submodule ℝ linSubmodule)).subtype) =
+      Module.finrank ℝ (quadSubmodule ⧸ P) := by
+  let T := symSquareSubmodule (⊤ : Submodule ℝ linSubmodule)
+  let S : Submodule ℝ T := P.comap T.subtype
+  have hTtop : T = ⊤ := by
+    simpa [T, symSquareSubmodule] using linProductSubmodule_top_top_eq_top
+  have hP_le : P ≤ T := by
+    rw [hTtop]
+    exact le_top
+  have hSfin : Module.finrank ℝ S = Module.finrank ℝ P :=
+    (Submodule.comapSubtypeEquivOfLe hP_le).finrank_eq
+  have hTfin : Module.finrank ℝ T = Module.finrank ℝ quadSubmodule := by
+    rw [hTtop, finrank_top]
+  change Module.finrank ℝ (T ⧸ S) = Module.finrank ℝ (quadSubmodule ⧸ P)
+  rw [Submodule.finrank_quotient, Submodule.finrank_quotient, hSfin, hTfin]
+
 theorem finrank_symSquare_quotient_eq_one_of_eq_spanPairProductsExceptZeroZero
     {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
     (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
@@ -4699,6 +4753,20 @@ def linearAnnihilatorMap (B : DotForm) (p : Poly) (u : RankSevenVec) :
       (LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct a e) :=
   rfl
 
+theorem range_linearAnnihilatorMap_apply_eq_map_mkQ_range_linProductLeftMap
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (a : linSubmodule) :
+    LinearMap.range (linearAnnihilatorMap B p u a) =
+      (LinearMap.range (linProductLeftMap a)).map
+        (LinearMap.ker (catalecticantMap B p u)).mkQ := by
+  ext q
+  constructor
+  · rintro ⟨e, rfl⟩
+    exact ⟨linProduct a e, ⟨e, rfl⟩, rfl⟩
+  · rintro ⟨q', ⟨e, heq⟩, hq'⟩
+    refine ⟨e, ?_⟩
+    rw [← hq', ← heq]
+    rfl
+
 theorem linearAnnihilator_eq_ker_linearAnnihilatorMap
     (B : DotForm) (p : Poly) (u : RankSevenVec) :
     linearAnnihilator B p u = LinearMap.ker (linearAnnihilatorMap B p u) := by
@@ -4998,6 +5066,20 @@ theorem rankThree_leftMultiplication_degreeTwoCokernel_finrank_eq_three_sub
   rw [Submodule.finrank_quotient]
   rw [finrank_quotient_ker_catalecticantMap_eq_three_of_rank_three
     (B := B) (p := p) (u := u) hrank]
+
+theorem finrank_leftMultiplication_degreeTwoCokernel_eq_quotient_sup_range
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (a : linSubmodule) :
+    Module.finrank ℝ
+        ((quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) ⧸
+          LinearMap.range (linearAnnihilatorMap B p u a)) =
+      Module.finrank ℝ
+        (quadSubmodule ⧸
+          LinearMap.ker (catalecticantMap B p u) ⊔
+            LinearMap.range (linProductLeftMap a)) := by
+  rw [range_linearAnnihilatorMap_apply_eq_map_mkQ_range_linProductLeftMap]
+  exact (Submodule.quotientQuotientEquivQuotientSup
+    (LinearMap.ker (catalecticantMap B p u))
+    (LinearMap.range (linProductLeftMap a))).finrank_eq
 
 theorem exists_rankThreeBadBranch_leftMultiplication_degreeTwoCokernel
     {B : DotForm} {p : Poly} {u : RankSevenVec}

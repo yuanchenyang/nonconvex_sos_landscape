@@ -15819,4 +15819,47 @@ rank-three exact sequence.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-three local Macaulay quotient bridge}
+
+\paragraph{Gap targeted.}
+The rank-three bad branch needs the left-multiplication degree-two cokernel to
+be presented as the same local quadratic quotient used by the inverse-system
+Macaulay bounds.  The existing local bounds handled quotient dimensions
+\(0,1,2\) separately, while the rank-three branch naturally supplies only a
+uniform \(\leq 2\) bound.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, added
+\[
+\texttt{macaulay\_cokernel\_bound\_of\_finrank\_symSquare\_quotient\_le\_two},
+\]
+a direct case split over the already-proved \(0,1,2\) local Macaulay cases.
+Also added
+\[
+\texttt{finrank\_symSquare\_top\_quotient\_eq\_finrank\_quad\_quotient},
+\]
+\[
+\texttt{range\_linearAnnihilatorMap\_apply\_eq\_map\_mkQ\_range\_linProductLeftMap},
+\]
+and
+\[
+\texttt{finrank\_leftMultiplication\_degreeTwoCokernel\_eq\_quotient\_sup\_range}.
+\]
+Together these identify the rank-three degree-two cokernel with the local
+quotient by
+\[
+\ker C_\lambda \;+\; a\cdot E_1.
+\]
+
+\paragraph{Strategy status.}
+The degree-two side of the rank-three Macaulay inequality is now aligned with
+the local algebra.  The largest remaining gap is the degree-three side:
+injecting the left-multiplication degree-three cokernel into the cubic
+annihilator attached to the same quotient.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
