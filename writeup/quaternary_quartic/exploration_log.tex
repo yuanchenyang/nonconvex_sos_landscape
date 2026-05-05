@@ -4609,4 +4609,48 @@ future lemmas as a concrete two-dimensional span.
 
 No Julia numerical claims were used in this round.
 
+\section*{Naming binary kernel-equation normal-form bridges}
+
+\paragraph{Gap targeted.}
+The rank-two binary classification in the blueprint splits according to a
+kernel vector in \(\Sym^2W\): \(xy\), \(y^2\), or \(x^2+y^2\).  The Lean
+normal-form predicate already had constructors for the resulting coefficient
+families, but later apolar code needs named bridges from the actual coefficient
+equations to those constructors.
+
+\paragraph{Lean progress.}
+Added three theorem wrappers to \texttt{QuaternaryQuarticProof/Binary.lean}:
+\[
+\texttt{HasBinaryLowRankNegativeNormalForm.of\_xyKernel\_equations},
+\]
+\[
+\texttt{HasBinaryLowRankNegativeNormalForm.of\_ySqKernel\_equations},
+\]
+and
+\[
+\texttt{HasBinaryLowRankNegativeNormalForm.of\_ellipticKernel\_equations}.
+\]
+They convert the coefficient equations
+\[
+b=c=d=0,\qquad c=d=e=0,\qquad c=-a,\ d=-b,\ e=a
+\]
+respectively into
+\(\texttt{HasBinaryLowRankNegativeNormalForm}\), with the corresponding
+negativity or nonzero side condition required by the blueprint.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Binary.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure remains the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The missing binary step is now shifted to proving that the rank-two
+catalecticant restriction actually has one of these kernel-equation patterns
+after a suitable binary basis choice, plus the side conditions required in the
+three cases.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

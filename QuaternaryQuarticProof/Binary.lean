@@ -46,6 +46,36 @@ theorem HasBinaryLowRankNegativeNormalForm.ellipticKernel
     HasBinaryLowRankNegativeNormalForm a b (-a) (-b) a := by
   exact Or.inr (Or.inr (Or.inr ⟨rfl, rfl, rfl, hne⟩))
 
+theorem HasBinaryLowRankNegativeNormalForm.of_xyKernel_equations
+    {a b c d e : ℝ}
+    (hb : b = 0) (hc : c = 0) (hd : d = 0)
+    (hneg : ∃ r t : ℝ, a * r^2 + e * t^2 < 0) :
+    HasBinaryLowRankNegativeNormalForm a b c d e := by
+  subst b
+  subst c
+  subst d
+  exact HasBinaryLowRankNegativeNormalForm.xyKernel hneg
+
+theorem HasBinaryLowRankNegativeNormalForm.of_ySqKernel_equations
+    {a b c d e : ℝ}
+    (hc : c = 0) (hd : d = 0) (he : e = 0)
+    (hb : b ≠ 0) :
+    HasBinaryLowRankNegativeNormalForm a b c d e := by
+  subst c
+  subst d
+  subst e
+  exact HasBinaryLowRankNegativeNormalForm.ySqKernel hb
+
+theorem HasBinaryLowRankNegativeNormalForm.of_ellipticKernel_equations
+    {a b c d e : ℝ}
+    (hc : c = -a) (hd : d = -b) (he : e = a)
+    (hne : a ≠ 0 ∨ b ≠ 0) :
+    HasBinaryLowRankNegativeNormalForm a b c d e := by
+  subst c
+  subst d
+  subst e
+  exact HasBinaryLowRankNegativeNormalForm.ellipticKernel hne
+
 def binaryRestrictionCoeffA
     (B : DotForm) (p : Poly) (u : RankSevenVec) (x : linSubmodule) : ℝ :=
   B ((linProduct x x : quadSubmodule).1^2) (residual p u)
