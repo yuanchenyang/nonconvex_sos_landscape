@@ -453,6 +453,26 @@ def HasRankTwoExistentialKernelBranchData
                           (binaryRestrictionCoeffD B p u x y)
                           (binaryRestrictionCoeffE B p u y)
 
+def HasRankTwoExistentialCanonicalKernelData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+    ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+      A ≤ linearAnnihilator B p u →
+        IsCompl A W →
+          x ∈ W →
+            (x : Poly) ≠ 0 →
+              Module.finrank ℝ A = 2 →
+                Module.finrank ℝ W = 2 →
+                  ∃ y : linSubmodule,
+                    y ∈ W ∧
+                      y ∉ ℝ ∙ x ∧
+                        HasBinaryCanonicalKernelData
+                          (binaryRestrictionCoeffA B p u x)
+                          (binaryRestrictionCoeffB B p u x y)
+                          (binaryRestrictionCoeffC B p u x y)
+                          (binaryRestrictionCoeffD B p u x y)
+                          (binaryRestrictionCoeffE B p u y)
+
 def HasRankCaseKernelDecompositionApolarData
     (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u) : Prop :=
@@ -1540,6 +1560,23 @@ theorem hasRankTwoExistentialBinaryFormData_of_kernelBranchData
   exact ⟨y, hyW, hynot,
     binaryRestriction_lowRankNegativeNormalForm_of_kernelBranchCertificate hcert⟩
 
+theorem hasRankTwoExistentialKernelBranchData_of_canonicalKernelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hcanon : HasRankTwoExistentialCanonicalKernelData B p u) :
+    HasRankTwoExistentialKernelBranchData B p u := by
+  intro hrank2 A W x hAann hAW hxW hx hAdim hWdim
+  rcases hcanon hrank2 A W x hAann hAW hxW hx hAdim hWdim with
+    ⟨y, hyW, hynot, hcanon_y⟩
+  exact ⟨y, hyW, hynot,
+    binaryKernelBranchCertificate_of_canonicalKernelData hcanon_y⟩
+
+theorem hasRankTwoExistentialBinaryFormData_of_canonicalKernelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hcanon : HasRankTwoExistentialCanonicalKernelData B p u) :
+    HasRankTwoExistentialBinaryFormData B p u :=
+  hasRankTwoExistentialBinaryFormData_of_kernelBranchData
+    (hasRankTwoExistentialKernelBranchData_of_canonicalKernelData hcanon)
+
 theorem hasRankTwoNegativeSquareData_of_existentialBinaryFormData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hforms : HasRankTwoExistentialBinaryFormData B p u) :
@@ -2055,6 +2092,18 @@ theorem residual_eq_zero_of_lowRankApolarSupportDecomposition_and_kernelBranches
     (hasLowRankApolarSupportTheorem_of_decomposition hdecomp)
     hbranches
 
+theorem residual_eq_zero_of_lowRankApolarSupportDecomposition_and_canonicalKernelData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdecomp : HasLowRankApolarSupportDecomposition B p u)
+    (hcanon : HasRankTwoExistentialCanonicalKernelData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_lowRankApolarSupportDecomposition_and_kernelBranches
+    (B := B) hu hp hsocp hdecomp
+    (hasRankTwoExistentialKernelBranchData_of_canonicalKernelData hcanon)
+
 theorem residual_eq_zero_of_rankCaseSupportData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -2390,6 +2439,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportDeco
     (B := B) hu hp hsocp
     (hdecomp B p u hu hB hp hsocp)
     (hbranches B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportDecomposition_and_canonicalKernelData
+    (hdecomp :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarSupportDecomposition B p u)
+    (hcanon :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialCanonicalKernelData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarSupportDecomposition_and_canonicalKernelData
+    (B := B) hu hp hsocp
+    (hdecomp B p u hu hB hp hsocp)
+    (hcanon B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseSupportData
     (hdata :

@@ -56,6 +56,15 @@ def HasBinaryKernelBranchCertificate (a b c d e : ℝ) : Prop :=
   (c = -a ∧ d = -b ∧ e = a ∧
     HasBinaryHankelNegativeValue a b c d e)
 
+def HasBinaryCanonicalKernelData (a b c d e : ℝ) : Prop :=
+  (binaryHankelMul a b c d e (![0, 1, 0] : Fin 3 → ℝ) = 0 ∧
+    HasBinaryHankelNegativeValue a b c d e) ∨
+  (binaryHankelMul a b c d e (![0, 0, 1] : Fin 3 → ℝ) = 0 ∧
+    LinearIndependent ℝ
+      ![(![a, b, 0] : Fin 3 → ℝ), (![b, 0, 0] : Fin 3 → ℝ)]) ∨
+  (binaryHankelMul a b c d e (![1, 0, 1] : Fin 3 → ℝ) = 0 ∧
+    HasBinaryHankelNegativeValue a b c d e)
+
 theorem xy_kernel_equations_of_binaryHankelMul_eq_zero
     {a b c d e : ℝ}
     (hker : binaryHankelMul a b c d e (![0, 1, 0] : Fin 3 → ℝ) = 0) :
@@ -115,6 +124,15 @@ theorem binaryKernelBranchCertificate_of_elliptic_kernel
   rcases elliptic_kernel_equations_of_binaryHankelMul_eq_zero hker with
     ⟨hc, hd, he⟩
   exact Or.inr (Or.inr ⟨hc, hd, he, hneg⟩)
+
+theorem binaryKernelBranchCertificate_of_canonicalKernelData
+    {a b c d e : ℝ}
+    (hcanon : HasBinaryCanonicalKernelData a b c d e) :
+    HasBinaryKernelBranchCertificate a b c d e := by
+  rcases hcanon with hxy | hySq | hell
+  · exact binaryKernelBranchCertificate_of_xy_kernel hxy.1 hxy.2
+  · exact binaryKernelBranchCertificate_of_ySq_kernel hySq.1 hySq.2
+  · exact binaryKernelBranchCertificate_of_elliptic_kernel hell.1 hell.2
 
 def HasBinaryLowRankNegativeNormalForm (a b c d e : ℝ) : Prop :=
   (∃ ρ α β : ℝ,

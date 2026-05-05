@@ -7111,4 +7111,46 @@ apolar support theorem remain open.
 
 No Julia numerical claims were used in this round.
 
+\section*{Canonical rank-two kernel data}
+
+\paragraph{Gap targeted.}
+The rank-two binary interface still asked for the downstream branch
+certificate.  The blueprint's classification step first normalizes the kernel
+generator to one of three canonical coefficient triples.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasBinaryCanonicalKernelData}
+\]
+for the three canonical scalar Hankel-kernel alternatives, using the vectors
+\[
+(0,1,0),\qquad (0,0,1),\qquad (1,0,1).
+\]
+Proved
+\[
+\texttt{binaryKernelBranchCertificate\_of\_canonicalKernelData}.
+\]
+Added the rank-two proof interface
+\[
+\texttt{HasRankTwoExistentialCanonicalKernelData}
+\]
+and proved bridges from canonical kernel data to branch data, binary normal
+form data, residual zero, and the root reduction theorem.
+
+\paragraph{Strategy change.}
+The remaining binary blocker is now the real change-of-basis classification
+that produces canonical kernel data in a support basis.  The conversion from
+canonical vectors to branch certificates and negative normal forms is
+formalized.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The two open inputs are now the decomposition-level low-rank apolar support
+theorem and the rank-two canonical kernel data theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
