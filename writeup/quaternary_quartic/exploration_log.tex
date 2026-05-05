@@ -11966,4 +11966,48 @@ reassociation identity for that scalarized map.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one scalarization bridge to the annihilator map}
+
+\paragraph{Gap targeted.}
+The preceding finite-dimensional lemmas supplied scalar row-rank and
+postcomposition tools, but they were not yet connected to the concrete
+\texttt{linearAnnihilatorMap}.  The next gap was to expose the precise
+rank-one identity needed for the catalecticant quotient.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof.Catalecticant}:
+\[
+\texttt{scalarizedLinearAnnihilatorMap},
+\quad
+\texttt{scalarizedLinearAnnihilatorMap\_symm},
+\]
+\[
+\texttt{scalarizedLinearAnnihilatorMap\_range\_le\_one\_of\_rank\_one\_identity},
+\]
+\[
+\texttt{finrank\_range\_linearAnnihilatorMap\_le\_one\_of\_scalarized\_rank\_one\_identity},
+\]
+and:
+\[
+\texttt{finrank\_range\_linearAnnihilatorMap\_le\_one\_of\_rank\_one\_scalarization}.
+\]
+These lemmas show that the rank-one annihilator-map bound follows once every
+injective scalar coordinate on the one-dimensional quotient satisfies the
+rank-one reassociation identity for scalarized products of linear forms.
+
+\paragraph{Strategy change.}
+The rank-one apolar support case is now reduced to a concrete identity:
+\[
+M(w,x)M(y,z)=M(w,y)M(x,z)
+\]
+for the scalarized quotient multiplication map
+\texttt{scalarizedLinearAnnihilatorMap}.  Proving this identity from the
+rank-one catalecticant hypothesis is the next rank-one blocker.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

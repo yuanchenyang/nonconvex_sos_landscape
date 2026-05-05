@@ -2138,6 +2138,91 @@ theorem finrank_range_linearAnnihilatorMap_add_finrank_linearAnnihilator
   rw [LinearMap.finrank_range_add_finrank_ker]
   exact finrank_linSubmodule_eq_four
 
+def scalarizedLinearAnnihilatorMap
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (T :
+      (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) →ₗ[ℝ] ℝ) :
+    linSubmodule →ₗ[ℝ] Module.Dual ℝ linSubmodule :=
+  (linearMapPostcomp (V := linSubmodule) T).comp
+    (linearAnnihilatorMap B p u)
+
+@[simp] theorem scalarizedLinearAnnihilatorMap_apply
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (T :
+      (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) →ₗ[ℝ] ℝ)
+    (a e : linSubmodule) :
+    scalarizedLinearAnnihilatorMap B p u T a e =
+      T ((LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct a e)) :=
+  rfl
+
+theorem scalarizedLinearAnnihilatorMap_symm
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (T :
+      (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) →ₗ[ℝ] ℝ)
+    (a e : linSubmodule) :
+    scalarizedLinearAnnihilatorMap B p u T a e =
+      scalarizedLinearAnnihilatorMap B p u T e a := by
+  change T ((LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct a e)) =
+    T ((LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct e a))
+  rw [linProduct_comm]
+
+theorem scalarizedLinearAnnihilatorMap_range_le_one_of_rank_one_identity
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (T :
+      (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) →ₗ[ℝ] ℝ)
+    (hid :
+      ∀ w x y z : linSubmodule,
+        scalarizedLinearAnnihilatorMap B p u T w x *
+            scalarizedLinearAnnihilatorMap B p u T y z =
+          scalarizedLinearAnnihilatorMap B p u T w y *
+            scalarizedLinearAnnihilatorMap B p u T x z) :
+    Module.finrank ℝ
+        (LinearMap.range (scalarizedLinearAnnihilatorMap B p u T)) ≤ 1 :=
+  finrank_range_le_one_of_symmetric_rank_one_identity
+    (scalarizedLinearAnnihilatorMap B p u T)
+    (scalarizedLinearAnnihilatorMap_symm B p u T)
+    hid
+
+theorem finrank_range_linearAnnihilatorMap_le_one_of_scalarized_rank_one_identity
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (T :
+      (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) →ₗ[ℝ] ℝ)
+    (hT : LinearMap.ker T = ⊥)
+    (hid :
+      ∀ w x y z : linSubmodule,
+        scalarizedLinearAnnihilatorMap B p u T w x *
+            scalarizedLinearAnnihilatorMap B p u T y z =
+          scalarizedLinearAnnihilatorMap B p u T w y *
+            scalarizedLinearAnnihilatorMap B p u T x z) :
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 1 := by
+  exact finrank_range_le_one_of_scalarized_postcomp
+    (V := linSubmodule) T hT (linearAnnihilatorMap B p u)
+    (scalarizedLinearAnnihilatorMap_range_le_one_of_rank_one_identity
+      (B := B) (p := p) (u := u) T hid)
+
+theorem finrank_range_linearAnnihilatorMap_le_one_of_rank_one_scalarization
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1)
+    (hidentity :
+      ∀ T :
+          (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) →ₗ[ℝ] ℝ,
+        LinearMap.ker T = ⊥ →
+          ∀ w x y z : linSubmodule,
+            scalarizedLinearAnnihilatorMap B p u T w x *
+                scalarizedLinearAnnihilatorMap B p u T y z =
+              scalarizedLinearAnnihilatorMap B p u T w y *
+                scalarizedLinearAnnihilatorMap B p u T x z) :
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 1 := by
+  rcases exists_linearMap_to_field_ker_eq_bot_of_finrank_eq_one
+      (K := ℝ)
+      (V := quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u))
+      (finrank_quotient_ker_catalecticantMap_eq_one_of_rank_one
+        (B := B) (p := p) (u := u) hrank) with
+    ⟨T, hT⟩
+  exact finrank_range_linearAnnihilatorMap_le_one_of_scalarized_rank_one_identity
+    (B := B) (p := p) (u := u) T hT (hidentity T hT)
+
 theorem linProductSubmodule_linearAnnihilator_top_le_ker
     {B : DotForm} {p : Poly} {u : RankSevenVec} :
     linProductSubmodule (linearAnnihilator B p u) ⊤ ≤
