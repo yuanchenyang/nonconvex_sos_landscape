@@ -11388,4 +11388,53 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Negative Hankel values under dual binary transport}
+
+\paragraph{Gap targeted.}
+Canonical kernel positions alone are not enough for the existing binary branch
+certificates: the \(xy\) and elliptic branches also require a negative Hankel
+value for the transformed coefficients.  The next bridge is therefore
+sign-preservation of the Hankel quadratic form under the same dual coordinate
+changes used to transport kernels.
+
+\paragraph{Lean progress.}
+Added exact identities:
+\[
+\texttt{binaryHankelQuad\_swap\_dual},
+\quad
+\texttt{binaryHankelQuad\_shearX\_dual},
+\quad
+\texttt{binaryHankelQuad\_shearY\_dual},
+\]
+and lifted them to negative-value transport:
+\[
+\texttt{HasBinaryHankelNegativeValue.swap\_dual},
+\quad
+\texttt{HasBinaryHankelNegativeValue.shearX\_dual},
+\quad
+\texttt{HasBinaryHankelNegativeValue.shearY\_dual}.
+\]
+These lemmas show that swap and shear transformations preserve an existing
+negative Hankel witness by applying the same dual action to the witness
+quadratic coefficients.
+
+\paragraph{Strategy change.}
+The transported parabolic, hyperbolic, and elliptic kernel-position packages
+can now be combined with transformed negative-value witnesses for all shear
+and swap steps.  Diagonal sign transport remains the main small missing
+negative-value bridge before forming full transformed canonical branch
+certificates.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}

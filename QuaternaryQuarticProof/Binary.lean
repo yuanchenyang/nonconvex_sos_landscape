@@ -544,6 +544,39 @@ theorem binaryHankelQuad_eq_zero_of_binaryHankelMul_eq_zero
   rw [hker]
   simp
 
+theorem binaryHankelQuad_swap_dual
+    (a b c d e r s t : ℝ) :
+    binaryHankelQuad e d c b a t s r =
+      binaryHankelQuad a b c d e r s t := by
+  unfold binaryHankelQuad
+  ring
+
+theorem binaryHankelQuad_shearX_dual
+    (a b c d e r s t tau : ℝ) :
+    binaryHankelQuad
+        a
+        (a * tau + b)
+        (a * tau^2 + 2 * b * tau + c)
+        (a * tau^3 + 3 * b * tau^2 + 3 * c * tau + d)
+        (a * tau^4 + 4 * b * tau^3 + 6 * c * tau^2 + 4 * d * tau + e)
+        (r - s * tau + t * tau^2) (s - 2 * t * tau) t =
+      binaryHankelQuad a b c d e r s t := by
+  unfold binaryHankelQuad
+  ring
+
+theorem binaryHankelQuad_shearY_dual
+    (a b c d e r s t tau : ℝ) :
+    binaryHankelQuad
+        (a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4)
+        (b + 3 * c * tau + 3 * d * tau^2 + e * tau^3)
+        (c + 2 * d * tau + e * tau^2)
+        (d + e * tau)
+        e
+        r (s - 2 * r * tau) (r * tau^2 - s * tau + t) =
+      binaryHankelQuad a b c d e r s t := by
+  unfold binaryHankelQuad
+  ring
+
 def binaryQuadraticCombinationMap (x y : linSubmodule) :
     (Fin 3 → ℝ) →ₗ[ℝ] quadSubmodule where
   toFun v := v 0 • linProduct x x + v 1 • linProduct x y + v 2 • linProduct y y
@@ -576,6 +609,39 @@ theorem binaryHankelMul_ne_zero_of_binaryHankelQuad_neg
 
 def HasBinaryHankelNegativeValue (a b c d e : ℝ) : Prop :=
   ∃ r s t : ℝ, binaryHankelQuad a b c d e r s t < 0
+
+theorem HasBinaryHankelNegativeValue.swap_dual
+    {a b c d e : ℝ}
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    HasBinaryHankelNegativeValue e d c b a := by
+  rcases hneg with ⟨r, s, t, hneg⟩
+  exact ⟨t, s, r, by rwa [binaryHankelQuad_swap_dual]⟩
+
+theorem HasBinaryHankelNegativeValue.shearX_dual
+    {a b c d e tau : ℝ}
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    HasBinaryHankelNegativeValue
+      a
+      (a * tau + b)
+      (a * tau^2 + 2 * b * tau + c)
+      (a * tau^3 + 3 * b * tau^2 + 3 * c * tau + d)
+      (a * tau^4 + 4 * b * tau^3 + 6 * c * tau^2 + 4 * d * tau + e) := by
+  rcases hneg with ⟨r, s, t, hneg⟩
+  exact ⟨r - s * tau + t * tau^2, s - 2 * t * tau, t,
+    by rwa [binaryHankelQuad_shearX_dual]⟩
+
+theorem HasBinaryHankelNegativeValue.shearY_dual
+    {a b c d e tau : ℝ}
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    HasBinaryHankelNegativeValue
+      (a + 4 * b * tau + 6 * c * tau^2 + 4 * d * tau^3 + e * tau^4)
+      (b + 3 * c * tau + 3 * d * tau^2 + e * tau^3)
+      (c + 2 * d * tau + e * tau^2)
+      (d + e * tau)
+      e := by
+  rcases hneg with ⟨r, s, t, hneg⟩
+  exact ⟨r, s - 2 * r * tau, r * tau^2 - s * tau + t,
+    by rwa [binaryHankelQuad_shearY_dual]⟩
 
 def HasBinaryKernelDiscriminantCase (r s t : ℝ) : Prop :=
   0 < binaryKernelDiscriminant r s t ∨
