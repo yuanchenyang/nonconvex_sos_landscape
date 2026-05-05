@@ -7749,4 +7749,43 @@ and the rank-two canonical/normalized binary kernel construction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Annihilator-map route for normalized Hankel data}
+
+\paragraph{Gap targeted.}
+The annihilator-map support interface introduced in the previous round fed the
+canonical-kernel route, but the normalized Hankel route still exposed the
+support theorem directly.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarAnnihilatorMapTheorem\_and\_normalizedHankelData}
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarAnnihilatorMapTheorem\_and\_normalizedHankelData}.
+\]
+These route the annihilator-map theorem through the existing support theorem
+bridge and then through the normalized Hankel package.
+
+\paragraph{Strategy change.}
+Both binary routes now share the same support-side input: prove the
+low-rank apolar annihilator-map theorem, then prove either canonical kernel
+data or normalized Hankel data for the rank-two binary reduction.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The open mathematical inputs remain the low-rank apolar annihilator-map theorem
+and the rank-two canonical/normalized binary kernel construction.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
