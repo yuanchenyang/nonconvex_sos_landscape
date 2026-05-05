@@ -8948,6 +8948,39 @@ theorem globalRankTwoApolarMacaulayGrowthBound_iff_globalRankTwoApolarEssentialQ
   ⟨globalRankTwoApolarEssentialQuotientBound_of_globalRankTwoApolarMacaulayGrowthBound,
     globalRankTwoApolarMacaulayGrowthBound_of_globalRankTwoApolarEssentialQuotientBound⟩
 
+theorem globalRankTwoApolarLowAnnihilatorContradiction_of_globalRankTwoApolarMacaulayGrowthBound
+    (hgrowth : HasGlobalRankTwoApolarMacaulayGrowthBound) :
+    HasGlobalRankTwoApolarLowAnnihilatorContradiction := by
+  intro B p u hu hB hp hsocp
+  exact rankTwoLowAnnihilatorContradiction_of_rankTwoDimensionBound
+    (rankTwoDimensionBound_of_rankTwoEssentialQuotientBound
+      (globalRankTwoApolarEssentialQuotientBound_of_globalRankTwoApolarMacaulayGrowthBound
+        hgrowth B p u hu hB hp hsocp))
+
+theorem globalRankTwoApolarMacaulayGrowthBound_of_globalRankTwoApolarLowAnnihilatorContradiction
+    (hlow : HasGlobalRankTwoApolarLowAnnihilatorContradiction) :
+    HasGlobalRankTwoApolarMacaulayGrowthBound := by
+  intro B p u hu hB hp hsocp hrank2 h3 hh3
+  have hnot_low :
+      ¬ Module.finrank ℝ (linearAnnihilator B p u) ≤ 1 := by
+    intro hlow_dim
+    exact hlow B p u hu hB hp hsocp hrank2 hlow_dim
+  have hann_ge : 2 ≤ Module.finrank ℝ (linearAnnihilator B p u) := by
+    omega
+  have hquot :=
+    finrank_quotient_linearAnnihilator_eq_sub B p u
+  have hdegree_two :
+      Module.finrank ℝ
+          (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) = 2 :=
+    finrank_quotient_ker_catalecticantMap_eq_two_of_rank_two hrank2
+  omega
+
+theorem globalRankTwoApolarMacaulayGrowthBound_iff_globalRankTwoApolarLowAnnihilatorContradiction :
+    HasGlobalRankTwoApolarMacaulayGrowthBound ↔
+      HasGlobalRankTwoApolarLowAnnihilatorContradiction :=
+  ⟨globalRankTwoApolarLowAnnihilatorContradiction_of_globalRankTwoApolarMacaulayGrowthBound,
+    globalRankTwoApolarMacaulayGrowthBound_of_globalRankTwoApolarLowAnnihilatorContradiction⟩
+
 theorem globalRankThreeApolarEssentialQuotientBound_of_globalRankThreeApolarBadBranchContradiction
     (hbad : HasGlobalRankThreeApolarBadBranchContradiction) :
     HasGlobalRankThreeApolarEssentialQuotientBound := by
@@ -9400,6 +9433,32 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoLowAnnihil
         hsplit.2⟩
   · intro hdata
     exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoLowAnnihilator_and_rankThreeMacaulayObstruction
+      hdata.1 hdata.2
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeMacaulayObstruction
+    (hgrowth2 : HasGlobalRankTwoApolarMacaulayGrowthBound)
+    (hobstruction3 : HasGlobalRankThreeApolarMacaulayObstruction) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoLowAnnihilator_and_rankThreeMacaulayObstruction
+    (globalRankTwoApolarLowAnnihilatorContradiction_of_globalRankTwoApolarMacaulayGrowthBound
+      hgrowth2)
+    hobstruction3
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoMacaulayGrowth_and_rankThreeMacaulayObstruction :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoApolarMacaulayGrowthBound ∧
+        HasGlobalRankThreeApolarMacaulayObstruction := by
+  constructor
+  · intro hmain
+    have hdata :=
+      (quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoLowAnnihilator_and_rankThreeMacaulayObstruction).mp
+        hmain
+    exact ⟨
+      globalRankTwoApolarMacaulayGrowthBound_of_globalRankTwoApolarLowAnnihilatorContradiction
+        hdata.1,
+      hdata.2⟩
+  · intro hdata
+    exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeMacaulayObstruction
       hdata.1 hdata.2
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch

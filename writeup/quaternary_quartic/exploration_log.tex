@@ -14318,4 +14318,29 @@ rank-three Macaulay obstruction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Align remaining target with Macaulay branches}
+
+\paragraph{Gap targeted.}
+The remaining contradiction package should be tied back to the two Macaulay
+branches in the blueprint: rank-two Macaulay growth and rank-three Macaulay
+obstruction.
+
+\paragraph{Lean progress.}
+Proved that the global rank-two Macaulay-growth package is equivalent to the
+rank-two low-annihilator contradiction package.  Together with the previous
+rank-three Macaulay-obstruction equivalence, added the root equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoMacaulayGrowth\_and\_rankThreeMacaulayObstruction}.
+\]
+
+\paragraph{Strategy change.}
+The largest remaining gap is now stated exactly in the blueprint's Macaulay
+language: prove global rank-two Macaulay growth and global rank-three
+Macaulay obstruction from the SOCP hypotheses.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
