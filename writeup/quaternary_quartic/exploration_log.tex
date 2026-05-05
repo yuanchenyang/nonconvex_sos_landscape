@@ -11863,4 +11863,39 @@ SOCP theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one scalar bilinear core}
+
+\paragraph{Gap targeted.}
+The rank-one apolar support case requires showing that a quartic functional
+whose catalecticant has rank one has at most one essential linear variable.
+After quotienting the quadratic space by the catalecticant kernel, this reduces
+to a scalar symmetric bilinear form satisfying the product reassociation
+identity
+\[
+M(w,x)M(y,z)=M(w,y)M(x,z).
+\]
+
+\paragraph{Lean progress.}
+Added the field-generic finite-dimensional lemma
+\[
+\texttt{finrank\_range\_le\_one\_of\_symmetric\_rank\_one\_identity}
+\]
+to \texttt{QuaternaryQuarticProof.Dimension}.  It proves that any symmetric
+bilinear map \(M:V\to V^\ast\) satisfying the identity above has image rank at
+most one.  The proof chooses a nonzero entry of \(M\), shows every row is a
+scalar multiple of that row, and bounds the range by a one-dimensional span.
+
+\paragraph{Strategy change.}
+The next rank-one apolar step is to scalarize the one-dimensional quotient
+\(\Quad/K\), derive the reassociation identity from commutativity of quartic
+products, and apply this abstract lemma to the quotient-valued multiplication
+map \(a\mapsto(e\mapsto [ae])\).  That should yield the rank-one
+annihilator-map bound, hence the rank-one annihilator dimension bound.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Dimension} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

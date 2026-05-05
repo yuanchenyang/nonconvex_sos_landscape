@@ -316,6 +316,55 @@ theorem span_singleton_eq_of_mem_of_finrank_one
 
 end SubspaceChoice
 
+section RankOneBilinear
+
+variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
+
+theorem finrank_range_le_one_of_symmetric_rank_one_identity
+    (M : V →ₗ[K] Module.Dual K V)
+    (hsym : ∀ x y : V, M x y = M y x)
+    (hrank_one : ∀ w x y z : V, M w x * M y z = M w y * M x z) :
+    Module.finrank K (LinearMap.range M) ≤ 1 := by
+  by_cases hzero : ∀ x y : V, M x y = 0
+  · have hrange_bot : LinearMap.range M = ⊥ := by
+      ext φ
+      constructor
+      · rintro ⟨x, rfl⟩
+        ext y
+        exact hzero x y
+      · intro hφ
+        have hφ0 : φ = 0 := by
+          simp at hφ
+          exact hφ
+        refine ⟨0, ?_⟩
+        rw [hφ0]
+        simp
+    rw [hrange_bot]
+    simp
+  · push Not at hzero
+    rcases hzero with ⟨x, y, hxy⟩
+    have hx_ne : M x ≠ 0 := by
+      intro hx
+      have hxy_zero := congrArg (fun φ : Module.Dual K V => φ y) hx
+      exact hxy (by simpa using hxy_zero)
+    have hrange_le :
+        LinearMap.range M ≤ (K ∙ M x : Submodule K (Module.Dual K V)) := by
+      rintro φ ⟨w, rfl⟩
+      refine Submodule.mem_span_singleton.mpr ⟨M w y / M x y, ?_⟩
+      ext z
+      have hmul : M w z * M x y = M w y * M x z := by
+        simpa [hsym y x, hsym z x] using hrank_one w z y x
+      change (M w y / M x y) * M x z = M w z
+      field_simp [hxy]
+      simpa [mul_comm] using hmul.symm
+    have hrange_fin := Submodule.finrank_mono hrange_le
+    have hspan_fin :
+        Module.finrank K (K ∙ M x : Submodule K (Module.Dual K V)) = 1 :=
+      finrank_span_singleton hx_ne
+    omega
+
+end RankOneBilinear
+
 section ExactSubspaces
 
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
