@@ -644,6 +644,32 @@ theorem binaryRestriction_kernelEquationCase_of_canonicalKernelData
     rcases hell.2 with ⟨r, s, t, hneg⟩
     simp [binaryHankelQuad, hc, hd, he, hzero.1, hzero.2] at hneg
 
+theorem binaryRestriction_kernelEquationCase_of_kernelBranchCertificate
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}
+    (hcert :
+      HasBinaryKernelBranchCertificate
+        (binaryRestrictionCoeffA B p u x)
+        (binaryRestrictionCoeffB B p u x y)
+        (binaryRestrictionCoeffC B p u x y)
+        (binaryRestrictionCoeffD B p u x y)
+        (binaryRestrictionCoeffE B p u y)) :
+    HasBinaryRestrictionKernelEquationCase B p u x y := by
+  rcases hcert with hxy | hySq | hell
+  · rcases hxy with ⟨hb, hc, hd, hneg⟩
+    refine Or.inl ⟨hb, hc, hd, ?_⟩
+    rcases hneg with ⟨r, _s, t, hneg⟩
+    refine ⟨r, t, ?_⟩
+    simpa [binaryHankelQuad, hb, hc, hd] using hneg
+  · rcases hySq with ⟨hc, hd, he, hLI⟩
+    exact Or.inr (Or.inl
+      ⟨hc, hd, he, ySqKernel_b_ne_zero_of_column_linearIndependent hLI⟩)
+  · rcases hell with ⟨hc, hd, he, hneg⟩
+    refine Or.inr (Or.inr ⟨hc, hd, he, ?_⟩)
+    by_contra hzero
+    push Not at hzero
+    rcases hneg with ⟨r, s, t, hneg⟩
+    simp [binaryHankelQuad, hc, hd, he, hzero.1, hzero.2] at hneg
+
 theorem binaryLowRankNegativeNormalForm_of_kernelBranchCertificate
     {a b c d e : ℝ}
     (hcert : HasBinaryKernelBranchCertificate a b c d e) :

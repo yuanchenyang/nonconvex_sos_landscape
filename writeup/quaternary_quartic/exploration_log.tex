@@ -8544,4 +8544,48 @@ data, and universal Hankel-negativity data; then replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Universal branch certificates}
+
+\paragraph{Gap targeted.}
+The binary layer had scalar branch certificates and syntactic kernel-equation
+cases, but only canonical data was connected directly to the kernel-equation
+route.  This left the branch-certificate route unavailable for the universal
+rank-two proof.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{binaryRestriction\_kernelEquationCase\_of\_kernelBranchCertificate}
+\]
+in \texttt{QuaternaryQuarticProof.Binary}, proving that each scalar branch
+certificate yields the corresponding binary restriction kernel-equation case.
+Added the universal predicate
+\[
+\texttt{HasRankTwoUniversalKernelBranchData}
+\]
+and bridges from universal canonical data to universal branch data and from
+universal branch data to universal kernel-equation data.  Added residual and
+root reductions from annihilator-map bounds or annihilator-dimension bounds
+plus universal branch data.
+
+\paragraph{Strategy change.}
+The rank-two proof can now close via universal branch certificates directly,
+without first packaging them as canonical kernel data.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the apolar support/dimension bounds and one of the universal rank-two
+binary packages (branch certificates, canonical data, or normalized
+position plus Hankel negativity), then replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
