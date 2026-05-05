@@ -2797,6 +2797,17 @@ theorem hasRankTwoUniversalKernelBranchData_of_universalNormalizedHankelData
   hasRankTwoUniversalKernelBranchData_of_universalCanonicalKernelData
     (hasRankTwoUniversalCanonicalKernelData_of_universalNormalizedHankelData hdata)
 
+theorem hasRankCaseApolarComponentData_of_productIndependenceGeometryData_and_universalNormalizedHankelData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hgeom : HasRankCaseProductIndependenceGeometryData B p u hu)
+    (hdata : HasRankTwoUniversalNormalizedHankelData B p u) :
+    HasRankCaseApolarComponentData B p u hu :=
+  hasRankCaseApolarComponentData_of_productIndependenceGeometryData_and_universalKernelBranchData
+    (B := B) (p := p) (u := u) (hu := hu)
+    hgeom
+    (hasRankTwoUniversalKernelBranchData_of_universalNormalizedHankelData hdata)
+
 theorem hasRankTwoUniversalNormalizedHankelData_of_components
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u)
@@ -3837,6 +3848,18 @@ theorem residual_eq_zero_of_productIndependenceGeometryData_and_universalKernelB
     (B := B) hu hp hsocp
     (hasRankCaseApolarComponentData_of_productIndependenceGeometryData_and_universalKernelBranchData
       hgeom hbranches)
+
+theorem residual_eq_zero_of_productIndependenceGeometryData_and_universalNormalizedHankelData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hgeom : HasRankCaseProductIndependenceGeometryData B p u hu)
+    (hdata : HasRankTwoUniversalNormalizedHankelData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_productIndependenceGeometryData_and_universalKernelBranchData
+    (B := B) hu hp hsocp hgeom
+    (hasRankTwoUniversalKernelBranchData_of_universalNormalizedHankelData hdata)
 
 theorem residual_eq_zero_of_productFreeApolarData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
@@ -5124,6 +5147,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_productIndependenceGeome
     (B := B) hu hp hsocp
     (hgeom B p u hu hB hp hsocp)
     (hbranches B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_productIndependenceGeometryData_and_universalNormalizedHankelData
+    (hgeom :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankCaseProductIndependenceGeometryData B p u hu)
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoUniversalNormalizedHankelData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_productIndependenceGeometryData_and_universalNormalizedHankelData
+    (B := B) hu hp hsocp
+    (hgeom B p u hu hB hp hsocp)
+    (hdata B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_productFreeApolarData
     (hdata :

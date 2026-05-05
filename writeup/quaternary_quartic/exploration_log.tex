@@ -8890,4 +8890,43 @@ package; then replace the root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Product geometry with universal normalized Hankel data}
+
+\paragraph{Gap targeted.}
+After splitting product-independence geometry from rank-two branch data, the new
+route still named universal branch certificates rather than the compact
+universal normalized-Hankel package used elsewhere in the proof architecture.
+
+\paragraph{Lean progress.}
+Added component, residual, and root reductions combining
+\[
+\texttt{HasRankCaseProductIndependenceGeometryData}
+\]
+with
+\[
+\texttt{HasRankTwoUniversalNormalizedHankelData}.
+\]
+The bridge uses the existing conversion from universal normalized-Hankel data
+to universal branch data.
+
+\paragraph{Strategy change.}
+The product-independence path can now close from a geometry-only apolar package
+plus the full universal normalized-Hankel rank-two theorem.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the product-independence geometry package and universal normalized-Hankel
+data, or prove the low-rank support theorem plus a universal rank-two package;
+then replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
