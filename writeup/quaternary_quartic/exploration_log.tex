@@ -15037,4 +15037,41 @@ codimension at most the same number.
 
 No Julia numerical claims were used in this round.
 
+\section*{Full cubic product space in a line complement}
+
+\paragraph{Gap targeted.}
+The special Macaulay count compares a degree-two subspace with its
+degree-three product span.  Before proving the low-codimension lower bound,
+the full product space \(A\cdot\operatorname{Sym}^2(A)\) in the
+three-variable complement had to be identified with the ten cubic basis
+products.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{linQuadProduct\_mem\_span\_basis\_cubic\_products\_of\_mem\_symSquare}
+\]
+and
+\[
+\texttt{span\_basis\_cubic\_products\_eq\_linQuadProductSubmodule\_symSquare}.
+\]
+Together these show that multiplying the symmetric-square submodule of a
+three-dimensional complement by the complement gives exactly the span of the
+ten sorted cubic products.  Using the previous independence theorem, proved
+\[
+\texttt{finrank\_linQuadProductSubmodule\_symSquare\_eq\_ten\_of\_isCompl\_line}.
+\]
+
+\paragraph{Strategy change.}
+The Macaulay bound is now reduced to a lower-bound problem for product spans
+inside a concrete ten-dimensional cubic product space.  The full-space case
+has been closed; the remaining cases are codimension one and codimension two
+subspaces of the six-dimensional quadratic space.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

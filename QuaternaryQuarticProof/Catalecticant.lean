@@ -1504,6 +1504,133 @@ theorem finrank_symSquareSubmodule_eq_six_of_isCompl_line
   finrank_symSquareSubmodule_eq_six_of_basis_products_linearIndependent β
     (linearIndependent_basis_pair_products_fin_three_of_isCompl_line hAL β hxspan)
 
+theorem linQuadProduct_mem_span_basis_cubic_products_of_mem_symSquare
+    {A : Submodule ℝ linSubmodule}
+    (β : Module.Basis (Fin 3) ℝ A)
+    (a : A) {q : quadSubmodule}
+    (hq : q ∈ symSquareSubmodule A) :
+    linQuadProduct a.1 q ∈
+      Submodule.span ℝ
+        (Set.range fun ijk :
+          {ijk : (Fin 3 × Fin 3) × Fin 3 // ijk.1.1 ≤ ijk.1.2 ∧ ijk.1.2 ≤ ijk.2} =>
+          linQuadProduct (β ijk.1.1.1).1
+            (linProduct (β ijk.1.1.2).1 (β ijk.1.2).1)) := by
+  let Triple3 :=
+    {ijk : (Fin 3 × Fin 3) × Fin 3 // ijk.1.1 ≤ ijk.1.2 ∧ ijk.1.2 ≤ ijk.2}
+  let C : Submodule ℝ cubicSubmodule :=
+    Submodule.span ℝ
+      (Set.range fun ijk : Triple3 =>
+        linQuadProduct (β ijk.1.1.1).1
+          (linProduct (β ijk.1.1.2).1 (β ijk.1.2).1))
+  have hqspan :
+      q ∈ Submodule.span ℝ
+        (Set.range fun ij : {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2} =>
+          linProduct (β ij.1.1).1 (β ij.1.2).1) := by
+    simpa [span_basis_pair_products_eq_symSquareSubmodule β] using hq
+  change linQuadProduct a.1 q ∈ C
+  refine Submodule.span_induction
+    (p := fun q _hq => linQuadProduct a.1 q ∈ C) ?_ ?_ ?_ ?_ hqspan
+  · intro r hr
+    rcases hr with ⟨ij, rfl⟩
+    have hrepr := β.sum_repr a
+    have hsum : (∑ i : Fin 3, β.repr a i • (β i).1) = (a : linSubmodule) := by
+      change (fun z : A => (z : linSubmodule))
+          (∑ i : Fin 3, β.repr a i • β i) = (a : linSubmodule)
+      exact congrArg (fun z : A => (z : linSubmodule)) hrepr
+    rw [← hsum]
+    change (linQuadProductBilin (∑ i : Fin 3, β.repr a i • (β i).1))
+        (linProduct (β ij.1.1).1 (β ij.1.2).1) ∈ C
+    rw [map_sum]
+    rw [LinearMap.sum_apply]
+    refine Submodule.sum_mem C ?_
+    intro i _hi
+    rw [map_smul]
+    change (β.repr a i) •
+        linQuadProduct (β i).1 (linProduct (β ij.1.1).1 (β ij.1.2).1) ∈ C
+    refine Submodule.smul_mem _ _ ?_
+    change linQuadProduct (β i).1 (linProduct (β ij.1.1).1 (β ij.1.2).1) ∈ C
+    by_cases hij : i ≤ ij.1.1
+    · exact Submodule.subset_span
+        ⟨⟨((i, ij.1.1), ij.1.2), hij, ij.2⟩, rfl⟩
+    · have hji : ij.1.1 ≤ i := le_of_not_ge hij
+      by_cases hik : i ≤ ij.1.2
+      · rw [linQuadProduct_reassociate]
+        exact Submodule.subset_span
+          ⟨⟨((ij.1.1, i), ij.1.2), hji, hik⟩, rfl⟩
+      · have hki : ij.1.2 ≤ i := le_of_not_ge hik
+        rw [linQuadProduct_reassociate_right]
+        exact Submodule.subset_span
+          ⟨⟨((ij.1.1, ij.1.2), i), ij.2, hki⟩, rfl⟩
+  · change linQuadProduct a.1 (0 : quadSubmodule) ∈ C
+    rw [show linQuadProduct a.1 (0 : quadSubmodule) = 0 by
+      ext
+      simp [linQuadProduct]]
+    exact C.zero_mem
+  · intro x y _hx _hy hxC hyC
+    simpa [linQuadProduct_add_right] using C.add_mem hxC hyC
+  · intro c x _hx hxC
+    simpa [linQuadProduct_smul_right] using C.smul_mem c hxC
+
+theorem span_basis_cubic_products_eq_linQuadProductSubmodule_symSquare
+    {A : Submodule ℝ linSubmodule}
+    (β : Module.Basis (Fin 3) ℝ A) :
+    Submodule.span ℝ
+        (Set.range fun ijk :
+          {ijk : (Fin 3 × Fin 3) × Fin 3 // ijk.1.1 ≤ ijk.1.2 ∧ ijk.1.2 ≤ ijk.2} =>
+          linQuadProduct (β ijk.1.1.1).1
+            (linProduct (β ijk.1.1.2).1 (β ijk.1.2).1)) =
+      linQuadProductSubmodule A (symSquareSubmodule A) := by
+  apply le_antisymm
+  · refine Submodule.span_le.mpr ?_
+    rintro q ⟨ijk, rfl⟩
+    exact linQuadProduct_mem_linQuadProductSubmodule
+      (⟨(β ijk.1.1.1).1, (β ijk.1.1.1).2⟩ : A)
+      (⟨linProduct (β ijk.1.1.2).1 (β ijk.1.2).1,
+        linProduct_mem_linProductSubmodule
+          (⟨(β ijk.1.1.2).1, (β ijk.1.1.2).2⟩ : A)
+          (⟨(β ijk.1.2).1, (β ijk.1.2).2⟩ : A)⟩ :
+        symSquareSubmodule A)
+  · refine linQuadProductSubmodule_le_of_generators ?_
+    intro a q
+    exact linQuadProduct_mem_span_basis_cubic_products_of_mem_symSquare
+      β a q.2
+
+theorem finrank_linQuadProductSubmodule_symSquare_eq_ten_of_isCompl_line
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) :
+    Module.finrank ℝ (linQuadProductSubmodule A (symSquareSubmodule A)) = 10 := by
+  let Triple3 :=
+    {ijk : (Fin 3 × Fin 3) × Fin 3 // ijk.1.1 ≤ ijk.1.2 ∧ ijk.1.2 ≤ ijk.2}
+  have hLI :
+      LinearIndependent ℝ
+        (fun ijk : Triple3 =>
+          linQuadProduct (β ijk.1.1.1).1
+            (linProduct (β ijk.1.1.2).1 (β ijk.1.2).1)) :=
+    linearIndependent_basis_cubic_products_fin_three_of_isCompl_line hAL β hxspan
+  have hcard :
+      Fintype.card Triple3 =
+        Module.finrank ℝ
+          (Submodule.span ℝ
+            (Set.range fun ijk : Triple3 =>
+              linQuadProduct (β ijk.1.1.1).1
+                (linProduct (β ijk.1.1.2).1 (β ijk.1.2).1))) := by
+    exact (linearIndependent_iff_card_eq_finrank_span (R := ℝ)
+      (b := fun ijk : Triple3 =>
+        linQuadProduct (β ijk.1.1.1).1
+          (linProduct (β ijk.1.1.2).1 (β ijk.1.2).1))).mp hLI
+  have hTripleCard : Fintype.card Triple3 = 10 := by
+    decide
+  have hspan_finrank :
+      Module.finrank ℝ
+          (Submodule.span ℝ
+            (Set.range fun ijk : Triple3 =>
+              linQuadProduct (β ijk.1.1.1).1
+                (linProduct (β ijk.1.1.2).1 (β ijk.1.2).1))) = 10 := by
+    omega
+  rw [← span_basis_cubic_products_eq_linQuadProductSubmodule_symSquare β]
+  exact hspan_finrank
+
 theorem exists_rank_two_adapted_basis
     {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
     (β : Module.Basis (Fin 2) ℝ A) {x y : linSubmodule}
