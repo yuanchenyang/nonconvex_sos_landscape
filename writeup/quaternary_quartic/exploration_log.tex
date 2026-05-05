@@ -5607,4 +5607,42 @@ support theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Adding negative-square transfer across kernel decompositions}
+
+\paragraph{Gap targeted.}
+The rank-three support argument needs not only equality after dropping a kernel
+component, but also the direct inequality consequence: if the original
+quadratic square is negative, then the supported component square is negative.
+
+\paragraph{Lean progress.}
+Added three follow-up lemmas to
+\texttt{QuaternaryQuarticProof/Catalecticant.lean}:
+\[
+\texttt{residualEval\_sq\_lt\_of\_add\_mem\_ker\_catalecticantMap},
+\]
+\[
+\texttt{residualEval\_sq\_eq\_of\_eq\_add\_mem\_ker\_catalecticantMap},
+\]
+and
+\[
+\texttt{residualEval\_sq\_lt\_of\_eq\_add\_mem\_ker\_catalecticantMap}.
+\]
+These package the previous kernel-dropping equality in the forms needed when a
+quadratic is explicitly decomposed as \(q=q_W+q_K\) with \(q_K\) in the
+catalecticant kernel.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-three branch now has the algebra needed to transfer negativity to the
+supported component once the decomposition is supplied.  The remaining missing
+piece is constructing that decomposition from the apolar support reduction.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

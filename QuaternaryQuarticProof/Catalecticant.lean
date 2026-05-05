@@ -1377,6 +1377,37 @@ theorem residualEval_sq_add_eq_of_mem_ker_catalecticantMap
   rw [hpoly]
   simp [hkq, hkk, pow_two]
 
+theorem residualEval_sq_lt_of_add_mem_ker_catalecticantMap
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (q k : quadSubmodule)
+    (hk : k ∈ LinearMap.ker (catalecticantMap B p u))
+    (hneg : B ((q.1 + k.1)^2) (residual p u) < 0) :
+    B (q.1^2) (residual p u) < 0 := by
+  rwa [residualEval_sq_add_eq_of_mem_ker_catalecticantMap
+    (B := B) (p := p) (u := u) q k hk] at hneg
+
+theorem residualEval_sq_eq_of_eq_add_mem_ker_catalecticantMap
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {q qW qK : quadSubmodule}
+    (hdecomp : q = qW + qK)
+    (hK : qK ∈ LinearMap.ker (catalecticantMap B p u)) :
+    B (q.1^2) (residual p u) =
+      B (qW.1^2) (residual p u) := by
+  subst q
+  exact residualEval_sq_add_eq_of_mem_ker_catalecticantMap
+    (B := B) (p := p) (u := u) qW qK hK
+
+theorem residualEval_sq_lt_of_eq_add_mem_ker_catalecticantMap
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {q qW qK : quadSubmodule}
+    (hdecomp : q = qW + qK)
+    (hK : qK ∈ LinearMap.ker (catalecticantMap B p u))
+    (hneg : B (q.1^2) (residual p u) < 0) :
+    B (qW.1^2) (residual p u) < 0 := by
+  rw [residualEval_sq_eq_of_eq_add_mem_ker_catalecticantMap
+    (B := B) (p := p) (u := u) hdecomp hK] at hneg
+  exact hneg
+
 theorem finrank_quotient_ker_catalecticantMap_eq_rank
     (B : DotForm) (p : Poly) (u : RankSevenVec) :
     Module.finrank ℝ
