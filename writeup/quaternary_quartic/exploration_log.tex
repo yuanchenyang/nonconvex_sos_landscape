@@ -5021,4 +5021,41 @@ argument forcing the annihilator and support decompositions.
 
 No Julia numerical claims were used in this round.
 
+\section*{Equating annihilator codimension and annihilator-map rank bounds}
+
+\paragraph{Gap targeted.}
+The low-rank support theorem in the blueprint can be used either as a large
+linear annihilator subspace or as a rank bound for the multiplication map out
+of affine-linear forms.  Lean already had the direction from the map rank bound
+to \(\texttt{HasLinearAnnihilatorCodimAtMost}\); later structural lemmas also
+need the reverse direction.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{annihilatorMap\_range\_le\_of\_hasLinearAnnihilatorCodimAtMost}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}, plus rank-one, rank-two, and
+rank-three specializations.  The proof uses the rank-nullity identity
+\[
+\dim\operatorname{range}(\texttt{linearAnnihilatorMap})
++\dim\texttt{linearAnnihilator}=4
+\]
+and monotonicity of finrank for a subspace contained in the linear
+annihilator.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The apolar support reduction can now be phrased in either of the two equivalent
+forms used by the blueprint.  The remaining hard step is still proving such a
+support reduction from low catalecticant rank.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
