@@ -10637,4 +10637,56 @@ kernel quadratics.
 
 No Julia numerical claims were used in this round.
 
+\section*{Binary quadratic pullbacks}
+
+\paragraph{Gap targeted.}
+The binary kernel normalization must transform both the quartic functional and
+the kernel quadratic.  The quartic pullback layer existed after the previous
+rounds, but there was not yet a matching scalar pullback API for binary
+quadratics.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{binaryQuadraticEval},
+\qquad
+\texttt{IsBinaryQuadraticPullback}.
+\]
+Added concrete pullback identities and composition:
+\[
+\texttt{isBinaryQuadraticPullback\_id},
+\quad
+\texttt{isBinaryQuadraticPullback\_swap},
+\quad
+\texttt{isBinaryQuadraticPullback\_diagonal},
+\quad
+\texttt{isBinaryQuadraticPullback\_shearX},
+\quad
+\texttt{isBinaryQuadraticPullback\_shearY},
+\quad
+\texttt{IsBinaryQuadraticPullback.comp}.
+\]
+
+\paragraph{Strategy change.}
+The future discriminant branch proofs can normalize a kernel quadratic using
+the same elementary coordinate changes already available for the quartic, then
+prove the quartic coefficient pullback and kernel pullback in parallel.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support and the
+branch-specific normalization theorems connecting these quadratic pullbacks to
+the binary Hankel kernel equations.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

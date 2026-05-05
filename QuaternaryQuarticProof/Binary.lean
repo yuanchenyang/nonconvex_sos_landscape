@@ -10,11 +10,73 @@ namespace QuaternaryQuartic
 def binaryQuarticEval (a b c d e x y : ℝ) : ℝ :=
   a * x^4 + 4 * b * x^3 * y + 6 * c * x^2 * y^2 + 4 * d * x * y^3 + e * y^4
 
+def binaryQuadraticEval (r s t x y : ℝ) : ℝ :=
+  r * x^2 + s * x * y + t * y^2
+
 def IsBinaryQuarticPullback
     (a b c d e A B C D E α β γ δ : ℝ) : Prop :=
   ∀ X Y : ℝ,
     binaryQuarticEval A B C D E X Y =
       binaryQuarticEval a b c d e (α * X + β * Y) (γ * X + δ * Y)
+
+def IsBinaryQuadraticPullback
+    (r s t R S T α β γ δ : ℝ) : Prop :=
+  ∀ X Y : ℝ,
+    binaryQuadraticEval R S T X Y =
+      binaryQuadraticEval r s t (α * X + β * Y) (γ * X + δ * Y)
+
+theorem isBinaryQuadraticPullback_id (r s t : ℝ) :
+    IsBinaryQuadraticPullback r s t r s t 1 0 0 1 := by
+  intro X Y
+  simp [binaryQuadraticEval]
+
+theorem isBinaryQuadraticPullback_swap (r s t : ℝ) :
+    IsBinaryQuadraticPullback r s t t s r 0 1 1 0 := by
+  intro X Y
+  unfold binaryQuadraticEval
+  ring
+
+theorem IsBinaryQuadraticPullback.comp
+    {r s t R S T P Q U α β γ δ mu nu xi om : ℝ}
+    (h1 : IsBinaryQuadraticPullback r s t R S T α β γ δ)
+    (h2 : IsBinaryQuadraticPullback R S T P Q U mu nu xi om) :
+    IsBinaryQuadraticPullback r s t P Q U
+      (α * mu + β * xi) (α * nu + β * om)
+      (γ * mu + δ * xi) (γ * nu + δ * om) := by
+  intro X Y
+  rw [h2 X Y, h1 (mu * X + nu * Y) (xi * X + om * Y)]
+  unfold binaryQuadraticEval
+  ring
+
+theorem isBinaryQuadraticPullback_diagonal
+    (r s t α δ : ℝ) :
+    IsBinaryQuadraticPullback r s t
+      (r * α^2) (s * α * δ) (t * δ^2) α 0 0 δ := by
+  intro X Y
+  unfold binaryQuadraticEval
+  ring
+
+theorem isBinaryQuadraticPullback_shearX
+    (r s t tau : ℝ) :
+    IsBinaryQuadraticPullback r s t
+      r
+      (2 * r * tau + s)
+      (r * tau^2 + s * tau + t)
+      1 tau 0 1 := by
+  intro X Y
+  unfold binaryQuadraticEval
+  ring
+
+theorem isBinaryQuadraticPullback_shearY
+    (r s t tau : ℝ) :
+    IsBinaryQuadraticPullback r s t
+      (r + s * tau + t * tau^2)
+      (s + 2 * t * tau)
+      t
+      1 0 tau 1 := by
+  intro X Y
+  unfold binaryQuadraticEval
+  ring
 
 theorem isBinaryQuarticPullback_id (a b c d e : ℝ) :
     IsBinaryQuarticPullback a b c d e a b c d e 1 0 0 1 := by
