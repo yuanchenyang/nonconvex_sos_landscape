@@ -3009,6 +3009,17 @@ theorem lowRankApolarBlueprintLocalData_iff_lowRankApolarEssentialQuotientTheore
   ⟨lowRankApolarEssentialQuotientTheorem_of_lowRankApolarBlueprintLocalData,
     lowRankApolarBlueprintLocalData_of_lowRankApolarEssentialQuotientTheorem⟩
 
+theorem lowRankApolarEssentialQuotientTheorem_of_blueprintLocalComponents
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsymm2 : HasRankTwoApolarGorensteinSymmetryData B p u)
+    (hgrowth2 : HasRankTwoApolarMacaulayGrowthBound B p u)
+    (hshape3 : HasRankThreeApolarBadBranchExactSequenceShape B p u)
+    (hmac3 : HasRankThreeApolarBadBranchMacaulayBound B p u) :
+    HasLowRankApolarEssentialQuotientTheorem B p u :=
+  lowRankApolarEssentialQuotientTheorem_of_bounds
+    (lowRankApolarEssentialQuotientBounds_of_rankTwoSymmetryAndGrowth_rankThreeShapeAndMacaulayBound
+      hsymm2 hgrowth2 hshape3 hmac3)
+
 theorem lowRankApolarEssentialQuotientTheorem_of_lowRankApolarAnnihilatorMapTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hann : HasLowRankApolarAnnihilatorMapTheorem B p u) :
@@ -3034,6 +3045,17 @@ theorem hasLowRankApolarAnnihilatorMapTheorem_iff_lowRankApolarEssentialQuotient
       HasLowRankApolarEssentialQuotientTheorem B p u :=
   ⟨lowRankApolarEssentialQuotientTheorem_of_lowRankApolarAnnihilatorMapTheorem,
     hasLowRankApolarAnnihilatorMapTheorem_of_lowRankApolarEssentialQuotientTheorem⟩
+
+theorem hasLowRankApolarAnnihilatorMapTheorem_of_blueprintLocalComponents
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsymm2 : HasRankTwoApolarGorensteinSymmetryData B p u)
+    (hgrowth2 : HasRankTwoApolarMacaulayGrowthBound B p u)
+    (hshape3 : HasRankThreeApolarBadBranchExactSequenceShape B p u)
+    (hmac3 : HasRankThreeApolarBadBranchMacaulayBound B p u) :
+    HasLowRankApolarAnnihilatorMapTheorem B p u :=
+  hasLowRankApolarAnnihilatorMapTheorem_of_lowRankApolarEssentialQuotientTheorem
+    (lowRankApolarEssentialQuotientTheorem_of_blueprintLocalComponents
+      hsymm2 hgrowth2 hshape3 hmac3)
 
 theorem lowRankApolarEssentialQuotientTheorem_of_lowRankApolarSupportTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -3065,6 +3087,17 @@ theorem hasLowRankApolarSupportTheorem_iff_lowRankApolarEssentialQuotientTheorem
       HasLowRankApolarEssentialQuotientTheorem B p u :=
   ⟨lowRankApolarEssentialQuotientTheorem_of_lowRankApolarSupportTheorem,
     hasLowRankApolarSupportTheorem_of_lowRankApolarEssentialQuotientTheorem⟩
+
+theorem hasLowRankApolarSupportTheorem_of_blueprintLocalComponents
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsymm2 : HasRankTwoApolarGorensteinSymmetryData B p u)
+    (hgrowth2 : HasRankTwoApolarMacaulayGrowthBound B p u)
+    (hshape3 : HasRankThreeApolarBadBranchExactSequenceShape B p u)
+    (hmac3 : HasRankThreeApolarBadBranchMacaulayBound B p u) :
+    HasLowRankApolarSupportTheorem B p u :=
+  hasLowRankApolarSupportTheorem_of_lowRankApolarEssentialQuotientTheorem
+    (lowRankApolarEssentialQuotientTheorem_of_blueprintLocalComponents
+      hsymm2 hgrowth2 hshape3 hmac3)
 
 theorem hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}

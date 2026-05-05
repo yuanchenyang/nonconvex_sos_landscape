@@ -13368,4 +13368,35 @@ main theorem without any additional packaging step.
 
 No Julia numerical claims were used in this round.
 
+\section*{Four components to all apolar interfaces}
+
+\paragraph{Gap targeted.}
+The four local blueprint components fed the root theorem directly, but some
+older proof routes still started from the support theorem or annihilator-map
+theorem.  Those interfaces should also be reachable directly from the same
+four assumptions.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{lowRankApolarEssentialQuotientTheorem\_of\_blueprintLocalComponents},
+\]
+\[
+\texttt{hasLowRankApolarAnnihilatorMapTheorem\_of\_blueprintLocalComponents},
+\]
+and:
+\[
+\texttt{hasLowRankApolarSupportTheorem\_of\_blueprintLocalComponents}.
+\]
+
+\paragraph{Strategy change.}
+Once the four local blueprint components are proved, they now immediately
+provide every apolar structural interface used by the existing proof:
+essential quotient bounds, annihilator-map bounds, and support bounds.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
