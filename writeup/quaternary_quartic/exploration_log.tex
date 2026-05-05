@@ -12198,4 +12198,40 @@ rank-two and rank-three annihilator-map bounds.
 
 No Julia numerical claims were used in this round.
 
+\section*{Top-level reduction after closing rank one}
+
+\paragraph{Gap targeted.}
+After formalizing the rank-one annihilator-map bound, the top-level apolar
+interface still accepted all three rank-case bounds as assumptions.  This made
+the remaining proof obligation look larger than it now is.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{hasRankCaseAnnihilatorMapBounds\_of\_rankTwo\_rankThree},
+\]
+\[
+\texttt{residual\_eq\_zero\_of\_rankTwo\_rankThreeApolarAnnihilatorMapBounds\_direct},
+\]
+and:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_rankTwo\_rankThreeApolarAnnihilatorMapBounds\_direct}.
+\]
+These wrappers use the direct rank-one theorem and expose only the rank-two
+and rank-three annihilator-map bounds as remaining assumptions.
+
+\paragraph{Strategy change.}
+Future structural work should now target only:
+\[
+\texttt{HasRankTwoApolarAnnihilatorMapBound},
+\qquad
+\texttt{HasRankThreeApolarAnnihilatorMapBound}.
+\]
+The rank-one case no longer appears in the top-level reduction.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
