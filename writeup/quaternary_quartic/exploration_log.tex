@@ -5567,4 +5567,44 @@ these combined product-independence facts from \(E=A\oplus W\).
 
 No Julia numerical claims were used in this round.
 
+\section*{Dropping catalecticant-kernel components from negative squares}
+
+\paragraph{Gap targeted.}
+In the rank-three blueprint, a negative quadratic \(q_0\) is decomposed as
+\[
+q_0=q_W+q_K
+\]
+with \(q_K\) in the catalecticant kernel.  The proof then uses
+\(\lambda(q_W^2)=\lambda(q_0^2)\).  This kernel-invariance step was not yet
+available as a Lean lemma.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{residualEval\_sq\_add\_eq\_of\_mem\_ker\_catalecticantMap}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  For quadratic
+submodule elements \(q,k\), if \(k\) lies in
+\(\ker(\texttt{catalecticantMap B p u})\), then
+\[
+B((q+k)^2,\texttt{residual p u})=B(q^2,\texttt{residual p u}).
+\]
+The proof expands the square and uses that \(k\) pairs to zero with both
+\(q\) and \(k\).
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Catalecticant.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+Rank-three negative support transport now has the algebraic kernel-dropping
+step.  It still needs the actual decomposition of an arbitrary negative
+quadratic into its supported and kernel components under the low-rank apolar
+support theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -1357,6 +1357,26 @@ theorem mem_ker_catalecticantMap_iff {B : DotForm} {p : Poly} {u : RankSevenVec}
     ext r
     exact hq.2 r.1 r.2
 
+theorem residualEval_sq_add_eq_of_mem_ker_catalecticantMap
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (q k : quadSubmodule)
+    (hk : k ∈ LinearMap.ker (catalecticantMap B p u)) :
+    B ((q.1 + k.1)^2) (residual p u) =
+      B (q.1^2) (residual p u) := by
+  have hkq : B (k.1 * q.1) (residual p u) = 0 := by
+    have hmap : catalecticantMap B p u k = 0 := hk
+    have hval := congrArg (fun φ : Module.Dual ℝ quadSubmodule => φ q) hmap
+    simpa using hval
+  have hkk : B (k.1 * k.1) (residual p u) = 0 := by
+    have hmap : catalecticantMap B p u k = 0 := hk
+    have hval := congrArg (fun φ : Module.Dual ℝ quadSubmodule => φ k) hmap
+    simpa using hval
+  have hpoly :
+      (q.1 + k.1)^2 = q.1^2 + k.1 * q.1 + k.1 * q.1 + k.1^2 := by
+    ring
+  rw [hpoly]
+  simp [hkq, hkk, pow_two]
+
 theorem finrank_quotient_ker_catalecticantMap_eq_rank
     (B : DotForm) (p : Poly) (u : RankSevenVec) :
     Module.finrank ℝ
