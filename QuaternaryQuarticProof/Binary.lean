@@ -2992,6 +2992,74 @@ theorem binaryQuarticEval_exists_negative_of_elliptic_shearY_diagonal_dual
   exact binaryQuarticEval_exists_negative_of_pullback_canonicalKernelData
     (hpull₁.comp hpull₂) hcanon
 
+theorem binaryQuarticEval_exists_negative_of_parabolic_zero_xCoeff_kernel
+    {a b c d e r s t : ℝ}
+    (hr : r = 0)
+    (hdisc : binaryKernelDiscriminant r s t = 0)
+    (hnonzero : r ≠ 0 ∨ s ≠ 0 ∨ t ≠ 0)
+    (h0 : a * r + b * s + c * t = 0)
+    (h1 : b * r + c * s + d * t = 0)
+    (h2 : c * r + d * s + e * t = 0)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 := by
+  have hySq :
+      binaryHankelMul a b c d e (![0, 0, 1] : Fin 3 → ℝ) = 0 :=
+    ySq_kernel_of_parabolic_zero_xCoeff_kernel_equations
+      (a := a) (b := b) (c := c) (d := d) (e := e)
+      (r := r) (s := s) (t := t) hr hdisc hnonzero h0 h1 h2
+  rcases ySq_kernel_equations_of_binaryHankelMul_eq_zero hySq with
+    ⟨hc, hd, he⟩
+  by_cases hb : b = 0
+  · have hxy : binaryHankelMul a b c d e (![0, 1, 0] : Fin 3 → ℝ) = 0 :=
+      (binaryHankelMul_eq_zero_iff a b c d e 0 1 0).2
+        ⟨by simp [hb], by simp [hc], by simp [hd]⟩
+    exact binaryQuarticEval_exists_negative_of_canonicalKernelData
+      (Or.inl ⟨hxy, hneg⟩)
+  · have hLI :
+        LinearIndependent ℝ
+          ![(![a, b, 0] : Fin 3 → ℝ), (![b, 0, 0] : Fin 3 → ℝ)] :=
+      ySqKernel_column_linearIndependent_of_b_ne_zero (a := a) (b := b) hb
+    exact binaryQuarticEval_exists_negative_of_canonicalKernelData
+      (Or.inr (Or.inl ⟨hySq, hLI⟩))
+
+theorem binaryQuarticEval_exists_negative_of_hankelKernelDiscriminantData
+    {a b c d e : ℝ}
+    (hneg : HasBinaryHankelNegativeValue a b c d e)
+    (hdata : HasBinaryHankelKernelDiscriminantData a b c d e) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 := by
+  rcases hdata with
+    ⟨r, s, t, hnonzero, h0, h1, h2, hcase⟩
+  have hker : binaryHankelMul a b c d e (![r, s, t] : Fin 3 → ℝ) = 0 :=
+    (binaryHankelMul_eq_zero_iff a b c d e r s t).2 ⟨h0, h1, h2⟩
+  rcases hcase with hdisc_pos | hdisc_zero | hdisc_neg
+  · by_cases hr : r = 0
+    · exact binaryQuarticEval_exists_negative_of_hyperbolic_zero_xCoeff_shearY_dual
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc_pos hker hneg
+    · exact binaryQuarticEval_exists_negative_of_hyperbolic_shearY_shearX_dual
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc_pos hker hneg
+  · by_cases hr : r = 0
+    · exact binaryQuarticEval_exists_negative_of_parabolic_zero_xCoeff_kernel
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc_zero hnonzero h0 h1 h2 hneg
+    · exact binaryQuarticEval_exists_negative_of_parabolic_shearY_swap_dual
+        (a := a) (b := b) (c := c) (d := d) (e := e)
+        (r := r) (s := s) (t := t) hr hdisc_zero hker hneg
+  · exact binaryQuarticEval_exists_negative_of_elliptic_shearY_diagonal_dual
+      (a := a) (b := b) (c := c) (d := d) (e := e)
+      (r := r) (s := s) (t := t) hdisc_neg hker hneg
+
+theorem binaryQuarticEval_exists_negative_of_finrank_range_le_two
+    {a b c d e : ℝ}
+    (hneg : HasBinaryHankelNegativeValue a b c d e)
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2) :
+    ∃ x y : ℝ, binaryQuarticEval a b c d e x y < 0 :=
+  binaryQuarticEval_exists_negative_of_hankelKernelDiscriminantData hneg
+    (hasBinaryHankelKernelDiscriminantData_of_finrank_range_le_two
+      (a := a) (b := b) (c := c) (d := d) (e := e) hrank)
+
 theorem exists_negative_pure_square_of_binaryLowRankNormalForm
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {a b c d e : ℝ} {x y : linSubmodule}

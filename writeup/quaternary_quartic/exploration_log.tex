@@ -11623,4 +11623,50 @@ because the root theorem still depends on
 
 No Julia numerical claims were used in this round.
 
+\section*{Coefficient-level binary rank-two classifier}
+
+\paragraph{Gap targeted.}
+After every discriminant branch had an end-to-end negative-evaluation theorem,
+the remaining finite-dimensional binary gap was the dispatcher: starting only
+from a negative Hankel value and rank at most two, produce the negative value
+of the original binary quartic.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_parabolic\_zero\_xCoeff\_kernel},
+\]
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_hankelKernelDiscriminantData},
+\qquad
+\texttt{binaryQuarticEval\_exists\_negative\_of\_finrank\_range\_le\_two}.
+\]
+The zero-leading parabolic helper handles the \(r=0,D=0\) case directly in
+the original coefficients, splitting between the \(y^2\) and \(xy\) canonical
+branches.  The discriminant-data theorem dispatches over \(D>0\), \(D=0\), and
+\(D<0\), and the rank theorem obtains the nonzero kernel/discriminant data
+from the previously formalized rank-nullity lemma.
+
+\paragraph{Strategy change.}
+The coefficient-level binary negative-pure-square theorem is now available
+without an external normalized-classification assumption:
+\[
+\texttt{binaryQuarticEval\_exists\_negative\_of\_finrank\_range\_le\_two}.
+\]
+The next integration gap is to replace uses of the older universal normalized
+classification assumptions in the rank-two apolar pipeline with this direct
+binary theorem, then return to the low-rank apolar support theorem.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+No Julia numerical claims were used in this round.
+
 \end{document}
