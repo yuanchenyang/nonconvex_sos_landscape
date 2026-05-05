@@ -13879,4 +13879,45 @@ rank-two and rank-three support/codimension bounds.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-one closed in the global split}
+
+\paragraph{Gap targeted.}
+After exposing the global rank-case obligations, the rank-one case should be
+removed from the remaining open work because the rank-one catalecticant
+argument is already formalized.
+
+\paragraph{Lean progress.}
+Added the direct support consequence:
+\[
+\texttt{rankOneApolarSupportBound\_direct}.
+\]
+Added two global two/three-only packages:
+\[
+\texttt{HasGlobalRankTwoThreeApolarAnnihilatorMapBounds}
+\]
+and
+\[
+\texttt{HasGlobalRankTwoThreeApolarSupportBounds}.
+\]
+Proved that each is equivalent to the corresponding global rank-case package,
+using the direct rank-one support/annihilator-map bound to supply the omitted
+rank-one case.  Added root equivalences:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoThreeApolarAnnihilatorMapBounds},
+\]
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoThreeApolarSupportBounds}.
+\]
+
+\paragraph{Strategy change.}
+The exact remaining global support/annihilator-map target now consists only of
+rank two and rank three.  This matches the blueprint's substantive cases:
+rank two via Macaulay growth and Gorenstein symmetry, rank three via the bad
+branch exact-sequence contradiction.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

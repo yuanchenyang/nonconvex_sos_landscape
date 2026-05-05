@@ -850,6 +850,26 @@ def HasGlobalRankCaseApolarSupportBounds : Prop :=
         IsSOCP B p u →
           HasRankCaseApolarSupportBounds B p u
 
+def HasGlobalRankTwoThreeApolarAnnihilatorMapBounds : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankTwoApolarAnnihilatorMapBound B p u ∧
+            HasRankThreeApolarAnnihilatorMapBound B p u
+
+def HasGlobalRankTwoThreeApolarSupportBounds : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+            HasLinearAnnihilatorCodimAtMost B p u 2) ∧
+          (Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+            HasLinearAnnihilatorCodimAtMost B p u 3)
+
 def HasLowRankApolarSupportDecomposition
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   ∀ k : ℕ,
@@ -2295,6 +2315,15 @@ theorem rankOneApolarAnnihilatorMapBound_direct
   intro hrank1
   exact finrank_range_linearAnnihilatorMap_le_one_of_catalecticantMap_rank_one
     (B := B) (p := p) (u := u) hrank1
+
+theorem rankOneApolarSupportBound_direct
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+      HasLinearAnnihilatorCodimAtMost B p u 1 := by
+  intro hrank1
+  exact hasLinearAnnihilatorCodimAtMost_one_of_annihilatorMap_range
+    (B := B) (p := p) (u := u)
+    (rankOneApolarAnnihilatorMapBound_direct (B := B) (p := p) (u := u) hrank1)
 
 theorem rankOneApolarAnnihilatorMapBound_of_rankOneDimensionBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -8159,6 +8188,78 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankCaseApolarSup
         ((quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarSupportTheorem).mp
           hmain),
     quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankCaseApolarSupportBounds⟩
+
+theorem globalRankCaseAnnihilatorMapBounds_of_globalRankTwoThreeApolarAnnihilatorMapBounds
+    (hbounds : HasGlobalRankTwoThreeApolarAnnihilatorMapBounds) :
+    HasGlobalRankCaseAnnihilatorMapBounds := by
+  intro B p u hu hB hp hsocp
+  exact hasRankCaseAnnihilatorMapBounds_of_rankTwo_rankThree
+    (hbounds B p u hu hB hp hsocp).1
+    (hbounds B p u hu hB hp hsocp).2
+
+theorem globalRankTwoThreeApolarAnnihilatorMapBounds_of_globalRankCaseAnnihilatorMapBounds
+    (hbounds : HasGlobalRankCaseAnnihilatorMapBounds) :
+    HasGlobalRankTwoThreeApolarAnnihilatorMapBounds := by
+  intro B p u hu hB hp hsocp
+  exact ⟨(hbounds B p u hu hB hp hsocp).2.1,
+    (hbounds B p u hu hB hp hsocp).2.2⟩
+
+theorem globalRankTwoThreeApolarAnnihilatorMapBounds_iff_globalRankCaseAnnihilatorMapBounds :
+    HasGlobalRankTwoThreeApolarAnnihilatorMapBounds ↔
+      HasGlobalRankCaseAnnihilatorMapBounds :=
+  ⟨globalRankCaseAnnihilatorMapBounds_of_globalRankTwoThreeApolarAnnihilatorMapBounds,
+    globalRankTwoThreeApolarAnnihilatorMapBounds_of_globalRankCaseAnnihilatorMapBounds⟩
+
+theorem globalRankCaseApolarSupportBounds_of_globalRankTwoThreeApolarSupportBounds
+    (hsupport : HasGlobalRankTwoThreeApolarSupportBounds) :
+    HasGlobalRankCaseApolarSupportBounds := by
+  intro B p u hu hB hp hsocp
+  exact ⟨rankOneApolarSupportBound_direct (B := B) (p := p) (u := u),
+    (hsupport B p u hu hB hp hsocp).1,
+    (hsupport B p u hu hB hp hsocp).2⟩
+
+theorem globalRankTwoThreeApolarSupportBounds_of_globalRankCaseApolarSupportBounds
+    (hsupport : HasGlobalRankCaseApolarSupportBounds) :
+    HasGlobalRankTwoThreeApolarSupportBounds := by
+  intro B p u hu hB hp hsocp
+  exact ⟨(hsupport B p u hu hB hp hsocp).2.1,
+    (hsupport B p u hu hB hp hsocp).2.2⟩
+
+theorem globalRankTwoThreeApolarSupportBounds_iff_globalRankCaseApolarSupportBounds :
+    HasGlobalRankTwoThreeApolarSupportBounds ↔
+      HasGlobalRankCaseApolarSupportBounds :=
+  ⟨globalRankCaseApolarSupportBounds_of_globalRankTwoThreeApolarSupportBounds,
+    globalRankTwoThreeApolarSupportBounds_of_globalRankCaseApolarSupportBounds⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarAnnihilatorMapBounds
+    (hbounds : HasGlobalRankTwoThreeApolarAnnihilatorMapBounds) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankCaseAnnihilatorMapBounds
+    (globalRankCaseAnnihilatorMapBounds_of_globalRankTwoThreeApolarAnnihilatorMapBounds hbounds)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarSupportBounds
+    (hsupport : HasGlobalRankTwoThreeApolarSupportBounds) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankCaseApolarSupportBounds
+    (globalRankCaseApolarSupportBounds_of_globalRankTwoThreeApolarSupportBounds hsupport)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeApolarAnnihilatorMapBounds :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoThreeApolarAnnihilatorMapBounds :=
+  ⟨fun hmain =>
+      globalRankTwoThreeApolarAnnihilatorMapBounds_of_globalRankCaseAnnihilatorMapBounds
+        ((quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankCaseAnnihilatorMapBounds).mp
+          hmain),
+    quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarAnnihilatorMapBounds⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeApolarSupportBounds :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoThreeApolarSupportBounds :=
+  ⟨fun hmain =>
+      globalRankTwoThreeApolarSupportBounds_of_globalRankCaseApolarSupportBounds
+        ((quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankCaseApolarSupportBounds).mp
+          hmain),
+    quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarSupportBounds⟩
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_quotientLocalComponents_direct
     (hsymm2 :
