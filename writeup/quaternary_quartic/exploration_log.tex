@@ -8448,4 +8448,56 @@ root placeholder.
 
 No Julia numerical claims were used in this round.
 
+\section*{Annihilator dimension bounds}
+
+\paragraph{Gap targeted.}
+The split annihilator-map obligations were still stated as rank bounds for
+\[
+\texttt{linearAnnihilatorMap}.
+\]
+The blueprint's apolar geometry is more naturally phrased as the existence of
+large subspaces of affine-linear annihilators.
+
+\paragraph{Lean progress.}
+Added the rank-specific dimension predicates
+\[
+\begin{gathered}
+\texttt{HasRankOneApolarAnnihilatorDimensionBound},\\
+\texttt{HasRankTwoApolarAnnihilatorDimensionBound},\\
+\texttt{HasRankThreeApolarAnnihilatorDimensionBound},
+\end{gathered}
+\]
+and the bundled predicate
+\[
+\texttt{HasRankCaseApolarAnnihilatorDimensionBounds}.
+\]
+Proved both directions between these dimension bounds and the corresponding
+annihilator-map bounds using
+\[
+\texttt{finrank\_range\_linearAnnihilatorMap\_add\_finrank\_linearAnnihilator}.
+\]
+Added residual and root reductions from the bundled dimension bounds plus the
+two remaining universal rank-two normalized-Hankel obligations.
+
+\paragraph{Strategy change.}
+The annihilator side can now be closed by proving lower bounds on
+\(\dim \texttt{linearAnnihilator}\), with map-rank estimates recovered
+automatically by rank-nullity.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove the three rank-specific annihilator dimension bounds, universal
+normalized kernel-position data, and universal Hankel-negativity data; then
+replace the root placeholder.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
