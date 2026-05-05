@@ -6178,4 +6178,61 @@ product-independence gap.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two product-independence extraction}
+
+\paragraph{Gap targeted.}
+The largest remaining product-independence gap was the rank-two family
+\[
+\{z\beta_i\}_{i<2}\cup\{\beta_i\beta_j\}_{i\le j<2},
+\]
+where \(z\) is any nonzero vector in the binary complement plane.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{linearIndependent\_rank\_two\_combined\_products\_of\_isCompl}
+\]
+to \texttt{QuaternaryQuarticProof/Catalecticant.lean}.  The proof constructs
+an adapted \(\texttt{Fin 4}\)-basis whose first two vectors are a basis of
+\(A\), whose third vector is \(z\), and whose fourth vector completes the
+rank-two complement.  The desired five products are then pulled back from the
+ten independent products of the full basis.
+
+Added
+\[
+\texttt{exists\_rank\_two\_combined\_product\_independence}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  Given \(z\ne0\) in
+\(\Span\{x,y\}=W\), it chooses a second direction \(y'\in W\) outside
+\(\mathbb R z\), proves \(\Span\{z,y'\}=W\), and applies the Catalecticant
+lemma.
+
+Added
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_product\_free\_component\_obligations}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  This bridge no longer asks for
+rank-one or rank-two product-independence assumptions; it supplies them from
+the two support-level existence lemmas.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\]
+and
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+complete successfully.  The full quaternary verification harness again reaches
+the final axiom audit; the only extra dependency remains the root placeholder
+axiom.
+
+\paragraph{Remaining blockers.}
+The product-independence layer has been discharged for the rank-one and
+rank-two component obligations.  The remaining non-placeholder mathematical
+inputs are the rank-one negativity, rank-two binary kernel-equation cases, and
+the rank-three negative/decomposition data that feed the product-free bridge.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

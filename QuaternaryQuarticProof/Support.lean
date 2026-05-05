@@ -454,6 +454,36 @@ theorem span_rank_two_support_pair_eq
       exact hx (congrArg (fun z : linSubmodule => (z : Poly)) h))
     hxW hyW hy hW
 
+theorem exists_rank_two_combined_product_independence
+    {A W : Submodule ℝ linSubmodule} {x y z : linSubmodule}
+    (hAW : IsCompl A W)
+    (hxW : x ∈ W)
+    (hyW : y ∈ W)
+    (hy : y ∉ ℝ ∙ x)
+    (hx : (x : Poly) ≠ 0)
+    (hAdim : Module.finrank ℝ A = 2)
+    (hWdim : Module.finrank ℝ W = 2)
+    (hzspan : z ∈ Submodule.span ℝ ({x, y} : Set linSubmodule))
+    (hz : (z : Poly) ≠ 0) :
+    ∃ β : Module.Basis (Fin 2) ℝ A,
+      LinearIndependent ℝ
+        (Sum.elim
+          (fun i : Fin 2 => linProduct z (β i).1)
+          (fun ij : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+            linProduct (β ij.1.1).1 (β ij.1.2).1)) := by
+  letI : Module.Free ℝ A := Module.Free.of_divisionRing ℝ A
+  let β : Module.Basis (Fin 2) ℝ A := Module.finBasisOfFinrankEq ℝ A hAdim
+  have hxyspan : Submodule.span ℝ ({x, y} : Set linSubmodule) = W :=
+    span_rank_two_support_pair_eq hx hxW hyW hy hWdim
+  have hzW : z ∈ W := by
+    rw [← hxyspan]
+    exact hzspan
+  rcases exists_rank_two_complement_second_direction hz hWdim with
+    ⟨y', hy'W, hy'not⟩
+  have hzyspan : Submodule.span ℝ ({z, y'} : Set linSubmodule) = W :=
+    span_rank_two_support_pair_eq hz hzW hy'W hy'not hWdim
+  exact ⟨β, linearIndependent_rank_two_combined_products_of_isCompl hAW β hzyspan⟩
+
 theorem span_rank_one_support_vector_eq
     {W : Submodule ℝ linSubmodule} {x : linSubmodule}
     (hx : (x : Poly) ≠ 0)

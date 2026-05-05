@@ -1002,6 +1002,88 @@ theorem exists_rank_two_adapted_basis
       exact Module.Basis.mk_apply hLI htop_le ⟨3, by norm_num⟩]
     exact hv_three
 
+theorem linearIndependent_rank_two_combined_products_of_isCompl
+    {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
+    (β : Module.Basis (Fin 2) ℝ A) {z y : linSubmodule}
+    (hzyspan : Submodule.span ℝ ({z, y} : Set linSubmodule) = W) :
+    LinearIndependent ℝ
+      (Sum.elim
+        (fun i : Fin 2 => linProduct z (β i).1)
+        (fun ij : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+          linProduct (β ij.1.1).1 (β ij.1.2).1)) := by
+  rcases exists_rank_two_adapted_basis hAW β hzyspan with
+    ⟨β4, hβA, hβz, _hβy⟩
+  let cast2 : Fin 2 → Fin 4 := Fin.castLE (by norm_num : (2 : ℕ) ≤ 4)
+  let two : Fin 4 := ⟨2, by norm_num⟩
+  let Pair2 := {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2}
+  let Pair4 := {ij : Fin 4 × Fin 4 // ij.1 ≤ ij.2}
+  let φ : (Fin 2 ⊕ Pair2) → Pair4 :=
+    Sum.elim
+      (fun i : Fin 2 => ⟨(cast2 i, two), by simp [cast2, two, Fin.le_def]⟩)
+      (fun ij : Pair2 =>
+        ⟨(cast2 ij.1.1, cast2 ij.1.2), by
+          simpa [cast2] using
+            (Fin.castLE_le_castLE_iff (by norm_num : (2 : ℕ) ≤ 4)).mpr ij.2⟩)
+  have hφinj : Function.Injective φ := by
+    intro a b h
+    cases a with
+    | inl i =>
+        cases b with
+        | inl j =>
+            have hp := congrArg Subtype.val h
+            have hi : cast2 i = cast2 j := congrArg Prod.fst hp
+            have hival : i.1 = j.1 := by
+              simpa [cast2, Fin.ext_iff] using congrArg Fin.val hi
+            exact congrArg Sum.inl (Fin.ext hival)
+        | inr ij =>
+            have hp := congrArg Subtype.val h
+            have hsec : two = cast2 ij.1.2 := congrArg Prod.snd hp
+            have hval := congrArg Fin.val hsec
+            have hlt : (ij.1.2).1 < 2 := ij.1.2.2
+            simp [two, cast2] at hval
+            omega
+    | inr ij =>
+        cases b with
+        | inl j =>
+            have hp := congrArg Subtype.val h
+            have hsec : cast2 ij.1.2 = two := congrArg Prod.snd hp
+            have hval := congrArg Fin.val hsec
+            have hlt : (ij.1.2).1 < 2 := ij.1.2.2
+            simp [two, cast2] at hval
+            omega
+        | inr kl =>
+            have hp := congrArg Subtype.val h
+            have hfst : cast2 ij.1.1 = cast2 kl.1.1 := congrArg Prod.fst hp
+            have hsnd : cast2 ij.1.2 = cast2 kl.1.2 := congrArg Prod.snd hp
+            have hfstv : ij.1.1.1 = kl.1.1.1 := by
+              simpa [cast2, Fin.ext_iff] using congrArg Fin.val hfst
+            have hsndv : ij.1.2.1 = kl.1.2.1 := by
+              simpa [cast2, Fin.ext_iff] using congrArg Fin.val hsnd
+            have hij : ij.1 = kl.1 :=
+              Prod.ext (Fin.ext hfstv) (Fin.ext hsndv)
+            exact congrArg Sum.inr (Subtype.ext hij)
+  have hsub := (linearIndependent_basis_products_fin_four β4).comp φ hφinj
+  let target : (Fin 2 ⊕ Pair2) → quadSubmodule :=
+    Sum.elim
+      (fun i : Fin 2 => linProduct z (β i).1)
+      (fun ij : Pair2 => linProduct (β ij.1.1).1 (β ij.1.2).1)
+  let pulled : (Fin 2 ⊕ Pair2) → quadSubmodule :=
+    fun t => linProduct (β4 (φ t).1.1) (β4 (φ t).1.2)
+  have htwo : β4 (2 : Fin 4) = z := by
+    simpa [two] using hβz
+  have hpulled : pulled = target := by
+    funext t
+    cases t with
+    | inl i =>
+        dsimp [pulled, target, φ, cast2, two]
+        rw [hβA i, htwo, linProduct_comm]
+    | inr ij =>
+        dsimp [pulled, target, φ, cast2]
+        rw [hβA ij.1.1, hβA ij.1.2]
+  change LinearIndependent ℝ pulled at hsub
+  change LinearIndependent ℝ target
+  exact hpulled ▸ hsub
+
 theorem linProduct_mem_sup_of_isCompl
     {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
     (x y : linSubmodule) :
