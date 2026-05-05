@@ -18,6 +18,35 @@ def binaryHankelMul (a b c d e : ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
     b * v 0 + c * v 1 + d * v 2,
     c * v 0 + d * v 1 + e * v 2]
 
+def binaryHankelLinearMap (a b c d e : ℝ) :
+    (Fin 3 → ℝ) →ₗ[ℝ] (Fin 3 → ℝ) where
+  toFun := binaryHankelMul a b c d e
+  map_add' := by
+    intro v w
+    ext i
+    fin_cases i
+    · simp [binaryHankelMul]
+      ring
+    · simp [binaryHankelMul]
+      ring
+    · simp [binaryHankelMul]
+      ring
+  map_smul' := by
+    intro r v
+    ext i
+    fin_cases i
+    · simp [binaryHankelMul]
+      ring
+    · simp [binaryHankelMul]
+      ring
+    · simp [binaryHankelMul]
+      ring
+
+@[simp] theorem binaryHankelLinearMap_apply
+    (a b c d e : ℝ) (v : Fin 3 → ℝ) :
+    binaryHankelLinearMap a b c d e v = binaryHankelMul a b c d e v :=
+  rfl
+
 theorem binaryHankelQuad_eq_dot_binaryHankelMul
     (a b c d e r s t : ℝ) :
     binaryHankelQuad a b c d e r s t =
@@ -64,6 +93,11 @@ def HasBinaryCanonicalKernelData (a b c d e : ℝ) : Prop :=
       ![(![a, b, 0] : Fin 3 → ℝ), (![b, 0, 0] : Fin 3 → ℝ)]) ∨
   (binaryHankelMul a b c d e (![1, 0, 1] : Fin 3 → ℝ) = 0 ∧
     HasBinaryHankelNegativeValue a b c d e)
+
+def HasBinaryRankTwoCanonicalKernelClassification (a b c d e : ℝ) : Prop :=
+  HasBinaryHankelNegativeValue a b c d e →
+    Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2 →
+      HasBinaryCanonicalKernelData a b c d e
 
 theorem xy_kernel_equations_of_binaryHankelMul_eq_zero
     {a b c d e : ℝ}
@@ -422,6 +456,15 @@ theorem binaryLowRankNegativeNormalForm_of_canonicalKernelData
     HasBinaryLowRankNegativeNormalForm a b c d e :=
   binaryLowRankNegativeNormalForm_of_kernelBranchCertificate
     (binaryKernelBranchCertificate_of_canonicalKernelData hcanon)
+
+theorem binaryLowRankNegativeNormalForm_of_rankTwoCanonicalKernelClassification
+    {a b c d e : ℝ}
+    (hclass : HasBinaryRankTwoCanonicalKernelClassification a b c d e)
+    (hneg : HasBinaryHankelNegativeValue a b c d e)
+    (hrank :
+      Module.finrank ℝ (LinearMap.range (binaryHankelLinearMap a b c d e)) ≤ 2) :
+    HasBinaryLowRankNegativeNormalForm a b c d e :=
+  binaryLowRankNegativeNormalForm_of_canonicalKernelData (hclass hneg hrank)
 
 theorem binaryRestriction_lowRankNegativeNormalForm_of_kernelBranchCertificate
     {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}

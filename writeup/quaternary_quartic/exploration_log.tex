@@ -7257,4 +7257,41 @@ and the rank-two canonical kernel data theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Scalar Hankel classification interface}
+
+\paragraph{Gap targeted.}
+The binary blocker should ultimately be a finite-dimensional classification of
+the explicit \(3\times3\) Hankel map, not a statement tied directly to
+polynomial restriction coefficients.
+
+\paragraph{Lean progress.}
+Added the linear map
+\[
+\texttt{binaryHankelLinearMap}
+\]
+whose underlying function is \(\texttt{binaryHankelMul}\).  Added
+\[
+\texttt{HasBinaryRankTwoCanonicalKernelClassification}
+\]
+as the scalar rank-two classification interface:
+a negative Hankel value and range dimension at most two imply canonical kernel
+data.  Proved
+\[
+\texttt{binaryLowRankNegativeNormalForm\_of\_rankTwoCanonicalKernelClassification}.
+\]
+
+\paragraph{Strategy change.}
+The remaining binary proof can now be developed as a standalone statement
+about an explicit linear map on \(\mathbb{R}^3\), then connected to the
+restriction coefficients.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The open inputs remain the product-kernel low-rank support decomposition and
+the scalar/rank-two canonical Hankel classification theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
