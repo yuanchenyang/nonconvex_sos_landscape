@@ -13673,4 +13673,39 @@ contradiction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two growth equivalent to quotient bound}
+
+\paragraph{Gap targeted.}
+The shortest remaining target uses the rank-two Macaulay growth component.
+In the current quotient formulation, this component is equivalent to the
+rank-two essential quotient bound because the degree-two catalecticant quotient
+has dimension two in rank two.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{rankTwoEssentialQuotientBound\_of\_macaulayGrowth},
+\]
+\[
+\texttt{rankTwoMacaulayGrowthBound\_of\_rankTwoEssentialQuotientBound},
+\]
+and:
+\[
+\texttt{rankTwoMacaulayGrowthBound\_iff\_rankTwoEssentialQuotientBound}.
+\]
+The reverse direction uses
+\[
+\texttt{finrank\_quotient\_ker\_catalecticantMap\_eq\_two\_of\_rank\_two}.
+\]
+
+\paragraph{Strategy change.}
+Both core components are now explicitly equivalent to their corresponding
+essential quotient bounds: rank-two growth to the rank-two quotient bound, and
+rank-three bad-branch contradiction to the rank-three quotient bound.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

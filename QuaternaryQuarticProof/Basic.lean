@@ -2401,6 +2401,32 @@ theorem rankTwoEssentialQuotientBound_of_symmetry_and_macaulayGrowth
   rankTwoEssentialQuotientBound_of_rankTwoQuotientGrowthData
     (rankTwoQuotientGrowthData_of_symmetry_and_macaulayGrowth hsymm hgrowth)
 
+theorem rankTwoEssentialQuotientBound_of_macaulayGrowth
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hgrowth : HasRankTwoApolarMacaulayGrowthBound B p u) :
+    HasRankTwoApolarEssentialQuotientBound B p u :=
+  rankTwoEssentialQuotientBound_of_symmetry_and_macaulayGrowth
+    (rankTwoApolarGorensteinSymmetryData_direct B p u) hgrowth
+
+theorem rankTwoMacaulayGrowthBound_of_rankTwoEssentialQuotientBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasRankTwoApolarEssentialQuotientBound B p u) :
+    HasRankTwoApolarMacaulayGrowthBound B p u := by
+  intro hrank2 h3 hh3
+  have hdegree_two :
+      Module.finrank ℝ
+          (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) = 2 :=
+    finrank_quotient_ker_catalecticantMap_eq_two_of_rank_two hrank2
+  have hquot_le := hquot hrank2
+  omega
+
+theorem rankTwoMacaulayGrowthBound_iff_rankTwoEssentialQuotientBound
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankTwoApolarMacaulayGrowthBound B p u ↔
+      HasRankTwoApolarEssentialQuotientBound B p u :=
+  ⟨rankTwoEssentialQuotientBound_of_macaulayGrowth,
+    rankTwoMacaulayGrowthBound_of_rankTwoEssentialQuotientBound⟩
+
 theorem rankTwoMacaulayGrowthData_of_rankTwoEssentialQuotientBound
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hquot : HasRankTwoApolarEssentialQuotientBound B p u) :
