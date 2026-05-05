@@ -5235,4 +5235,44 @@ kernel-equation alternatives.
 
 No Julia numerical claims were used in this round.
 
+\section*{Threading product linear independence into apolar assembly}
+
+\paragraph{Gap targeted.}
+The rank-two support constructor now accepts product linear independence, but
+the top-level apolar rank-case assembler still exposed the older binary-plane
+disjointness equality.  The remaining obligations should be stated in the most
+concrete form available.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_productLI\_component\_obligations}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  Its rank-two branch asks for a
+basis \(\beta\) of \(A\) such that the combined family
+\[
+\{z\beta_i\}_{i=1}^2
+\cup
+\{\beta_i\beta_j:i\le j\}
+\]
+is linearly independent for each relevant nonzero
+\(z\in\operatorname{span}\{x,y\}\).  The theorem converts this to the
+binary-plane disjointness input using the Catalecticant lemma from the previous
+round.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two disjointness subgoal has been replaced by a concrete product
+linear-independence statement.  Remaining structural work: prove that product
+linear independence from the direct-sum decomposition, prove exact
+\(\Sym^2A\) dimensions, and derive binary kernel-equation alternatives.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
