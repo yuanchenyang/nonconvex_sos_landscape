@@ -13960,4 +13960,46 @@ bounds appearing in the blueprint: rank two \(h_1\le 2\) and rank three
 
 No Julia numerical claims were used in this round.
 
+\section*{Split two-three quotient into blueprint branches}
+
+\paragraph{Gap targeted.}
+The global rank-two/rank-three essential quotient package still combined the
+two substantive blueprint arguments.  The next useful reduction is to expose
+the two independent proof obligations: rank two from Macaulay growth and rank
+three from the bad-branch contradiction.
+
+\paragraph{Lean progress.}
+Added global rank-specific packages:
+\[
+\texttt{HasGlobalRankTwoApolarEssentialQuotientBound},
+\quad
+\texttt{HasGlobalRankThreeApolarEssentialQuotientBound},
+\]
+and the blueprint branch packages:
+\[
+\texttt{HasGlobalRankTwoApolarMacaulayGrowthBound},
+\quad
+\texttt{HasGlobalRankThreeApolarBadBranchContradiction}.
+\]
+Proved that the combined global two-three quotient package is equivalent to
+the split rank-two and rank-three quotient packages.  Lifted the existing local
+rank-two equivalence between Macaulay growth and the essential quotient bound,
+and the existing local rank-three equivalence between bad-branch contradiction
+and the essential quotient bound, to global statements.  Added the root
+equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoMacaulayGrowth\_and\_rankThreeBadBranch}.
+\]
+
+\paragraph{Strategy change.}
+The remaining proof is now reduced to the two named blueprint branches: a
+global rank-two Macaulay-growth theorem and a global rank-three bad-branch
+contradiction theorem.  These are independent of the already discharged
+rank-one case and no longer carry support or annihilator-map packaging.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

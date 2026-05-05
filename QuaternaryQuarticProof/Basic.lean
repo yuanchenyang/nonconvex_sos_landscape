@@ -879,6 +879,38 @@ def HasGlobalRankTwoThreeApolarEssentialQuotientBounds : Prop :=
           HasRankTwoApolarEssentialQuotientBound B p u ∧
             HasRankThreeApolarEssentialQuotientBound B p u
 
+def HasGlobalRankTwoApolarEssentialQuotientBound : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankTwoApolarEssentialQuotientBound B p u
+
+def HasGlobalRankThreeApolarEssentialQuotientBound : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankThreeApolarEssentialQuotientBound B p u
+
+def HasGlobalRankTwoApolarMacaulayGrowthBound : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankTwoApolarMacaulayGrowthBound B p u
+
+def HasGlobalRankThreeApolarBadBranchContradiction : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankThreeApolarBadBranchContradiction B p u
+
 def HasLowRankApolarSupportDecomposition
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   ∀ k : ℕ,
@@ -8429,6 +8461,103 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeApola
         ((quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeApolarAnnihilatorMapBounds).mp
           hmain),
     quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarEssentialQuotientBounds⟩
+
+theorem globalRankTwoThreeApolarEssentialQuotientBounds_of_splitGlobalEssentialQuotientBounds
+    (hquot2 : HasGlobalRankTwoApolarEssentialQuotientBound)
+    (hquot3 : HasGlobalRankThreeApolarEssentialQuotientBound) :
+    HasGlobalRankTwoThreeApolarEssentialQuotientBounds := by
+  intro B p u hu hB hp hsocp
+  exact ⟨hquot2 B p u hu hB hp hsocp,
+    hquot3 B p u hu hB hp hsocp⟩
+
+theorem splitGlobalEssentialQuotientBounds_of_globalRankTwoThreeApolarEssentialQuotientBounds
+    (hquot : HasGlobalRankTwoThreeApolarEssentialQuotientBounds) :
+    HasGlobalRankTwoApolarEssentialQuotientBound ∧
+      HasGlobalRankThreeApolarEssentialQuotientBound := by
+  exact ⟨
+    fun B p u hu hB hp hsocp => (hquot B p u hu hB hp hsocp).1,
+    fun B p u hu hB hp hsocp => (hquot B p u hu hB hp hsocp).2⟩
+
+theorem globalRankTwoThreeApolarEssentialQuotientBounds_iff_splitGlobalEssentialQuotientBounds :
+    HasGlobalRankTwoThreeApolarEssentialQuotientBounds ↔
+      HasGlobalRankTwoApolarEssentialQuotientBound ∧
+        HasGlobalRankThreeApolarEssentialQuotientBound :=
+  ⟨splitGlobalEssentialQuotientBounds_of_globalRankTwoThreeApolarEssentialQuotientBounds,
+    fun hquot =>
+      globalRankTwoThreeApolarEssentialQuotientBounds_of_splitGlobalEssentialQuotientBounds
+        hquot.1 hquot.2⟩
+
+theorem globalRankTwoApolarEssentialQuotientBound_of_globalRankTwoApolarMacaulayGrowthBound
+    (hgrowth : HasGlobalRankTwoApolarMacaulayGrowthBound) :
+    HasGlobalRankTwoApolarEssentialQuotientBound := by
+  intro B p u hu hB hp hsocp
+  exact rankTwoEssentialQuotientBound_of_macaulayGrowth
+    (hgrowth B p u hu hB hp hsocp)
+
+theorem globalRankTwoApolarMacaulayGrowthBound_of_globalRankTwoApolarEssentialQuotientBound
+    (hquot : HasGlobalRankTwoApolarEssentialQuotientBound) :
+    HasGlobalRankTwoApolarMacaulayGrowthBound := by
+  intro B p u hu hB hp hsocp
+  exact rankTwoMacaulayGrowthBound_of_rankTwoEssentialQuotientBound
+    (hquot B p u hu hB hp hsocp)
+
+theorem globalRankTwoApolarMacaulayGrowthBound_iff_globalRankTwoApolarEssentialQuotientBound :
+    HasGlobalRankTwoApolarMacaulayGrowthBound ↔
+      HasGlobalRankTwoApolarEssentialQuotientBound :=
+  ⟨globalRankTwoApolarEssentialQuotientBound_of_globalRankTwoApolarMacaulayGrowthBound,
+    globalRankTwoApolarMacaulayGrowthBound_of_globalRankTwoApolarEssentialQuotientBound⟩
+
+theorem globalRankThreeApolarEssentialQuotientBound_of_globalRankThreeApolarBadBranchContradiction
+    (hbad : HasGlobalRankThreeApolarBadBranchContradiction) :
+    HasGlobalRankThreeApolarEssentialQuotientBound := by
+  intro B p u hu hB hp hsocp
+  exact rankThreeEssentialQuotientBound_of_badBranchContradiction
+    (hbad B p u hu hB hp hsocp)
+
+theorem globalRankThreeApolarBadBranchContradiction_of_globalRankThreeApolarEssentialQuotientBound
+    (hquot : HasGlobalRankThreeApolarEssentialQuotientBound) :
+    HasGlobalRankThreeApolarBadBranchContradiction := by
+  intro B p u hu hB hp hsocp
+  exact rankThreeBadBranchContradiction_of_rankThreeEssentialQuotientBound
+    (hquot B p u hu hB hp hsocp)
+
+theorem globalRankThreeApolarBadBranchContradiction_iff_globalRankThreeApolarEssentialQuotientBound :
+    HasGlobalRankThreeApolarBadBranchContradiction ↔
+      HasGlobalRankThreeApolarEssentialQuotientBound :=
+  ⟨globalRankThreeApolarEssentialQuotientBound_of_globalRankThreeApolarBadBranchContradiction,
+    globalRankThreeApolarBadBranchContradiction_of_globalRankThreeApolarEssentialQuotientBound⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch
+    (hgrowth2 : HasGlobalRankTwoApolarMacaulayGrowthBound)
+    (hbad3 : HasGlobalRankThreeApolarBadBranchContradiction) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoThreeApolarEssentialQuotientBounds
+    (globalRankTwoThreeApolarEssentialQuotientBounds_of_splitGlobalEssentialQuotientBounds
+      (globalRankTwoApolarEssentialQuotientBound_of_globalRankTwoApolarMacaulayGrowthBound
+        hgrowth2)
+      (globalRankThreeApolarEssentialQuotientBound_of_globalRankThreeApolarBadBranchContradiction
+        hbad3))
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoApolarMacaulayGrowthBound ∧
+        HasGlobalRankThreeApolarBadBranchContradiction := by
+  constructor
+  · intro hmain
+    have hquot :=
+      (quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoThreeApolarEssentialQuotientBounds).mp
+        hmain
+    have hsplit :=
+      splitGlobalEssentialQuotientBounds_of_globalRankTwoThreeApolarEssentialQuotientBounds
+        hquot
+    exact ⟨
+      globalRankTwoApolarMacaulayGrowthBound_of_globalRankTwoApolarEssentialQuotientBound
+        hsplit.1,
+      globalRankThreeApolarBadBranchContradiction_of_globalRankThreeApolarEssentialQuotientBound
+        hsplit.2⟩
+  · intro hdata
+    exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch
+      hdata.1 hdata.2
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_quotientLocalComponents_direct
     (hsymm2 :
