@@ -393,6 +393,54 @@ theorem exists_rank_two_complement_second_direction
       exact hx (congrArg (fun z : linSubmodule => (z : Poly)) h))
     hW
 
+theorem hasRankTwoSupportComponentHypothesis_of_independent_binary_data
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hSym :
+      ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              (x : Poly) ≠ 0 →
+                Module.finrank ℝ A = 2 →
+                  Module.finrank ℝ W = 2 →
+                    Module.finrank ℝ (symSquareSubmodule A) = 3)
+    (hform :
+      ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              y ∈ W →
+                y ∉ ℝ ∙ x →
+                  (x : Poly) ≠ 0 →
+                    Module.finrank ℝ A = 2 →
+                      Module.finrank ℝ W = 2 →
+                        HasBinaryLowRankNegativeNormalForm
+                          (binaryRestrictionCoeffA B p u x)
+                          (binaryRestrictionCoeffB B p u x y)
+                          (binaryRestrictionCoeffC B p u x y)
+                          (binaryRestrictionCoeffD B p u x y)
+                          (binaryRestrictionCoeffE B p u y))
+    (hdisj :
+      ∀ (A W : Submodule ℝ linSubmodule) (z : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            z ∈ W →
+              (z : Poly) ≠ 0 →
+                Module.finrank ℝ A = 2 →
+                  Module.finrank ℝ W = 2 →
+                    LinearMap.range (linProductLeftMapOn z A) ⊓
+                        symSquareSubmodule A =
+                      ⊥) :
+    HasRankTwoSupportComponentHypothesis B p u := by
+  intro A W x hAann hAW hxW hx hAdim hWdim
+  rcases exists_rank_two_complement_second_direction
+      (W := W) (x := x) hx hWdim with
+    ⟨y, hyW, hynot⟩
+  exact ⟨y, hyW, hSym A W x hAann hAW hxW hx hAdim hWdim,
+    hform A W x y hAann hAW hxW hyW hynot hx hAdim hWdim,
+    fun z hzW hz =>
+      hdisj A W z hAann hAW hzW hz hAdim hWdim⟩
+
 theorem hasRankOneSupportComponentHypothesis_of_self_negative
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hSym :

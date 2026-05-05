@@ -4514,4 +4514,52 @@ support direction is now formalized.
 
 No Julia numerical claims were used in this round.
 
+\section*{Reducing rank-two support components to independent binary data}
+
+\paragraph{Gap targeted.}
+The previous round supplied the dimension-theoretic choice of a second
+rank-two support direction \(y\in W\setminus \mathbb{R}x\), but the main
+component hypothesis still treated the resulting \(y\) as part of one opaque
+assumption.  The next useful reduction is to separate this into the actual
+mathematical obligations: exact \(\Sym^2 A\) dimension, binary normal form for
+an independent pair \((x,y)\), and product-disjointness for every nonzero
+direction in \(W\).
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankTwoSupportComponentHypothesis\_of\_independent\_binary\_data}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It proves
+\[
+\texttt{HasRankTwoSupportComponentHypothesis B p u}
+\]
+from three reusable hypotheses:
+\begin{enumerate}
+\item \(\dim \Sym^2 A=3\) for every exact rank-two annihilator complement;
+\item the canonical binary restriction coefficients have
+  \(\texttt{HasBinaryLowRankNegativeNormalForm}\) whenever
+  \(y\in W\setminus \mathbb{R}x\);
+\item every nonzero \(z\in W\) has
+  \(zA\cap \Sym^2A=\{0\}\).
+\end{enumerate}
+The proof invokes
+\(\texttt{exists\_rank\_two\_complement\_second\_direction}\), so the
+independent second coordinate is now part of the formal support pipeline.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is still the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two case is now reduced to proving the three separated component
+facts above from the apolar Hilbert-function/support analysis.  In particular,
+the binary normal-form classification and the product-disjointness proof remain
+the largest rank-two blockers.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
