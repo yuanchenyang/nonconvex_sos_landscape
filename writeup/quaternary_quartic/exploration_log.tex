@@ -14612,4 +14612,46 @@ finite-dimensional argument.
 
 No Julia numerical claims were used in this round.
 
+\section*{Bad-branch linear annihilator consequences}
+
+\paragraph{Gap targeted.}
+The rank-three bad branch is the case where the linear quotient by the
+annihilator has dimension four.  The exact-sequence proof needs this to be
+available as concrete information about the linear annihilator and its
+multiplication map, not only as a Hilbert-function number.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved that
+\[
+\texttt{Module.finrank}\ \mathbb{R}\,
+  (\texttt{linSubmodule} / \texttt{linearAnnihilator}\ B\ p\ u)=4
+\]
+implies
+\[
+\texttt{linearAnnihilator}\ B\ p\ u=\bot.
+\]
+Also proved the corresponding kernel, injectivity, and range-dimension facts
+for \(\texttt{linearAnnihilatorMap}\):
+\[
+\texttt{ker\_linearAnnihilatorMap\_eq\_bot\_of\_finrank\_quotient\_linearAnnihilator\_eq\_four},
+\]
+\[
+\texttt{linearAnnihilatorMap\_injective\_of\_finrank\_quotient\_linearAnnihilator\_eq\_four},
+\]
+and
+\[
+\texttt{finrank\_range\_linearAnnihilatorMap\_eq\_four\_of\_finrank\_quotient\_linearAnnihilator\_eq\_four}.
+\]
+
+\paragraph{Strategy change.}
+The bad-branch assumption now gives the exact injectivity statement for
+linear multiplication into the degree-two quotient.  This is another concrete
+ingredient for replacing the current rank-three exact-sequence package by a
+direct finite-dimensional proof.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

@@ -2201,6 +2201,14 @@ theorem finrank_linearAnnihilator_eq_zero_of_finrank_quotient_linearAnnihilator_
   rw [hquot] at hquot_sub
   omega
 
+theorem linearAnnihilator_eq_bot_of_finrank_quotient_linearAnnihilator_eq_four
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4) :
+    linearAnnihilator B p u = ⊥ := by
+  exact (Submodule.finrank_eq_zero).mp
+    (finrank_linearAnnihilator_eq_zero_of_finrank_quotient_linearAnnihilator_eq_four
+      hquot)
+
 @[simp] theorem mem_linearAnnihilator {B : DotForm} {p : Poly} {u : RankSevenVec}
     {a : linSubmodule} :
     a ∈ linearAnnihilator B p u ↔
@@ -2278,6 +2286,28 @@ theorem finrank_range_linearAnnihilatorMap_add_finrank_linearAnnihilator
   rw [linearAnnihilator_eq_ker_linearAnnihilatorMap]
   rw [LinearMap.finrank_range_add_finrank_ker]
   exact finrank_linSubmodule_eq_four
+
+theorem ker_linearAnnihilatorMap_eq_bot_of_finrank_quotient_linearAnnihilator_eq_four
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4) :
+    LinearMap.ker (linearAnnihilatorMap B p u) = ⊥ := by
+  rw [← linearAnnihilator_eq_ker_linearAnnihilatorMap]
+  exact linearAnnihilator_eq_bot_of_finrank_quotient_linearAnnihilator_eq_four hquot
+
+theorem linearAnnihilatorMap_injective_of_finrank_quotient_linearAnnihilator_eq_four
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4) :
+    Function.Injective (linearAnnihilatorMap B p u) :=
+  LinearMap.ker_eq_bot.mp
+    (ker_linearAnnihilatorMap_eq_bot_of_finrank_quotient_linearAnnihilator_eq_four
+      hquot)
+
+theorem finrank_range_linearAnnihilatorMap_eq_four_of_finrank_quotient_linearAnnihilator_eq_four
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : Module.finrank ℝ (linSubmodule ⧸ linearAnnihilator B p u) = 4) :
+    Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) = 4 := by
+  rw [← finrank_quotient_linearAnnihilator_eq_range_linearAnnihilatorMap]
+  exact hquot
 
 def scalarizedLinearAnnihilatorMap
     (B : DotForm) (p : Poly) (u : RankSevenVec)
