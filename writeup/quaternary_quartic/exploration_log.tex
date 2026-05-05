@@ -9246,4 +9246,56 @@ position/Hankel negativity components, or equivalently universal branch data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Supported binary quadratics give Hankel negativity}
+
+\paragraph{Gap targeted.}
+The rank-two route still lacked a direct formal bridge from a negative residual
+square of an explicitly supported quadratic
+\[
+r x^2+sxy+t y^2
+\]
+to the binary Hankel negativity predicate used by the normalized-kernel branch
+machinery.
+
+\paragraph{Lean progress.}
+Added the exact expansion
+\[
+\texttt{binaryRestriction\_quadraticCombination\_sq\_eq\_C}
+\]
+and the evaluation identity
+\[
+\texttt{binaryRestriction\_hankelQuad\_eval\_eq}.
+\]
+These prove that the residual square evaluation of
+\(r x^2+sxy+t y^2\) is exactly the Hankel quadratic form associated to the
+binary restriction coefficients.  The theorem
+\[
+\texttt{binaryHankelNegativeValue\_of\_quadraticCombination}
+\]
+then packages any such negative square as
+\(\texttt{HasBinaryHankelNegativeValue}\).
+
+\paragraph{Strategy change.}
+The remaining rank-two negativity problem can now be attacked by producing
+coordinates for the negative supported quadratic in the span
+\(\{x^2,xy,y^2\}\), rather than by reasoning directly about the Hankel matrix.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove rank-case apolar support bounds and construct the rank-two normalized
+position/Hankel negativity components.  For the latter, the next local target is
+to derive explicit \(r,s,t\) coordinates for a negative quadratic in
+\(\operatorname{span}\{x^2,xy,y^2\}\).
+
+No Julia numerical claims were used in this round.
+
 \end{document}

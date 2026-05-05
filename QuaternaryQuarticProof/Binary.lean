@@ -783,6 +783,15 @@ theorem residualEval_mul_four
   simp
   ring
 
+theorem residualEval_mul_two
+    (B : DotForm) (q s : Poly) :
+    B (q * (2 : Poly)) s = 2 * B q s := by
+  have hq : q * (2 : Poly) = q + q := by
+    ring
+  rw [hq]
+  simp
+  ring
+
 theorem residualEval_mul_six
     (B : DotForm) (q s : Poly) :
     B (q * (6 : Poly)) s = 6 * B q s := by
@@ -796,6 +805,13 @@ theorem residualEval_C_mul_mul_four
     (B : DotForm) (r : ℝ) (q s : Poly) :
     B ((MvPolynomial.C r * q) * (4 : Poly)) s = 4 * r * B q s := by
   rw [residualEval_mul_four]
+  rw [residualEval_C_mul]
+  ring
+
+theorem residualEval_C_mul_mul_two
+    (B : DotForm) (r : ℝ) (q s : Poly) :
+    B ((MvPolynomial.C r * q) * (2 : Poly)) s = 2 * r * B q s := by
+  rw [residualEval_mul_two]
   rw [residualEval_C_mul]
   ring
 
@@ -853,6 +869,63 @@ theorem binaryRestriction_eval_eq
     binaryRestrictionCoeffC, binaryRestrictionCoeffD, binaryRestrictionCoeffE,
     binaryQuarticEval]
   ring
+
+theorem binaryRestriction_quadraticCombination_sq_eq_C
+    (x y : linSubmodule) (r s t : ℝ) :
+    (((r • linProduct x x + s • linProduct x y + t • linProduct y y :
+        quadSubmodule).1)^2) =
+      MvPolynomial.C (r^2) * (linProduct x x : quadSubmodule).1^2 +
+        (MvPolynomial.C (r * s) *
+            ((linProduct x x : quadSubmodule).1 *
+              (linProduct x y : quadSubmodule).1)) * 2 +
+          (MvPolynomial.C (r * t) *
+              (linProduct x y : quadSubmodule).1^2) * 2 +
+            MvPolynomial.C (s^2) * (linProduct x y : quadSubmodule).1^2 +
+              (MvPolynomial.C (s * t) *
+                ((linProduct x y : quadSubmodule).1 *
+                  (linProduct y y : quadSubmodule).1)) * 2 +
+                MvPolynomial.C (t^2) * (linProduct y y : quadSubmodule).1^2 := by
+  simp [linProduct, Algebra.smul_def]
+  ring_nf
+
+theorem binaryRestriction_hankelQuad_eval_eq
+    (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule)
+    (r s t : ℝ) :
+    B (((r • linProduct x x + s • linProduct x y + t • linProduct y y :
+        quadSubmodule).1)^2) (residual p u) =
+      binaryHankelQuad
+        (binaryRestrictionCoeffA B p u x)
+        (binaryRestrictionCoeffB B p u x y)
+        (binaryRestrictionCoeffC B p u x y)
+        (binaryRestrictionCoeffD B p u x y)
+        (binaryRestrictionCoeffE B p u y) r s t := by
+  rw [binaryRestriction_quadraticCombination_sq_eq_C]
+  simp only [map_add, LinearMap.add_apply]
+  rw [residualEval_C_mul]
+  rw [residualEval_C_mul_mul_two]
+  rw [residualEval_C_mul_mul_two]
+  rw [residualEval_C_mul]
+  rw [residualEval_C_mul_mul_two]
+  rw [residualEval_C_mul]
+  simp [binaryRestrictionCoeffA, binaryRestrictionCoeffB,
+    binaryRestrictionCoeffC, binaryRestrictionCoeffD, binaryRestrictionCoeffE,
+    binaryHankelQuad]
+  ring
+
+theorem binaryHankelNegativeValue_of_quadraticCombination
+    {B : DotForm} {p : Poly} {u : RankSevenVec} {x y : linSubmodule}
+    {r s t : ℝ}
+    (hneg :
+      B (((r • linProduct x x + s • linProduct x y + t • linProduct y y :
+          quadSubmodule).1)^2) (residual p u) < 0) :
+    HasBinaryHankelNegativeValue
+      (binaryRestrictionCoeffA B p u x)
+      (binaryRestrictionCoeffB B p u x y)
+      (binaryRestrictionCoeffC B p u x y)
+      (binaryRestrictionCoeffD B p u x y)
+      (binaryRestrictionCoeffE B p u y) := by
+  refine ⟨r, s, t, ?_⟩
+  rwa [← binaryRestriction_hankelQuad_eval_eq B p u x y r s t]
 
 theorem binaryRestriction_eval_eq_of_pow_expansion
     (B : DotForm) (p : Poly) (u : RankSevenVec) (x y : linSubmodule)
