@@ -15074,4 +15074,47 @@ subspaces of the six-dimensional quadratic space.
 
 No Julia numerical claims were used in this round.
 
+\section*{Codimension-zero Macaulay cokernel case}
+
+\paragraph{Gap targeted.}
+The special three-variable Macaulay bound has cases according to the
+degree-two quotient dimension.  The codimension-zero case should be closed
+directly from the full product-space theorem: if the quadratic subspace is all
+of \(\operatorname{Sym}^2(A)\), then its degree-three product span is all of
+\(A\operatorname{Sym}^2(A)\).
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved quotient-zero lemmas
+for the quadratic and cubic product spaces:
+\[
+\texttt{finrank\_symSquare\_quotient\_eq\_zero\_of\_eq\_symSquare},
+\qquad
+\texttt{finrank\_linQuadProductSubmodule\_quotient\_eq\_zero\_of\_eq\_symSquare}.
+\]
+Combined them as
+\[
+\texttt{macaulay\_cokernel\_bound\_of\_eq\_symSquare}.
+\]
+Also proved the converse bridge
+\[
+\texttt{eq\_symSquare\_of\_finrank\_symSquare\_quotient\_eq\_zero},
+\]
+so a zero-dimensional degree-two quotient forces the quadratic subspace to be
+the full symmetric square.  This yields
+\[
+\texttt{macaulay\_cokernel\_bound\_of\_finrank\_symSquare\_quotient\_eq\_zero}.
+\]
+
+\paragraph{Strategy change.}
+The finite Macaulay count is now closed for \(q_2=0\).  The remaining finite
+cases are \(q_2=1\) and \(q_2=2\), where a hyperplane or codimension-two
+subspace of the six quadrics must generate a cubic product span of
+codimension at most one or two.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

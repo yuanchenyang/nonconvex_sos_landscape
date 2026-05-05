@@ -1631,6 +1631,86 @@ theorem finrank_linQuadProductSubmodule_symSquare_eq_ten_of_isCompl_line
   rw [← span_basis_cubic_products_eq_linQuadProductSubmodule_symSquare β]
   exact hspan_finrank
 
+theorem finrank_symSquare_quotient_eq_zero_of_eq_symSquare
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    (hP : P = symSquareSubmodule A) :
+    Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 0 := by
+  subst P
+  simp
+
+theorem finrank_linQuadProductSubmodule_quotient_eq_zero_of_eq_symSquare
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    (hP : P = symSquareSubmodule A) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) = 0 := by
+  subst P
+  simp
+
+theorem macaulay_cokernel_bound_of_eq_symSquare
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    (hP : P = symSquareSubmodule A) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) := by
+  rw [finrank_linQuadProductSubmodule_quotient_eq_zero_of_eq_symSquare hP,
+    finrank_symSquare_quotient_eq_zero_of_eq_symSquare hP]
+
+theorem eq_symSquare_of_finrank_symSquare_quotient_eq_zero
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    (hP_le : P ≤ symSquareSubmodule A)
+    (hquot :
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 0) :
+    P = symSquareSubmodule A := by
+  apply le_antisymm hP_le
+  intro q hq
+  let S : Submodule ℝ (symSquareSubmodule A) :=
+    P.comap (symSquareSubmodule A).subtype
+  have hSfin :
+      Module.finrank ℝ S =
+        Module.finrank ℝ (symSquareSubmodule A) := by
+    have hdim := Submodule.finrank_quotient (R := ℝ) (S := ℝ) S
+    have hquotS :
+        Module.finrank ℝ ((symSquareSubmodule A) ⧸ S) = 0 := hquot
+    rw [hquotS] at hdim
+    have hle :
+        Module.finrank ℝ S ≤
+          Module.finrank ℝ (symSquareSubmodule A) := by
+      simpa [finrank_top] using
+        (Submodule.finrank_mono (show S ≤ (⊤ : Submodule ℝ (symSquareSubmodule A)) from le_top))
+    omega
+  have hStop : S = ⊤ := Submodule.eq_top_of_finrank_eq hSfin
+  have hmemS : (⟨q, hq⟩ : symSquareSubmodule A) ∈ S := by
+    rw [hStop]
+    trivial
+  exact hmemS
+
+theorem macaulay_cokernel_bound_of_finrank_symSquare_quotient_eq_zero
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    (hP_le : P ≤ symSquareSubmodule A)
+    (hquot :
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) = 0) :
+    Module.finrank ℝ
+        (linQuadProductSubmodule A (symSquareSubmodule A) ⧸
+          (linQuadProductSubmodule A P).comap
+            (linQuadProductSubmodule A (symSquareSubmodule A)).subtype) ≤
+      Module.finrank ℝ
+        (symSquareSubmodule A ⧸
+          P.comap (symSquareSubmodule A).subtype) := by
+  exact macaulay_cokernel_bound_of_eq_symSquare
+    (eq_symSquare_of_finrank_symSquare_quotient_eq_zero hP_le hquot)
+
 theorem exists_rank_two_adapted_basis
     {A W : Submodule ℝ linSubmodule} (hAW : IsCompl A W)
     (β : Module.Basis (Fin 2) ℝ A) {x y : linSubmodule}
