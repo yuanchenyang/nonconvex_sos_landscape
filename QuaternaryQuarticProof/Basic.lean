@@ -2089,6 +2089,36 @@ theorem hasRankCaseProductFreeApolarData_of_kernelDecompositionApolarData
       residualEval_sq_lt_of_eq_add_mem_ker_catalecticantMap
         (B := B) (p := p) (u := u) hqdecomp hqK hqneg⟩
 
+theorem hasRankCaseKernelEquationApolarData_of_productFreeApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseProductFreeApolarData B p u hu) :
+    HasRankCaseKernelEquationApolarData B p u hu := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    exact (hdata1 hrank1).1
+  constructor
+  · intro hrank2
+    exact ⟨(hdata2 hrank2).1, (hdata2 hrank2).2⟩
+  · intro hrank3
+    exact (hdata3 hrank3).1
+
+theorem hasRankCaseKernelEquationApolarData_of_rankOneFreeApolarData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hdata : HasRankCaseRankOneFreeApolarData B p u hu) :
+    HasRankCaseKernelEquationApolarData B p u hu := by
+  rcases hdata with ⟨hdata1, hdata2, hdata3⟩
+  constructor
+  · intro hrank1
+    exact hdata1 hrank1
+  constructor
+  · intro hrank2
+    exact hdata2 hrank2
+  · intro hrank3
+    exact (hdata3 hrank3).1
+
 theorem hasRankCaseBinaryFormAndAnnihilatorData_of_kernelDecompositionApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

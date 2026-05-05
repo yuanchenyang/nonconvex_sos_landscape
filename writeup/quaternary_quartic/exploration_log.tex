@@ -8070,4 +8070,44 @@ and the binary change-of-basis classification.
 
 No Julia numerical claims were used in this round.
 
+\section*{Project broader rank-case packages to kernel-equation data}
+
+\paragraph{Gap targeted.}
+The minimal kernel-equation apolar interface introduced in the previous round
+was not yet connected to the nearby broader rank-case packages that already
+contain the same exact-rank bounds and rank-two kernel-equation cases.
+
+\paragraph{Lean progress.}
+Added projections
+\[
+\texttt{hasRankCaseKernelEquationApolarData\_of\_productFreeApolarData}
+\]
+and
+\[
+\texttt{hasRankCaseKernelEquationApolarData\_of\_rankOneFreeApolarData}.
+\]
+Both forget the extra rank-one or rank-three data and retain only the exact
+annihilator bounds plus rank-two kernel equations needed by the minimal route.
+
+\paragraph{Strategy change.}
+The proof can now pass through the minimal kernel-equation interface from
+several existing rank-case packages, reducing coupling to older stronger
+interfaces.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The remaining mathematical work is still proving the minimal
+kernel-equation apolar data from the apolar support and binary
+change-of-basis arguments.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
