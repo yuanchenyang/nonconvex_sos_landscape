@@ -1644,6 +1644,22 @@ theorem hasLowRankApolarSupportTheorem_of_decomposition
     ⟨A, _W, hAann, _hAW, _hWdim, hAdim⟩
   exact ⟨A, hAann, hAdim⟩
 
+theorem hasLowRankApolarSupportDecomposition_of_lowRankApolarSupportTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hsupport : HasLowRankApolarSupportTheorem B p u) :
+    HasLowRankApolarSupportDecomposition B p u := by
+  intro k hk hrank_le
+  exact exists_support_complement_of_hasLinearAnnihilatorCodimAtMost
+    (B := B) (p := p) (u := u) (k := k) (by omega)
+    (hsupport k hk hrank_le)
+
+theorem hasLowRankApolarSupportTheorem_iff_decomposition
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarSupportTheorem B p u ↔
+      HasLowRankApolarSupportDecomposition B p u :=
+  ⟨hasLowRankApolarSupportDecomposition_of_lowRankApolarSupportTheorem,
+    hasLowRankApolarSupportTheorem_of_decomposition⟩
+
 theorem hasRankCaseApolarSupportBounds_of_lowRankApolarSupportDecomposition
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hdecomp : HasLowRankApolarSupportDecomposition B p u) :
@@ -2403,6 +2419,19 @@ theorem residual_eq_zero_of_supportDecomposition_and_normalizedHankelData
     (B := B) hu hp hsocp hdecomp
     (hasRankTwoExistentialCanonicalKernelData_of_normalizedHankelData hdata)
 
+theorem residual_eq_zero_of_lowRankApolarSupportTheorem_and_normalizedHankelData
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hsupport : HasLowRankApolarSupportTheorem B p u)
+    (hdata : HasRankTwoExistentialNormalizedHankelData B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_supportDecomposition_and_normalizedHankelData
+    (B := B) hu hp hsocp
+    (hasLowRankApolarSupportDecomposition_of_lowRankApolarSupportTheorem hsupport)
+    hdata
+
 theorem residual_eq_zero_of_rankCaseSupportData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -2879,6 +2908,29 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_supportDecomposition_and
   exact residual_eq_zero_of_supportDecomposition_and_normalizedHankelData
     (B := B) hu hp hsocp
     (hdecomp B p u hu hB hp hsocp)
+    (hdata B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarSupportTheorem_and_normalizedHankelData
+    (hsupport :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarSupportTheorem B p u)
+    (hdata :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialNormalizedHankelData B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_lowRankApolarSupportTheorem_and_normalizedHankelData
+    (B := B) hu hp hsocp
+    (hsupport B p u hu hB hp hsocp)
     (hdata B p u hu hB hp hsocp)
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_rankCaseSupportData

@@ -7609,4 +7609,50 @@ blueprint's binary change-of-basis argument.
 
 No Julia numerical claims were used in this round.
 
+\section*{Support theorem to support decomposition}
+
+\paragraph{Gap targeted.}
+The normalized Hankel route still asked for a full support decomposition, while
+Lemma~\ref{lem:low-rank-support} is naturally formalized first as a
+codimension statement for the linear annihilator.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasLowRankApolarSupportDecomposition\_of\_lowRankApolarSupportTheorem}
+\]
+by choosing a complement to the annihilator subspace supplied by the support
+theorem.  Packaged the equivalence as
+\[
+\texttt{hasLowRankApolarSupportTheorem\_iff\_decomposition}.
+\]
+Then added the residual and root reductions
+\[
+\texttt{residual\_eq\_zero\_of\_lowRankApolarSupportTheorem\_and\_normalizedHankelData}
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_lowRankApolarSupportTheorem\_and\_normalizedHankelData}.
+\]
+
+\paragraph{Strategy change.}
+The final route no longer needs the support input to construct the complement
+itself.  It suffices to prove the blueprint's low-rank apolar support theorem
+and the rank-two normalized Hankel data theorem.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The open theorem-level inputs are now exactly the low-rank apolar support
+theorem and the rank-two normalized Hankel data theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
