@@ -5058,4 +5058,42 @@ support reduction from low catalecticant rank.
 
 No Julia numerical claims were used in this round.
 
+\section*{Reducing rank-two disjointness to the selected binary plane}
+
+\paragraph{Gap targeted.}
+The rank-two component constructor still required product-disjointness for
+every nonzero \(z\in W\), while the binary normal-form proof naturally works
+inside the chosen coordinate plane \(\operatorname{span}\{x,y\}\).  Since the
+previous rounds proved that an independent \(x,y\in W\) span \(W\), this
+disjointness obligation can be stated on the binary plane instead.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankTwoSupportComponentHypothesis\_of\_independent\_binary\_plane\_cases}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It chooses
+\(y\in W\setminus\mathbb{R}x\), identifies
+\[
+\operatorname{span}\{x,y\}=W
+\]
+using \(\texttt{span\_rank\_two\_support\_pair\_eq}\), and then converts a
+disjointness hypothesis over the binary span into the original
+\(\texttt{HasRankTwoSupportComponentHypothesis}\) field.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The rank-two branch can now be proved using binary-plane data only: exact
+\(\dim\Sym^2A\), a packaged kernel-equation case, and disjointness on
+\(\operatorname{span}\{x,y\}\).  The difficult remaining part is deriving
+those binary-plane facts from the apolar support theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

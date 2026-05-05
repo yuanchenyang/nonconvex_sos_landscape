@@ -557,6 +557,60 @@ theorem hasRankTwoSupportComponentHypothesis_of_independent_binary_cases
         (hcase A W x y hAann hAW hxW hyW hynot hx hAdim hWdim))
     hdisj
 
+theorem hasRankTwoSupportComponentHypothesis_of_independent_binary_plane_cases
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hSym :
+      ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              (x : Poly) ≠ 0 →
+                Module.finrank ℝ A = 2 →
+                  Module.finrank ℝ W = 2 →
+                    Module.finrank ℝ (symSquareSubmodule A) = 3)
+    (hcase :
+      ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              y ∈ W →
+                y ∉ ℝ ∙ x →
+                  (x : Poly) ≠ 0 →
+                    Module.finrank ℝ A = 2 →
+                      Module.finrank ℝ W = 2 →
+                        HasBinaryRestrictionKernelEquationCase B p u x y)
+    (hdisj :
+      ∀ (A W : Submodule ℝ linSubmodule) (x y z : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              y ∈ W →
+                y ∉ ℝ ∙ x →
+                  (x : Poly) ≠ 0 →
+                    Module.finrank ℝ A = 2 →
+                      Module.finrank ℝ W = 2 →
+                        z ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) →
+                          (z : Poly) ≠ 0 →
+                            LinearMap.range (linProductLeftMapOn z A) ⊓
+                                symSquareSubmodule A =
+                              ⊥) :
+    HasRankTwoSupportComponentHypothesis B p u := by
+  intro A W x hAann hAW hxW hx hAdim hWdim
+  rcases exists_rank_two_complement_second_direction
+      (W := W) (x := x) hx hWdim with
+    ⟨y, hyW, hynot⟩
+  have hspan : Submodule.span ℝ ({x, y} : Set linSubmodule) = W :=
+    span_rank_two_support_pair_eq hx hxW hyW hynot hWdim
+  exact ⟨y, hyW, hSym A W x hAann hAW hxW hx hAdim hWdim,
+    binaryRestriction_lowRankNegativeNormalForm_of_kernelEquationCase
+      (hcase A W x y hAann hAW hxW hyW hynot hx hAdim hWdim),
+    fun z hzW hz =>
+      hdisj A W x y z hAann hAW hxW hyW hynot hx hAdim hWdim
+        (by
+          rw [hspan]
+          exact hzW)
+        hz⟩
+
 theorem hasRankOneSupportComponentHypothesis_of_self_negative
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hSym :
