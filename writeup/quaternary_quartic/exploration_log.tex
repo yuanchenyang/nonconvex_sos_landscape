@@ -14500,4 +14500,39 @@ split target.
 
 No Julia numerical claims were used in this round.
 
+\section*{Split blueprint Hilbert data}
+
+\paragraph{Gap targeted.}
+The global blueprint Hilbert package bundled its two branches together.  To
+make the next proof work independently on each branch, the rank-two quotient
+growth data and rank-three bad-branch exact-sequence data should be available
+as separate global targets.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{HasGlobalRankTwoApolarQuotientGrowthData},
+\qquad
+\texttt{HasGlobalRankThreeApolarBadBranchExactSequenceData}.
+\]
+Proved
+\[
+\texttt{globalLowRankApolarBlueprintHilbertData\_iff\_splitGlobalBlueprintHilbertData}
+\]
+and added the root equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoQuotientGrowth\_and\_rankThreeBadBranchExactSequenceData}.
+\]
+
+\paragraph{Strategy change.}
+The remaining blueprint Hilbert theorem is now decomposed into the rank-two
+quotient-growth branch and the rank-three bad-branch exact-sequence branch.
+This gives future rounds a smaller target for each side of the low
+catalecticant rank argument.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

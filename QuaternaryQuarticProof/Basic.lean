@@ -644,6 +644,22 @@ def HasGlobalLowRankApolarBlueprintLocalData : Prop :=
         IsSOCP B p u →
           HasLowRankApolarBlueprintLocalData B p u
 
+def HasGlobalRankTwoApolarQuotientGrowthData : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankTwoApolarQuotientGrowthData B p u
+
+def HasGlobalRankThreeApolarBadBranchExactSequenceData : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankThreeApolarBadBranchExactSequenceData B p u
+
 def HasRankTwoUniversalKernelEquationData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
@@ -8657,6 +8673,51 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarBlue
         (globalLowRankApolarEssentialQuotientTheorem_of_quaternaryQuartic_rankSeven_no_spurious_socp
           hmain),
     quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarBlueprintLocalData⟩
+
+theorem globalLowRankApolarBlueprintHilbertData_of_splitGlobalBlueprintHilbertData
+    (hdata2 : HasGlobalRankTwoApolarQuotientGrowthData)
+    (hdata3 : HasGlobalRankThreeApolarBadBranchExactSequenceData) :
+    HasGlobalLowRankApolarBlueprintHilbertData := by
+  intro B p u hu hB hp hsocp
+  exact ⟨hdata2 B p u hu hB hp hsocp,
+    hdata3 B p u hu hB hp hsocp⟩
+
+theorem splitGlobalBlueprintHilbertData_of_globalLowRankApolarBlueprintHilbertData
+    (hdata : HasGlobalLowRankApolarBlueprintHilbertData) :
+    HasGlobalRankTwoApolarQuotientGrowthData ∧
+      HasGlobalRankThreeApolarBadBranchExactSequenceData := by
+  exact ⟨
+    fun B p u hu hB hp hsocp => (hdata B p u hu hB hp hsocp).1,
+    fun B p u hu hB hp hsocp => (hdata B p u hu hB hp hsocp).2⟩
+
+theorem globalLowRankApolarBlueprintHilbertData_iff_splitGlobalBlueprintHilbertData :
+    HasGlobalLowRankApolarBlueprintHilbertData ↔
+      HasGlobalRankTwoApolarQuotientGrowthData ∧
+        HasGlobalRankThreeApolarBadBranchExactSequenceData :=
+  ⟨splitGlobalBlueprintHilbertData_of_globalLowRankApolarBlueprintHilbertData,
+    fun hdata =>
+      globalLowRankApolarBlueprintHilbertData_of_splitGlobalBlueprintHilbertData
+        hdata.1 hdata.2⟩
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoQuotientGrowth_and_rankThreeBadBranchExactSequenceData
+    (hdata2 : HasGlobalRankTwoApolarQuotientGrowthData)
+    (hdata3 : HasGlobalRankThreeApolarBadBranchExactSequenceData) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarBlueprintHilbertData
+    (globalLowRankApolarBlueprintHilbertData_of_splitGlobalBlueprintHilbertData
+      hdata2 hdata3)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoQuotientGrowth_and_rankThreeBadBranchExactSequenceData :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoApolarQuotientGrowthData ∧
+        HasGlobalRankThreeApolarBadBranchExactSequenceData :=
+  ⟨fun hmain =>
+      splitGlobalBlueprintHilbertData_of_globalLowRankApolarBlueprintHilbertData
+        ((quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarBlueprintHilbertData).mp
+          hmain),
+    fun hdata =>
+      quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoQuotientGrowth_and_rankThreeBadBranchExactSequenceData
+        hdata.1 hdata.2⟩
 
 theorem globalLowRankApolarAnnihilatorMapTheorem_of_globalLowRankApolarEssentialQuotientTheorem
     (hquot : HasGlobalLowRankApolarEssentialQuotientTheorem) :
