@@ -444,6 +444,12 @@ section OneDimensionalCoordinate
 
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
 
+theorem smul_eq_smul_of_linearMap_to_field_ker_eq_bot
+    {T : V →ₗ[K] K} (hT : LinearMap.ker T = ⊥) (a b : V) :
+    T a • b = T b • a := by
+  apply LinearMap.ker_eq_bot.mp hT
+  simp [mul_comm]
+
 theorem exists_linearMap_to_field_ker_eq_bot_of_finrank_eq_one
     (hV : Module.finrank K V = 1) :
     ∃ T : V →ₗ[K] K, LinearMap.ker T = ⊥ := by
@@ -452,6 +458,40 @@ theorem exists_linearMap_to_field_ker_eq_bot_of_finrank_eq_one
       (R := K) (M := V) hV with
     ⟨e⟩
   exact ⟨e.symm.toLinearMap, LinearMap.ker_eq_bot.mpr e.symm.injective⟩
+
+theorem coordinate_mul_bilin_eq_coordinate_mul_bilin_of_ker_eq_bot
+    {T : V →ₗ[K] K} (hT : LinearMap.ker T = ⊥)
+    (C : V →ₗ[K] Module.Dual K V) (a b r s : V) :
+    T r * T s * C a b = T a * T b * C r s := by
+  have hra : T r • a = T a • r :=
+    smul_eq_smul_of_linearMap_to_field_ker_eq_bot hT r a
+  have hsb : T s • b = T b • s :=
+    smul_eq_smul_of_linearMap_to_field_ker_eq_bot hT s b
+  calc
+    T r * T s * C a b =
+        C (T r • a) (T s • b) := by
+          simp [mul_assoc, mul_left_comm]
+    _ = C (T a • r) (T b • s) := by
+          rw [hra, hsb]
+    _ = T a * T b * C r s := by
+          simp [mul_assoc, mul_left_comm]
+
+theorem coordinate_mul_eq_of_bilin_eq_of_ker_eq_bot
+    {T : V →ₗ[K] K} (hT : LinearMap.ker T = ⊥)
+    (C : V →ₗ[K] Module.Dual K V) {r s a b c d : V}
+    (hrs : C r s ≠ 0)
+    (habcd : C a b = C c d) :
+    T a * T b = T c * T d := by
+  have h_ab :=
+    coordinate_mul_bilin_eq_coordinate_mul_bilin_of_ker_eq_bot
+      (T := T) hT C a b r s
+  have h_cd :=
+    coordinate_mul_bilin_eq_coordinate_mul_bilin_of_ker_eq_bot
+      (T := T) hT C c d r s
+  have hmul : T a * T b * C r s = T c * T d * C r s := by
+    rw [← h_ab, ← h_cd, habcd]
+  exact (mul_right_inj' hrs).mp
+    (by simpa [mul_assoc, mul_comm, mul_left_comm] using hmul)
 
 end OneDimensionalCoordinate
 

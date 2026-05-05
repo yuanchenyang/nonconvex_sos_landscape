@@ -12010,4 +12010,47 @@ rank-one catalecticant hypothesis is the next rank-one blocker.
 
 No Julia numerical claims were used in this round.
 
+\section*{One-dimensional pairing identity reduction}
+
+\paragraph{Gap targeted.}
+The rank-one scalarization bridge left a reassociation identity for scalarized
+linear products.  In the quotient proof this identity should follow by
+comparing catalecticant pairings: in a one-dimensional coordinate, a nonzero
+bilinear pairing turns equality of pairings into equality of coordinate
+products.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof.Dimension}:
+\[
+\texttt{smul\_eq\_smul\_of\_linearMap\_to\_field\_ker\_eq\_bot},
+\]
+\[
+\texttt{coordinate\_mul\_bilin\_eq\_coordinate\_mul\_bilin\_of\_ker\_eq\_bot},
+\]
+and:
+\[
+\texttt{coordinate\_mul\_eq\_of\_bilin\_eq\_of\_ker\_eq\_bot}.
+\]
+These lemmas formalize the one-dimensional coordinate algebra: if \(T:V\to K\)
+has zero kernel, then all vectors are proportional in the coordinate \(T\);
+therefore equality under a nonzero bilinear pairing implies equality of the
+corresponding coordinate products.
+
+\paragraph{Strategy change.}
+The remaining rank-one identity can now be attacked by constructing the
+quotient catalecticant pairing and proving two facts: it is nonzero in the
+rank-one case, and the two pairings
+\[
+C([wx],[yz]) \quad\text{and}\quad C([wy],[xz])
+\]
+are equal by commutativity/associativity of polynomial multiplication.  The
+new abstract lemma will then convert that equality into the scalarized
+reassociation identity needed by the annihilator-map bridge.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Dimension} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
