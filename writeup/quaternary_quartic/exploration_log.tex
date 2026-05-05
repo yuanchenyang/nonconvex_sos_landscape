@@ -11934,4 +11934,36 @@ linear-annihilator map.
 
 No Julia numerical claims were used in this round.
 
+\section*{One-dimensional quotient coordinate}
+
+\paragraph{Gap targeted.}
+To apply the scalar rank-one bilinear core to the quotient
+\(\Quad/K\), the rank-one quotient must be converted to a scalar coordinate
+with trivial kernel.  This is the coordinate map used by the injective
+postcomposition bridge.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{exists\_linearMap\_to\_field\_ker\_eq\_bot\_of\_finrank\_eq\_one}.
+\]
+The lemma states that any vector space of finrank one over a field admits a
+linear map to the base field with zero kernel.  It uses the existing mathlib
+linear equivalence for one-dimensional free modules.
+
+\paragraph{Strategy change.}
+For the rank-one catalecticant case, the quotient dimension theorem
+\[
+\texttt{finrank\_quotient\_ker\_catalecticantMap\_eq\_one\_of\_rank\_one}
+\]
+can now supply the injective scalar coordinate needed to scalarize
+\texttt{linearAnnihilatorMap}.  The remaining bridge is the quartic
+reassociation identity for that scalarized map.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Dimension} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

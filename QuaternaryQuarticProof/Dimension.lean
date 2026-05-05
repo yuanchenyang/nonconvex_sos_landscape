@@ -440,6 +440,21 @@ theorem finrank_range_le_one_of_scalarized_postcomp
 
 end Postcomposition
 
+section OneDimensionalCoordinate
+
+variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
+
+theorem exists_linearMap_to_field_ker_eq_bot_of_finrank_eq_one
+    (hV : Module.finrank K V = 1) :
+    ∃ T : V →ₗ[K] K, LinearMap.ker T = ⊥ := by
+  letI : Module.Free K V := Module.Free.of_divisionRing K V
+  rcases Module.nonempty_linearEquiv_of_finrank_eq_one
+      (R := K) (M := V) hV with
+    ⟨e⟩
+  exact ⟨e.symm.toLinearMap, LinearMap.ker_eq_bot.mpr e.symm.injective⟩
+
+end OneDimensionalCoordinate
+
 section ExactSubspaces
 
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
