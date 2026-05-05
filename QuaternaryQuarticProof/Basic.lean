@@ -2909,6 +2909,35 @@ theorem hasRankCaseKernelEquationApolarData_of_kernelDecompositionApolarData
   · intro hrank3
     exact (hdata3 hrank3).1
 
+theorem hasRankCaseKernelEquationApolarData_of_lowRankApolarAnnihilatorMapTheorem_and_universalKernelEquationData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hann : HasLowRankApolarAnnihilatorMapTheorem B p u)
+    (hcases : HasRankTwoUniversalKernelEquationData B p u) :
+    HasRankCaseKernelEquationApolarData B p u hu := by
+  have hbounds : HasRankCaseAnnihilatorMapBounds B p u :=
+    hasRankCaseAnnihilatorMapBounds_of_lowRankApolarAnnihilatorMapTheorem hann
+  rcases hbounds with ⟨hbound1, hbound2, hbound3⟩
+  constructor
+  · intro hrank1
+    exact hbound1 hrank1
+  constructor
+  · intro hrank2
+    exact ⟨hbound2 hrank2, hcases hrank2⟩
+  · intro hrank3
+    exact hbound3 hrank3
+
+theorem hasRankCaseKernelEquationApolarData_of_lowRankApolarSupportTheorem_and_universalKernelEquationData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hsupport : HasLowRankApolarSupportTheorem B p u)
+    (hcases : HasRankTwoUniversalKernelEquationData B p u) :
+    HasRankCaseKernelEquationApolarData B p u hu :=
+  hasRankCaseKernelEquationApolarData_of_lowRankApolarAnnihilatorMapTheorem_and_universalKernelEquationData
+    (B := B) (p := p) (u := u) (hu := hu)
+    (hasLowRankApolarAnnihilatorMapTheorem_of_supportTheorem hsupport)
+    hcases
+
 theorem hasRankCaseAnnihilatorMapBounds_of_kernelEquationApolarData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     {hu : IsAdmissiblePoint u}

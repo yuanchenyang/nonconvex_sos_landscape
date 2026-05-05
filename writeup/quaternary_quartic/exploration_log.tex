@@ -9854,4 +9854,46 @@ removed one routing dependency between those two inputs and the final theorem.
 
 No Julia numerical claims were used in this round.
 
+\section*{Kernel-equation apolar data from low-rank apolar theorem}
+
+\paragraph{Gap targeted.}
+The final scaffold has a rank-case kernel-equation apolar data package, while
+the likely remaining inputs are a low-rank apolar theorem and universal rank-two
+kernel equations.  These were connected at the residual theorem level, but not
+as a reusable rank-case data object.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseKernelEquationApolarData\_of\_lowRankApolarAnnihilatorMapTheorem\_and\_universalKernelEquationData}
+\]
+and
+\[
+\texttt{hasRankCaseKernelEquationApolarData\_of\_lowRankApolarSupportTheorem\_and\_universalKernelEquationData}.
+\]
+The first theorem converts the low-rank annihilator-map theorem into the
+rank-case annihilator-map bounds and combines the rank-two branch with the
+universal kernel-equation data.  The second theorem uses the existing support
+to annihilator-map equivalence.
+
+\paragraph{Strategy change.}
+Once the two remaining mathematical inputs are available, they can now be
+packaged into the existing rank-case kernel-equation apolar scaffold directly,
+not only consumed by a specialized theorem route.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The low-rank apolar theorem and rank-two binary kernel equations still need
+their actual mathematical formalizations.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
