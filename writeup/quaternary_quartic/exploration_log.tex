@@ -11012,4 +11012,58 @@ to transformed binary Hankel canonical data.
 
 No Julia numerical claims were used in this round.
 
+\section*{Elliptic binary kernel diagonalization}
+
+\paragraph{Gap targeted.}
+After the hyperbolic scalar branch, the remaining binary discriminant branch is
+the elliptic case \(D<0\).  The first blueprint step is to complete the square
+and remove the mixed term.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{elliptic\_xCoeff\_ne\_zero},
+\quad
+\texttt{elliptic\_shearX\_mixedCoeff\_eq\_zero},
+\]
+\[
+\texttt{elliptic\_shearX\_ySqCoeff\_eq\_neg\_discriminant\_div},
+\quad
+\texttt{isBinaryQuadraticPullback\_elliptic\_shearX\_to\_diagonal},
+\]
+and
+\[
+\texttt{elliptic\_shearX\_diagonal\_yCoeff\_ne\_zero}.
+\]
+For \(D<0\), the coefficient \(r\) is nonzero, and the shear
+\[
+x=X-\frac{s}{2r}Y,\qquad y=Y
+\]
+transforms \(r x^2+sxy+ty^2\) into
+\[
+rX^2-\frac{D}{4r}Y^2.
+\]
+
+\paragraph{Strategy change.}
+The elliptic branch is now reduced to a diagonal nondegenerate quadratic.  The
+next scalar normalization step is to rescale the diagonal terms to the
+\(X^2+Y^2\) canonical shape.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Binary} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.  The stable
+\texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the selected
+targets and found the root theorem, then failed only at the final axiom audit
+because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+The root theorem still needs genuine proofs of low-rank apolar support, the
+elliptic diagonal rescaling step, and the link from normalized quadratic
+pullbacks to transformed binary Hankel canonical data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

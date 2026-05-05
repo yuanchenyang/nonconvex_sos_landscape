@@ -334,6 +334,50 @@ theorem exists_binaryQuadraticPullback_hyperbolic_to_xy
   · exact exists_binaryQuadraticPullback_hyperbolic_to_xy_of_xCoeff_ne_zero
       (r := r) (s := s) (t := t) hr hdisc_pos
 
+theorem elliptic_xCoeff_ne_zero
+    {r s t : ℝ}
+    (hdisc_neg : binaryKernelDiscriminant r s t < 0) :
+    r ≠ 0 := by
+  intro hr
+  unfold binaryKernelDiscriminant at hdisc_neg
+  rw [hr] at hdisc_neg
+  nlinarith [sq_nonneg s]
+
+theorem elliptic_shearX_mixedCoeff_eq_zero
+    {r s : ℝ} (hr : r ≠ 0) :
+    2 * r * (-s / (2 * r)) + s = 0 := by
+  exact parabolic_shearX_mixedCoeff_eq_zero (r := r) (s := s) hr
+
+theorem elliptic_shearX_ySqCoeff_eq_neg_discriminant_div
+    {r s t : ℝ} (hr : r ≠ 0) :
+    r * (-s / (2 * r))^2 + s * (-s / (2 * r)) + t =
+      -binaryKernelDiscriminant r s t / (4 * r) := by
+  field_simp [hr]
+  unfold binaryKernelDiscriminant
+  ring
+
+theorem isBinaryQuadraticPullback_elliptic_shearX_to_diagonal
+    {r s t : ℝ}
+    (hdisc_neg : binaryKernelDiscriminant r s t < 0) :
+    IsBinaryQuadraticPullback r s t
+      r 0 (-binaryKernelDiscriminant r s t / (4 * r))
+      1 (-s / (2 * r)) 0 1 := by
+  have hr : r ≠ 0 := elliptic_xCoeff_ne_zero
+    (r := r) (s := s) (t := t) hdisc_neg
+  convert isBinaryQuadraticPullback_shearX r s t (-s / (2 * r)) using 1
+  · exact (elliptic_shearX_mixedCoeff_eq_zero (r := r) (s := s) hr).symm
+  · exact (elliptic_shearX_ySqCoeff_eq_neg_discriminant_div
+      (r := r) (s := s) (t := t) hr).symm
+
+theorem elliptic_shearX_diagonal_yCoeff_ne_zero
+    {r s t : ℝ}
+    (hdisc_neg : binaryKernelDiscriminant r s t < 0) :
+    -binaryKernelDiscriminant r s t / (4 * r) ≠ 0 := by
+  have hr : r ≠ 0 := elliptic_xCoeff_ne_zero
+    (r := r) (s := s) (t := t) hdisc_neg
+  have hD : binaryKernelDiscriminant r s t ≠ 0 := ne_of_lt hdisc_neg
+  exact div_ne_zero (neg_ne_zero.mpr hD) (mul_ne_zero (by norm_num) hr)
+
 def binaryHankelMul (a b c d e : ℝ) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ![a * v 0 + b * v 1 + c * v 2,
     b * v 0 + c * v 1 + d * v 2,
