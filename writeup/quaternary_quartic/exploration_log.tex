@@ -6865,4 +6865,39 @@ the other main blocker.
 
 No Julia numerical claims were used in this round.
 
+\section*{\(y^2\)-kernel nonzero column branch}
+
+\paragraph{Gap targeted.}
+The \(y^2\)-kernel branch of the binary classification requires \(b\ne0\).
+In the blueprint this comes from rank two of the Hankel matrix.
+
+\paragraph{Lean progress.}
+Added a concrete column-independence lemma
+\[
+\texttt{ySqKernel\_b\_ne\_zero\_of\_column\_linearIndependent}
+\]
+showing that linear independence of the first two specialized Hankel columns
+\[
+(a,b,0),\qquad (b,0,0)
+\]
+forces \(b\ne0\).  Added the corresponding normal-form constructor
+\[
+\texttt{HasBinaryLowRankNegativeNormalForm.ySqKernel\_of\_column\_linearIndependent}.
+\]
+
+\paragraph{Strategy change.}
+The \(y^2\)-case can now be closed from a local two-column independence
+certificate, avoiding a dependency on general matrix-rank infrastructure at
+this stage.
+
+\paragraph{Verification.}
+Pending the next Lean harness run.
+
+\paragraph{Remaining blockers.}
+The binary theorem still needs the global classification that supplies one of
+the three kernel cases and the relevant branch certificate.  The low-rank
+apolar support theorem remains open.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

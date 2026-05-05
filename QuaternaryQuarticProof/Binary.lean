@@ -90,6 +90,25 @@ theorem HasBinaryLowRankNegativeNormalForm.ySqKernel
     HasBinaryLowRankNegativeNormalForm a b 0 0 0 := by
   exact Or.inr (Or.inr (Or.inl ⟨rfl, rfl, rfl, hb⟩))
 
+theorem ySqKernel_b_ne_zero_of_column_linearIndependent
+    {a b : ℝ}
+    (hLI : LinearIndependent ℝ
+      ![(![a, b, 0] : Fin 3 → ℝ), (![b, 0, 0] : Fin 3 → ℝ)]) :
+    b ≠ 0 := by
+  intro hb
+  have hcol : (![b, 0, 0] : Fin 3 → ℝ) = 0 := by
+    ext i
+    fin_cases i <;> simp [hb]
+  exact (LinearIndependent.ne_zero (R := ℝ) (1 : Fin 2) hLI) hcol
+
+theorem HasBinaryLowRankNegativeNormalForm.ySqKernel_of_column_linearIndependent
+    {a b : ℝ}
+    (hLI : LinearIndependent ℝ
+      ![(![a, b, 0] : Fin 3 → ℝ), (![b, 0, 0] : Fin 3 → ℝ)]) :
+    HasBinaryLowRankNegativeNormalForm a b 0 0 0 :=
+  HasBinaryLowRankNegativeNormalForm.ySqKernel
+    (ySqKernel_b_ne_zero_of_column_linearIndependent hLI)
+
 theorem HasBinaryLowRankNegativeNormalForm.ellipticKernel
     {a b : ℝ} (hne : a ≠ 0 ∨ b ≠ 0) :
     HasBinaryLowRankNegativeNormalForm a b (-a) (-b) a := by
