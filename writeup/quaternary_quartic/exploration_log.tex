@@ -13735,4 +13735,42 @@ remaining local target synchronized with the rank-pair quotient formulation.
 
 No Julia numerical claims were used in this round.
 
+\section*{Global equivalence for quotient-core data}
+
+\paragraph{Gap targeted.}
+The largest remaining gap is no longer a case split inside the residual
+argument, but the global construction of the two quotient-core components:
+the rank-two Macaulay growth bound and the rank-three bad-branch
+contradiction.
+
+\paragraph{Lean progress.}
+Added the global package
+\[
+\texttt{HasGlobalLowRankApolarQuotientCoreData}
+\]
+and proved both directions of the equivalence:
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_of\_globalLowRankApolarQuotientCoreData},
+\]
+\[
+\texttt{globalLowRankApolarQuotientCoreData\_of\_quaternaryQuartic\_rankSeven\_no\_spurious\_socp},
+\]
+and
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalLowRankApolarQuotientCoreData}.
+\]
+The reverse implication uses the fact that if the residual vanishes, then the
+catalecticant map has rank zero, so the rank-two and rank-three core
+obligations are vacuous.
+
+\paragraph{Strategy change.}
+This round makes the remaining global obligation exact: replacing the root
+placeholder now amounts precisely to proving the global quotient-core data.
+No stronger auxiliary assumptions were introduced.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

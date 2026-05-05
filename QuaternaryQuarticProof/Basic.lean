@@ -595,6 +595,14 @@ def HasLowRankApolarQuotientCoreData
   HasRankTwoApolarMacaulayGrowthBound B p u ∧
     HasRankThreeApolarBadBranchContradiction B p u
 
+def HasGlobalLowRankApolarQuotientCoreData : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasLowRankApolarQuotientCoreData B p u
+
 def HasRankTwoUniversalKernelEquationData
     (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
   Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
@@ -7906,6 +7914,32 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_quotientCoreComponents_d
     (B := B) hu hp hsocp
     (hgrowth2 B p u hu hB hp hsocp)
     (hbad3 B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarQuotientCoreData
+    (hdata : HasGlobalLowRankApolarQuotientCoreData) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_lowRankApolarQuotientCoreData_direct
+    hdata
+
+theorem globalLowRankApolarQuotientCoreData_of_quaternaryQuartic_rankSeven_no_spurious_socp
+    (hmain : QuaternaryQuarticRankSevenNoSpuriousSOCP) :
+    HasGlobalLowRankApolarQuotientCoreData := by
+  intro B p u hu hB hp hsocp
+  have hres : residual p u = 0 := hmain B p u hB hp hu hsocp
+  have hrank_zero :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 0 :=
+    finrank_range_catalecticantMap_eq_zero_of_residual_eq_zero hres
+  constructor
+  · intro hrank2 h3 _hh3
+    omega
+  · intro hrank3 _hbad
+    omega
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalLowRankApolarQuotientCoreData :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalLowRankApolarQuotientCoreData :=
+  ⟨globalLowRankApolarQuotientCoreData_of_quaternaryQuartic_rankSeven_no_spurious_socp,
+    quaternaryQuartic_rankSeven_no_spurious_socp_of_globalLowRankApolarQuotientCoreData⟩
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_quotientLocalComponents_direct
     (hsymm2 :
