@@ -2441,6 +2441,69 @@ theorem cubicProductAnnihilatorContraction_eval_mem_squareEval_ker
     rfl
   exact hsymm.trans hbase
 
+theorem finrank_ker_linearMap_to_real_le_one_of_finrank_eq_two
+    {W : Type*} [AddCommGroup W] [Module ℝ W] [FiniteDimensional ℝ W]
+    (hW : Module.finrank ℝ W = 2) {f : W →ₗ[ℝ] ℝ} (hf : f ≠ 0) :
+    Module.finrank ℝ (LinearMap.ker f) ≤ 1 := by
+  have hrange_pos : 0 < Module.finrank ℝ (LinearMap.range f) := by
+    rw [Nat.pos_iff_ne_zero]
+    intro hzero
+    have hbot : LinearMap.range f = ⊥ := (Submodule.finrank_eq_zero).mp hzero
+    apply hf
+    ext x
+    have hx : f x ∈ LinearMap.range f := LinearMap.mem_range_self f x
+    have hx0 : f x ∈ (⊥ : Submodule ℝ ℝ) := by
+      simpa [hbot] using hx
+    simpa using hx0
+  have hrange_le : Module.finrank ℝ (LinearMap.range f) ≤ 1 := by
+    simpa using (LinearMap.range f).finrank_le
+  have hrange_eq : Module.finrank ℝ (LinearMap.range f) = 1 := by
+    omega
+  have hsum := LinearMap.finrank_range_add_finrank_ker f
+  rw [hrange_eq, hW] at hsum
+  omega
+
+theorem finrank_ker_dualAnnihilator_squareEval_le_one_of_finrank_eq_two
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    {η : (P.comap (symSquareSubmodule A).subtype).dualAnnihilator}
+    (hfin :
+      Module.finrank ℝ
+        ((P.comap (symSquareSubmodule A).subtype).dualAnnihilator) = 2)
+    {a0 : A}
+    (ha0 :
+      η.1 ⟨linProduct a0.1 a0.1,
+        linProduct_mem_linProductSubmodule a0 a0⟩ ≠ 0) :
+    Module.finrank ℝ
+        (LinearMap.ker
+          ({ toFun := fun θ =>
+                θ.1 ⟨linProduct a0.1 a0.1,
+                  linProduct_mem_linProductSubmodule a0 a0⟩
+             map_add' := by
+              intro θ ψ
+              rfl
+             map_smul' := by
+              intro r θ
+              rfl } :
+            (P.comap (symSquareSubmodule A).subtype).dualAnnihilator →ₗ[ℝ] ℝ)) ≤ 1 := by
+  let squareEval :
+      (P.comap (symSquareSubmodule A).subtype).dualAnnihilator →ₗ[ℝ] ℝ :=
+    { toFun := fun θ =>
+        θ.1 ⟨linProduct a0.1 a0.1,
+          linProduct_mem_linProductSubmodule a0 a0⟩
+      map_add' := by
+        intro θ ψ
+        rfl
+      map_smul' := by
+        intro r θ
+        rfl }
+  have hsquare_ne : squareEval ≠ 0 := by
+    intro hzero
+    have hηzero := congrArg (fun f =>
+      f η) hzero
+    exact ha0 (by simpa [squareEval] using hηzero)
+  exact finrank_ker_linearMap_to_real_le_one_of_finrank_eq_two
+    hfin hsquare_ne
+
 theorem finrank_linQuadProductSubmodule_quotient_eq_finrank_cubicProductAnnihilator
     {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule} :
     Module.finrank ℝ

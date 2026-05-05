@@ -15524,4 +15524,39 @@ kept as proof clutter.
 
 No Julia numerical claims were used in this round.
 
+\section*{Codimension-one slice for quotient dimension two}
+
+\paragraph{Gap targeted.}
+The q=2 contraction argument needs a controlled codimension-one slice of the
+two-dimensional quadratic dual space.  This round isolated that slice as a
+small linear-algebra fact rather than retrying the full kernel theorem in one
+large statement.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{finrank\_ker\_linearMap\_to\_real\_le\_one\_of\_finrank\_eq\_two},
+\]
+the general fact that a nonzero linear map from a two-dimensional real vector
+space to \(\mathbb R\) has kernel dimension at most one.  Specialized it to
+quadratic duals as
+\[
+\texttt{finrank\_ker\_dualAnnihilator\_squareEval\_le\_one\_of\_finrank\_eq\_two}.
+\]
+Thus, if a two-dimensional quadratic dual annihilator contains a functional
+nonzero on \(a_0^2\), the slice of functionals vanishing on \(a_0^2\) has
+dimension at most one.
+
+\paragraph{Strategy status.}
+Together with the previous kernel observation, the q=2 case is now reduced to
+showing that the kernel of contraction-evaluation at \(a_0\) injects into this
+one-dimensional square-evaluation slice.  That should reuse the q=1
+contraction argument with less typeclass pressure.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
