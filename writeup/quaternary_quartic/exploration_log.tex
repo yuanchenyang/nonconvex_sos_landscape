@@ -9521,4 +9521,40 @@ kernel-equation cases.
 
 No Julia numerical claims were used in this round.
 
+\section*{Normalized position gives kernel equations for SOCP points}
+
+\paragraph{Gap targeted.}
+The rank-two kernel-equation and normalized-position tasks were connected in
+one direction, but the reverse conversion under the actual point hypotheses was
+not named directly.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankTwoUniversalKernelEquationData\_of\_universalNormalizedPosition\_of\_point}.
+\]
+The proof derives universal Hankel negativity from the SOCP point hypotheses,
+turns normalized position plus negativity into branch data, and then extracts
+the binary kernel-equation cases.
+
+\paragraph{Strategy change.}
+For genuine SOCP points, the remaining rank-two normalized-position and
+kernel-equation formulations are now interchangeable at the universal-data
+level.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded after this change.
+The stable \texttt{./scripts/verify\_quaternary\_quartic.sh} harness built the
+selected targets and found the root theorem, then failed only at the final axiom
+audit because the root theorem still depends on
+\[
+\texttt{QuaternaryQuartic.quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_placeholder}.
+\]
+
+\paragraph{Remaining blockers.}
+Prove rank-case apolar support bounds and either universal rank-two binary
+kernel-equation cases or universal rank-two normalized kernel position.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

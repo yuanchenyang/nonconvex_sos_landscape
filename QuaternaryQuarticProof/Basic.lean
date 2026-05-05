@@ -2963,6 +2963,19 @@ theorem hasRankTwoUniversalKernelEquationData_of_universalKernelBranchData
   exact binaryRestriction_kernelEquationCase_of_kernelBranchCertificate
     (hbranches hrank2 A W x y hAann hAW hxW hyW hynot hx hAdim hWdim)
 
+theorem hasRankTwoUniversalKernelEquationData_of_universalNormalizedPosition_of_point
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hpos : HasRankTwoUniversalNormalizedKernelPositionData B p u) :
+    HasRankTwoUniversalKernelEquationData B p u :=
+  hasRankTwoUniversalKernelEquationData_of_universalKernelBranchData
+    (hasRankTwoUniversalKernelBranchData_of_universalNormalizedPosition_and_HankelNegative
+      hpos
+      (hasRankTwoUniversalHankelNegativeData_of_point
+        (B := B) (p := p) (u := u) hu hp hfocp))
+
 theorem hasRankTwoUniversalNormalizedHankelData_of_universalKernelBranchData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hbranches : HasRankTwoUniversalKernelBranchData B p u) :
