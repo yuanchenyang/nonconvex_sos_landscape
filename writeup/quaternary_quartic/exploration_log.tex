@@ -4255,4 +4255,54 @@ from the rank-one and rank-two catalecticant cases.
 
 No Julia numerical claims were used in this round.
 
+\section*{Complement-based binary restriction component data}
+
+\paragraph{Gap targeted.}
+After closing the canonical binary evaluation identity, the remaining rank-one
+and rank-two branches should be stated in terms of the actual complement
+geometry supplied by the apolar support theorem: an exact annihilator subspace,
+its complement, normal forms on complement directions, and the remaining
+component dimension/disjointness facts.
+
+\paragraph{Lean progress.}
+Added \(\texttt{HasRankOneBinaryRestrictionComponentData}\) and
+\(\texttt{HasRankTwoBinaryRestrictionComponentData}\) to
+\texttt{QuaternaryQuarticProof/Support.lean}.  These package exact
+annihilator-complement data together with canonical binary restriction normal
+forms.  The rank-two package states disjointness for all nonzero directions in
+the complement \(W\); the bridge proves the span-based disjointness needed by
+the existing rank-two constructor.
+
+Added
+\[
+\texttt{hasRankOneProductSupportData\_of\_binaryRestrictionComponentData}
+\]
+and
+\[
+\texttt{hasPreimageProductSupportData\_of\_rank\_two\_binaryRestrictionComponentData}.
+\]
+Added the root-level
+\(\texttt{HasRankCaseBinaryRestrictionComponentData}\) and reducers in
+\texttt{QuaternaryQuarticProof/Basic.lean}.  The global proof is now reducible
+to proving complement-based binary restriction component data for ranks one
+and two, plus the existing rank-three support data.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Support}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the only
+remaining expected failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The largest remaining gap is now sharply localized: prove the complement-based
+rank-one/rank-two component data from the catalecticant rank cases.  This
+includes exact \(\Sym^2\) dimensions, rank-two direct-sum disjointness, and the
+binary low-rank normal-form classification of the canonical restriction
+coefficients.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

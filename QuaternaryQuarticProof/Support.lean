@@ -294,6 +294,49 @@ theorem exists_rank_two_exact_annihilator_supportAmbient
       (B := B) (p := p) (u := u) (x := x) hAann,
     finrank_supportAmbient_le_five_of_finrank_eq_two (x := x) hAfin⟩
 
+def HasRankOneBinaryRestrictionComponentData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  ∃ A W : Submodule ℝ linSubmodule,
+    ∃ x y : linSubmodule,
+      A ≤ linearAnnihilator B p u ∧
+        IsCompl A W ∧
+          x ∈ W ∧
+            (x : Poly) ≠ 0 ∧
+              Module.finrank ℝ A = 3 ∧
+                Module.finrank ℝ W = 1 ∧
+                  Module.finrank ℝ (symSquareSubmodule A) = 6 ∧
+                    HasBinaryLowRankNegativeNormalForm
+                      (binaryRestrictionCoeffA B p u x)
+                      (binaryRestrictionCoeffB B p u x y)
+                      (binaryRestrictionCoeffC B p u x y)
+                      (binaryRestrictionCoeffD B p u x y)
+                      (binaryRestrictionCoeffE B p u y)
+
+def HasRankTwoBinaryRestrictionComponentData
+    (B : DotForm) (p : Poly) (u : RankSevenVec) : Prop :=
+  ∃ A W : Submodule ℝ linSubmodule,
+    ∃ x y : linSubmodule,
+      A ≤ linearAnnihilator B p u ∧
+        IsCompl A W ∧
+          x ∈ W ∧
+            y ∈ W ∧
+              (x : Poly) ≠ 0 ∧
+                Module.finrank ℝ A = 2 ∧
+                  Module.finrank ℝ W = 2 ∧
+                    Module.finrank ℝ (symSquareSubmodule A) = 3 ∧
+                      HasBinaryLowRankNegativeNormalForm
+                        (binaryRestrictionCoeffA B p u x)
+                        (binaryRestrictionCoeffB B p u x y)
+                        (binaryRestrictionCoeffC B p u x y)
+                        (binaryRestrictionCoeffD B p u x y)
+                        (binaryRestrictionCoeffE B p u y) ∧
+                        ∀ z : linSubmodule,
+                          z ∈ W →
+                            (z : Poly) ≠ 0 →
+                              LinearMap.range (linProductLeftMapOn z A) ⊓
+                                  symSquareSubmodule A =
+                                ⊥
+
 theorem exists_rank_three_exact_annihilator
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupp : HasLinearAnnihilatorCodimAtMost B p u 3) :
@@ -1038,6 +1081,49 @@ theorem hasRankOneProductSupportData_of_binaryRestriction_coefficients
     (A := A) (x := x) (y := y)
     hAann hAdim hSymdim hform
     (binaryRestriction_eval_eq B p u x y)
+
+theorem hasRankOneProductSupportData_of_binaryRestrictionComponentData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1)
+    (hdata : HasRankOneBinaryRestrictionComponentData B p u) :
+    HasRankOneProductSupportData B p u hu := by
+  rcases hdata with
+    ⟨A, _W, x, y, hAann, _hAW, _hxW, _hx, hAdim, _hWdim, hSymdim, hform⟩
+  exact hasRankOneProductSupportData_of_binaryRestriction_coefficients
+    (B := B) (p := p) (u := u) (hu := hu)
+    hfocp hrelker hrank
+    (A := A) (x := x) (y := y)
+    hAann hAdim hSymdim hform
+
+theorem hasPreimageProductSupportData_of_rank_two_binaryRestrictionComponentData
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hfocp : IsFOCP B p u)
+    (hrelker : LinearMap.ker (relationPolyLin u) = ⊥)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2)
+    (hdata : HasRankTwoBinaryRestrictionComponentData B p u) :
+    HasPreimageProductSupportData B p u hu := by
+  rcases hdata with
+    ⟨A, W, x, y, hAann, _hAW, hxW, hyW, _hx, hAdim, _hWdim, hSymdim,
+      hform, hdisjW⟩
+  exact hasPreimageProductSupportData_of_rank_two_binaryRestriction_coefficients
+    (B := B) (p := p) (u := u) (hu := hu)
+    hfocp hrelker hrank
+    (A := A) (x := x) (y := y)
+    hAann hAdim hSymdim hform
+    (by
+      intro z hzspan hz
+      have hspan_le : Submodule.span ℝ ({x, y} : Set linSubmodule) ≤ W := by
+        refine Submodule.span_le.mpr ?_
+        intro w hw
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hw
+        rcases hw with rfl | rfl
+        · exact hxW
+        · exact hyW
+      exact hdisjW z (hspan_le hzspan) hz)
 
 theorem hasPreimageProductSupportData_of_rank_one_ambient_bounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}
