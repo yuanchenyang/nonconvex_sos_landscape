@@ -6367,4 +6367,50 @@ data.  Rank-one negativity is now discharged from SOS and decomposition.
 
 No Julia numerical claims were used in this round.
 
+\section*{Rank-two binary-form interface}
+
+\paragraph{Gap targeted.}
+The rank-two apolar interface still required one of the explicit binary
+kernel-equation cases.  Downstream, those cases are only used to obtain a
+binary low-rank negative normal form.  The case classification is therefore a
+separate algebraic subproblem and should not be part of the main rank-case
+interface.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankTwoSupportComponentHypothesis\_of\_binary\_forms\_and\_productLI}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It mirrors the existing
+kernel-case constructor but accepts
+\[
+\texttt{HasBinaryLowRankNegativeNormalForm}
+\]
+directly; the \(\Sym^2A\) dimension and disjointness requirements are supplied
+from the combined product-independence lemma.
+
+Added to \texttt{QuaternaryQuarticProof/Basic.lean}:
+\[
+\texttt{HasRankCaseBinaryFormApolarData},
+\quad
+\texttt{hasRankCaseApolarComponentData\_of\_binaryFormApolarData},
+\]
+and the corresponding residual/root reduction theorems.  This interface keeps
+the annihilator-map bounds, rank-two binary normal-form input, and rank-three
+negative product input, while deriving rank-one negativity internally.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+completes successfully.
+
+\paragraph{Remaining blockers.}
+The rank-two kernel-equation classification has been separated from the main
+proof chain.  The remaining structural inputs are now the annihilator-map
+bounds, the rank-two binary low-rank normal form, and rank-three negative
+product data.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

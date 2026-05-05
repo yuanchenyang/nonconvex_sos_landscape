@@ -948,6 +948,74 @@ theorem hasRankTwoSupportComponentHypothesis_of_binary_cases_and_productLI
         range_linProductLeftMapOn_inf_symSquare_eq_bot_of_basis_products_linearIndependent
           (A := A) (z := z) βz hLIz⟩
 
+theorem hasRankTwoSupportComponentHypothesis_of_binary_forms_and_productLI
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hform :
+      ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              y ∈ W →
+                y ∉ ℝ ∙ x →
+                  (x : Poly) ≠ 0 →
+                    Module.finrank ℝ A = 2 →
+                      Module.finrank ℝ W = 2 →
+                        HasBinaryLowRankNegativeNormalForm
+                          (binaryRestrictionCoeffA B p u x)
+                          (binaryRestrictionCoeffB B p u x y)
+                          (binaryRestrictionCoeffC B p u x y)
+                          (binaryRestrictionCoeffD B p u x y)
+                          (binaryRestrictionCoeffE B p u y))
+    (hprodLI :
+      ∀ (A W : Submodule ℝ linSubmodule) (x y z : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              y ∈ W →
+                y ∉ ℝ ∙ x →
+                  (x : Poly) ≠ 0 →
+                    Module.finrank ℝ A = 2 →
+                      Module.finrank ℝ W = 2 →
+                        z ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) →
+                          (z : Poly) ≠ 0 →
+                            ∃ β : Module.Basis (Fin 2) ℝ A,
+                              LinearIndependent ℝ
+                                (Sum.elim
+                                  (fun i : Fin 2 => linProduct z (β i).1)
+                                  (fun ij : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+                                    linProduct (β ij.1.1).1 (β ij.1.2).1))) :
+    HasRankTwoSupportComponentHypothesis B p u := by
+  intro A W x hAann hAW hxW hx hAdim hWdim
+  rcases exists_rank_two_complement_second_direction
+      (W := W) (x := x) hx hWdim with
+    ⟨y, hyW, hynot⟩
+  have hxspan : x ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) :=
+    Submodule.subset_span (by simp)
+  rcases hprodLI A W x y x hAann hAW hxW hyW hynot hx hAdim hWdim hxspan hx with
+    ⟨β, hLI⟩
+  have hSymLI :
+      LinearIndependent ℝ
+        (fun ij : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+          linProduct (β ij.1.1).1 (β ij.1.2).1) := by
+    simpa [Function.comp_def] using (linearIndependent_sum.mp hLI).2.1
+  have hSymdim : Module.finrank ℝ (symSquareSubmodule A) = 3 :=
+    finrank_symSquareSubmodule_eq_three_of_basis_products_linearIndependent β hSymLI
+  have hspan : Submodule.span ℝ ({x, y} : Set linSubmodule) = W :=
+    span_rank_two_support_pair_eq hx hxW hyW hynot hWdim
+  exact ⟨y, hyW, hSymdim,
+    hform A W x y hAann hAW hxW hyW hynot hx hAdim hWdim,
+    fun z hzW hz =>
+      let hβ :=
+        hprodLI A W x y z hAann hAW hxW hyW hynot hx hAdim hWdim
+          (by
+            rw [hspan]
+            exact hzW)
+          hz
+      match hβ with
+      | ⟨βz, hLIz⟩ =>
+        range_linProductLeftMapOn_inf_symSquare_eq_bot_of_basis_products_linearIndependent
+          (A := A) (z := z) βz hLIz⟩
+
 theorem hasRankOneSupportComponentHypothesis_of_self_negative
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hSym :
