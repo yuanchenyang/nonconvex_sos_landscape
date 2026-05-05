@@ -5645,4 +5645,44 @@ piece is constructing that decomposition from the apolar support reduction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Reducing rank-three negative support to kernel decomposition}
+
+\paragraph{Gap targeted.}
+Rank three still asked directly for a negative quadratic supported on a
+subspace \(W\).  In the blueprint this is obtained by taking a negative SOS
+summand and decomposing it into a supported component plus a catalecticant
+kernel component.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankThreeAnnihilatorSupportData\_of\_rank\_three\_kernel\_decomposition}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  The theorem assumes
+rank three, SOS feasibility, FOCP, the codimension-three annihilator support
+bound, and a decomposition principle:
+\[
+q=q_W+q_K,\qquad q_W\in WW,\qquad q_K\in\ker C_\lambda
+\]
+for each negative quadratic \(q\).  It obtains a negative SOS summand from the
+rank-three catalecticant hypothesis, applies the decomposition, and transfers
+negativity to \(q_W\) using the kernel-decomposition lemmas from the previous
+round.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Catalecticant}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Support.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+Rank three is now reduced to a precise decomposition theorem for negative
+quadratics under the apolar support split.  This is closer to the blueprint’s
+\(q_0=q_W+q_K\) step.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

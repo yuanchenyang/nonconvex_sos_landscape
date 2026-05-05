@@ -962,6 +962,32 @@ theorem hasRankThreeAnnihilatorSupportData_of_rank_three_support
     ⟨z, hzann, hzne⟩
   exact ⟨z, W, q, hzann, hzne, hqWW, hneg⟩
 
+theorem hasRankThreeAnnihilatorSupportData_of_rank_three_kernel_decomposition
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hfocp : IsFOCP B p u)
+    (hrank : Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3)
+    (hsupp : HasLinearAnnihilatorCodimAtMost B p u 3)
+    (hdecomp :
+      ∀ q : quadSubmodule,
+        B (q.1^2) (residual p u) < 0 →
+          ∃ (W : Submodule ℝ linSubmodule) (qW qK : quadSubmodule),
+            q = qW + qK ∧
+              qW ∈ linProductSubmodule W W ∧
+                qK ∈ LinearMap.ker (catalecticantMap B p u)) :
+    HasRankThreeAnnihilatorSupportData B p u := by
+  rcases exists_negative_sos_summand_of_catalecticantMap_rank_eq_three
+      (B := B) hu hp hfocp hrank with
+    ⟨q, hq, hqneg⟩
+  let qQuad : quadSubmodule := ⟨q, hq⟩
+  rcases hdecomp qQuad hqneg with
+    ⟨W, qW, qK, hqdecomp, hqW, hqK⟩
+  exact hasRankThreeAnnihilatorSupportData_of_rank_three_support
+    (B := B) (p := p) (u := u) hsupp hqW
+    (residualEval_sq_lt_of_eq_add_mem_ker_catalecticantMap
+      (B := B) (p := p) (u := u) hqdecomp hqK hqneg)
+
 theorem exists_negative_syzygyCertificate_of_rank_three_supportData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
