@@ -5474,4 +5474,55 @@ support transport.
 
 No Julia numerical claims were used in this round.
 
+\section*{Reducing rank-one symmetric-square data to combined product independence}
+
+\paragraph{Gap targeted.}
+Rank one still separately required symmetric product independence for
+\(\Sym^2A\).  In the rank-one normal form, the natural product decomposition is
+\[
+xA\oplus\Sym^2A,
+\]
+so a single combined product-linear-independence statement should provide the
+\(\Sym^2A\) dimension as a subfamily consequence.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankOneSupportComponentHypothesis\_of\_combined\_product\_independence}
+\]
+to \texttt{QuaternaryQuarticProof/Support.lean}.  It takes linear independence
+of the combined family
+\[
+\{x\beta_i\}_{i=1}^3
+\cup
+\{\beta_i\beta_j:i\le j\}
+\]
+and derives the symmetric-product independence by projecting to the right half
+of the \(\texttt{Sum.elim}\) family.
+
+Added
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_combined\_productLI\_component\_obligations}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}, so the top-level rank-one and
+rank-two branches can both be supplied using combined product-linear
+independence.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Support}
+\qquad
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typecheck.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+Both rank-one and rank-two product-geometry obligations are now stated as
+combined product-linear-independence facts.  The remaining hard step is proving
+those facts, plus binary kernel equations and negative support transport, from
+the low-rank apolar support theorem.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

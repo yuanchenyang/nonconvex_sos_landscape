@@ -836,6 +836,41 @@ theorem hasRankOneSupportComponentHypothesis_of_basis_product_independence
         finrank_symSquareSubmodule_eq_six_of_basis_products_linearIndependent β hLI)
     hneg
 
+theorem hasRankOneSupportComponentHypothesis_of_combined_product_independence
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hprodLI :
+      ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              (x : Poly) ≠ 0 →
+                Module.finrank ℝ A = 3 →
+                  Module.finrank ℝ W = 1 →
+                    ∃ β : Module.Basis (Fin 3) ℝ A,
+                      LinearIndependent ℝ
+                        (Sum.elim
+                          (fun i : Fin 3 => linProduct x (β i).1)
+                          (fun ij : {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2} =>
+                            linProduct (β ij.1.1).1 (β ij.1.2).1)))
+    (hneg :
+      ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+        A ≤ linearAnnihilator B p u →
+          IsCompl A W →
+            x ∈ W →
+              (x : Poly) ≠ 0 →
+                Module.finrank ℝ A = 3 →
+                  Module.finrank ℝ W = 1 →
+                    binaryRestrictionCoeffA B p u x < 0) :
+    HasRankOneSupportComponentHypothesis B p u :=
+  hasRankOneSupportComponentHypothesis_of_basis_product_independence
+    (B := B) (p := p) (u := u)
+    (fun A W x hAann hAW hxW hx hAdim hWdim =>
+      match hprodLI A W x hAann hAW hxW hx hAdim hWdim with
+      | ⟨β, hLI⟩ =>
+        ⟨β, by
+          simpa [Function.comp_def] using (linearIndependent_sum.mp hLI).2.1⟩)
+    hneg
+
 theorem exists_rank_one_binaryRestrictionComponentData_of_support
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hsupp : HasLinearAnnihilatorCodimAtMost B p u 1)
