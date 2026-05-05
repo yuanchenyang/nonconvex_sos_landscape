@@ -2419,6 +2419,28 @@ theorem finrank_cubicProductAnnihilator_le_one_of_symSquare_quotient_eq_one
     exact (LinearMap.range ev).finrank_le
   omega
 
+theorem cubicProductAnnihilatorContraction_eval_mem_squareEval_ker
+    {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule}
+    {a0 : A} {φ : cubicProductAnnihilator A P}
+    (hφ :
+      (((LinearMap.applyₗ (R := ℝ) (M := A)
+          (M₂ := (P.comap (symSquareSubmodule A).subtype).dualAnnihilator)) a0).comp
+        (cubicProductAnnihilatorContraction A P)) φ = 0)
+    (c : A) :
+    ((cubicProductAnnihilatorContraction A P φ) c).1
+        ⟨linProduct a0.1 a0.1, linProduct_mem_linProductSubmodule a0 a0⟩ = 0 := by
+  have hsymm :=
+    cubicProductAnnihilatorContraction_pair_symm (A := A) (P := P) φ c a0 a0
+  have hbase :
+      ((cubicProductAnnihilatorContraction A P φ) a0).1
+          ⟨linProduct c.1 a0.1, linProduct_mem_linProductSubmodule c a0⟩ = 0 := by
+    have hzero :
+        (cubicProductAnnihilatorContraction A P φ) a0 = 0 := by
+      simpa using hφ
+    rw [hzero]
+    rfl
+  exact hsymm.trans hbase
+
 theorem finrank_linQuadProductSubmodule_quotient_eq_finrank_cubicProductAnnihilator
     {A : Submodule ℝ linSubmodule} {P : Submodule ℝ quadSubmodule} :
     Module.finrank ℝ

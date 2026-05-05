@@ -15493,4 +15493,35 @@ quadratic dual functionals.
 
 No Julia numerical claims were used in this round.
 
+\section*{Quotient-dimension-two kernel observation}
+
+\paragraph{Gap targeted.}
+After closing the quotient-dimension-one Macaulay step, the remaining central
+case is quadratic quotient dimension two.  A first attempt to formalize the
+full kernel-dimension argument was too typeclass-heavy, so this round kept the
+part of the argument that is both stable and directly useful.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, proved
+\[
+\texttt{cubicProductAnnihilatorContraction\_eval\_mem\_squareEval\_ker}.
+\]
+If the contraction of a cubic annihilator vanishes at \(a_0\), then every
+contraction vanishes on the square \(a_0^2\).  This is the first kernel
+reduction needed for the quotient-two case: the kernel of evaluation at
+\(a_0\) lands in the codimension-one slice of the two-dimensional quadratic
+dual space cut out by evaluation on \(a_0^2\).
+
+\paragraph{Strategy status.}
+The next q=2 step should package the codimension-one slice without triggering
+heavy typeclass search, then reuse the quotient-one contraction argument
+inside that slice.  The previous oversized attempt was abandoned rather than
+kept as proof clutter.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
