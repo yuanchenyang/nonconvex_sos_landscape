@@ -12053,4 +12053,41 @@ reassociation identity needed by the annihilator-map bridge.
 
 No Julia numerical claims were used in this round.
 
+\section*{Quotient catalecticant pairing}
+
+\paragraph{Gap targeted.}
+The one-dimensional pairing reduction requires an induced catalecticant pairing
+on \(\Quad/K\), where \(K\) is the degree-two catalecticant kernel.  This
+pairing must be well-defined on both quotient arguments before it can be used
+to compare products of linear forms.
+
+\paragraph{Lean progress.}
+Added to \texttt{QuaternaryQuarticProof.Catalecticant}:
+\[
+\texttt{ker\_catalecticantMap\_le\_flip\_ker},
+\quad
+\texttt{quotientCatalecticantMap},
+\]
+\[
+\texttt{quotientCatalecticantMap\_mk},
+\quad
+\texttt{quotientCatalecticantMap\_pair\_comm}.
+\]
+The quotient pairing is constructed with \texttt{LinearMap.liftQ₂}.  The
+left-kernel condition is immediate, and the right-kernel condition follows
+from commutativity of polynomial multiplication, formalized as symmetry of
+\texttt{catalecticantMap}.
+
+\paragraph{Strategy change.}
+The rank-one scalarized identity can now be proved by applying the abstract
+one-dimensional coordinate lemma to \texttt{quotientCatalecticantMap}.  The
+remaining concrete facts are nonvanishing of this quotient pairing in rank one
+and equality of the two quotient pairings attached to \(wx,yz\) and \(wy,xz\).
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

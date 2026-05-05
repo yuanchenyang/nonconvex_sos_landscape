@@ -1,4 +1,5 @@
 import Mathlib.LinearAlgebra.Dimension.Constructions
+import Mathlib.LinearAlgebra.Quotient.Bilinear
 import Mathlib.RingTheory.MvPolynomial.Basic
 import Mathlib.RingTheory.MvPolynomial.Homogeneous
 import Mathlib.Data.Finsupp.Order
@@ -1869,6 +1870,51 @@ theorem catalecticantMap_pair_comm
     (B : DotForm) (p : Poly) (u : RankSevenVec) (q r : quadSubmodule) :
     catalecticantMap B p u q r = catalecticantMap B p u r q := by
   simp [mul_comm]
+
+theorem ker_catalecticantMap_le_flip_ker
+    (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    LinearMap.ker (catalecticantMap B p u) ≤
+      LinearMap.ker (catalecticantMap B p u).flip := by
+  intro q hq
+  rw [LinearMap.mem_ker]
+  ext r
+  change catalecticantMap B p u r q = 0
+  rw [catalecticantMap_pair_comm]
+  exact congrArg (fun φ : Module.Dual ℝ quadSubmodule => φ r)
+    (by simpa [LinearMap.mem_ker] using hq)
+
+def quotientCatalecticantMap (B : DotForm) (p : Poly) (u : RankSevenVec) :
+    (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) →ₗ[ℝ]
+      Module.Dual ℝ
+        (quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) :=
+  LinearMap.liftQ₂
+    (LinearMap.ker (catalecticantMap B p u))
+    (LinearMap.ker (catalecticantMap B p u))
+    (catalecticantMap B p u)
+    le_rfl
+    (ker_catalecticantMap_le_flip_ker B p u)
+
+@[simp] theorem quotientCatalecticantMap_mk
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (q r : quadSubmodule) :
+    quotientCatalecticantMap B p u
+        ((LinearMap.ker (catalecticantMap B p u)).mkQ q)
+        ((LinearMap.ker (catalecticantMap B p u)).mkQ r) =
+      catalecticantMap B p u q r := by
+  rfl
+
+theorem quotientCatalecticantMap_pair_comm
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (q r :
+      quadSubmodule ⧸ LinearMap.ker (catalecticantMap B p u)) :
+    quotientCatalecticantMap B p u q r =
+      quotientCatalecticantMap B p u r q := by
+  induction q using Submodule.Quotient.induction_on with
+  | _ q' =>
+      induction r using Submodule.Quotient.induction_on with
+      | _ r' =>
+          change catalecticantMap B p u q' r' = catalecticantMap B p u r' q'
+          rw [catalecticantMap_pair_comm]
 
 theorem catalecticantMap_eq_zero_of_residual_eq_zero
     {B : DotForm} {p : Poly} {u : RankSevenVec}
