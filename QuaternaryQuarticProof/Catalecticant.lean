@@ -1413,8 +1413,14 @@ abbrev Triple3Idx :=
 def pair3ZeroZero : Pair3Idx :=
   ⟨(0, 0), by norm_num⟩
 
+def pair3ZeroOne : Pair3Idx :=
+  ⟨(0, 1), by norm_num⟩
+
 def triple3ZeroZeroZero : Triple3Idx :=
   ⟨((0, 0), 0), by norm_num⟩
+
+def triple3ZeroZeroOne : Triple3Idx :=
+  ⟨((0, 0), 1), by norm_num⟩
 
 def spanPairProductsExceptZeroZero
     {A : Submodule ℝ linSubmodule} (β : Module.Basis (Fin 3) ℝ A) :
@@ -1428,6 +1434,23 @@ def spanCubicProductsExceptZeroZeroZero
     Submodule ℝ cubicSubmodule :=
   Submodule.span ℝ
     (Set.range fun ijk : {ijk : Triple3Idx // ijk ≠ triple3ZeroZeroZero} =>
+      linQuadProduct (β ijk.1.1.1.1).1
+        (linProduct (β ijk.1.1.1.2).1 (β ijk.1.1.2).1))
+
+def spanPairProductsExceptZeroZeroZeroOne
+    {A : Submodule ℝ linSubmodule} (β : Module.Basis (Fin 3) ℝ A) :
+    Submodule ℝ quadSubmodule :=
+  Submodule.span ℝ
+    (Set.range fun ij :
+      {ij : Pair3Idx // ij ≠ pair3ZeroZero ∧ ij ≠ pair3ZeroOne} =>
+      linProduct (β ij.1.1.1).1 (β ij.1.1.2).1)
+
+def spanCubicProductsExceptZeroZeroZeroZeroOne
+    {A : Submodule ℝ linSubmodule} (β : Module.Basis (Fin 3) ℝ A) :
+    Submodule ℝ cubicSubmodule :=
+  Submodule.span ℝ
+    (Set.range fun ijk :
+      {ijk : Triple3Idx // ijk ≠ triple3ZeroZeroZero ∧ ijk ≠ triple3ZeroZeroOne} =>
       linQuadProduct (β ijk.1.1.1.1).1
         (linProduct (β ijk.1.1.1.2).1 (β ijk.1.1.2).1))
 
@@ -1498,6 +1521,101 @@ theorem nine_le_finrank_linQuadProductSubmodule_exceptZeroZero_of_isCompl_line
   have hmono := Submodule.finrank_mono hle
   have hspan :=
     finrank_spanCubicProductsExceptZeroZeroZero_eq_nine_of_isCompl_line
+      hAL β hxspan
+  omega
+
+theorem spanCubicProductsExceptZeroZeroZeroZeroOne_le_linQuadProductSubmodule_exceptZeroZeroZeroOne
+    {A : Submodule ℝ linSubmodule} (β : Module.Basis (Fin 3) ℝ A) :
+    spanCubicProductsExceptZeroZeroZeroZeroOne β ≤
+      linQuadProductSubmodule A (spanPairProductsExceptZeroZeroZeroOne β) := by
+  refine Submodule.span_le.mpr ?_
+  rintro c ⟨ijk, rfl⟩
+  let jk : Pair3Idx := ⟨(ijk.1.1.1.2, ijk.1.1.2), ijk.1.2.2⟩
+  have hjk_ne00 : jk ≠ pair3ZeroZero := by
+    intro h
+    have hj : ijk.1.1.1.2 = (0 : Fin 3) := by
+      exact congrArg (fun p : Pair3Idx => p.1.1) h
+    have hk : ijk.1.1.2 = (0 : Fin 3) := by
+      exact congrArg (fun p : Pair3Idx => p.1.2) h
+    have hi : ijk.1.1.1.1 = (0 : Fin 3) := by
+      have hij := ijk.1.2.1
+      rw [hj] at hij
+      apply Fin.ext
+      have hival : ijk.1.1.1.1.val ≤ 0 := by
+        simpa [Fin.le_def] using hij
+      omega
+    exact ijk.2.1 (Subtype.ext (Prod.ext (Prod.ext hi hj) hk))
+  have hjk_ne01 : jk ≠ pair3ZeroOne := by
+    intro h
+    have hj : ijk.1.1.1.2 = (0 : Fin 3) := by
+      exact congrArg (fun p : Pair3Idx => p.1.1) h
+    have hk : ijk.1.1.2 = (1 : Fin 3) := by
+      exact congrArg (fun p : Pair3Idx => p.1.2) h
+    have hi : ijk.1.1.1.1 = (0 : Fin 3) := by
+      have hij := ijk.1.2.1
+      rw [hj] at hij
+      apply Fin.ext
+      have hival : ijk.1.1.1.1.val ≤ 0 := by
+        simpa [Fin.le_def] using hij
+      omega
+    exact ijk.2.2 (Subtype.ext (Prod.ext (Prod.ext hi hj) hk))
+  have hpair :
+      linProduct (β ijk.1.1.1.2).1 (β ijk.1.1.2).1 ∈
+        spanPairProductsExceptZeroZeroZeroOne β := by
+    exact Submodule.subset_span ⟨⟨jk, hjk_ne00, hjk_ne01⟩, rfl⟩
+  exact linQuadProduct_mem_linQuadProductSubmodule
+    (⟨(β ijk.1.1.1.1).1, (β ijk.1.1.1.1).2⟩ : A)
+    (⟨linProduct (β ijk.1.1.1.2).1 (β ijk.1.1.2).1, hpair⟩ :
+      spanPairProductsExceptZeroZeroZeroOne β)
+
+theorem finrank_spanCubicProductsExceptZeroZeroZeroZeroOne_eq_eight_of_isCompl_line
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) :
+    Module.finrank ℝ (spanCubicProductsExceptZeroZeroZeroZeroOne β) = 8 := by
+  have hLIall :=
+    linearIndependent_basis_cubic_products_fin_three_of_isCompl_line hAL β hxspan
+  let f :
+      {ijk : Triple3Idx //
+        ijk ≠ triple3ZeroZeroZero ∧ ijk ≠ triple3ZeroZeroOne} → cubicSubmodule :=
+    fun ijk =>
+      linQuadProduct (β ijk.1.1.1.1).1
+        (linProduct (β ijk.1.1.1.2).1 (β ijk.1.1.2).1)
+  have hLI : LinearIndependent ℝ f :=
+    hLIall.comp
+      (fun ijk :
+        {ijk : Triple3Idx //
+          ijk ≠ triple3ZeroZeroZero ∧ ijk ≠ triple3ZeroZeroOne} =>
+        ijk.1)
+      (fun a b h => Subtype.ext h)
+  have hcard :
+      Fintype.card
+        {ijk : Triple3Idx //
+          ijk ≠ triple3ZeroZeroZero ∧ ijk ≠ triple3ZeroZeroOne} = 8 := by
+    decide
+  have hspan :
+      Module.finrank ℝ (Submodule.span ℝ (Set.range f)) = 8 := by
+    have hcard_eq :
+        Fintype.card
+          {ijk : Triple3Idx //
+            ijk ≠ triple3ZeroZeroZero ∧ ijk ≠ triple3ZeroZeroOne} =
+          Module.finrank ℝ (Submodule.span ℝ (Set.range f)) := by
+      exact (linearIndependent_iff_card_eq_finrank_span (R := ℝ) (b := f)).mp hLI
+    omega
+  simpa [spanCubicProductsExceptZeroZeroZeroZeroOne, f] using hspan
+
+theorem eight_le_finrank_linQuadProductSubmodule_exceptZeroZeroZeroOne_of_isCompl_line
+    {A L : Submodule ℝ linSubmodule} (hAL : IsCompl A L)
+    (β : Module.Basis (Fin 3) ℝ A) {x : linSubmodule}
+    (hxspan : ℝ ∙ x = L) :
+    8 ≤ Module.finrank ℝ
+      (linQuadProductSubmodule A (spanPairProductsExceptZeroZeroZeroOne β)) := by
+  have hle :=
+    spanCubicProductsExceptZeroZeroZeroZeroOne_le_linQuadProductSubmodule_exceptZeroZeroZeroOne
+      β
+  have hmono := Submodule.finrank_mono hle
+  have hspan :=
+    finrank_spanCubicProductsExceptZeroZeroZeroZeroOne_eq_eight_of_isCompl_line
       hAL β hxspan
   omega
 

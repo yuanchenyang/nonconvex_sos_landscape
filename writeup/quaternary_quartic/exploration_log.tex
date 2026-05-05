@@ -15161,4 +15161,51 @@ subspaces to these concrete models.
 
 No Julia numerical claims were used in this round.
 
+\section*{Lex codimension-two cubic product count}
+
+\paragraph{Gap targeted.}
+The next finite Macaulay model is the codimension-two lex subspace of
+\(\operatorname{Sym}^2(A)\), obtained by omitting \(x_0^2\) and
+\(x_0x_1\).  The required product lower bound is that this four-dimensional
+quadratic model generates at least eight independent cubic products.
+
+\paragraph{Lean progress.}
+In \texttt{QuaternaryQuarticProof.Catalecticant}, added the second omitted
+quadratic and cubic indices
+\[
+\texttt{pair3ZeroOne},
+\qquad
+\texttt{triple3ZeroZeroOne},
+\]
+and the lex \(q_2=2\) subspaces
+\[
+\texttt{spanPairProductsExceptZeroZeroZeroOne},
+\qquad
+\texttt{spanCubicProductsExceptZeroZeroZeroZeroOne}.
+\]
+Proved
+\[
+\texttt{spanCubicProductsExceptZeroZeroZeroZeroOne\_le\_linQuadProductSubmodule\_exceptZeroZeroZeroOne},
+\]
+then used the sorted cubic independence theorem to prove
+\[
+\texttt{finrank\_spanCubicProductsExceptZeroZeroZeroZeroOne\_eq\_eight\_of\_isCompl\_line},
+\]
+and finally
+\[
+\texttt{eight\_le\_finrank\_linQuadProductSubmodule\_exceptZeroZeroZeroOne\_of\_isCompl\_line}.
+\]
+
+\paragraph{Strategy change.}
+The finite lex lower bounds now cover \(q_2=0,1,2\).  The largest remaining
+central algebraic gap is the reduction from an arbitrary codimension-one or
+codimension-two quadratic subspace of \(\operatorname{Sym}^2(A)\) to these
+lex product counts, without introducing non-proof-serving infrastructure.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} both succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
