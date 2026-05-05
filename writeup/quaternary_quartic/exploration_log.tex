@@ -6275,4 +6275,40 @@ hypotheses.
 
 No Julia numerical claims were used in this round.
 
+\section*{Kernel decomposition through product-free data}
+
+\paragraph{Gap targeted.}
+The kernel-decomposition bridge still passed through the older
+product-independence apolar data package, even though those product
+independence facts are now derived internally.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseProductFreeApolarData\_of\_kernelDecompositionApolarData}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  Rank one and rank two discard
+the now-redundant product-independence fields from the kernel-decomposition
+package, keeping only the negativity and binary kernel-equation fields.  Rank
+three reuses the existing negative SOS summand and decomposition argument.
+
+Updated
+\[
+\texttt{residual\_eq\_zero\_of\_kernelDecompositionApolarData}
+\]
+to route through \texttt{residual\_eq\_zero\_of\_productFreeApolarData}.
+
+\paragraph{Verification.}
+\[
+\texttt{lake build QuaternaryQuarticProof.Basic}
+\]
+completes successfully.
+
+\paragraph{Remaining blockers.}
+Kernel-decomposition data is still stronger than the product-free data in rank
+one and rank two, but the main proof chain no longer depends on product
+independence as an external input.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
