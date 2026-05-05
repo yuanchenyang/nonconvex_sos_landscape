@@ -2306,6 +2306,20 @@ theorem residual_eq_zero_of_productKernelSupport_and_universalNormalizedBinaryCl
     (B := B) hu hp hsocp hprod
     (hasRankTwoExistentialScalarHankelData_of_universal_and_facts hclass hfacts)
 
+theorem residual_eq_zero_of_supportDecomposition_and_universalNormalizedBinaryClassification_and_scalarFacts
+    {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
+    (hu : IsAdmissiblePoint u)
+    (hp : IsSOSQuartic p)
+    (hsocp : IsSOCP B p u)
+    (hdecomp : HasLowRankApolarSupportDecomposition B p u)
+    (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification)
+    (hfacts : HasRankTwoExistentialScalarHankelFacts B p u) :
+    residual p u = 0 :=
+  residual_eq_zero_of_productKernelSupport_and_universalNormalizedBinaryClassification_and_scalarFacts
+    (B := B) hu hp hsocp
+    (hasLowRankApolarProductKernelDecomposition_of_supportDecomposition hdecomp)
+    hclass hfacts
+
 theorem residual_eq_zero_of_rankCaseSupportData
     {B : DotForm} [Fact B.toQuadraticMap.PosDef] {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
@@ -2733,6 +2747,31 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_productKernelSupport_and
   exact residual_eq_zero_of_productKernelSupport_and_universalNormalizedBinaryClassification_and_scalarFacts
     (B := B) hu hp hsocp
     (hprod B p u hu hB hp hsocp)
+    hclass
+    (hfacts B p u hu hB hp hsocp)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_supportDecomposition_and_universalNormalizedBinaryClassification_and_scalarFacts
+    (hdecomp :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasLowRankApolarSupportDecomposition B p u)
+    (hclass : HasUniversalBinaryRankTwoNormalizedKernelClassification)
+    (hfacts :
+      ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+        (_hu : IsAdmissiblePoint u),
+        IsPositiveDefinite B →
+          IsSOSQuartic p →
+            IsSOCP B p u →
+              HasRankTwoExistentialScalarHankelFacts B p u) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP := by
+  intro B p u hB hp hu hsocp
+  letI : Fact B.toQuadraticMap.PosDef := ⟨hB⟩
+  exact residual_eq_zero_of_supportDecomposition_and_universalNormalizedBinaryClassification_and_scalarFacts
+    (B := B) hu hp hsocp
+    (hdecomp B p u hu hB hp hsocp)
     hclass
     (hfacts B p u hu hB hp hsocp)
 
