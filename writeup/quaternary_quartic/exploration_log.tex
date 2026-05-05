@@ -5317,4 +5317,40 @@ product independence, and derive binary kernel-equation alternatives.
 
 No Julia numerical claims were used in this round.
 
+\section*{Threading symmetric product independence into apolar assembly}
+
+\paragraph{Gap targeted.}
+After reducing exact \(\Sym^2A\) dimensions in \texttt{Support.lean}, the
+top-level apolar assembler in \texttt{Basic.lean} still exposed those exact
+dimension equalities directly.  The remaining obligations should instead be
+the concrete basis-product linear-independence facts.
+
+\paragraph{Lean progress.}
+Added
+\[
+\texttt{hasRankCaseApolarComponentData\_of\_product\_independence\_component\_obligations}
+\]
+to \texttt{QuaternaryQuarticProof/Basic.lean}.  It replaces:
+\[
+\dim\Sym^2A=6,\qquad \dim\Sym^2A=3
+\]
+by linear independence of the symmetric product families for bases of the
+rank-one and rank-two annihilator subspaces.  It also keeps the previous
+rank-two combined product-linear-independence obligation for disjointness.
+
+\paragraph{Verification.}
+\[
+\texttt{lake env lean QuaternaryQuarticProof/Basic.lean}
+\]
+typechecks.  The full quaternary harness is run for the commit; the expected
+remaining failure is the root placeholder axiom.
+
+\paragraph{Remaining blockers.}
+The main apolar-data target now asks for product linear independence,
+rank-two binary kernel-equation alternatives, annihilator-map bounds, and
+rank-three negative support.  The difficult missing proof is the structural
+low-rank apolar theorem that supplies these from catalecticant rank.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

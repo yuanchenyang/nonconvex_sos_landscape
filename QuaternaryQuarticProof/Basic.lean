@@ -497,6 +497,107 @@ theorem hasRankCaseApolarComponentData_of_productLI_component_obligations
           (A := A) (z := z) β hLI)
     hann3 hneg3
 
+theorem hasRankCaseApolarComponentData_of_product_independence_component_obligations
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    {hu : IsAdmissiblePoint u}
+    (hann1 :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+        Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 1)
+    (hSymLI1 :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+        ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+          A ≤ linearAnnihilator B p u →
+            IsCompl A W →
+              x ∈ W →
+                (x : Poly) ≠ 0 →
+                  Module.finrank ℝ A = 3 →
+                    Module.finrank ℝ W = 1 →
+                      ∃ β : Module.Basis (Fin 3) ℝ A,
+                        LinearIndependent ℝ
+                          (fun ij : {ij : Fin 3 × Fin 3 // ij.1 ≤ ij.2} =>
+                            linProduct (β ij.1.1).1 (β ij.1.2).1))
+    (hneg1 :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 1 →
+        ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+          A ≤ linearAnnihilator B p u →
+            IsCompl A W →
+              x ∈ W →
+                (x : Poly) ≠ 0 →
+                  Module.finrank ℝ A = 3 →
+                    Module.finrank ℝ W = 1 →
+                      binaryRestrictionCoeffA B p u x < 0)
+    (hann2 :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+        Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 2)
+    (hSymLI2 :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+        ∀ (A W : Submodule ℝ linSubmodule) (x : linSubmodule),
+          A ≤ linearAnnihilator B p u →
+            IsCompl A W →
+              x ∈ W →
+                (x : Poly) ≠ 0 →
+                  Module.finrank ℝ A = 2 →
+                    Module.finrank ℝ W = 2 →
+                      ∃ β : Module.Basis (Fin 2) ℝ A,
+                        LinearIndependent ℝ
+                          (fun ij : {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+                            linProduct (β ij.1.1).1 (β ij.1.2).1))
+    (hcase2 :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+        ∀ (A W : Submodule ℝ linSubmodule) (x y : linSubmodule),
+          A ≤ linearAnnihilator B p u →
+            IsCompl A W →
+              x ∈ W →
+                y ∈ W →
+                  y ∉ ℝ ∙ x →
+                    (x : Poly) ≠ 0 →
+                      Module.finrank ℝ A = 2 →
+                        Module.finrank ℝ W = 2 →
+                          HasBinaryRestrictionKernelEquationCase B p u x y)
+    (hprodLI2 :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 2 →
+        ∀ (A W : Submodule ℝ linSubmodule) (x y z : linSubmodule),
+          A ≤ linearAnnihilator B p u →
+            IsCompl A W →
+              x ∈ W →
+                y ∈ W →
+                  y ∉ ℝ ∙ x →
+                    (x : Poly) ≠ 0 →
+                      Module.finrank ℝ A = 2 →
+                        Module.finrank ℝ W = 2 →
+                          z ∈ Submodule.span ℝ ({x, y} : Set linSubmodule) →
+                            (z : Poly) ≠ 0 →
+                              ∃ β : Module.Basis (Fin 2) ℝ A,
+                                LinearIndependent ℝ
+                                  (Sum.elim
+                                    (fun i : Fin 2 => linProduct z (β i).1)
+                                    (fun ij :
+                                        {ij : Fin 2 × Fin 2 // ij.1 ≤ ij.2} =>
+                                      linProduct (β ij.1.1).1 (β ij.1.2).1)))
+    (hann3 :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+        Module.finrank ℝ (LinearMap.range (linearAnnihilatorMap B p u)) ≤ 3)
+    (hneg3 :
+      Module.finrank ℝ (LinearMap.range (catalecticantMap B p u)) = 3 →
+        ∃ (W : Submodule ℝ linSubmodule) (q : quadSubmodule),
+          q ∈ linProductSubmodule W W ∧
+            B (q.1^2) (residual p u) < 0) :
+    HasRankCaseApolarComponentData B p u hu := by
+  exact hasRankCaseApolarComponentData_of_productLI_component_obligations
+    (B := B) (p := p) (u := u) (hu := hu)
+    hann1
+    (fun hrank1 A W x hAann hAW hxW hx hAdim hWdim =>
+      match hSymLI1 hrank1 A W x hAann hAW hxW hx hAdim hWdim with
+      | ⟨β, hLI⟩ =>
+        finrank_symSquareSubmodule_eq_six_of_basis_products_linearIndependent β hLI)
+    hneg1
+    hann2
+    (fun hrank2 A W x hAann hAW hxW hx hAdim hWdim =>
+      match hSymLI2 hrank2 A W x hAann hAW hxW hx hAdim hWdim with
+      | ⟨β, hLI⟩ =>
+        finrank_symSquareSubmodule_eq_three_of_basis_products_linearIndependent β hLI)
+    hcase2 hprodLI2 hann3 hneg3
+
 theorem hasRankCaseNegativeCertificateFamily_of_supportData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hu : IsAdmissiblePoint u)
