@@ -13609,4 +13609,34 @@ growth and rank-three bad-branch contradiction.
 
 No Julia numerical claims were used in this round.
 
+\section*{Core data equivalent to quotient theorem}
+
+\paragraph{Gap targeted.}
+After closing the rank-two symmetry component, the new core data needed to be
+checked against the uniform quotient theorem.  Otherwise the shortened target
+would only be a sufficient interface, not a known equivalent reformulation.
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{lowRankApolarQuotientCoreData\_of\_lowRankApolarEssentialQuotientTheorem},
+\]
+and:
+\[
+\texttt{lowRankApolarQuotientCoreData\_iff\_lowRankApolarEssentialQuotientTheorem}.
+\]
+The reverse direction extracts rank-two quotient-growth data from the quotient
+theorem and projects its Macaulay growth component; the rank-three part is the
+bad-branch contradiction induced by the rank-three quotient bound.
+
+\paragraph{Strategy change.}
+The two-component core target is now formally equivalent to the uniform
+essential quotient theorem.  The remaining proof can focus on rank-two
+Macaulay growth and rank-three bad-branch contradiction.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

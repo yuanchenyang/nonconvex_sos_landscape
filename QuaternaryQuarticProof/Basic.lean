@@ -3120,6 +3120,24 @@ theorem lowRankApolarEssentialQuotientTheorem_of_coreData
   lowRankApolarEssentialQuotientTheorem_of_lowRankApolarQuotientLocalData
     (lowRankApolarQuotientLocalData_of_coreData hdata)
 
+theorem lowRankApolarQuotientCoreData_of_lowRankApolarEssentialQuotientTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hquot : HasLowRankApolarEssentialQuotientTheorem B p u) :
+    HasLowRankApolarQuotientCoreData B p u := by
+  have hdata2 :=
+    rankTwoQuotientGrowthData_of_lowRankApolarEssentialQuotientTheorem hquot
+  exact ⟨
+    rankTwoMacaulayGrowthBound_of_rankTwoQuotientGrowthData hdata2,
+    rankThreeBadBranchContradiction_of_rankThreeEssentialQuotientBound
+      (lowRankApolarEssentialQuotientBounds_of_theorem hquot).2⟩
+
+theorem lowRankApolarQuotientCoreData_iff_lowRankApolarEssentialQuotientTheorem
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasLowRankApolarQuotientCoreData B p u ↔
+      HasLowRankApolarEssentialQuotientTheorem B p u :=
+  ⟨lowRankApolarEssentialQuotientTheorem_of_coreData,
+    lowRankApolarQuotientCoreData_of_lowRankApolarEssentialQuotientTheorem⟩
+
 theorem lowRankApolarQuotientLocalData_of_lowRankApolarEssentialQuotientTheorem
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hquot : HasLowRankApolarEssentialQuotientTheorem B p u) :
