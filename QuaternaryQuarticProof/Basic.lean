@@ -952,6 +952,14 @@ def HasGlobalRankThreeApolarMacaulayObstruction : Prop :=
         IsSOCP B p u →
           HasRankThreeApolarMacaulayObstruction B p u
 
+def HasGlobalRankThreeApolarExactSequenceData : Prop :=
+  ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (_hu : IsAdmissiblePoint u),
+    IsPositiveDefinite B →
+      IsSOSQuartic p →
+        IsSOCP B p u →
+          HasRankThreeApolarExactSequenceData B p u
+
 def HasGlobalRankTwoThreeApolarEssentialQuotientBounds : Prop :=
   ∀ (B : DotForm) (p : Poly) (u : RankSevenVec)
     (_hu : IsAdmissiblePoint u),
@@ -2970,6 +2978,15 @@ theorem rankThreeMacaulayObstruction_iff_zeroAnnihilatorContradiction
   ⟨rankThreeZeroAnnihilatorContradiction_of_macaulayObstruction,
     rankThreeMacaulayObstruction_of_zeroAnnihilatorContradiction⟩
 
+theorem rankThreeExactSequenceData_of_macaulayObstruction
+    {B : DotForm} {p : Poly} {u : RankSevenVec}
+    (hobstruction : HasRankThreeApolarMacaulayObstruction B p u) :
+    HasRankThreeApolarExactSequenceData B p u := by
+  intro hrank3 hzero
+  exact False.elim
+    (rankThreeZeroAnnihilatorContradiction_of_macaulayObstruction
+      hobstruction hrank3 hzero)
+
 theorem rankTwoThreeAnnihilatorContradictions_of_dimensionBounds
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hdims : HasRankTwoThreeApolarAnnihilatorDimensionBounds B p u) :
@@ -3124,6 +3141,13 @@ theorem rankThreeMacaulayObstruction_of_rankThreeExactSequenceData
   exfalso
   exact rankThreeExactSequenceNumericalContradiction
     hbpos hbtop hq2 hq3 hineq
+
+theorem rankThreeExactSequenceData_iff_macaulayObstruction
+    {B : DotForm} {p : Poly} {u : RankSevenVec} :
+    HasRankThreeApolarExactSequenceData B p u ↔
+      HasRankThreeApolarMacaulayObstruction B p u :=
+  ⟨rankThreeMacaulayObstruction_of_rankThreeExactSequenceData,
+    rankThreeExactSequenceData_of_macaulayObstruction⟩
 
 theorem rankThreeHilbertFirstBound_of_rankThreeExactSequenceData
     {B : DotForm} {p : Poly} {u : RankSevenVec}
@@ -8744,6 +8768,26 @@ theorem globalRankThreeApolarMacaulayObstruction_iff_globalRankThreeApolarZeroAn
   ⟨globalRankThreeApolarZeroAnnihilatorContradiction_of_globalRankThreeApolarMacaulayObstruction,
     globalRankThreeApolarMacaulayObstruction_of_globalRankThreeApolarZeroAnnihilatorContradiction⟩
 
+theorem globalRankThreeApolarExactSequenceData_of_globalRankThreeApolarMacaulayObstruction
+    (hobstruction : HasGlobalRankThreeApolarMacaulayObstruction) :
+    HasGlobalRankThreeApolarExactSequenceData := by
+  intro B p u hu hB hp hsocp
+  exact rankThreeExactSequenceData_of_macaulayObstruction
+    (hobstruction B p u hu hB hp hsocp)
+
+theorem globalRankThreeApolarMacaulayObstruction_of_globalRankThreeApolarExactSequenceData
+    (hdata : HasGlobalRankThreeApolarExactSequenceData) :
+    HasGlobalRankThreeApolarMacaulayObstruction := by
+  intro B p u hu hB hp hsocp
+  exact rankThreeMacaulayObstruction_of_rankThreeExactSequenceData
+    (hdata B p u hu hB hp hsocp)
+
+theorem globalRankThreeApolarExactSequenceData_iff_globalRankThreeApolarMacaulayObstruction :
+    HasGlobalRankThreeApolarExactSequenceData ↔
+      HasGlobalRankThreeApolarMacaulayObstruction :=
+  ⟨globalRankThreeApolarMacaulayObstruction_of_globalRankThreeApolarExactSequenceData,
+    globalRankThreeApolarExactSequenceData_of_globalRankThreeApolarMacaulayObstruction⟩
+
 theorem globalRankCaseApolarSupportBounds_of_globalRankTwoThreeApolarSupportBounds
     (hsupport : HasGlobalRankTwoThreeApolarSupportBounds) :
     HasGlobalRankCaseApolarSupportBounds := by
@@ -9459,6 +9503,31 @@ theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoMacaulayGr
       hdata.2⟩
   · intro hdata
     exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeMacaulayObstruction
+      hdata.1 hdata.2
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeExactSequenceData
+    (hgrowth2 : HasGlobalRankTwoApolarMacaulayGrowthBound)
+    (hdata3 : HasGlobalRankThreeApolarExactSequenceData) :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP :=
+  quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeMacaulayObstruction
+    hgrowth2
+    (globalRankThreeApolarMacaulayObstruction_of_globalRankThreeApolarExactSequenceData
+      hdata3)
+
+theorem quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoMacaulayGrowth_and_rankThreeExactSequenceData :
+    QuaternaryQuarticRankSevenNoSpuriousSOCP ↔
+      HasGlobalRankTwoApolarMacaulayGrowthBound ∧
+        HasGlobalRankThreeApolarExactSequenceData := by
+  constructor
+  · intro hmain
+    have hdata :=
+      (quaternaryQuartic_rankSeven_no_spurious_socp_iff_globalRankTwoMacaulayGrowth_and_rankThreeMacaulayObstruction).mp
+        hmain
+    exact ⟨hdata.1,
+      globalRankThreeApolarExactSequenceData_of_globalRankThreeApolarMacaulayObstruction
+        hdata.2⟩
+  · intro hdata
+    exact quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeExactSequenceData
       hdata.1 hdata.2
 
 theorem quaternaryQuartic_rankSeven_no_spurious_socp_of_globalRankTwoMacaulayGrowth_and_rankThreeBadBranch

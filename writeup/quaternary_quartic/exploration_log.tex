@@ -14343,4 +14343,31 @@ Macaulay obstruction from the SOCP hypotheses.
 
 No Julia numerical claims were used in this round.
 
+\section*{Connect rank-three exact-sequence data}
+
+\paragraph{Gap targeted.}
+The remaining rank-three Macaulay branch should also be available in the
+blueprint's exact-sequence-data language, not only as the obstruction package.
+
+\paragraph{Lean progress.}
+Added the global package
+\[
+\texttt{HasGlobalRankThreeApolarExactSequenceData}.
+\]
+Proved local and global equivalences between rank-three exact-sequence data
+and rank-three Macaulay obstruction.  Added the root equivalence
+\[
+\texttt{quaternaryQuartic\_rankSeven\_no\_spurious\_socp\_iff\_globalRankTwoMacaulayGrowth\_and\_rankThreeExactSequenceData}.
+\]
+
+\paragraph{Strategy change.}
+The largest remaining rank-three gap can now be attacked through the
+exact-sequence construction from the blueprint, while the rank-two branch
+remains the Macaulay-growth statement.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}
