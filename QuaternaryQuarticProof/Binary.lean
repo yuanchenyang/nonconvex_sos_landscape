@@ -185,6 +185,14 @@ theorem binaryCanonicalKernelData_of_normalizedKernelPosition
   · exact Or.inr (Or.inl hySq)
   · exact Or.inr (Or.inr ⟨hell, hneg⟩)
 
+theorem binaryKernelBranchCertificate_of_normalizedKernelPosition
+    {a b c d e : ℝ}
+    (hpos : HasBinaryNormalizedKernelPosition a b c d e)
+    (hneg : HasBinaryHankelNegativeValue a b c d e) :
+    HasBinaryKernelBranchCertificate a b c d e :=
+  binaryKernelBranchCertificate_of_canonicalKernelData
+    (binaryCanonicalKernelData_of_normalizedKernelPosition hpos hneg)
+
 theorem binaryRankTwoNormalizedKernelClassification_of_normalizedKernelPosition
     {a b c d e : ℝ}
     (hpos : HasBinaryNormalizedKernelPosition a b c d e) :
