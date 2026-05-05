@@ -12090,4 +12090,35 @@ and equality of the two quotient pairings attached to \(wx,yz\) and \(wy,xz\).
 
 No Julia numerical claims were used in this round.
 
+\section*{Quotient product reassociation}
+
+\paragraph{Gap targeted.}
+After constructing \texttt{quotientCatalecticantMap}, the rank-one identity
+still needed the concrete equality of pairings obtained by regrouping four
+linear factors.  This is the formal version of
+\[
+(wx)(yz)=(wy)(xz).
+\]
+
+\paragraph{Lean progress.}
+Added:
+\[
+\texttt{quotientCatalecticantMap\_linearProducts\_reassociate}.
+\]
+It states that the quotient catalecticant pairings of \([wx]\) with \([yz]\)
+and of \([wy]\) with \([xz]\) are equal for all affine-linear forms
+\(w,x,y,z\).  The proof is a direct polynomial multiplication normalization.
+
+\paragraph{Strategy change.}
+The rank-one scalarized identity now has both ingredients except nonvanishing
+of the quotient catalecticant pairing in the rank-one case.  Once a nonzero
+pair in the quotient is packaged, the one-dimensional coordinate lemma can
+convert this reassociation equality into the scalar product identity.
+
+\paragraph{Verification.}
+\texttt{lake build QuaternaryQuarticProof.Catalecticant} and
+\texttt{lake build QuaternaryQuarticProof.Basic} succeeded.
+
+No Julia numerical claims were used in this round.
+
 \end{document}

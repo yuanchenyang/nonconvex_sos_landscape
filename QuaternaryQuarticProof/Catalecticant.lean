@@ -1916,6 +1916,21 @@ theorem quotientCatalecticantMap_pair_comm
           change catalecticantMap B p u q' r' = catalecticantMap B p u r' q'
           rw [catalecticantMap_pair_comm]
 
+theorem quotientCatalecticantMap_linearProducts_reassociate
+    (B : DotForm) (p : Poly) (u : RankSevenVec)
+    (w x y z : linSubmodule) :
+    quotientCatalecticantMap B p u
+        ((LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct w x))
+        ((LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct y z)) =
+      quotientCatalecticantMap B p u
+        ((LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct w y))
+        ((LinearMap.ker (catalecticantMap B p u)).mkQ (linProduct x z)) := by
+  change B ((linProduct w x : quadSubmodule).1 *
+      (linProduct y z : quadSubmodule).1) (residual p u) =
+    B ((linProduct w y : quadSubmodule).1 *
+      (linProduct x z : quadSubmodule).1) (residual p u)
+  simp [linProduct, mul_comm, mul_left_comm]
+
 theorem catalecticantMap_eq_zero_of_residual_eq_zero
     {B : DotForm} {p : Poly} {u : RankSevenVec}
     (hres : residual p u = 0) :
