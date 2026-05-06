@@ -1,0 +1,965 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[T1]{fontenc}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true, linkcolor=blue!60!black, citecolor=blue!60!black, urlcolor=blue!60!black}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb R}
+\newcommand{\N}{\mathbb N}
+\newcommand{\Poly}{\mathcal P}
+\newcommand{\Lin}{\mathcal E}
+\newcommand{\Quad}{\mathcal Q}
+\newcommand{\Quart}{\mathcal T}
+\newcommand{\Span}{\operatorname{span}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\codim}{\operatorname{codim}}
+\newcommand{\Ann}{\operatorname{Ann}}
+\newcommand{\Sym}{\operatorname{Sym}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\kerop}{\operatorname{ker}}
+\newcommand{\sos}{\operatorname{sos}}
+\newcommand{\td}{\operatorname{totalDegree}}
+\newcommand{\defeq}{\mathrel{:=}}
+\newcommand{\lean}[1]{\texttt{\detokenize{#1}}}
+
+\title{Blueprint for \lean{QuaternaryQuarticRankSevenNoSpuriousSOCP}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Purpose and exact target}
+
+This blueprint is written for the immutable Lean target in \lean{QuaternaryQuartic.lean}:
+\[
+\begin{aligned}
+\lean{QuaternaryQuarticRankSevenNoSpuriousSOCP} :\quad
+\forall (B : \lean{DotForm})\,(p : \lean{Poly})\,(u : \lean{RankSevenVec}),\;&
+\lean{IsPositiveDefinite}\;B \to
+\lean{IsSOSQuartic}\;p \to{}\\
+&\lean{IsAdmissiblePoint}\;u \to
+\lean{IsSOCP}\;B\;p\;u \to
+\lean{residual}\;p\;u = 0.
+\end{aligned}
+\]
+Here
+\[
+\Poly=\R[X_1,X_2,X_3],\qquad
+\Quad=\{q\in\Poly: \td(q)\le 2\},
+\]
+so dehomogenized quaternary quadratics form a 10-dimensional real vector space.  The rank-seven factor variable is a map
+\[
+ u:\{0,\dots,6\}\to \Poly,
+\]
+with each coordinate in \(\Quad\).  The quadratic map and its linearization are
+\[
+\sigma(u)=\sum_{i=0}^6 u_i^2,
+\qquad
+A_u(v)=\sum_{i=0}^6 u_i v_i.
+\]
+For a fixed quartic target \(p\), the residual is
+\[
+R=\sigma(u)-p.
+\]
+The Lean file defines the second-order expression as
+\[
+H_u(v)=B(\sigma(v),R)+2B(A_u(v),A_u(v)).
+\]
+Thus \lean{IsSOCP} means
+\[
+\forall v\in \Quad^7,\quad B(A_u(v),R)=0,
+\qquad
+\forall v\in \Quad^7,\quad 0\le H_u(v).
+\]
+The proof below uses only these definitions.  In particular, it does \emph{not} require symmetry of \(B\).  Positive-definiteness is used only in the form
+\[
+R\ne 0\implies B(R,R)>0.
+\]
+
+\begin{remark}[Relation to the homogeneous statement]
+The dehomogenized space \(\Quad\) is naturally isomorphic to the homogeneous quadratic space in four variables.  Let
+\[
+\Lin=\{\ell\in\Poly: \td(\ell)\le 1\}.
+\]
+Then \(\dim\Lin=4\), \(\dim\Quad=10\), and products \(\ell m\), \(\ell,m\in\Lin\), span \(\Quad\).  This is the affine chart of the homogeneous quaternary-quartic problem.
+\end{remark}
+
+\section{Finite-dimensional spaces and notation}
+
+For formalization it is useful to introduce submodules or subtypes:
+\[
+\Lin=\{a: \td(a)\le 1\},\qquad
+\Quad=\{q: \td(q)\le 2\},\qquad
+\Quart=\{f: \td(f)\le 4\}.
+\]
+The required dimensions are
+\[
+\dim_\R \Lin=4,
+\qquad
+\dim_\R \Quad=10,
+\qquad
+\dim_\R \Quart=35.
+\]
+The proofs only need \(\dim\Lin=4\) and \(\dim\Quad=10\), plus the closure facts
+\[
+\Lin\cdot\Lin\subseteq\Quad,
+\qquad
+\Quad\cdot\Quad\subseteq\Quart.
+\]
+If \(U,W\subseteq\Lin\), write
+\[
+UW\defeq \Span_\R\{uw:u\in U,w\in W\}\subseteq\Quad,
+\]
+and write \(\Sym^2 U\) for \(UU\).  If \(E=U\oplus W\), then
+\[
+\Sym^2 E=(\Sym^2 U)\oplus (UW)\oplus(\Sym^2 W),
+\]
+with the expected dimensions.  The only cases used later are:
+\[
+\dim \Sym^2(\R^2)=3,
+\qquad
+\dim \Sym^2(\R^3)=6,
+\qquad
+\dim(xA)=\dim A
+\]
+for a nonzero linear form \(x\notin A\).  These are elementary basis computations.
+
+\section{The residual functional}
+
+Fix \(B,p,u\) satisfying the hypotheses except for the desired conclusion.  Let
+\[
+R=\sigma(u)-p.
+\]
+Assume for contradiction that \(R\ne0\).  Define the linear functional
+\[
+\lambda:\Poly\to\R,
+\qquad
+\lambda(f)=B(f,R).
+\]
+The entire proof is driven by the restriction of \(\lambda\) to quartics.
+
+\begin{lemma}[FOCP makes \(\lambda(p)\) negative]\label{lem:lambda-p-negative}
+If \(R\ne0\), \(u\) is admissible, \(B\) is positive-definite, and \(u\) is first-order critical, then
+\[
+\lambda(p)<0.
+\]
+\end{lemma}
+
+\begin{proof}
+Because \(u\) is admissible, the direction \(v=u\) is admissible.  First-order criticality gives
+\[
+0=B(A_u(u),R)=B(\sigma(u),R)=\lambda(\sigma(u)).
+\]
+Since \(R=\sigma(u)-p\), we have \(p=\sigma(u)-R\).  Therefore
+\[
+\lambda(p)=\lambda(\sigma(u))-\lambda(R)=0-B(R,R).
+\]
+Positive-definiteness and \(R\ne0\) give \(B(R,R)>0\), hence \(\lambda(p)<0\).
+\end{proof}
+
+\begin{lemma}[A negative square from the SOS certificate]\label{lem:negative-sos-summand}
+Assume \(p\) is SOS in the sense of \lean{IsSOSQuartic}, and \(\lambda(p)<0\).  Then there exists a quadratic polynomial \(q\in\Quad\) such that
+\[
+\lambda(q^2)<0.
+\]
+\end{lemma}
+
+\begin{proof}
+Write the SOS certificate as
+\[
+p=\sum_{j\in J} q_j^2,
+\qquad q_j\in\Quad.
+\]
+By linearity,
+\[
+\lambda(p)=\sum_{j\in J}\lambda(q_j^2).
+\]
+If every term were nonnegative, the sum would be nonnegative.  Since \(\lambda(p)<0\), at least one term is negative.
+\end{proof}
+
+\section{The catalecticant kernel attached to \(\lambda\)}
+
+Define the degree-two catalecticant bilinear form
+\[
+C_\lambda:\Quad\times\Quad\to\R,
+\qquad
+C_\lambda(a,b)=\lambda(ab).
+\]
+Because multiplication is commutative, \(C_\lambda(a,b)=C_\lambda(b,a)\).  Its left radical is
+\[
+K=K_\lambda
+\defeq
+\{a\in\Quad: \forall b\in\Quad,\ \lambda(ab)=0\}.
+\]
+Equivalently, \(K=\ker(\Quad\to\Quad^*)\), \(a\mapsto(b\mapsto\lambda(ab))\).  Put
+\[
+k=\rank C_\lambda=10-\dim K.
+\]
+
+Let
+\[
+L=L_u\defeq \Span_\R\{u_0,\dots,u_6\}\subseteq\Quad.
+\]
+
+\begin{lemma}[FOCP implies \(L\subseteq K\)]\label{lem:L-subset-K}
+If \(u\) is first-order critical, then every \(a\in L\) lies in \(K\).  Equivalently,
+\[
+L\subseteq K.
+\]
+\end{lemma}
+
+\begin{proof}
+Fix an index \(i\) and any quadratic \(q\in\Quad\).  Let \(v\) be the rank-seven direction with \(v_i=q\) and all other coordinates zero.  Then
+\[
+A_u(v)=u_iq.
+\]
+First-order criticality gives \(\lambda(u_iq)=0\).  By linearity in the coordinate \(u_i\), every element of their span has the same property.
+\end{proof}
+
+\section{Rank-deficient factor points}
+
+The rank-deficient case is easier than in the SDP proof; no orthogonal rotation is needed.
+
+\begin{lemma}[Rank-deficient points have negative curvature unless \(R=0\)]\label{lem:rank-deficient}
+Assume \(R\ne0\), \(p\) is SOS, \(u\) is admissible and first-order critical.  If the seven quadratics \(u_i\) are linearly dependent, then \(u\) is not second-order critical.
+\end{lemma}
+
+\begin{proof}
+By Lemmas~\ref{lem:lambda-p-negative} and~\ref{lem:negative-sos-summand}, choose \(q\in\Quad\) with \(\lambda(q^2)<0\).  Since the \(u_i\) are linearly dependent, choose coefficients \(c_i\), not all zero, with
+\[
+\sum_i c_i u_i=0.
+\]
+Define an admissible direction
+\[
+v_i=c_iq.
+\]
+Then
+\[
+A_u(v)=\sum_i u_i(c_iq)=q\sum_i c_i u_i=0.
+\]
+Also
+\[
+\sigma(v)=\sum_i(c_iq)^2=\left(\sum_i c_i^2\right)q^2.
+\]
+The scalar \(\sum_i c_i^2
+>0\), so
+\[
+H_u(v)
+=
+\lambda(\sigma(v))+2B(0,0)
+=
+\left(\sum_i c_i^2\right)\lambda(q^2)<0.
+\]
+This contradicts second-order criticality.
+\end{proof}
+
+Thus, under the contradiction assumption \(R\ne0\), a second-order critical point must have
+\[
+\dim L=7.
+\]
+Combined with \(L\subseteq K\), this implies
+\[
+\dim K\ge7,
+\qquad
+k=10-\dim K\le3.
+\]
+
+\section{The syzygy-to-negative-curvature mechanism}
+
+The next lemma is the main reusable Hessian argument.  It converts an algebraic product identity into a negative second derivative direction.
+
+\begin{lemma}[Syzygy gives negative curvature]\label{lem:syzygy-negative-curvature}
+Assume \(u\) is admissible and first-order critical.  Let \(L\subseteq K\) be as above.  Suppose there exist a finite index set \(J\), elements
+\[
+m_j\in L,
+\qquad
+n_j\in K,
+\qquad
+s\in L\setminus\{0\},
+\qquad
+q\in\Quad,
+\]
+with
+\[
+\sum_{j\in J}m_jn_j=sq,
+\qquad
+\lambda(q^2)<0.
+\]
+If the coordinates \(u_i\) are linearly independent, then \(u\) is not second-order critical.
+\end{lemma}
+
+\begin{proof}
+Write
+\[
+m_j=\sum_i \alpha_{j,i}u_i,
+\qquad
+s=\sum_i\beta_i u_i.
+\]
+Because \(s\ne0\) and the \(u_i\) are linearly independent, the coefficient vector \(\beta=(\beta_i)_i\) is nonzero, hence
+\[
+\sum_i\beta_i^2>0.
+\]
+Define the admissible direction
+\[
+v_i=\sum_{j\in J}\alpha_{j,i}n_j-\beta_iq.
+\]
+Then
+\[
+A_u(v)
+=
+\sum_i u_iv_i
+=
+\sum_{j\in J}\left(\sum_i\alpha_{j,i}u_i\right)n_j
+-
+\left(\sum_i\beta_i u_i\right)q
+=
+\sum_{j\in J}m_jn_j-sq
+=0.
+\]
+Now compute \(\lambda(\sigma(v))\).  For every \(n_j\in K\) and every quadratic \(r\), one has \(\lambda(n_jr)=0\).  Therefore all terms involving at least one \(n_j\) vanish under \(\lambda\).  Only the \(q^2\)-terms remain:
+\[
+\lambda(\sigma(v))
+=
+\sum_i\lambda(v_i^2)
+=
+\sum_i\beta_i^2\lambda(q^2)<0.
+\]
+Consequently
+\[
+H_u(v)=\lambda(\sigma(v))+2B(A_u(v),A_u(v))
+=\left(\sum_i\beta_i^2\right)\lambda(q^2)<0,
+\]
+contradicting second-order criticality.
+\end{proof}
+
+\section{Low-rank catalecticants}
+
+This is the only genuinely structural input.  It is best isolated as a separate formalization block.
+
+\subsection{Apolar support reduction}
+
+Let \(E\) be the four-dimensional affine-linear space \(\Lin\).  The quadratic space \(\Quad\) is \(\Sym^2E\) after homogenization.  Given \(\lambda\) on quartics, define
+\[
+\Ann_1(\lambda)=\{a\in E: \forall q\in\Sym^3E,\ \lambda(aq)=0\}.
+\]
+Equivalently, since cubics are spanned by products of a linear form and a quadratic,
+\[
+a\in\Ann_1(\lambda)
+\quad\Longleftrightarrow\quad
+\forall e\in E,
+\ ae\in K.
+\]
+
+\begin{lemma}[Low catalecticant rank forces few essential variables]\label{lem:low-rank-support}
+Let \(C_\lambda:\Sym^2E\to(\Sym^2E)^*\) have rank \(k\le3\).  Then there is a direct sum decomposition
+\[
+E=W\oplus A
+\]
+such that
+\[
+\dim W\le k,
+\qquad
+\dim A\ge4-k,
+\qquad
+A E\subseteq K.
+\]
+Equivalently, \(\lambda\) only sees the \(W\)-part: if a quadratic has at least one factor in \(A\), then it lies in \(K\), and any square-pairing involving it is zero under \(\lambda\).
+\end{lemma}
+
+\begin{proof}[Proof idea for formalization]
+Homogenize and use the apolar Artinian Gorenstein algebra
+\[
+A_\lambda=S/\Ann(\lambda),
+\qquad S=\R[E^*].
+\]
+Its Hilbert function has the symmetric form
+\[
+h(A_\lambda)=(1,h_1,h_2,h_1,1),
+\qquad
+h_2=\rank C_\lambda=k.
+\]
+The number \(h_1
+\) is the number of essential variables, namely
+\[
+h_1=4-\dim\Ann_1(\lambda).
+\]
+It remains to show \(h_1\le k\) for \(k\le3\).
+
+For \(k\le2\), Macaulay growth in degree two gives
+\[
+h_3\le h_2^{\langle2\rangle}\le2.
+\]
+By Gorenstein symmetry, \(h_1=h_3\le2\).
+
+For \(k=3\), suppose for contradiction that \(h_1=4\).  Then
+\[
+h=(1,4,3,4,1).
+\]
+Choose a nonzero linear element \(\ell\in(A_\lambda)_1\).  The standard exact sequence
+\[
+0\to A_\lambda/(0:\ell)(-1)
+\xrightarrow{\cdot\ell}
+A_\lambda
+\to
+A_\lambda/\ell A_\lambda
+\to0
+\]
+has first term Gorenstein of socle degree three, hence Hilbert function
+\[
+(1,b,b,1)
+\]
+for some \(1\le b\le3\).  Therefore the quotient \(A_\lambda/\ell A_\lambda\), a standard graded quotient in at most three variables, has Hilbert function
+\[
+(1,3,3-b,4-b,0).
+\]
+But this is not an \(O\)-sequence: Macaulay's degree-two bound says
+\[
+4-b\le(3-b)^{\langle2\rangle},
+\]
+and for \(b=1,2,3\) the right side is respectively \(2,1,0\), always smaller than \(4-b\).  Contradiction.  Thus \(h_1\le3\).
+
+Choose \(A=\Ann_1(\lambda)\subseteq E\) and any complement \(W\).  Since \(\dim W=h_1\le k\), and since every element of \(A\) annihilates all degree-three products, one gets \(AE\subseteq K\).
+\end{proof}
+
+\begin{remark}[Formalization strategy for Lemma~\ref{lem:low-rank-support}]
+This lemma can be formalized either through the apolar Hilbert-function argument above, or as a standalone finite-dimensional theorem about degree-four inverse systems.  The latter statement is sufficient for the main proof:
+\[
+\rank C_\lambda\le3
+\Rightarrow
+\exists W,A,
+\ E=W\oplus A,\ \dim W\le3,\ AE\subseteq K,
+\]
+and similarly with \(\dim W\le2\) when \(\rank C_\lambda\le2\), and \(\dim W\le1\) when \(\rank C_\lambda=1\) and \(\lambda\ne0\).
+No order or positivity of \(\lambda\) is involved in this structural lemma.
+\end{remark}
+
+\subsection{Binary rank at most two: a negative square}
+
+The rank-two and rank-one cases need a negative \emph{pure square} \(x^2\), not merely an arbitrary quadratic with negative square.
+
+\begin{lemma}[Binary low-rank indefinite forms have a negative pure square]\label{lem:binary-negative-square}
+Let \(W\) be two-dimensional and let \(\lambda\) be a quartic functional supported on \(W\), so its catalecticant acts on \(\Sym^2W\).  If
+\[
+\rank C_\lambda\le2
+\]
+and there exists \(q\in\Sym^2W\) with
+\[
+\lambda(q^2)<0,
+\]
+then there exists \(x\in W\) with
+\[
+\lambda(x^4)<0.
+\]
+\end{lemma}
+
+\begin{proof}
+Choose a basis \(x,y\) of \(W\).  Write
+\[
+\lambda(x^4)=a,
+\quad
+\lambda(x^3y)=b,
+\quad
+\lambda(x^2y^2)=c,
+\quad
+\lambda(xy^3)=d,
+\quad
+\lambda(y^4)=e.
+\]
+In the basis \((x^2,xy,y^2)\), the catalecticant matrix is the Hankel matrix
+\[
+M=
+\begin{pmatrix}
+a&b&c\\
+b&c&d\\
+c&d&e
+\end{pmatrix}.
+\]
+The assumption \(\exists q,\lambda(q^2)<0\) means that \(M\) is not positive semidefinite.
+
+If \(\rank M=1\), the Hankel relations force
+\[
+M=\rho
+\begin{pmatrix}
+\alpha^2\\ \alpha\beta\\ \beta^2
+\end{pmatrix}
+\begin{pmatrix}
+\alpha^2&\alpha\beta&\beta^2
+\end{pmatrix}
+\]
+for some real \(\alpha,\beta\).  Since \(M\) is not psd, \(\rho<0\).  Taking \(x'=\alpha x+\beta y\) gives \(\lambda((x')^4)<0\).
+
+If \(\rank M=2\), its kernel is a real one-dimensional space generated by a binary quadratic.  Up to a real linear change of basis, the kernel generator is one of
+\[
+xy,
+\qquad
+y^2,
+\qquad
+x^2+y^2.
+\]
+The corresponding forms are as follows.
+
+\begin{enumerate}[label=(\roman*)]
+\item If \(xy\in\ker M\), then \(b=c=d=0\), so only \(a x^4+e y^4\) remains.  Since \(M\) is not psd, either \(a<0\) or \(e<0\), giving a negative pure fourth power.
+
+\item If \(y^2\in\ker M\), then \(c=d=e=0\), so along \(x+ty\) one has
+\[
+\lambda((x+ty)^4)=a+4bt.
+\]
+Rank two forces \(b\ne0\), and some real \(t\) makes this negative.
+
+\item If \(x^2+y^2\in\ker M\), then
+\[
+a+c=0,
+\qquad b+d=0,
+\qquad c+e=0.
+\]
+Thus
+\[
+\lambda((x+ty)^4)=a(1-6t^2+t^4)+4b(t-t^3).
+\]
+If \(a\ne0\), then \(t=0\) or \(t=1\) gives opposite signs, since the values are \(a\) and \(-4a\).  If \(a=0\), then \(b\ne0\) by rank two, and \(4b(t-t^3)\) is negative for some real \(t\).
+\end{enumerate}
+Thus in all cases some linear form has negative fourth-power value.
+\end{proof}
+
+\begin{corollary}[Rank-one normal form]\label{cor:rank-one-normal-form}
+If \(\rank C_\lambda=1\), \(\lambda\) has a negative square, and \(E\) is four-dimensional, then there is a decomposition
+\[
+E=\R x\oplus B,
+\qquad \dim B=3,
+\]
+such that
+\[
+K=xB\oplus\Sym^2B,
+\qquad
+\lambda(x^4)<0.
+\]
+\end{corollary}
+
+\begin{proof}
+By Lemma~\ref{lem:low-rank-support}, \(\lambda\) is supported on at most one essential variable.  Since \(\lambda\) has a negative square, it is nonzero, so the support is exactly one-dimensional.  Let \(x\) span the support and let \(B\) be a complementary three-dimensional subspace.  Then every quadratic except the \(x^2\)-component lies in the kernel, giving the displayed formula for \(K\).  The negative-square condition gives \(\lambda(x^4)<0\) after scaling \(x\).
+\end{proof}
+
+\section{Full-rank proof by catalecticant rank}
+
+Assume now that \(u\) is second-order critical, \(R\ne0\), and the coordinates \(u_i\) are linearly independent.  Then
+\[
+\dim L=7,
+\qquad
+L\subseteq K,
+\qquad
+\rank C_\lambda=k\le3.
+\]
+By Lemma~\ref{lem:negative-sos-summand}, \(\lambda\) has a negative square.  In particular \(k\ne0\), because if \(k=0\), every quadratic square from the SOS representation of \(p\) would have \(\lambda(q_j^2)=0\), contradicting \(\lambda(p)<0\).
+
+Thus \(k\in\{1,2,3\}\).  Each case produces a syzygy of the form required by Lemma~\ref{lem:syzygy-negative-curvature}.
+
+\subsection{Case \(k=3\)}
+
+Here
+\[
+\dim K=10-3=7=\dim L,
+\]
+so
+\[
+L=K.
+\]
+By Lemma~\ref{lem:low-rank-support}, choose
+\[
+E=W\oplus A,
+\qquad
+\dim A\ge1,
+\qquad
+AE\subseteq K.
+\]
+Pick \(0\ne z\in A\).  Then
+\[
+zE\subseteq K=L,
+\]
+so in particular
+\[
+z^2\in L,
+\qquad
+z\ell\in L\quad(\ell\in W).
+\]
+
+Choose a quadratic \(q_0\) with \(\lambda(q_0^2)<0\).  Decompose
+\[
+q_0=q_W+q_K,
+\qquad
+q_W\in\Sym^2W,
+\qquad
+q_K\in AE\subseteq K.
+\]
+Since \(q_K\in K\), all terms involving \(q_K\) vanish under \(\lambda\), and therefore
+\[
+\lambda(q_W^2)=\lambda(q_0^2)<0.
+\]
+Write the quadratic \(q_W\) as a finite sum of products of linear forms in \(W\):
+\[
+q_W=\sum_{j\in J}\ell_jm_j,
+\qquad
+\ell_j,m_j\in W.
+\]
+Now define
+\[
+M_j=z\ell_j\in L,
+\qquad
+N_j=zm_j\in K,
+\qquad
+s=z^2\in L\setminus\{0\},
+\qquad
+q=q_W.
+\]
+Then
+\[
+\sum_{j\in J}M_jN_j
+=\sum_j(z\ell_j)(zm_j)
+=z^2\sum_j\ell_jm_j
+=sq.
+\]
+Also \(\lambda(q^2)<0\).  Lemma~\ref{lem:syzygy-negative-curvature} gives a negative Hessian direction, contradiction.
+
+\subsection{Case \(k=2\)}
+
+By Lemma~\ref{lem:low-rank-support}, choose a decomposition
+\[
+E=W\oplus A,
+\qquad
+\dim W=2,
+\qquad
+\dim A=2,
+\qquad
+AE\subseteq K.
+\]
+The support is genuinely two-dimensional because the catalecticant rank is two.  By Lemma~\ref{lem:binary-negative-square}, after choosing a suitable \(x\in W\), we have
+\[
+\lambda(x^4)<0.
+\]
+Set
+\[
+U=xA\oplus\Sym^2A\subseteq K.
+\]
+Then
+\[
+\dim U=2+3=5,
+\qquad
+\dim K=10-2=8.
+\]
+Because \(L\subseteq K\), \(\dim L=7\), and \(U\subseteq K\), the Grassmann dimension inequality gives
+\[
+\dim(L\cap U)
+\ge
+\dim L+
+\dim U-
+\dim K
+=7+5-8=4.
+\]
+Put
+\[
+P=L\cap U.
+\]
+Inside the direct sum \(U=xA\oplus\Sym^2A\), define
+\[
+M=\{a\in A: xa\in P\},
+\qquad
+N=P\cap\Sym^2A.
+\]
+Then
+\[
+\dim M=\dim(P\cap xA)
+\ge 4+2-5=1,
+\]
+and
+\[
+\dim N
+\ge 4+3-5=2.
+\]
+Since \(A\) is two-dimensional and \(M\ne0\), the product space
+\[
+MA=\Span\{ab:a\in M,b\in A\}\subseteq\Sym^2A
+\]
+has dimension at least two.  Because \(\dim\Sym^2A=3\),
+\[
+\dim N+
+\dim(MA)
+\ge2+2>3,
+\]
+so
+\[
+N\cap MA\ne\{0\}.
+\]
+Choose
+\[
+0\ne s\in N\cap MA.
+\]
+Then \(s\in N\subseteq P\subseteq L\), and since \(s\in MA\), we can write
+\[
+s=\sum_{j\in J}a_jb_j,
+\qquad
+a_j\in M,
+\quad b_j\in A.
+\]
+For each \(j\), membership \(a_j\in M\) gives
+\[
+xa_j\in P\subseteq L,
+\]
+while \(b_j\in A\) gives
+\[
+xb_j\in xA\subseteq AE\subseteq K.
+\]
+Now use the identity
+\[
+\sum_j(xa_j)(xb_j)
+=x^2\sum_j a_jb_j
+=x^2s.
+\]
+This is Lemma~\ref{lem:syzygy-negative-curvature} with
+\[
+M_j=xa_j,
+\qquad
+N_j=xb_j,
+\qquad
+q=x^2,
+\qquad
+s=s.
+\]
+The negativity condition is \(\lambda(q^2)=\lambda(x^4)<0\).  Hence a negative Hessian direction exists, contradiction.
+
+\subsection{Case \(k=1\)}
+
+By Corollary~\ref{cor:rank-one-normal-form}, choose
+\[
+E=\R x\oplus B,
+\qquad
+\dim B=3,
+\]
+such that
+\[
+K=xB\oplus\Sym^2B,
+\qquad
+\lambda(x^4)<0.
+\]
+The dimensions are
+\[
+\dim K=9,
+\qquad
+\dim xB=3,
+\qquad
+\dim\Sym^2B=6.
+\]
+Define
+\[
+M=\{b\in B: xb\in L\},
+\qquad
+N=L\cap\Sym^2B.
+\]
+By the dimension inequality inside \(K\),
+\[
+\dim M
+=
+\dim(L\cap xB)
+\ge 7+3-9=1,
+\]
+and
+\[
+\dim N
+=
+\dim(L\cap\Sym^2B)
+\ge 7+6-9=4.
+\]
+Since \(M\ne0\) and \(B\) is three-dimensional, multiplication by a nonzero element of \(M\) embeds \(B\) into \(\Sym^2B\), so
+\[
+\dim(MB)
+\ge3.
+\]
+As \(\dim\Sym^2B=6\),
+\[
+\dim N+
+\dim(MB)
+\ge4+3>6.
+\]
+Therefore
+\[
+N\cap MB\ne\{0\}.
+\]
+Choose
+\[
+0\ne s\in N\cap MB.
+\]
+Then \(s\in L\), and because \(s\in MB\), write
+\[
+s=\sum_{j\in J}b_jc_j,
+\qquad
+b_j\in M,
+\quad c_j\in B.
+\]
+Then
+\[
+xb_j\in L,
+\qquad
+xc_j\in xB\subseteq K,
+\]
+and
+\[
+\sum_j(xb_j)(xc_j)
+=x^2\sum_j b_jc_j
+=x^2s.
+\]
+Apply Lemma~\ref{lem:syzygy-negative-curvature} with
+\[
+q=x^2,
+\qquad
+\lambda(q^2)=\lambda(x^4)<0.
+\]
+Again this contradicts second-order criticality.
+
+\section{Main proof}
+
+\begin{theorem}[Rank-seven dehomogenized quaternary quartic theorem]\label{thm:main}
+For every positive-definite bilinear form \(B\), every SOS quartic \(p\), and every admissible rank-seven factor \(u\), if \(u\) is second-order critical in the sense of the Lean definition, then
+\[
+\sigma(u)-p=0.
+\]
+\end{theorem}
+
+\begin{proof}
+Let \(R=\sigma(u)-p\).  Suppose \(R\ne0\).  Define \(\lambda(f)=B(f,R)
+\).  Lemma~\ref{lem:lambda-p-negative} gives \(\lambda(p)<0\), and Lemma~\ref{lem:negative-sos-summand} gives a quadratic \(q\) with \(\lambda(q^2)<0\).
+
+Let \(L=\Span\{u_i\}\) and \(K=\{a\in\Quad: \forall b\in\Quad,\lambda(ab)=0\}\).  By Lemma~\ref{lem:L-subset-K}, \(L\subseteq K\).
+
+If the \(u_i\) are linearly dependent, Lemma~\ref{lem:rank-deficient} contradicts second-order criticality.  Therefore they are linearly independent and \(\dim L=7\).  Since \(L\subseteq K\subseteq\Quad\) and \(\dim\Quad=10\), the catalecticant rank satisfies
+\[
+k=10-
+\dim K\le3.
+\]
+Moreover \(k\ne0\), because \(k=0\) would imply every SOS summand square has \(\lambda(q_j^2)=0\), contradicting \(\lambda(p)<0\).
+
+Thus \(k=1,2,\) or \(3\).  The rank-three, rank-two, and rank-one arguments in the previous section each construct a syzygy satisfying Lemma~\ref{lem:syzygy-negative-curvature}.  Each case therefore produces an admissible direction \(v\) with
+\[
+H_u(v)<0,
+\]
+contradicting the second-order criticality hypothesis.
+
+The contradiction shows that \(R\ne0\) is impossible.  Hence
+\[
+R=\sigma(u)-p=0,
+\]
+which is exactly \lean{residual p u = 0}.
+\end{proof}
+
+\section{Suggested Lean lemma inventory}
+
+The following list is meant as a formalization guide.  Names are suggestions only; the target theorem name and statement should remain unchanged.
+
+\subsection*{Finite-dimensional polynomial spaces}
+
+\begin{enumerate}[label=\textbf{F\arabic*.},leftmargin=2.5em]
+\item \lean{linSubmodule}, \lean{quadSubmodule}, \lean{quarticSubmodule}: submodules of polynomials of total degree at most \(1,2,4\).
+\item \lean{finrank_lin_eq_four}: \(\dim\Lin=4\).
+\item \lean{finrank_quad_eq_ten}: \(\dim\Quad=10\).
+\item \lean{mul_lin_lin_mem_quad}: product of two affine-linear polynomials is quadratic.
+\item \lean{mul_quad_quad_mem_quartic}: product of two quadratics is quartic.
+\item \lean{quad_eq_sym2_lin_span}: products of two elements of \(\Lin\) span \(\Quad\).
+\end{enumerate}
+
+\subsection*{Residual functional and FOCP}
+
+\begin{enumerate}[label=\textbf{R\arabic*.},leftmargin=2.5em]
+\item \lean{lambda_of_residual}: define \(\lambda(f)=B(f,\lean{residual p u})\).
+\item \lean{FOCP_self}: from \lean{IsFOCP B p u}, prove \(B(\sigma u,R)=0\).
+\item \lean{lambda_p_negative}: if \(R\ne0\), then \(\lambda(p)<0\).
+\item \lean{exists_negative_sos_summand}: from \lean{IsSOSQuartic p} and \(\lambda(p)<0\), produce \(q\in\Quad\) with \(\lambda(q^2)<0\).
+\item \lean{catalecticantKernel}: define \(K=\{a\in\Quad: \forall b\in\Quad,\lambda(ab)=0\}\).
+\item \lean{span_u_subset_catalecticantKernel}: FOCP implies \(L\subseteq K\).
+\end{enumerate}
+
+\subsection*{Negative-curvature constructions}
+
+\begin{enumerate}[label=\textbf{N\arabic*.},leftmargin=2.5em]
+\item \lean{rankDeficient_negative_curvature}: Lemma~\ref{lem:rank-deficient}.
+\item \lean{syzygy_negative_curvature}: Lemma~\ref{lem:syzygy-negative-curvature}.
+\item \lean{fullRank_rank_catalecticant_le_three}: if \(\dim L=7\) and \(L\subseteq K\), then \(\rank C_\lambda\le3\).
+\end{enumerate}
+
+\subsection*{Low-rank structure}
+
+\begin{enumerate}[label=\textbf{S\arabic*.},leftmargin=2.5em]
+\item \lean{lowRankCatalecticant_supportReduction}: Lemma~\ref{lem:low-rank-support}.
+\item \lean{binary_rank_le_two_negative_square}: Lemma~\ref{lem:binary-negative-square}.
+\item \lean{rank_one_normal_form}: Corollary~\ref{cor:rank-one-normal-form}.
+\item \lean{rank_three_syzygy}: construction in the \(k=3\) case.
+\item \lean{rank_two_syzygy}: construction in the \(k=2\) case.
+\item \lean{rank_one_syzygy}: construction in the \(k=1\) case.
+\end{enumerate}
+
+\subsection*{Main theorem}
+
+\begin{enumerate}[label=\textbf{M\arabic*.},leftmargin=2.5em]
+\item \lean{QuaternaryQuarticRankSevenNoSpuriousSOCP}: unfold the definition, introduce \(B,p,u\), assume all hypotheses, set \(R=\lean{residual p u}\), and prove by contradiction using Theorem~\ref{thm:main}.
+\end{enumerate}
+
+\section{Lean-specific comments}
+
+\begin{itemize}[leftmargin=2em]
+\item The proof never needs to modify \lean{QuaternaryQuartic.lean}.  It should live in a separate file, for example \lean{QuaternaryQuarticProof.lean}, importing the statement file.
+
+\item Since \lean{DotForm} is not assumed symmetric in the target, avoid any use of symmetry of \(B\).  Work with \(\lambda(f)=B(f,R)\) in the first argument only.  The catalecticant \(C_\lambda(a,b)=\lambda(ab)\) is symmetric because polynomial multiplication is commutative, not because \(B\) is symmetric.
+
+\item When proving Hessian negativity, use the Lean definition
+\[
+\lean{hessianTerm B p u v}=B(\sigma(v),R)+2B(A(u,v),A(u,v)).
+\]
+All constructed directions satisfy \(A(u,v)=0\), so the second term is exactly zero.
+
+\item The finite sums in \lean{sigma} and \lean{A} are over \lean{Fin 7}.  For rank-deficient directions, encode the dependence relation as a coefficient vector \(c:\lean{Fin 7}\to\R\) with \(\sum_i c_i u_i=0\).  The direction is \(v_i=c_i q\).
+
+\item For syzygy directions, if
+\[
+m_j=\sum_i\alpha_{j,i}u_i,
+\qquad
+s=\sum_i\beta_i u_i,
+\]
+define
+\[
+v_i=\sum_j\alpha_{j,i}n_j-\beta_iq.
+\]
+The key simplifications are
+\[
+A(u,v)=0,
+\qquad
+\lambda(\sigma(v))=\left(\sum_i\beta_i^2\right)\lambda(q^2).
+\]
+The second identity follows because every \(n_j\in K\) kills every quadratic factor under \(\lambda\).
+
+\item In the dimension arguments, repeatedly use
+\[
+\dim(U\cap V)\ge\dim U+
+\dim V-
+\dim W
+\]
+for subspaces \(U,V\subseteq W\).  Mathlib has the corresponding formula via \(\dim(U+V)+\dim(U\cap V)=\dim U+
+\dim V\).
+
+\item The rank-three case is the cleanest case to formalize after the syzygy lemma: since \(\dim K=7=\dim L\), one has \(L=K\), and the syzygy is simply
+\[
+\sum_j(z\ell_j)(zm_j)=z^2q.
+\]
+
+\item The rank-two and rank-one cases are pure finite-dimensional incidence arguments inside \(\Sym^2A\) or \(\Sym^2B\).  They should be formalized as separate lemmas about subspaces of a two- or three-dimensional vector space before being connected back to polynomials.
+\end{itemize}
+
+\end{document}
