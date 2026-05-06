@@ -1,5 +1,7 @@
 # Automatic Proof of a Benign Nonconvex Landscape Theorem
 
+[![Read Blog Post](https://img.shields.io/badge/Read-Blog%20Post-blue?logo=readthedocs)](https://chenyang.co/blog/automatic-theorem-proving.html)
+
 <img src="/imgs/loc_autoproof-tq-r4-apr9.png" alt="Successful Apr 9 run LOC">
 
 This repository showcases an automatic theorem-proving run for a nonconvex
