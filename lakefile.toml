@@ -1,7 +1,10 @@
 name = "TernaryQuartic"
 version = "0.1.0"
 keywords = ["math", "sos", "lean"]
-defaultTargets = ["TernaryQuartic", "TernaryQuarticProof", "QuaternaryQuartic", "QuaternaryQuarticProof"]
+defaultTargets = [
+  "TernaryQuartic",
+  "QuaternaryQuartic",
+]
 
 [leanOptions]
 pp.unicode.fun = true
@@ -15,12 +18,8 @@ rev = "v4.29.0"
 
 [[lean_lib]]
 name = "TernaryQuartic"
-
-[[lean_lib]]
-name = "TernaryQuarticProof"
+globs = ["TernaryQuartic.+"]
 
 [[lean_lib]]
 name = "QuaternaryQuartic"
-
-[[lean_lib]]
-name = "QuaternaryQuarticProof"
+globs = ["QuaternaryQuartic.+"]

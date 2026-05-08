@@ -90,7 +90,8 @@ install -d -m 755 -o vagrant -g vagrant /home/vagrant/.codex/hooks
 
 cat > /home/vagrant/.codex/config.toml <<'EOF'
 [features]
-codex_hooks = true
+hooks = true
+goals = true
 EOF
 
 cat > /home/vagrant/.codex/hooks.json <<'EOF'

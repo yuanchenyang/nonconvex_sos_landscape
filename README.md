@@ -7,7 +7,7 @@
 This repository showcases an automatic theorem-proving run for a nonconvex
 optimization problem: The rank-4 Burer-Monteiro factorization of ternary quartic
 sum-of-squares (SOS) polynomials. Given just the [problem statement in
-Lean](/TernaryQuartic.lean) , the proof agent autonomously used Julia to
+Lean](/TernaryQuartic/TernaryQuartic.lean), the proof agent autonomously used Julia to
 formulate [semidefinite programs (SDPs)](/julia/counter_poly.jl) that search for
 counterexamples and expose certificate structure, then used Lean 4 and mathlib
 to produce the final machine-checked theorem.
@@ -17,7 +17,7 @@ The successful run was produced by a lightweight harness using Codex with GPT
 
 ## What Was Proved
 
-The main theorem is stated in [`TernaryQuartic.lean`](/TernaryQuartic.lean). Let
+The main theorem is stated in [`TernaryQuartic/TernaryQuartic.lean`](TernaryQuartic/TernaryQuartic.lean). Let
 $\mathbb{R}[x_1,x_2,x_3]_d$ be the space of ternary forms of total degree
 $d$, and
 
@@ -54,7 +54,7 @@ for every $\mathbf{v} \in \mathbb{R}[x_1, x_2, x_3]_2^4$, then
 ```
 
 Although $f_p$ corresponds to a nonconvex rank-4 Burer-Monteiro factorization of
-the sum-of-sqaures SDP, this theorem shows that $f_p$ has a benign
+the sum-of-squares SDP, this theorem shows that $f_p$ has a benign
 landscape: all of its local minima are also global minima.
 
 ## Methodology
@@ -84,7 +84,7 @@ compaction and long-running work sessions; this is the "Codex continuation"
 pattern described [here](https://www.chenyang.co/blog/agents/2026/04/16/codex-continuation.html).
 
 For the ternary-quartic run, the entrypoint is
-[`scripts/run_ternary_quartic.sh`](scripts/run_ternary_quartic.sh). It sets
+[`TernaryQuartic/run.sh`](TernaryQuartic/run.sh). It sets
 `CODEX_KEEPALIVE=1`, supplies the fixed theorem-proving instructions through
 `CODEX_KEEPALIVE_PROMPT`, and starts `codex --yolo` so the agent can iterate
 through Julia exploration, LaTeX blueprinting, Lean formalization, verification,
@@ -127,13 +127,13 @@ and certificate exploration using [JuMP](https://github.com/jump-dev/JuMP.jl),
 and SDP solvers. See [`docs/julia_guide.md`](docs/julia_guide.md) for setup and
 workflow details.
 
-The Lean proof lives in [`TernaryQuarticProof/`](TernaryQuarticProof/) with the
-fixed statement in [`TernaryQuartic.lean`](TernaryQuartic.lean) and root theorem
-assembly in [`TernaryQuarticProof.lean`](TernaryQuarticProof.lean). See
+The Lean proof lives in [`TernaryQuartic/TernaryQuarticProof/`](TernaryQuartic/TernaryQuarticProof/) with the
+fixed statement in [`TernaryQuartic/TernaryQuartic.lean`](TernaryQuartic/TernaryQuartic.lean) and root theorem
+assembly in [`TernaryQuartic/TernaryQuarticProof.lean`](TernaryQuartic/TernaryQuarticProof.lean). See
 [`docs/lean_guide.md`](docs/lean_guide.md) for build and verification details.
 
 The original prover prompt and workflow are recorded in
-[`prompts/ternary_quartic.md`](prompts/ternary_quartic.md). The mathematical
+[`TernaryQuartic/prompt.md`](TernaryQuartic/prompt.md). The mathematical
 blueprint is in
 [`writeup/ternary_quartic/blueprint.pdf`](writeup/ternary_quartic/blueprint.pdf).
 
@@ -153,7 +153,7 @@ Paper citation: Benoit Legat, Chenyang Yuan, and Pablo A. Parrilo,
 Run the ternary-quartic verification harness:
 
 ```bash
-./scripts/verify_ternary_quartic.sh
+./TernaryQuartic/verify.sh
 ```
 
 The harness builds the Lean targets, typechecks the proof file, confirms the

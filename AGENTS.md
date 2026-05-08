@@ -17,22 +17,25 @@ The methodology combines:
 ## Repository Structure
 
 ```
-TernaryQuartic.lean              - Immutable statement file (read-only) for the rank-4 ternary-quartic track
-TernaryQuarticProof.lean         - Root import file for the ternary proof
-TernaryQuarticProof/             - Ternary proof modules
-QuaternaryQuartic.lean           - Immutable statement file (read-only) for the rank-7 quaternary-quartic track
-QuaternaryQuarticProof.lean      - Root import file for the quaternary proof
-QuaternaryQuarticProof/          - Quaternary proof modules
-program.md                       - Active execution brief for the quaternary-quartic proof track
-prompts/                         - Existing task prompts and agent instructions
+<Track>/<Track>.lean             - Immutable statement file (read-only) for one proof track
+<Track>/<Track>Proof.lean        - Root import file for that track's final theorem
+<Track>/<Track>Proof/            - Track-local Lean proof modules
+<Track>/prompt.md                - Track-specific proof task prompt
+<Track>/run.sh                   - Track-specific proof agent launcher
+<Track>/verify.sh                - Track-specific verification wrapper
 scripts/                         - Helper scripts (verification harnesses, Vagrant helpers, agent launcher)
 julia/                           - Computational search code (Julia)
-julia/ternary_quartic_explorations/ - Saved ternary-quartic Julia experiment scripts
+julia/<Track>_explorations/            - Saved experiment scripts, grouped by proof track
 low_rank_univariate_sos/         - Lean 4 + mathlib reference formalization (reference only; do not build it in this workspace)
 writeup/                         - Mathematical proofs and writeups (LaTeX sources)
-writeup/ternary_quartic/         - Ternary-quartic blueprint, summary, and exploration log
+writeup/<Track>/                 - Track-specific blueprints, summaries, and exploration logs
 docs/                            - Guides and supporting documentation
 ```
+
+Current root Lean proof tracks include `TernaryQuartic/` and
+`QuaternaryQuartic/`. Future tracks, for example a ternary-sextic track, should
+follow the same directory pattern and add their Lean library target to
+`lakefile.toml`.
 
 ## Detailed Guides
 
